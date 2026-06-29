@@ -39,7 +39,7 @@ In the Marketplace, switch to Type Packs and install **Infrastructure** (`run.vi
 A **plugin** is JavaScript that reads and/or writes your graph, declaring exactly which **scopes** it needs (e.g. `node:read`, `node:create`, `edge:create`). Two good first installs:
 
 - **CIDR Expand** — pure compute, no network. Consumes an `infrastructure.netblock` node and **produces** the individual `infrastructure.ip_address` nodes inside it. (This is why you installed Infrastructure first.)
-- **Chaos Reference Pack** (`run.vineyard.plugins.chaos`) — one bundle, many plugins: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, and Schrödinger's Node. They're destructive-but-harmless toys for learning the run loop on a throwaway graph.
+- **Chaos Reference Pack** (`run.vineyard.pluginpacks.chaos`) — one bundle, many plugins: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, and Schrödinger's Node. They're destructive-but-harmless toys for learning the run loop on a throwaway graph.
 
 When you install, an **approval dialog** lists the plugin's scopes so you can see what it can touch before you grant it, then the bundle is cached locally. Full details in [Browse & install](installing.md).
 

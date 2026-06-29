@@ -20,8 +20,8 @@ A pack is declared with `definePluginPack` from the SDK (`@vineyard/plugin-sdk`)
 import { definePlugin, definePluginPack } from "@vineyard/plugin-sdk";
 
 export default definePluginPack({
-  identifier: "run.vineyard.plugins.chaos",   // the pack id
-  content_type: "vineyard:plugin",
+  identifier: "run.vineyard.pluginpacks.chaos",   // the pack id
+  content_type: "vineyard:pluginpack",
   name: "Chaos Reference Pack",
   version: "1.0.0",
   plugins: [
@@ -34,8 +34,8 @@ export default definePluginPack({
 
 | Field          | Notes |
 | -------------- | ----- |
-| `identifier`   | The **pack id**, a reverse-DNS string `run.vineyard.plugins.*` (e.g. `run.vineyard.plugins.chaos`). It names the bundle, not any one contained plugin. |
-| `content_type` | Always `vineyard:plugin` — a pack is still plugin content, just one that carries several. |
+| `identifier`   | The **pack id**, a reverse-DNS string `run.vineyard.pluginpacks.*` (e.g. `run.vineyard.pluginpacks.chaos`). It names the bundle, not any one contained plugin. |
+| `content_type` | `vineyard:pluginpack` — the bundle's own kind. Each contained plugin still carries `vineyard:plugin`. |
 | `name`         | Human-readable pack name shown on the marketplace card. |
 | `version`      | SemVer for the bundle as a whole. |
 | `plugins`      | The array of `definePlugin(...)` entries. Each carries its **own** `identifier`, `scopes`, `io`, and `lifecycle`. |

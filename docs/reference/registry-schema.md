@@ -24,13 +24,13 @@ A row in `community-plugins.json`. The schema sets `additionalProperties: false`
 
 | Field | Type | Required | Meaning |
 |---|---|---|---|
-| `identifier` | string | yes | Reverse-DNS primary key, `^run\.vineyard\.plugins\.[a-z0-9_]+$`. Equals `manifest.identifier`. Unique across the **whole** registry (both catalogs). |
-| `content_type` | string | yes | Constant `vineyard:plugin`. Distinguishes Plugin Pack rows from Type Pack rows. |
+| `identifier` | string | yes | Reverse-DNS primary key, `^run\.vineyard\.(?:plugins\|pluginpacks)\.[a-z0-9_]+$` (`plugins.*` = single plugin, `pluginpacks.*` = bundle). Equals `manifest.identifier`. Unique across the **whole** registry (both catalogs). |
+| `content_type` | string | yes | `vineyard:plugin` (a single plugin) or `vineyard:pluginpack` (a bundle: one file → many plugins). |
 | `name` | string | yes | Display name, 1–128 chars. |
 | `author` | string | yes | Author handle, matched against `verified-authors.json`. |
 | `description` | string | yes | ≤250 chars, sentence case, ends with a period, no emoji. |
 | `repo` | string | yes | `owner/name` GitHub path (`^[^/]+/[^/]+$`). The **only** pointer to code. |
-| `ref` | string | yes | **Immutable**: a 40-char commit SHA or annotated tag, equal to `manifest.version`. Branches are rejected by review. |
+| `ref` | string | yes | **Immutable commit SHA** (40-hex SHA-1 or 64-hex SHA-256), captured at PR time. **Tags and branches are rejected** (both re-pointable) — pin the exact reviewed commit so the catalog can never serve different code. `version` carries the human-readable release. |
 | `path` | string | yes | Path to `manifest.json` within `repo@ref`. |
 | `version` | string | no | SemVer mirror of `manifest.version` at this `ref` (`^\d+\.\d+\.\d+(?:[-+].+)?$`). |
 | `platforms` | string[] | no | **Derived** badge set from `platforms.{web,desktop}` + `web.runtime`. Items: `web`, `web-proxy`, `desktop` (unique). |
@@ -51,13 +51,13 @@ This is the real Chaos reference pack — a single `identifier` that bundles six
 
 ```json
 {
-  "identifier": "run.vineyard.plugins.chaos",
-  "content_type": "vineyard:plugin",
+  "identifier": "run.vineyard.pluginpacks.chaos",
+  "content_type": "vineyard:pluginpack",
   "name": "Chaos Reference Pack",
   "author": "vineyard-run",
   "description": "A bundle of 6 graph-manipulation plugins for demo/validation: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node. Installing once adds all 6 together.",
   "repo": "vineyard-run/chaos-pack",
-  "ref": "v1.0.0",
+  "ref": "a62f42b507e495fda884289fce5316915475d4f5",
   "path": "plugins/chaos-pack.manifest.json",
   "version": "1.0.0",
   "platforms": ["web"],
@@ -106,7 +106,7 @@ The real Infrastructure base pack, defining five network-infrastructure entity t
   "author": "vineyard-run",
   "description": "A base Type Pack defining network-infrastructure entities (IP address, domain, URL, autonomous system, certificate).",
   "repo": "vineyard-run/typepacks",
-  "ref": "v1.0.0",
+  "ref": "ef35dab0513de207dc32a54a42e7e93d57d15af3",
   "path": "typepacks/infrastructure.json",
   "version": "1.0.0",
   "categories": ["infrastructure"],

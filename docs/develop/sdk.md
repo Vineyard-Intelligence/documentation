@@ -19,7 +19,7 @@ export default definePlugin({ manifest, run });
 
 // Or a pack — one bundle carrying many plugins (see plugin-packs.md)
 export default definePluginPack({
-  identifier: "run.vineyard.plugins.chaos",
+  identifier: "run.vineyard.pluginpacks.chaos",
   name: "Chaos",
   version: "1.0.0",
   plugins: [koreanRoulette, russianRoulette, thanosSnap /* ... */],
