@@ -1,6 +1,6 @@
 # Registry entry schemas
 
-Reference for the two **registry entry** schemas — one row in `community-plugins.json` and one row in `community-typepacks.json`. Each entry is a lean, denormalized pointer that lets the static browser render a card without fetching every upstream manifest.
+Reference for the two **registry entry** schemas — one row in `community-pluginpacks.json` and one row in `community-typepacks.json`. Each entry is a lean, denormalized pointer that lets the static browser render a card without fetching every upstream manifest.
 
 The schemas live at:
 
@@ -18,7 +18,7 @@ A registry entry is therefore a **catalog projection**: enough fields to search,
 
 ## Plugin entry
 
-A row in `community-plugins.json`. The schema sets `additionalProperties: false`, so unknown keys are rejected by the review bot.
+A row in `community-pluginpacks.json`. The schema sets `additionalProperties: false`, so unknown keys are rejected by the review bot.
 
 **Required:** `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`.
 

@@ -4,7 +4,7 @@ How Vineyard detects, gates, and applies a new version of an installed plugin or
 
 ## The registry entry is the latest pointer
 
-Vineyard does not poll author repos for updates. The **registry entry is the canonical latest pointer**: each row in `community-plugins.json` (or `community-typepacks.json`) carries the current `version`, the immutable `ref`, and the `repo`/`path` that resolve to the manifest at that ref. When the marketplace fetches the registry, the app already knows the newest published version of everything you have installed — no per-repo network fan-out required.
+Vineyard does not poll author repos for updates. The **registry entry is the canonical latest pointer**: each row in `community-pluginpacks.json` (or `community-typepacks.json`) carries the current `version`, the immutable `ref`, and the `repo`/`path` that resolve to the manifest at that ref. When the marketplace fetches the registry, the app already knows the newest published version of everything you have installed — no per-repo network fan-out required.
 
 The per-author `manifest.latest_url` field is a **fallback** pointer, not the primary mechanism. It points at the author's always-newest manifest and exists for update checks outside the catalog (for example, a plugin installed directly from a manifest URL during [local development](quickstart.md)). For anything published through the registry, the entry wins.
 

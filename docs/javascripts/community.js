@@ -18,7 +18,7 @@
 
     Promise.all([
       fetchJson(base + "community-typepacks.json").catch(function () { return null; }),
-      fetchJson(base + "community-plugins.json").catch(function () { return null; }),
+      fetchJson(base + "community-pluginpacks.json").catch(function () { return null; }),
     ])
       .then(function (res) {
         if (res[0] === null && res[1] === null) throw new Error("registry unreachable");
