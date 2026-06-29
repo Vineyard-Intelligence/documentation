@@ -1,0 +1,141 @@
+site_name: VINEYARD.RUN Documentation
+site_description: >-
+  User guide, developer documentation, and the marketplace browser for the
+  VINEYARD.RUN Plugin Pack and Type Pack ecosystem.
+site_author: vineyard-run
+site_url: https://docs.vineyard.run/
+copyright: Copyright &copy; VINEYARD.RUN
+
+# Fully static output. `mkdocs build` produces ./site_html with no server requirement.
+docs_dir: docs
+site_dir: site_html
+use_directory_urls: true
+
+theme:
+  name: material
+  custom_dir: overrides
+  language: en
+  favicon: assets/favicon.svg
+  logo: assets/logo.svg
+  icon:
+    repo: fontawesome/brands/github
+    logo: material/grape
+  font:
+    text: Inter
+    code: JetBrains Mono
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - navigation.footer
+    - navigation.tracking
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - content.tooltips
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/community.js
+
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/vineyard-run
+      name: vineyard-run on GitHub
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      permalink_title: Anchor link to this section
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.caret
+  - pymdownx.tilde
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+plugins:
+  - search
+  - minify:
+      minify_html: true
+
+nav:
+  - Home: index.md
+  - Marketplace:
+      - marketplace.md
+  - User Guide:
+      - guide/index.md
+      - Getting started: guide/getting-started.md
+      - Browse & install: guide/installing.md
+      - Running plugins: guide/running-plugins.md
+      - Working with Type Packs: guide/typepacks.md
+      - The canvas: guide/canvas.md
+      - Tasks & runs: guide/tasks.md
+  - Developer Guide:
+      - develop/index.md
+      - Architecture & principles: develop/architecture.md
+      - Quickstart — your first plugin: develop/quickstart.md
+      - Plugin manifest: develop/plugin-manifest.md
+      - Plugin Packs: develop/plugin-packs.md
+      - Type Packs: develop/typepacks.md
+      - SDK & host context: develop/sdk.md
+      - Sandbox & security: develop/security.md
+      - Task lifecycle: develop/lifecycle.md
+      - Distribution: develop/distribution.md
+      - Publishing to the registry: develop/publishing.md
+      - Updates: develop/updates.md
+  - Reference:
+      - reference/index.md
+      - Plugin manifest schema: reference/plugin-schema.md
+      - Type Pack schema: reference/typepack-schema.md
+      - Registry entry schemas: reference/registry-schema.md
+      - Scopes reference: reference/scopes.md
