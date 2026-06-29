@@ -32,13 +32,13 @@ From the canvas, choose **Project → Add from Marketplace…**. Search by name/
 
 A **Type Pack** is pure JSON that defines the **entity types** (and optional edge types) your nodes can be. Install one before plugins, because a plugin's inputs and outputs are expressed in terms of Type Pack types.
 
-In the Marketplace, switch to Type Packs and install **Infrastructure** (`run.vineyard.typepacks.infrastructure`). It ships entity types such as `infrastructure.ip_address`, `infrastructure.ip_range`, and `infrastructure.domain`, each addressed as `category.name`. More in [Type Packs](typepacks.md).
+In the Marketplace, switch to Type Packs and install **Infrastructure** (`run.vineyard.typepacks.infrastructure`). It ships entity types such as `infrastructure.ip_address`, `infrastructure.netblock`, and `infrastructure.domain`, each addressed as `category.name`. More in [Type Packs](typepacks.md).
 
 ## 6. Install a plugin
 
 A **plugin** is JavaScript that reads and/or writes your graph, declaring exactly which **scopes** it needs (e.g. `node:read`, `node:create`, `edge:create`). Two good first installs:
 
-- **CIDR Expand** — pure compute, no network. Consumes an `infrastructure.ip_range` node and **produces** the individual `infrastructure.ip_address` nodes inside it. (This is why you installed Infrastructure first.)
+- **CIDR Expand** — pure compute, no network. Consumes an `infrastructure.netblock` node and **produces** the individual `infrastructure.ip_address` nodes inside it. (This is why you installed Infrastructure first.)
 - **Chaos Reference Pack** (`run.vineyard.plugins.chaos`) — one bundle, many plugins: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, and Schrödinger's Node. They're destructive-but-harmless toys for learning the run loop on a throwaway graph.
 
 When you install, an **approval dialog** lists the plugin's scopes so you can see what it can touch before you grant it, then the bundle is cached locally. Full details in [Browse & install](installing.md).
@@ -47,7 +47,7 @@ When you install, an **approval dialog** lists the plugin's scopes so you can se
 
 How a plugin launches depends on what it **consumes**:
 
-- **Targets a node type** (e.g. CIDR Expand consumes `infrastructure.ip_range`) → it appears in the **right-click menu of a matching node**, with that node pre-bound as input.
+- **Targets a node type** (e.g. CIDR Expand consumes `infrastructure.netblock`) → it appears in the **right-click menu of a matching node**, with that node pre-bound as input.
 - **Operates on the whole graph** (e.g. Korean Roulette, which consumes nothing) → launch it from the global **Run plugin** menu.
 
 If the plugin declares input `params`, a small pre-run form appears (for CIDR Expand, the CIDR block — already filled from the node you right-clicked). Confirm, and the run starts.

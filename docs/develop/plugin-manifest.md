@@ -52,7 +52,7 @@ Each platform block may set `fallback` (`desktop`/`web`/`none`) describing what 
 ```json
 "io": {
   "consumes": [
-    { "typepack": "run.vineyard.typepacks.infrastructure", "category": "infrastructure", "name": "ip_range", "as": "cidr" }
+    { "typepack": "run.vineyard.typepacks.infrastructure", "category": "infrastructure", "name": "netblock", "as": "cidr" }
   ],
   "produces": [
     { "typepack": "run.vineyard.typepacks.infrastructure", "category": "infrastructure", "name": "ip_address" }
@@ -62,7 +62,7 @@ Each platform block may set `fallback` (`desktop`/`web`/`none`) describing what 
 
 `consumes` shapes the UX:
 
-- A plugin appears on a node's **right-click menu** when that node's `type` matches one of its consumed type references. CIDR Expand surfaces on any `infrastructure.ip_range` node.
+- A plugin appears on a node's **right-click menu** when that node's `type` matches one of its consumed type references. CIDR Expand surfaces on any `infrastructure.netblock` node.
 - `as` (consumes only) is an optional binding alias: the consumed node's value is **pre-bound into `params` under this key** when the run form opens. Because of `"as": "cidr"`, clicking the menu item pre-fills the `cidr` param with the node's value, so the user usually just confirms and runs.
 - A plugin with an **empty `consumes` array** is a whole-graph plugin: it does not attach to any node and is launched from the global **"Run plugin"** menu instead.
 
