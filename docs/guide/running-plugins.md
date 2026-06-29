@@ -16,13 +16,13 @@ See the [plugin manifest](../develop/plugin-manifest.md) and [scopes](../referen
 
 When a plugin's `io.consumes` matches a node's `type`, it appears on that node's right-click menu. Selecting it opens the pre-run params form with the consumed value already filled in.
 
-Take **CIDR Expand**, whose manifest consumes an `infrastructure.ip_range` node and binds it as `cidr`:
+Take **CIDR Expand**, whose manifest consumes an `infrastructure.netblock` node and binds it as `cidr`:
 
 ```jsonc
 "io": {
   "consumes": [
     { "typepack": "run.vineyard.typepacks.infrastructure",
-      "category": "infrastructure", "name": "ip_range", "as": "cidr" }
+      "category": "infrastructure", "name": "netblock", "as": "cidr" }
   ],
   "produces": [
     { "typepack": "run.vineyard.typepacks.infrastructure",
@@ -31,7 +31,7 @@ Take **CIDR Expand**, whose manifest consumes an `infrastructure.ip_range` node 
 }
 ```
 
-Right-click an `infrastructure.ip_range` node → **CIDR Expand** is listed → the form opens with `cidr` already set to that node's value. You then confirm `max_hosts` (or any other param) and run. New `infrastructure.ip_address` nodes appear on the canvas as the run progresses.
+Right-click an `infrastructure.netblock` node → **CIDR Expand** is listed → the form opens with `cidr` already set to that node's value. You then confirm `max_hosts` (or any other param) and run. New `infrastructure.ip_address` nodes appear on the canvas as the run progresses.
 
 !!! note "Built-in node menu actions"
     The reference UI's node menu also includes graph editing actions (Copy, Duplicate, Connect mode, Disconnect all, Delete). Consuming plugins are listed alongside these per-type actions.
@@ -51,7 +51,7 @@ Before a run starts, Vineyard shows a form generated from the manifest's `params
   "properties": {
     "cidr":      { "type": "string", "title": "CIDR block",
                    "pattern": "^\\d{1,3}(\\.\\d{1,3}){3}/\\d{1,2}$",
-                   "description": "Pre-filled from the right-clicked ip_range node." },
+                   "description": "Pre-filled from the right-clicked netblock node." },
     "max_hosts": { "type": "integer", "title": "Max hosts to emit",
                    "minimum": 1, "maximum": 65536, "default": 1024 }
   }

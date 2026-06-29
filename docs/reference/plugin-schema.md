@@ -214,7 +214,7 @@ Task execution model. `type: object`, `additionalProperties: false`. All propert
 
 ## Complete annotated example
 
-A full, valid manifest — the **CIDR Expand** reference plugin. It consumes an `infrastructure.ip_range` node, emits `infrastructure.ip_address` nodes, does pure compute (no network), and runs identically on web and desktop.
+A full, valid manifest — the **CIDR Expand** reference plugin. It consumes an `infrastructure.netblock` node, emits `infrastructure.ip_address` nodes, does pure compute (no network), and runs identically on web and desktop.
 
 ```json title="cidr_expand.manifest.json"
 {
@@ -237,7 +237,7 @@ A full, valid manifest — the **CIDR Expand** reference plugin. It consumes an 
   "io": {
     "consumes": [
       { "typepack": "run.vineyard.typepacks.infrastructure",
-        "category": "infrastructure", "name": "ip_range", "as": "cidr" } // (6)!
+        "category": "infrastructure", "name": "netblock", "as": "cidr" } // (6)!
     ],
     "produces": [
       { "typepack": "run.vineyard.typepacks.infrastructure",
@@ -251,7 +251,7 @@ A full, valid manifest — the **CIDR Expand** reference plugin. It consumes an 
     "properties": {
       "cidr": { "type": "string", "title": "CIDR block",
                 "pattern": "^\\d{1,3}(\\.\\d{1,3}){3}/\\d{1,2}$",
-                "description": "Pre-filled from the right-clicked ip_range node." },
+                "description": "Pre-filled from the right-clicked netblock node." },
       "max_hosts": { "type": "integer", "title": "Max hosts to emit",
                      "minimum": 1, "maximum": 65536, "default": 1024 }
     }
@@ -284,7 +284,7 @@ A full, valid manifest — the **CIDR Expand** reference plugin. It consumes an 
 3. SemVer, not the legacy float.
 4. Icon shown in the node right-click menu.
 5. `primary: web` is preferred. The `desktop` block is allowed by the schema but its runtime path is deferred; here both reuse the same `sandbox-js` entry.
-6. `as: "cidr"` pre-binds the right-clicked node's value into `params.cidr`. Runtime `Node.type` for these refs is `infrastructure.ip_range` / `infrastructure.ip_address`.
+6. `as: "cidr"` pre-binds the right-clicked node's value into `params.cidr`. Runtime `Node.type` for these refs is `infrastructure.netblock` / `infrastructure.ip_address`.
 7. JSON-Schema for the pre-run form; becomes `Task.input`. No secrets here.
 8. Pure compute: graph verbs only, no `network` or `config`.
 9. Short-lived, cancellable, determinate progress, ephemeral (no Task DB row).
