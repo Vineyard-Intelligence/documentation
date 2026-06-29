@@ -105,7 +105,7 @@ Every run becomes a task with a live status badge, a progress bar for determinat
 
 ## The Chaos reference pack
 
-The Chaos pack ships six pure client-side graph plugins in one bundle (`run.vineyard.plugins.chaos`) — installing it adds all six at once. They are the SDK's validation set and run identically on web and desktop.
+The Chaos pack ships six pure client-side graph plugins in one bundle (`run.vineyard.pluginpacks.chaos`) — installing it adds all six at once. They are the SDK's validation set and run identically on web and desktop.
 
 | Plugin | `scopes.graph` | `io.consumes` | Behavior |
 |---|---|---|---|

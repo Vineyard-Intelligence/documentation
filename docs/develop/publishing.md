@@ -22,7 +22,7 @@ You only ever edit **one** of the two catalog files in a submission, and you onl
 === "Steps"
 
     1. **Fork** `vineyard-run/vineyard-releases`.
-    2. **Pin an immutable `ref`** in your author repo — a 40-character commit SHA or an *annotated* tag. Branches are rejected.
+    2. **Pin an immutable `ref`** — the **commit SHA** of the release in your author repo. Tags and branches are mutable and rejected; resolve a tag/branch to its commit SHA with `scripts/resolve_ref.py`.
     3. **Append one entry** to `community-plugins.json` (Plugin Packs) or `community-typepacks.json` (Type Packs). Do not edit the stats, deprecation, removed, or verified-authors files — those are not submitter-owned.
     4. **Open a PR.** `VineyardReviewBot` posts its validation result as a status check.
     5. **Fix any blocking failures**, then wait for a human merge.
@@ -42,7 +42,7 @@ The `VineyardReviewBot` has two tiers. **Blocking** checks must pass before a hu
 
 - **Registry-entry schema.** The entry validates against `schemas/registry-plugin-entry` or `schemas/registry-typepack-entry`.
 - **Identifier uniqueness across BOTH catalogs.** An identifier cannot collide with any existing Plugin Pack *or* Type Pack entry.
-- **Immutable `ref`.** Must be a 40-character commit SHA or an annotated tag (which must equal `manifest.version`). Mutable branch refs are rejected.
+- **Immutable `ref`.** Must be a **commit SHA** (40-hex or 64-hex). Tags and branches are mutable (re-pointable to other code) and are **rejected** — pin the exact reviewed commit (`version` is the human-readable mirror).
 - **Full manifest/Type Pack validates** against the published plugin/Type Pack schema at `repo@ref/path` — not just the lean registry row.
 - **`web-proxy` ⇒ exactly one `network` endpoint, and it equals `proxy_endpoint`.** A web-proxy plugin may declare only its single proxy host. See [scopes](../reference/scopes.md).
 - **No secret-looking parameter keys.** Param keys that look like credentials (api_key, token, secret, …) are rejected; secrets belong in `scopes.config` with `secret: true` (desktop-only), not in user-facing params.
@@ -63,8 +63,8 @@ A **Plugin Pack** entry appended to `community-plugins.json`. Note `plugin_count
 
 ```json
 {
-  "identifier": "run.vineyard.plugins.chaos",
-  "content_type": "vineyard:plugin",
+  "identifier": "run.vineyard.pluginpacks.chaos",
+  "content_type": "vineyard:pluginpack",
   "name": "Chaos Reference Pack",
   "author": "vineyard-run",
   "description": "A bundle of 6 graph-manipulation plugins for demo/validation: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node. Installing once adds all 6 together.",
@@ -101,7 +101,7 @@ A Type Pack entry appended to `community-typepacks.json` (no scopes; `categories
 ```
 
 !!! note "Field reference"
-    The required fields are `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`. `content_type` is the literal `vineyard:plugin` or `vineyard:typepack`. The full field list and constraints live in [registry-schema](../reference/registry-schema.md).
+    The required fields are `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`. `content_type` is the literal `vineyard:plugin`, `vineyard:pluginpack`, or `vineyard:typepack`. The full field list and constraints live in [registry-schema](../reference/registry-schema.md).
 
 ## After merge
 
