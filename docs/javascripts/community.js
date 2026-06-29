@@ -2,7 +2,8 @@
    VINEYARD.RUN community browser — fully static, client-side only.
    Renders the plugin + typepack registry (fetched from the registry site)
    as a searchable/filterable card grid with a detail drawer.
-   No backend, no framework — just one fetch of the merged registry.json.
+   No backend, no build: fetches the two community-*.json index files for the
+   cards, and lazy-loads each pack's full document from jsDelivr for the drawer.
    ========================================================================== */
 (function () {
   "use strict";
@@ -12,16 +13,16 @@
     var mount = document.getElementById("vy-community");
     if (!mount) return;
 
-    var dataUrl = resolveDataUrl();
     renderSkeleton(mount);
+    var base = registryBase();
 
-    fetch(dataUrl, { cache: "no-cache" })
-      .then(function (r) {
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        return r.json();
-      })
-      .then(function (data) {
-        var entries = normalize(data);
+    Promise.all([
+      fetchJson(base + "community-typepacks.json").catch(function () { return null; }),
+      fetchJson(base + "community-plugins.json").catch(function () { return null; }),
+    ])
+      .then(function (res) {
+        if (res[0] === null && res[1] === null) throw new Error("registry unreachable");
+        var entries = normalize([].concat(res[0] || [], res[1] || []));
         new Browser(mount, entries).render();
       })
       .catch(function (err) {
@@ -29,15 +30,29 @@
           '<div class="vy-state">' + ICON.alert +
           "<p>Could not load the registry.</p><p style=\"font-size:.72rem\">" +
           escapeHtml(String(err && err.message ? err.message : err)) +
-          " &middot; expected at <code>" + escapeHtml(dataUrl) + "</code></p></div>";
+          " &middot; expected at <code>" + escapeHtml(base) + "community-*.json</code></p></div>";
       });
   }
 
-  // The catalog is produced and published by the registry site (separate repo).
-  // Override with window.VINEYARD_REGISTRY_URL for local preview / staging.
-  function resolveDataUrl() {
-    return (typeof window !== "undefined" && window.VINEYARD_REGISTRY_URL) ||
-      "https://registry.vineyard.run/registry/registry.json";
+  // The catalog is published by the registry site (separate repo) as two index
+  // files; each pack's full document is fetched from its content repo via jsDelivr.
+  // Override the base for local preview / staging.
+  function registryBase() {
+    return (typeof window !== "undefined" && window.VINEYARD_REGISTRY_BASE) ||
+      "https://registry.vineyard.run/registry/";
+  }
+
+  function fetchJson(url) {
+    return fetch(url, { cache: "no-cache" }).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status + " for " + url);
+      return r.json();
+    });
+  }
+
+  // jsDelivr URL for a pack's full document, from its content repo at the pinned ref.
+  function detailUrl(e) {
+    if (!e.repo || !e.ref || !e.path) return null;
+    return "https://cdn.jsdelivr.net/gh/" + e.repo + "@" + e.ref + "/" + e.path;
   }
 
   // --- Inline icon set (lucide-style, 24x24, stroke=currentColor) ----------
@@ -88,6 +103,7 @@
       e.name = e.name || e.identifier || "Untitled";
       e.author = typeof e.author === "object" && e.author ? e.author.name : e.author || "—";
       e.categories = e.categories || [];
+      e.icon = e.icon || (e.type === "typepack" ? "layers" : "package");
       return e;
     });
   }
@@ -263,14 +279,45 @@
 
   // --- Detail drawer -------------------------------------------------------
   Browser.prototype.openDrawer = function (e) {
+    var self = this;
     var drawer = document.getElementById("vy-drawer");
     var backdrop = document.getElementById("vy-backdrop");
-    drawer.innerHTML = this.drawerHtml(e);
+    this._openId = e.identifier || e.name;
+
+    var loading = !e._detail && !!detailUrl(e);
+    drawer.innerHTML = this.drawerHtml(e, loading);
     drawer.classList.add("is-open");
     backdrop.classList.add("is-open");
     document.body.style.overflow = "hidden";
+    this.wireDrawer();
+
+    // Lazy-load the full pack document (type palette / bundled plugins / io) from
+    // the content repo via jsDelivr, then re-render — once per entry, only while
+    // this entry is still the open one.
+    if (loading) {
+      var openId = this._openId;
+      fetchJson(detailUrl(e))
+        .then(function (doc) { mergeDetail(e, doc); })
+        .catch(function () { /* detail unavailable — keep card-level view */ })
+        .then(function () {
+          e._detail = true;
+          if (drawer.classList.contains("is-open") && self._openId === openId) {
+            drawer.innerHTML = self.drawerHtml(e, false);
+            self.wireDrawer();
+          }
+        });
+    }
+  };
+
+  Browser.prototype.wireDrawer = function () {
     var self = this;
-    drawer.querySelector(".vy-drawer__close").addEventListener("click", function () { self.closeDrawer(); });
+    var drawer = document.getElementById("vy-drawer");
+    if (!drawer) return;
+    var close = drawer.querySelector(".vy-drawer__close");
+    if (close) {
+      close.addEventListener("click", function () { self.closeDrawer(); });
+      close.focus();
+    }
     Array.prototype.forEach.call(drawer.querySelectorAll("[data-copy]"), function (btn) {
       btn.addEventListener("click", function () {
         var text = btn.getAttribute("data-copy");
@@ -278,7 +325,6 @@
         var old = btn.textContent; btn.textContent = "copied"; setTimeout(function () { btn.textContent = old; }, 1200);
       });
     });
-    drawer.querySelector(".vy-drawer__close").focus();
   };
 
   Browser.prototype.closeDrawer = function () {
@@ -289,7 +335,7 @@
     document.body.style.overflow = "";
   };
 
-  Browser.prototype.drawerHtml = function (e) {
+  Browser.prototype.drawerHtml = function (e, loading) {
     var rows = [];
     if (e.identifier)
       rows.push(kv("Identifier", '<code>' + escapeHtml(e.identifier) + "</code>" +
@@ -346,7 +392,7 @@
       body += e.types.map(function (t) {
         var color = t.color || "#8b5cf6";
         return '<span class="vy-typechip"><span class="vy-dot" style="background:' + escapeAttr(color) + '"></span>' +
-          escapeHtml(t.label || t.name) + "</span>";
+          escapeHtml(t.display_name || t.label || t.name) + "</span>";
       }).join("");
       body += "</div>";
       if ((e.edge_types || []).length) {
@@ -357,6 +403,8 @@
         body += "</div>";
       }
     }
+
+    if (loading) body += '<p class="vy-loading" style="font-size:.85rem;color:var(--vy-text-muted);margin:.5rem 0 0">Loading details…</p>';
 
     var installNote =
       e.type === "typepack"
@@ -405,6 +453,23 @@
       out.push({ icon: "key", text: "Config: requires install-time configuration values." });
     }
     return out;
+  }
+
+  // Merge a pack's full document (jsDelivr) into the card-level entry so the
+  // drawer can show the type palette / bundled plugins / io the lean index omits.
+  function mergeDetail(e, doc) {
+    if (!doc) return;
+    if (e.type === "typepack") {
+      e.types = doc.types || doc.node_types || [];
+      e.edge_types = doc.edge_types || [];
+    } else if (Array.isArray(doc.plugins)) {
+      e.plugins = doc.plugins;
+    } else {
+      e.io = doc.io;
+      e.scopes = doc.scopes;
+    }
+    if (doc.icon) e.icon = doc.icon;
+    if (!e.license && doc.license) e.license = doc.license;
   }
 
   // --- helpers -------------------------------------------------------------
