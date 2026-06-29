@@ -19,7 +19,7 @@ mkdocs serve            # preview at http://127.0.0.1:8000
 ```
 
 To preview the marketplace against a different registry, set a global before the page loads
-(the base must serve `community-typepacks.json` and `community-plugins.json`):
+(the base must serve `community-typepacks.json` and `community-pluginpacks.json`):
 
 ```js
 window.VINEYARD_REGISTRY_BASE = "http://localhost:8000/registry/";

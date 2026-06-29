@@ -8,7 +8,7 @@ The normative reference for VINEYARD.RUN's plugin and Type Pack formats: the JSO
 |---|---|
 | [Plugin manifest schema](plugin-schema.md) | The `vineyard:plugin` manifest — `identifier`, `version`, `platforms`, `io`, `scopes`, `lifecycle`, `distribution`. |
 | [Type Pack schema](typepack-schema.md) | The `vineyard:typepack` document — type definitions in the qualified `category.name` form (e.g. `infrastructure.ip_address`). |
-| [Registry entry schemas](registry-schema.md) | One row of `community-plugins.json` / `community-typepacks.json` — the metadata-only catalog rows the browser reads. |
+| [Registry entry schemas](registry-schema.md) | One row of `community-pluginpacks.json` / `community-typepacks.json` — the metadata-only catalog rows the browser reads. |
 | [Scopes](scopes.md) | The full permission vocabulary: `node:read`, `edge:delete`, `message:post`, and the rest. |
 
 ## Where the canonical artifacts live
@@ -19,7 +19,7 @@ The authoritative JSON-Schemas are not duplicated here — they live in the spec
 |---|---|
 | `schemas/plugin.schema.json` | A `vineyard:plugin` manifest. |
 | `schemas/typepack.schema.json` | A `vineyard:typepack` document. |
-| `schemas/registry-plugin-entry.schema.json` | One `community-plugins.json` row. |
+| `schemas/registry-plugin-entry.schema.json` | One `community-pluginpacks.json` row. |
 | `schemas/registry-typepack-entry.schema.json` | One `community-typepacks.json` row. |
 
 The reference pages summarize and explain these files; when the prose and the schema disagree, the schema in `marketplace/schemas/` wins.

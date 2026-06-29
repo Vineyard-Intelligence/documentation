@@ -8,7 +8,7 @@ Submissions go to **`vineyard-run/vineyard-releases`**. The repo carries *pointe
 
 | File | Role |
 |---|---|
-| `community-plugins.json` | One lean entry per plugin (or pack): identifier, name, author, description, repo, ref, path, version, platforms, `scopes_summary`, `verified`. |
+| `community-pluginpacks.json` | One lean entry per plugin (or pack): identifier, name, author, description, repo, ref, path, version, platforms, `scopes_summary`, `verified`. |
 | `community-typepacks.json` | Symmetric for Type Packs; carries `categories`/`type_count`/`edge_count` instead of scopes (no code executes). |
 | `community-plugin-stats.json` / `community-typepack-stats.json` | Install/activation counts — maintained by Vineyard infra, **not** the submitter. |
 | `deprecation.json` / `removed.json` | Withdrawn versions / delisted entries. |
@@ -23,7 +23,7 @@ You only ever edit **one** of the two catalog files in a submission, and you onl
 
     1. **Fork** `vineyard-run/vineyard-releases`.
     2. **Pin an immutable `ref`** — the **commit SHA** of the release in your author repo. Tags and branches are mutable and rejected; resolve a tag/branch to its commit SHA with `scripts/resolve_ref.py`.
-    3. **Append one entry** to `community-plugins.json` (Plugin Packs) or `community-typepacks.json` (Type Packs). Do not edit the stats, deprecation, removed, or verified-authors files — those are not submitter-owned.
+    3. **Append one entry** to `community-pluginpacks.json` (Plugin Packs) or `community-typepacks.json` (Type Packs). Do not edit the stats, deprecation, removed, or verified-authors files — those are not submitter-owned.
     4. **Open a PR.** `VineyardReviewBot` posts its validation result as a status check.
     5. **Fix any blocking failures**, then wait for a human merge.
     6. After green CI + merge, the entry is **live on the next registry fetch** — clients pull the static JSON; there is no coupled app release.
@@ -59,7 +59,7 @@ The `VineyardReviewBot` has two tiers. **Blocking** checks must pass before a hu
 
 ## Sample registry entries
 
-A **Plugin Pack** entry appended to `community-plugins.json`. Note `plugin_count` marks a pack with multiple plugins (one file → many plugins) so the marketplace shows one card and installs all contained plugins together:
+A **Plugin Pack** entry appended to `community-pluginpacks.json`. Note `plugin_count` marks a pack with multiple plugins (one file → many plugins) so the marketplace shows one card and installs all contained plugins together:
 
 ```json
 {
