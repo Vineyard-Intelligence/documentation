@@ -4,10 +4,11 @@ The user guide, developer documentation, and marketplace browser for Vineyard â€
 [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) site published to
 **https://docs.vineyard.run/** via GitHub Pages.
 
-The marketplace browser is **presentation only**: it fetches the merged catalog from the
+The marketplace browser is **presentation only**: it fetches the two index files from the
 [registry](https://github.com/Vineyard-Intelligence/registry) over XHR
-(`https://registry.vineyard.run/registry/registry.json`) and renders it client-side. This repo
-holds no catalog data of its own.
+(`https://registry.vineyard.run/registry/community-{typepacks,plugins}.json`), and lazy-loads each
+pack's full document from its content repo via jsDelivr for the detail drawer. This repo holds no
+catalog data of its own.
 
 ## Local development
 
@@ -17,10 +18,11 @@ pip install -r requirements.txt
 mkdocs serve            # preview at http://127.0.0.1:8000
 ```
 
-To preview the marketplace against a different catalog, set a global before the page loads:
+To preview the marketplace against a different registry, set a global before the page loads
+(the base must serve `community-typepacks.json` and `community-plugins.json`):
 
 ```js
-window.VINEYARD_REGISTRY_URL = "http://localhost:8000/registry/registry.json";
+window.VINEYARD_REGISTRY_BASE = "http://localhost:8000/registry/";
 ```
 
 ## Deployment
