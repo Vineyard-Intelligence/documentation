@@ -19,7 +19,9 @@ theme:
   logo: assets/logo.svg
   icon:
     repo: fontawesome/brands/github
-    logo: material/grape
+    # No `logo:` here. `theme.logo` above takes precedence over `theme.icon.logo`, so the
+    # `material/grape` that used to sit here never rendered — it just looked like the header
+    # mark was configured in two places that disagreed.
   font:
     text: Inter
     code: JetBrains Mono
