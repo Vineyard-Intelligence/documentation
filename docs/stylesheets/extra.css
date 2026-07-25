@@ -273,7 +273,19 @@
 .vy-badge--net { background: #b45309; color: #fff; border-color: transparent; }
 .vy-badge--write { background: #9333ea; color: #fff; border-color: transparent; }
 .vy-badge--schema { background: var(--vy-chip-bg); }
+.vy-badge--skill { background: #7c3aed; color: #fff; border-color: transparent; }
+.vy-badge--needs { background: #b45309; color: #fff; border-color: transparent; }
 .vy-verified { color: var(--vy-500); display: inline-flex; }
+
+/* Skill Pack playbook overview (drawer) */
+.vy-skill-overview {
+  white-space: pre-wrap; word-break: break-word;
+  font-size: .78rem; line-height: 1.5;
+  max-height: 15rem; overflow: auto;
+  margin: .25rem 0 0; padding: .6rem .7rem;
+  background: var(--vy-chip-bg); color: var(--vy-text);
+  border: 1px solid var(--vy-border); border-radius: .5rem;
+}
 .vy-verified svg { width: .85rem; height: .85rem; }
 
 /* Empty / loading states */
