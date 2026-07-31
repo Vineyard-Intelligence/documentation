@@ -99,17 +99,18 @@ API keys and secrets must **never** land in a task record or in AI-conversation 
 6. **BYOK on web is unsupported by design** — bring-your-own-key routes to the desktop plugin.
 
 !!! warning "BYOK / desktop secrets are DEFERRED"
-    Secret handling that depends on the desktop keychain (rules 1, 2, and 6) belongs to the **desktop runtime**, which is specified but **not yet built**. The browser-only initial build does not support secret config; plugins that need a key are directed to a desktop build that does not ship yet.
+    Secret handling that depends on the desktop keychain (rules 1, 2, and 6) is **deferred**. The desktop Electron shell ships today and runs plugins in its `sandbox-js` isolate, but keychain-backed `config.secret:true` injection and BYOK are not yet implemented. Plugins that need a secret key cannot yet obtain it automatically on any platform.
 
 ## What is and isn't shipped
 
 | Control | Status |
 |---|---|
-| Web Worker sandbox + CSP egress (`sandbox-js`) | shipping (browser-first) |
+| Web Worker sandbox + CSP egress (`sandbox-js`, browser) | shipping |
+| Desktop Electron shell + sandbox isolate (`sandbox-js`, desktop) | shipping |
 | One-time RunToken + DRF permission class | shipping |
 | Param secret-key lint, graph-write scrub, safe-field allowlist | shipping |
 | `web-proxy` runtime (single proxy endpoint) | **DEFERRED** |
-| Desktop isolate, keychain-backed secrets, BYOK | **DEFERRED** |
+| Keychain-backed secret config, BYOK | **DEFERRED** |
 
 ## Next / See also
 

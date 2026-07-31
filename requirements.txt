@@ -2,3 +2,4 @@
 mkdocs-material>=9.7,<10
 pymdown-extensions>=10
 mkdocs-minify-plugin>=0.8
+mkdocs-static-i18n>=1.0

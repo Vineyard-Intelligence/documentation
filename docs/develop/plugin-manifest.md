@@ -40,8 +40,8 @@ The identity block names and attributes the plugin: `identifier` (a reverse-DNS 
 
     `web-proxy` is the CORS escape hatch: the worker is a thin client that calls exactly **one** author-controlled endpoint. When `runtime` is `web-proxy`, `proxy_endpoint` is required and **must equal the single `scopes.network` entry** (no fan-out).
 
-!!! warning "Desktop is DEFERRED"
-    The schema accepts a `desktop` block (with runtimes `sandbox-js`, `native`, or `subprocess`), but the **desktop runtime is not yet shipped**. Today, author and test against `web`. A manifest may declare `desktop` for forward compatibility, but do not rely on it executing.
+!!! warning "Desktop: `sandbox-js` ships; `native`/`subprocess` deferred"
+    The schema accepts a `desktop` block (with runtimes `sandbox-js`, `native`, or `subprocess`). The `sandbox-js` desktop runtime **ships today** via the Electron shell. `native` and `subprocess` runtimes are forward-looking design — do not rely on them executing yet.
 
 Each platform block may set `fallback` (`desktop`/`web`/`none`) describing what to tell the user when this platform cannot run the plugin. The installer **greys out** unsupported plugins rather than hiding them, so a web-only plugin still appears in the catalog with a clear, disabled state.
 
@@ -105,7 +105,7 @@ For the full scope vocabulary, the scope families, and the enforcement model, se
 - **`long_running`** — when `true`, the runtime continuously manages the task (status/pause/resume/cancel/retry/progress). Defaults to `false`.
 - **`controls`** — which controls the UI exposes, from `pause`, `resume`, `cancel`, `retry`, `progress`.
 - **`progress`** — `none`, `determinate`, or `indeterminate`.
-- **`persistence`** — `ephemeral` (no Task DB row, current browser only), `opt-in`, or `always`. Defaults to `ephemeral`.
+- **`persistence`** — `ephemeral` (no Task DB row, in-memory only), `opt-in`, or `always`. Defaults to `ephemeral`.
 
 The canonical task state machine is the 7 states `queued → running → waiting → paused → cancelled → succeeded → failed`; retry mints a **new** task rather than being a state. See [Lifecycle](lifecycle.md) and the user-facing [Tasks](../guide/tasks.md) page.
 

@@ -55,7 +55,7 @@ Per-platform execution flags. `type: object`, `additionalProperties: false`, `mi
 | `desktop` | object | no | see [platforms.desktop](#platformsdesktop) | — | Desktop execution block. |
 
 !!! warning "What actually ships today"
-    The launch runs web plugins only, with `platforms.web.runtime: "sandbox-js"`. The `desktop` block and the `web-proxy` runtime are valid in the schema as forward-looking design but are **deferred** — not built yet. Treat them as reserved, not as shipped behavior.
+    Both the browser runtime (`platforms.web.runtime: "sandbox-js"`) and the desktop Electron shell (`platforms.desktop.runtime: "sandbox-js"`) ship today. The `web-proxy` runtime and `native`/`subprocess` desktop runtimes are valid in the schema as forward-looking design but are **deferred** — not built yet. Treat them as reserved, not as shipped behavior.
 
 ### platforms.web
 
@@ -175,7 +175,7 @@ Task execution model. `type: object`, `additionalProperties: false`. All propert
 | `long_running` | boolean | no | — | `false` | If true, the runtime continuously manages the task (status/pause/resume/cancel/retry/progress). |
 | `controls` | array | no | `uniqueItems`; enum: `pause`, `resume`, `cancel`, `retry`, `progress` | — | Controls exposed to the user. |
 | `progress` | string | no | `none`, `determinate`, `indeterminate` | `none` | Progress reporting style. |
-| `persistence` | string | no | `ephemeral`, `opt-in`, `always` | `ephemeral` | `ephemeral` = no Task DB row, current browser only. |
+| `persistence` | string | no | `ephemeral`, `opt-in`, `always` | `ephemeral` | `ephemeral` = no Task DB row, in-memory only. |
 | `states` | array | no | enum: `queued`, `running`, `waiting`, `paused`, `cancelled`, `succeeded`, `failed` | all 7 states | Canonical 7-state machine. |
 
 !!! note "Retry mints a new task"
@@ -283,7 +283,7 @@ A full, valid manifest — the **CIDR Expand** reference plugin. It consumes an 
 2. The `const` discriminator — must be exactly `vineyard:plugin`.
 3. SemVer, not the legacy float.
 4. Icon shown in the node right-click menu.
-5. `primary: web` is preferred. The `desktop` block is allowed by the schema but its runtime path is deferred; here both reuse the same `sandbox-js` entry.
+5. `primary: web` is preferred. The `desktop` block with `sandbox-js` ships today; `native`/`subprocess` runtimes are deferred. Here both reuse the same `sandbox-js` entry.
 6. `as: "cidr"` pre-binds the right-clicked node's value into `params.cidr`. Runtime `Node.type` for these refs is `infrastructure.netblock` / `infrastructure.ip_address`.
 7. JSON-Schema for the pre-run form; becomes `Task.input`. No secrets here.
 8. Pure compute: graph verbs only, no `network` or `config`.
