@@ -186,7 +186,7 @@ plugin과 Type Pack 양쪽에서 사용되는 공유 블록 (`#/$defs/distributi
   "license": "Apache-2.0",                             // SPDX 표현식
   "distribution": {                                    // 불변 git 소스
     "kind": "git",
-    "repository": "https://github.com/vineyard-run/typepacks",
+    "repository": "https://github.com/Vineyard-Intelligence/typepacks",
     "ref": "v1.0.0",                                   // 주석 태그 또는 40자 SHA
     "path": "infrastructure/typepack.json"
   },

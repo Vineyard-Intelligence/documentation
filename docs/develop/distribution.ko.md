@@ -29,7 +29,7 @@
     ```jsonc
     "distribution": {
       "kind": "git",
-      "repository": "https://github.com/vineyard-run/cidr-expand",
+      "repository": "https://github.com/Vineyard-Intelligence/cidr-expand",
       "ref": "4d2f8b19c0a7e6f3b1d5a4c9e8f70123456789ab",
       "path": "manifest.json",
       "integrity": { "algo": "sha256", "hash": "e3b0c44298fc1c149afbf4c8996fb924..." }
@@ -43,10 +43,10 @@
     ```jsonc
     "distribution": {
       "kind": "zip",
-      "repository": "https://github.com/vineyard-run/chaos-pack",
+      "repository": "https://github.com/Vineyard-Intelligence/chaos-pack",
       "ref": "v1.2.0",
       "archive": {
-        "url": "https://github.com/vineyard-run/chaos-pack/releases/download/v1.2.0/chaos-pack.zip",
+        "url": "https://github.com/Vineyard-Intelligence/chaos-pack/releases/download/v1.2.0/chaos-pack.zip",
         "sha256": "9b74c9897bac770ffc029102a200c5de..."
       }
     }

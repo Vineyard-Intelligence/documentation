@@ -186,7 +186,7 @@ A trimmed, fully valid `vineyard:typepack` showing the top-level block, two node
   "license": "Apache-2.0",                             // SPDX expression
   "distribution": {                                    // immutable git source
     "kind": "git",
-    "repository": "https://github.com/vineyard-run/typepacks",
+    "repository": "https://github.com/Vineyard-Intelligence/typepacks",
     "ref": "v1.0.0",                                   // annotated tag or 40-char SHA
     "path": "infrastructure/typepack.json"
   },

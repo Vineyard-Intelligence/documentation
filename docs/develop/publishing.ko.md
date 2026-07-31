@@ -4,26 +4,27 @@ Plugin Pack이나 Type Pack을 공개 Vineyard 마켓플레이스에 게시하�
 
 ## 레지스트리 저장소는 메타데이터만 보유합니다
 
-제출은 **`vineyard-run/vineyard-releases`**로 이루어집니다. 저장소는 *포인터와 파생 측면*을 보유하며, 코드나 매니페스트 또는 번들의 복사본을 절대 보유하지 않습니다. 전체 매니페스트/Type Pack JSON, README, 스크린샷, 번들은 모두 **귀하의** 작성자 저장소에 고정된 `ref`에 남아 있습니다. 마켓플레이스 상세 페이지는 거기서 지연 하이드레이션됩니다.
+제출은 **`Vineyard-Intelligence/registry`**로 이루어집니다. 저장소는 *포인터와 파생 측면*을 보유하며, 코드나 매니페스트 또는 번들의 복사본을 절대 보유하지 않습니다. 전체 매니페스트/Type Pack JSON, README, 스크린샷, 번들은 모두 **귀하의** 작성자 저장소에 고정된 `ref`에 남아 있습니다. 마켓플레이스 상세 페이지는 거기서 지연 하이드레이션됩니다.
 
 | 파일 | 역할 |
 |---|---|
 | `community-pluginpacks.json` | 플러그인(또는 팩)당 하나의 간소화된 항목: identifier, name, author, description, repo, ref, path, version, platforms, `scopes_summary`, `verified`. |
 | `community-typepacks.json` | Type Pack용 대칭 항목. 스코프 대신 `categories`/`type_count`/`edge_count`를 가집니다(코드가 실행되지 않음). |
+| `community-skillpacks.json` | Skill Pack용 대칭 항목. 스코프 대신 `applies_to`/`section_count`/`requires`를 가집니다(텍스트만 있으며, 코드가 실행되지 않음). |
 | `community-plugin-stats.json` / `community-typepack-stats.json` | 설치/활성화 횟수 — Vineyard 인프라가 유지 관리하며, **제출자가 아님**. |
 | `deprecation.json` / `removed.json` | 철회된 버전 / 목록 제외된 항목. |
 | `verified-authors.json` | "verified" 배지의 출처. CI가 멤버십을 항목에 미러링하며 — 절대 자체 주장되지 않음. |
 | `schemas/` | CI 봇이 항목을 검증하는 기준이 되는 게시된 메타 스키마. |
 
-제출 시 두 카탈로그 파일 중 **하나**만 편집하며, 단일 항목만 추가합니다.
+제출 시 세 카탈로그 파일 중 **하나**만 편집하며, 단일 항목만 추가합니다.
 
 ## 제출 워크플로
 
 === "단계"
 
-    1. `vineyard-run/vineyard-releases`를 **포크**합니다.
+    1. `Vineyard-Intelligence/registry`를 **포크**합니다.
     2. **불변 `ref` 고정** — 작성자 저장소의 릴리스 **커밋 SHA**. 태그와 브랜치는 가변이며 거부됩니다. `scripts/resolve_ref.py`로 태그/브랜치를 커밋 SHA로 확인하세요.
-    3. `community-pluginpacks.json`(Plugin Pack) 또는 `community-typepacks.json`(Type Pack)에 **항목 하나를 추가**합니다. 통계, 폐기, 제거, verified-authors 파일은 편집하지 마세요 — 이들은 제출자 소유가 아닙니다.
+    3. `community-pluginpacks.json`(Plugin Pack), `community-typepacks.json`(Type Pack) 또는 `community-skillpacks.json`(Skill Pack)에 **항목 하나를 추가**합니다. 통계, 폐기, 제거, verified-authors 파일은 편집하지 마세요 — 이들은 제출자 소유가 아닙니다.
     4. **PR을 엽니다.** `VineyardReviewBot`이 검증 결과를 상태 확인으로 게시합니다.
     5. **차단 실패를 수정**한 다음, 사람의 병합을 기다립니다.
     6. CI 통과 + 병합 후, 항목은 **다음 레지스트리 가져오기 시 라이브**됩니다 — 클라이언트가 정적 JSON을 가져오며, 결합된 앱 릴리스가 없습니다.
@@ -68,7 +69,7 @@ Plugin Pack이나 Type Pack을 공개 Vineyard 마켓플레이스에 게시하�
   "name": "Chaos Reference Pack",
   "author": "vineyard-run",
   "description": "A bundle of 6 graph-manipulation plugins for demo/validation: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node. Installing once adds all 6 together.",
-  "repo": "vineyard-run/chaos-pack",
+  "repo": "Vineyard-Intelligence/chaos-pack",
   "ref": "v1.0.0",
   "path": "plugins/chaos-pack.manifest.json",
   "version": "1.0.0",
@@ -89,7 +90,7 @@ Plugin Pack이나 Type Pack을 공개 Vineyard 마켓플레이스에 게시하�
   "name": "Infrastructure",
   "author": "vineyard-run",
   "description": "A base Type Pack defining network-infrastructure entities (IP address, domain, URL, autonomous system, certificate).",
-  "repo": "vineyard-run/typepacks",
+  "repo": "Vineyard-Intelligence/typepacks",
   "ref": "v1.0.0",
   "path": "typepacks/infrastructure.json",
   "version": "1.0.0",

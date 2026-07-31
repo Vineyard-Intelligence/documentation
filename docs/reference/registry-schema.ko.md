@@ -9,7 +9,7 @@
 
 ## What a registry entry is (and is not)
 
-registry 저장소 (`vineyard-run/vineyard-releases`)는 **경로와 메타데이터만 저장하며 — 코드나 복사본은 없습니다**. 전체 [plugin manifest](plugin-schema.md) 또는 [Type Pack](typepack-schema.md) JSON, README, 번들은 모두 고정된 `ref`의 **저자 저장소**에 남아 있습니다.
+registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데이터만 저장하며 — 코드나 복사본은 없습니다**. 전체 [plugin manifest](plugin-schema.md) 또는 [Type Pack](typepack-schema.md) JSON, README, 번들은 모두 고정된 `ref`의 **저자 저장소**에 남아 있습니다.
 
 따라서 registry 항목은 **카탈로그 프로젝션**입니다: 브라우저에서 항목을 검색, 필터링, 배지 표시하기에 충분한 필드와, 상세 페이지가 실제 항목을 하이드레이트하는 데 사용하는 `repo@ref/path` 포인터입니다.
 
@@ -56,7 +56,7 @@ registry 저장소 (`vineyard-run/vineyard-releases`)는 **경로와 메타데�
   "name": "Chaos Reference Pack",
   "author": "vineyard-run",
   "description": "A bundle of 6 graph-manipulation plugins for demo/validation: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node. Installing once adds all 6 together.",
-  "repo": "vineyard-run/chaos-pack",
+  "repo": "Vineyard-Intelligence/chaos-pack",
   "ref": "a62f42b507e495fda884289fce5316915475d4f5",
   "path": "plugins/chaos-pack.manifest.json",
   "version": "1.0.0",
@@ -105,7 +105,7 @@ registry 저장소 (`vineyard-run/vineyard-releases`)는 **경로와 메타데�
   "name": "Infrastructure",
   "author": "vineyard-run",
   "description": "A base Type Pack defining network-infrastructure entities (IP address, domain, URL, autonomous system, certificate).",
-  "repo": "vineyard-run/typepacks",
+  "repo": "Vineyard-Intelligence/typepacks",
   "ref": "ef35dab0513de207dc32a54a42e7e93d57d15af3",
   "path": "typepacks/infrastructure.json",
   "version": "1.0.0",
