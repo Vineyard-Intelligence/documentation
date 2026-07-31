@@ -151,9 +151,16 @@ GitHub and the registry are a **distribution** layer; development is fully local
 !!! example "Try Korean Roulette on a throwaway project"
     Because it deletes nearly everything, run it against a scratch project first. Watch the [task](../guide/tasks.md) panel show the run, then the survivor node standing alone in the canvas.
 
-## 6. Local dev & integration testing
+## 6. Integration testing in the app
 
-When unit tests pass, exercise the plugin end-to-end against a real graph. Run the development stack — the Docker backend on `:8000` plus Vite on `:3000` — sideload your plugin through Developer Mode (the dev-server URL mode is ideal here), and trigger a run. Graph mutations apply over the **WebSocket**, so you can watch nodes and edges appear, change, or vanish in the canvas in real time as `run(ctx)` executes. This is the closest thing to production behavior before you publish: real writes, real run token, real WebSocket fan-out — just sourced from your local bundle instead of the registry.
+When unit tests pass, exercise the plugin end-to-end against a real graph in the app you
+actually use — the web app at [vineyard.run](https://vineyard.run/) or the desktop build. You
+do not need Vineyard's source code or a local development stack for this: sideload your bundle
+through **Developer Mode** (the dev-server URL mode is ideal while you iterate), trigger a run
+on a throwaway project, and watch nodes and edges appear, change, or vanish in the canvas in
+real time as `run(ctx)` executes. This is the closest thing to production behavior before you
+publish: real writes, real run token, real WebSocket fan-out — just sourced from your local
+bundle instead of the registry.
 
 !!! warning "Dev Mode relaxes two protections"
     To keep the loop fast, Developer Mode **may auto-approve scopes and skip the integrity check**. That means a dev-loaded plugin can run with scopes you never explicitly granted, and its bytes are not pinned by hash the way a published, registry-installed plugin is (see [Distribution](distribution.md) and [Updates](updates.md)). Use Dev Mode only for code you wrote or trust, and re-test the *published* artifact through the normal install path before relying on it.

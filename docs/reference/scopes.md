@@ -17,7 +17,7 @@ The `scopes` block has exactly four keys, all optional:
 
 ## graph
 
-Fine-grained verbs over nodes and edges (`node:*` / `edge:*` × read/create/update/delete). A plugin that deletes must declare `node:delete` / `edge:delete` explicitly. `ctx.graph` is present iff **at least one** graph verb is granted; each method below is present iff its specific verb is granted. (Source: `sdk/types.ts` `GraphScope`, `HostContext.graph`.)
+Fine-grained verbs over nodes and edges (`node:*` / `edge:*` × read/create/update/delete). A plugin that deletes must declare `node:delete` / `edge:delete` explicitly. `ctx.graph` is present iff **at least one** graph verb is granted; each method below is present iff its specific verb is granted. (Source: the `@vineyard/plugin-sdk` package types — `GraphScope`, `HostContext.graph`.)
 
 | Scope string | Grants | `ctx` member(s) |
 | --- | --- | --- |
@@ -27,7 +27,7 @@ Fine-grained verbs over nodes and edges (`node:*` / `edge:*` × read/create/upda
 | `node:delete` | Delete one node or many in a single bounded op | `ctx.graph.deleteNode`, `ctx.graph.deleteNodes` |
 | `edge:read` | Read edges (returned alongside neighbor/list queries) | `ctx.graph.neighbors`, `ctx.graph.list` |
 | `edge:create` | Create edges; bulk upsert edges | `ctx.graph.createEdge`, `ctx.graph.emit` |
-| `edge:update` | Update edge data | *(reserved; no dedicated method in `sdk/types.ts`)* |
+| `edge:update` | Update edge data | *(reserved; no dedicated method in the SDK types)* |
 | `edge:delete` | Delete an edge | `ctx.graph.deleteEdge` |
 
 !!! note "Bulk ops count as one write"
@@ -42,11 +42,11 @@ Fine-grained verbs over nodes and edges (`node:*` / `edge:*` × read/create/upda
 | --- | --- | --- |
 | `message:post` | Post a text message (with optional metadata) into the project chat/feed | `ctx.message.post` |
 
-`ctx.message` is present iff `message:post` is granted. (Source: `sdk/types.ts` `PublishScope`, `HostContext.message`.)
+`ctx.message` is present iff `message:post` is granted. (Source: the `@vineyard/plugin-sdk` package types — `PublishScope`, `HostContext.message`.)
 
 ## network
 
-Each entry is a `NetworkScope` object, **not** a bare string. `ctx.net` is present iff at least one network scope is declared. (Source: `sdk/types.ts` `NetworkScope`, `HostContext.net`.)
+Each entry is a `NetworkScope` object, **not** a bare string. `ctx.net` is present iff at least one network scope is declared. (Source: the `@vineyard/plugin-sdk` package types — `NetworkScope`, `HostContext.net`.)
 
 ```jsonc
 "network": [
@@ -69,7 +69,7 @@ Each entry is a `NetworkScope` object, **not** a bare string. `ctx.net` is prese
 
 ## config
 
-Each entry is a `ConfigValue`. Declaring any `config` entry makes `ctx.config` present — a read-only map of the **non-secret** declared values. (Source: `sdk/types.ts` `ConfigValue`, `HostContext.config`.)
+Each entry is a `ConfigValue`. Declaring any `config` entry makes `ctx.config` present — a read-only map of the **non-secret** declared values. (Source: the `@vineyard/plugin-sdk` package types — `ConfigValue`, `HostContext.config`.)
 
 | Field | Type | Meaning |
 | --- | --- | --- |
@@ -86,7 +86,7 @@ Each entry is a `ConfigValue`. Declaring any `config` entry makes `ctx.config` p
 
 ## Not scopes
 
-The following are **always available** and grant no authority over data or network. They require no declaration. (Source: SPEC §4; `sdk/types.ts` `HostContext`.)
+The following are **always available** and grant no authority over data or network. They require no declaration. (Source: SPEC §4; the `@vineyard/plugin-sdk` package types — `HostContext`.)
 
 | Capability | `ctx` member | Notes |
 | --- | --- | --- |

@@ -1,6 +1,6 @@
 # SDK & host context
 
-`@vineyard/plugin-sdk`는 플러그인을 빌드할 때 사용하는 작은 작성자 대상 TypeScript 표면입니다. 두 가지 define 헬퍼, `run` 함수가 받는 타입이 지정된 `HostContext`(`ctx`), 그리고 단위 테스트용 인프로세스 mock을 제공합니다. 정식 소스는 마켓플레이스 저장소의 [`sdk/types.ts`](https://github.com/)입니다 — 아래 모든 멤버는 해당 파일에서 복사되었습니다.
+`@vineyard/plugin-sdk`는 플러그인을 빌드할 때 사용하는 작은 작성자 대상 TypeScript 표면입니다. 두 가지 define 헬퍼, `run` 함수가 받는 타입이 지정된 `HostContext`(`ctx`), 그리고 단위 테스트용 인프로세스 mock을 제공합니다. `npm i @vineyard/plugin-sdk`로 npm에서 설치하세요. 아래 모든 멤버는 게시된 패키지 타입의 일부입니다.
 
 ## 두 가지 define 헬퍼
 
@@ -109,7 +109,7 @@ ctx.progress?.status?.("waiting");   // "running" | "waiting"
     ```
 
     !!! note "멤버 이름"
-        호스트 컨텍스트는 `sdk/types.ts`에서 이를 **`ctx.message.post`**로 노출합니다. (스코프 문자열은 `message:post`입니다.)
+        호스트 컨텍스트는 이를 **`ctx.message.post`**로 노출합니다. (스코프 문자열은 `message:post`입니다.)
 
 === "net (network 스코프)"
 
@@ -148,7 +148,7 @@ ctx.progress?.status?.("waiting");   // "running" | "waiting"
 `MockContextOptions`는 `nodes`, `edges`, `params`, `config`, `selection`, `projectId`, `pluginId`, `grantedScopes`, `platform`을 허용합니다. `ctx.mock` 레코드는 `nodes`, `edges`, `createdNodes`, `deletedNodeIds`, `deletedEdgeIds`, `messages`, `netCalls`, `progress`를 노출합니다. 전체 테스트 예제는 [quickstart](quickstart.md)를 참조하세요.
 
 !!! note "참조 구현"
-    `sdk/types.ts`에서 `createMockContext`는 참조 스케치와 함께 선언(`export declare function …`)되어 있습니다. 배포된 SDK가 구현을 제공합니다. 위의 이름들을 안정적인 계약으로 취급하세요.
+    SDK 패키지에서 `createMockContext`는 참조 스케치와 함께 선언(`export declare function …`)되어 있습니다. 게시된 패키지가 구현을 제공합니다. 위의 이름들을 안정적인 계약으로 취급하세요.
 
 ## 다음 / 참고
 

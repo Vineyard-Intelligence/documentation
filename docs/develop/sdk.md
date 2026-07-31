@@ -2,9 +2,8 @@
 
 `@vineyard/plugin-sdk` is the small author-facing TypeScript surface you build a plugin
 against. It gives you two define helpers, the typed `HostContext` (`ctx`) your `run` function
-receives, and an in-process mock for unit tests. The canonical source is
-[`sdk/types.ts`](https://github.com/) in the marketplace repo — every member below is copied
-from that file.
+receives, and an in-process mock for unit tests. Install it from npm with
+`npm i @vineyard/plugin-sdk`; every member below is part of the published package's types.
 
 ## The two define helpers
 
@@ -133,7 +132,7 @@ Each of the following is `undefined` unless its scope was granted.
     ```
 
     !!! note "Member name"
-        The host context exposes this as **`ctx.message.post`** in `sdk/types.ts`. (The scope
+        The host context exposes this as **`ctx.message.post`** in the SDK types. (The scope
         string is `message:post`.)
 
 === "net (network scope)"
@@ -188,8 +187,8 @@ a `mock` record you can assert against.
 See [quickstart](quickstart.md) for a full test example.
 
 !!! note "Reference implementation"
-    In `sdk/types.ts`, `createMockContext` is declared (`export declare function …`) with a
-    reference sketch; the shipped SDK provides the implementation. Treat the names above as
+    In the SDK package, `createMockContext` is declared (`export declare function …`) with a
+    reference sketch; the published package provides the implementation. Treat the names above as
     the stable contract.
 
 ## Next / See also
