@@ -85,6 +85,13 @@
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/security/"/>
     </url>
     <url>
+        <loc>https://docs.vineyard.run/develop/skillpacks/</loc>
+        <lastmod>2026-07-31</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/skillpacks/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/skillpacks/"/>
+    </url>
+    <url>
         <loc>https://docs.vineyard.run/develop/typepacks/</loc>
         <lastmod>2026-07-31</lastmod>
         <changefreq>daily</changefreq>
@@ -132,6 +139,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/running-plugins/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/running-plugins/"/>
+    </url>
+    <url>
+        <loc>https://docs.vineyard.run/guide/skillpacks/</loc>
+        <lastmod>2026-07-31</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/skillpacks/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/skillpacks/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/guide/tasks/</loc>
@@ -267,6 +281,13 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/security/"/>
     </url>
     <url>
+        <loc>https://docs.vineyard.run/ko/develop/skillpacks/</loc>
+        <lastmod>2026-07-31</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/skillpacks/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/skillpacks/"/>
+    </url>
+    <url>
         <loc>https://docs.vineyard.run/ko/develop/typepacks/</loc>
         <lastmod>2026-07-31</lastmod>
         <changefreq>daily</changefreq>
@@ -314,6 +335,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/running-plugins/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/running-plugins/"/>
+    </url>
+    <url>
+        <loc>https://docs.vineyard.run/ko/guide/skillpacks/</loc>
+        <lastmod>2026-07-31</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/skillpacks/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/skillpacks/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/guide/tasks/</loc>

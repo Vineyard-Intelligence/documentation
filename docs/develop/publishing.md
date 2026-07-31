@@ -4,26 +4,27 @@ Publishing a Plugin Pack or Type Pack to the public Vineyard marketplace is a si
 
 ## The registry repo holds metadata only
 
-Submissions go to **`vineyard-run/vineyard-releases`**. The repo carries *pointers and derived facets*, never code and never copies of your manifest or bundle. Your full manifest/Type Pack JSON, README, screenshots, and bundle all stay in **your** author repo at the pinned `ref`; the marketplace detail page hydrates from there lazily.
+Submissions go to **`Vineyard-Intelligence/registry`**. The repo carries *pointers and derived facets*, never code and never copies of your manifest or bundle. Your full manifest/Type Pack JSON, README, screenshots, and bundle all stay in **your** author repo at the pinned `ref`; the marketplace detail page hydrates from there lazily.
 
 | File | Role |
 |---|---|
 | `community-pluginpacks.json` | One lean entry per plugin (or pack): identifier, name, author, description, repo, ref, path, version, platforms, `scopes_summary`, `verified`. |
 | `community-typepacks.json` | Symmetric for Type Packs; carries `categories`/`type_count`/`edge_count` instead of scopes (no code executes). |
+| `community-skillpacks.json` | Symmetric for Skill Packs; carries `applies_to`/`section_count`/`requires` instead of scopes (text only, no code executes). |
 | `community-plugin-stats.json` / `community-typepack-stats.json` | Install/activation counts — maintained by Vineyard infra, **not** the submitter. |
 | `deprecation.json` / `removed.json` | Withdrawn versions / delisted entries. |
 | `verified-authors.json` | Source of the "verified" badge. CI mirrors membership into the entry — it is never self-asserted. |
 | `schemas/` | The published meta-schemas the CI bot validates entries against. |
 
-You only ever edit **one** of the two catalog files in a submission, and you only append a single entry.
+You only ever edit **one** of the three catalog files in a submission, and you only append a single entry.
 
 ## Submission workflow
 
 === "Steps"
 
-    1. **Fork** `vineyard-run/vineyard-releases`.
+    1. **Fork** `Vineyard-Intelligence/registry`.
     2. **Pin an immutable `ref`** — the **commit SHA** of the release in your author repo. Tags and branches are mutable and rejected; resolve a tag/branch to its commit SHA with `scripts/resolve_ref.py`.
-    3. **Append one entry** to `community-pluginpacks.json` (Plugin Packs) or `community-typepacks.json` (Type Packs). Do not edit the stats, deprecation, removed, or verified-authors files — those are not submitter-owned.
+    3. **Append one entry** to `community-pluginpacks.json` (Plugin Packs), `community-typepacks.json` (Type Packs), or `community-skillpacks.json` (Skill Packs). Do not edit the stats, deprecation, removed, or verified-authors files — those are not submitter-owned.
     4. **Open a PR.** `VineyardReviewBot` posts its validation result as a status check.
     5. **Fix any blocking failures**, then wait for a human merge.
     6. After green CI + merge, the entry is **live on the next registry fetch** — clients pull the static JSON; there is no coupled app release.
@@ -68,7 +69,7 @@ A **Plugin Pack** entry appended to `community-pluginpacks.json`. Note `plugin_c
   "name": "Chaos Reference Pack",
   "author": "vineyard-run",
   "description": "A bundle of 6 graph-manipulation plugins for demo/validation: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node. Installing once adds all 6 together.",
-  "repo": "vineyard-run/chaos-pack",
+  "repo": "Vineyard-Intelligence/chaos-pack",
   "ref": "v1.0.0",
   "path": "plugins/chaos-pack.manifest.json",
   "version": "1.0.0",
@@ -89,7 +90,7 @@ A Type Pack entry appended to `community-typepacks.json` (no scopes; `categories
   "name": "Infrastructure",
   "author": "vineyard-run",
   "description": "A base Type Pack defining network-infrastructure entities (IP address, domain, URL, autonomous system, certificate).",
-  "repo": "vineyard-run/typepacks",
+  "repo": "Vineyard-Intelligence/typepacks",
   "ref": "v1.0.0",
   "path": "typepacks/infrastructure.json",
   "version": "1.0.0",

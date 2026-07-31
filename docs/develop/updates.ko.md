@@ -68,7 +68,7 @@ Vineyard는 업데이트를 위해 작성자 저장소를 폴링하지 않습니
 
 ### `deprecation.json`
 
-레지스트리 저장소(`vineyard-run/vineyard-releases`)는 철회된 버전을 나열하는 `deprecation.json`을 유지 관리합니다. **`deprecation.json`에 나열된 ref는 절대 설치되지 않습니다** — 신규 설치나 업데이트 대상으로 모두 해당됩니다. 최신 항목이 폐기된 경우, 앱은 이를 제공하지 않습니다. 이전에 설치되었지만 지금은 폐기된 ref는 로컬 캐시에서 계속 작동하지만 현재로 광고되는 것은 중단됩니다.
+레지스트리 저장소(`Vineyard-Intelligence/registry`)는 철회된 버전을 나열하는 `deprecation.json`을 유지 관리합니다. **`deprecation.json`에 나열된 ref는 절대 설치되지 않습니다** — 신규 설치나 업데이트 대상으로 모두 해당됩니다. 최신 항목이 폐기된 경우, 앱은 이를 제공하지 않습니다. 이전에 설치되었지만 지금은 폐기된 ref는 로컬 캐시에서 계속 작동하지만 현재로 광고되는 것은 중단됩니다.
 
 ## Type Pack도 동일한 방식으로 업데이트됩니다
 
