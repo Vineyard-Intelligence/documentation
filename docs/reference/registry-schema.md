@@ -9,7 +9,7 @@ The schemas live at:
 
 ## What a registry entry is (and is not)
 
-The registry repo (`vineyard-run/vineyard-releases`) stores **path and metadata only — no code, no copies**. The full [plugin manifest](plugin-schema.md) or [Type Pack](typepack-schema.md) JSON, the README, and the bundle all stay in the **author repo** at the pinned `ref`.
+The registry repo (`Vineyard-Intelligence/registry`) stores **path and metadata only — no code, no copies**. The full [plugin manifest](plugin-schema.md) or [Type Pack](typepack-schema.md) JSON, the README, and the bundle all stay in the **author repo** at the pinned `ref`.
 
 A registry entry is therefore a **catalog projection**: enough fields to search, filter, and badge an item in the browser, plus the `repo@ref/path` pointer that the detail page uses to hydrate the real thing.
 
@@ -56,7 +56,7 @@ This is the real Chaos reference pack — a single `identifier` that bundles six
   "name": "Chaos Reference Pack",
   "author": "vineyard-run",
   "description": "A bundle of 6 graph-manipulation plugins for demo/validation: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node. Installing once adds all 6 together.",
-  "repo": "vineyard-run/chaos-pack",
+  "repo": "Vineyard-Intelligence/chaos-pack",
   "ref": "a62f42b507e495fda884289fce5316915475d4f5",
   "path": "plugins/chaos-pack.manifest.json",
   "version": "1.0.0",
@@ -105,7 +105,7 @@ The real Infrastructure base pack, defining five network-infrastructure entity t
   "name": "Infrastructure",
   "author": "vineyard-run",
   "description": "A base Type Pack defining network-infrastructure entities (IP address, domain, URL, autonomous system, certificate).",
-  "repo": "vineyard-run/typepacks",
+  "repo": "Vineyard-Intelligence/typepacks",
   "ref": "ef35dab0513de207dc32a54a42e7e93d57d15af3",
   "path": "typepacks/infrastructure.json",
   "version": "1.0.0",
@@ -120,7 +120,7 @@ The companion Threat pack is the same shape with `categories: ["threat"]` and `t
 
 ## How entries are validated and merged
 
-Submission is a fork-and-PR that appends one entry to `vineyard-releases`, gated by blocking CI checks (schema, identifier uniqueness, immutable `ref`, upstream manifest validation) plus a human merge; see [Publishing](../develop/publishing.md) for the full walkthrough.
+Submission is a fork-and-PR that appends one entry to the registry catalog, gated by blocking CI checks (schema, identifier uniqueness, immutable `ref`, upstream manifest validation) plus a human merge; see [Publishing](../develop/publishing.md) for the full walkthrough.
 
 ## Next / See also
 

@@ -68,7 +68,7 @@ Each registry entry may carry `compat.min_app_version` — the oldest Vineyard r
 
 ### `deprecation.json`
 
-The registry repo (`vineyard-run/vineyard-releases`) maintains a `deprecation.json` listing withdrawn versions. **Refs listed in `deprecation.json` are never installed** — not as a fresh install and not as an update target. If the latest entry has been deprecated, the app will not offer it; a previously-installed-but-now-deprecated ref keeps working from its local cache but stops being advertised as current.
+The registry repo (`Vineyard-Intelligence/registry`) maintains a `deprecation.json` listing withdrawn versions. **Refs listed in `deprecation.json` are never installed** — not as a fresh install and not as an update target. If the latest entry has been deprecated, the app will not offer it; a previously-installed-but-now-deprecated ref keeps working from its local cache but stops being advertised as current.
 
 ## Type Packs update the same way
 

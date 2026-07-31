@@ -68,9 +68,9 @@ extra_javascript:
 extra:
   generator: false
   social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/vineyard-run
-      name: vineyard-run on GitHub
+    - icon: fontawesome/solid/globe
+      link: https://vineyard.run
+      name: VINEYARD.RUN homepage
 
 markdown_extensions:
   - abbr
@@ -124,6 +124,7 @@ plugins:
             "Working with Type Packs": Type Pack 사용하기
             "The canvas": 캔버스
             "Tasks & runs": 태스크 & 실행
+            "Working with Skill Packs": Skill Pack 사용하기
             "Developer Guide": 개발자 가이드
             "Architecture & principles": 아키텍처 & 원칙
             "Quickstart — your first plugin": 퀵스타트 - 첫 플러그인
@@ -134,6 +135,7 @@ plugins:
             "Sandbox & security": 샌드박스 & 보안
             "Task lifecycle": 태스크 생명주기
             Distribution: 배포
+            "Skill Packs": Skill Pack
             "Publishing to the registry": 레지스트리에 배포하기
             Updates: 업데이트
             Reference: 레퍼런스
@@ -154,6 +156,7 @@ nav:
       - Browse & install: guide/installing.md
       - Running plugins: guide/running-plugins.md
       - Working with Type Packs: guide/typepacks.md
+      - Working with Skill Packs: guide/skillpacks.md
       - The canvas: guide/canvas.md
       - Tasks & runs: guide/tasks.md
   - Developer Guide:
@@ -167,6 +170,7 @@ nav:
       - Sandbox & security: develop/security.md
       - Task lifecycle: develop/lifecycle.md
       - Distribution: develop/distribution.md
+      - Skill Packs: develop/skillpacks.md
       - Publishing to the registry: develop/publishing.md
       - Updates: develop/updates.md
   - Reference:
