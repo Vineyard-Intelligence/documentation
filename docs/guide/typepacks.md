@@ -38,8 +38,8 @@ one pack to another (a `threat.malware` that **communicates with** an
 
 | Pack (`identifier`) | Category | Types | Models |
 |---|---|---|---|
-| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure` | 9 | The network you map during recon |
-| **Threat** (`…typepacks.threat`) | `threat` | 8 | Threat-intelligence (STIX-aligned) |
+| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure` | 10 | The network you map during recon |
+| **Threat** (`…typepacks.threat`) | `threat` | 9 | Threat-intelligence (STIX-aligned) |
 | **Identity** (`…typepacks.identity`) | `identity` | 5 | People, orgs, and online personas |
 | **Financial** (`…typepacks.financial`) | `financial` | 4 | The money trail |
 | **Endpoint** (`…typepacks.endpoint`) | `endpoint` | 6 | Host / DFIR artifacts |
@@ -61,15 +61,19 @@ reconnaissance, all in the `infrastructure` category:
 | `infrastructure.dns_record` | the record name | `record_type`, `record_value`, `ttl` |
 | `infrastructure.whois_record` | the subject (domain/IP) | `registrant`, `registrar`, `created_at` |
 | `infrastructure.certificate` | the SHA-256 fingerprint | `subject_common_name`, `issuer`, `not_after` |
+| `infrastructure.technologies` | the technology name | `kind`, `vendor`, `version`, `cpe` |
 
 Edge types wire the recon graph together: `resolves_to`, `has_address`, `announced_by`,
-`contains`, `has_record`, `subdomain_of`, `has_domain`, `redirects_to`, `has_whois`, and
-`presents_certificate`. Each type ships its own icon and color, so an `ip_address`, a `domain`,
-and a `certificate` are visually distinct at a glance.
+`contains`, `has_record`, `subdomain_of`, `has_domain`, `redirects_to`, `has_whois`,
+`presents_certificate`, and `runs_technology` (which links a host, IP, domain, or URL to the
+software, hardware, or third-party service — such as Cloudflare — it runs or is served by).
+Each type ships its own icon and color, so an `ip_address`, a `domain`, and a `certificate` are
+visually distinct at a glance.
 
 The other packs follow the same shape — for example the **Threat** pack adds
-`threat.malware`, `threat.threat_actor`, and `threat.indicator` (STIX-aligned), while
-**Identity** adds the people and personas behind the activity.
+`threat.malware`, `threat.threat_actor`, `threat.indicator`, and `threat.operation` (a bounded
+operation within a campaign — one campaign can contain several operations), while **Identity**
+adds the people and personas behind the activity.
 
 !!! tip "Mixing Type Packs"
     Activate as many Type Packs as you need — they share one qualified-type namespace and

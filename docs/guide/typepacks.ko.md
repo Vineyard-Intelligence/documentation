@@ -37,8 +37,8 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 
 | 팩 (`identifier`) | 카테고리 | 유형 | 모델링 대상 |
 |---|---|---|---|
-| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure` | 9 | 정찰 중 매핑하는 네트워크 |
-| **Threat** (`…typepacks.threat`) | `threat` | 8 | 위협 인텔리전스 (STIX 정렬) |
+| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure` | 10 | 정찰 중 매핑하는 네트워크 |
+| **Threat** (`…typepacks.threat`) | `threat` | 9 | 위협 인텔리전스 (STIX 정렬) |
 | **Identity** (`…typepacks.identity`) | `identity` | 5 | 사람, 조직, 온라인 페르소나 |
 | **Financial** (`…typepacks.financial`) | `financial` | 4 | 자금 흐름 |
 | **Endpoint** (`…typepacks.endpoint`) | `endpoint` | 6 | 호스트 / DFIR 아티팩트 |
@@ -60,14 +60,18 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 | `infrastructure.dns_record` | 레코드 이름 | `record_type`, `record_value`, `ttl` |
 | `infrastructure.whois_record` | 주체 (도메인/IP) | `registrant`, `registrar`, `created_at` |
 | `infrastructure.certificate` | SHA-256 지문 | `subject_common_name`, `issuer`, `not_after` |
+| `infrastructure.technologies` | 기술 이름 | `kind`, `vendor`, `version`, `cpe` |
 
 엣지 유형이 정찰 그래프를 연결합니다: `resolves_to`, `has_address`, `announced_by`,
 `contains`, `has_record`, `subdomain_of`, `has_domain`, `redirects_to`, `has_whois`,
-`presents_certificate`. 각 유형은 자체 아이콘과 색상을 가지므로, `ip_address`, `domain`,
-`certificate`가 한눈에 구분됩니다.
+`presents_certificate`, 그리고 `runs_technology`(호스트, IP, 도메인, URL을 그것이 실행하거나
+제공받는 소프트웨어, 하드웨어, 또는 서드파티 서비스 — 예: Cloudflare — 에 연결).
+각 유형은 자체 아이콘과 색상을 가지므로, `ip_address`, `domain`, `certificate`가
+한눈에 구분됩니다.
 
 다른 팩도 같은 형태를 따릅니다 — 예를 들어 **Threat** 팩은 `threat.malware`,
-`threat.threat_actor`, `threat.indicator`(STIX 정렬)를, **Identity** 팩은 활동 뒤의
+`threat.threat_actor`, `threat.indicator`, `threat.operation`(캠페인 내의 경계된 작업 —
+하나의 캠페인은 여러 개의 operation을 포함할 수 있음)을, **Identity** 팩은 활동 뒤의
 사람과 페르소나를 추가합니다.
 
 !!! tip "Type Pack 혼합하기"
