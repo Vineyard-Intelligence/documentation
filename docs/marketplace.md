@@ -16,4 +16,4 @@ Browse every Plugin Pack, Type Pack, and Skill Pack published to the VINEYARD.RU
   </noscript>
 </div>
 
-See [Installing Plugin Packs &amp; Type Packs](guide/installing.md) for how install works.
+See [Browse &amp; install](guide/installing.md) for how install works.

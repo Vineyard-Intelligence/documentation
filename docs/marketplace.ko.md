@@ -15,4 +15,4 @@ VINEYARD.RUN 레지스트리에 게시된 모든 Plugin Pack, Type Pack, Skill P
   </noscript>
 </div>
 
-설치 작동 방식은 [Plugin Pack 및 Type Pack 설치하기](guide/installing.md)를 참조하세요.
+설치 작동 방식은 [둘러보기 및 설치](guide/installing.md)를 참조하세요.
