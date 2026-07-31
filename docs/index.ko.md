@@ -7,15 +7,15 @@ hide:
 
 <div class="vy-hero" markdown>
 
-# VINEYARD.RUN을 위한 Plugin Pack 및 Type Pack 빌드, 공유 및 실행
+# VINEYARD.RUN용 팩 빌드, 공유 및 실행
 
-플러그인(JavaScript)과 Type Pack(JSON)은 메타데이터 전용 GitHub 레지스트리를 통해
-배포되지만, **클라이언트에서 실행**됩니다.
+Plugin Pack(JavaScript), Type Pack(JSON), Skill Pack(조사 플레이북)은
+메타데이터 전용 GitHub 레지스트리를 통해 배포되지만, **클라이언트에서 실행**됩니다.
 
 <div class="vy-hero-cta" markdown>
 [마켓플레이스 둘러보기](marketplace.md){ .md-button .md-button--primary }
 [사용자 가이드 읽기](guide/index.md){ .md-button }
-[플러그인 빌드하기](develop/quickstart.md){ .md-button }
+[팩 빌드하기](develop/index.md){ .md-button }
 </div>
 </div>
 
@@ -25,20 +25,20 @@ hide:
 
 <div class="vy-card" markdown>
 ### :material-account: 사용자용
-마켓플레이스를 둘러보고, 플러그인과 Type Pack을 설치하고, 그래프에서 실행하고,
+마켓플레이스를 둘러보고, 팩을 설치하고, 그래프에서 플러그인을 실행하고,
 실행 기록을 관리하세요. → [사용자 가이드](guide/index.md)
 </div>
 
 <div class="vy-card" markdown>
 ### :material-code-braces: 개발자용
-SDK로 플러그인을 작성하고, Type Pack을 정의하고, 스코프를 선언하고, 레지스트리에
-게시하세요. → [개발자 가이드](develop/quickstart.md)
+Plugin Pack, Type Pack 또는 Skill Pack을 작성하고 레지스트리에 게시하세요.
+→ [개발자 가이드](develop/index.md)
 </div>
 
 <div class="vy-card" markdown>
 ### :material-file-document: 레퍼런스
-플러그인 매니페스트, Type Pack, 레지스트리 항목에 대한 필드별 스키마와
-스코프 카탈로그. → [레퍼런스](reference/index.md)
+팩 매니페스트와 레지스트리 항목에 대한 필드별 스키마, 그리고 스코프 카탈로그.
+→ [레퍼런스](reference/index.md)
 </div>
 
 </div>
@@ -50,8 +50,8 @@ flowchart LR
     A[GitHub의 작성자 저장소] -->|PR: 하나의 메타데이터 항목| B[(레지스트리<br/>메타데이터 전용)]
     B -->|레퍼런스 가져오기| C[마켓플레이스<br/>community.vineyard.run]
     C -->|레퍼런스 설치| D[Vineyard 앱]
-    D -->|고정된 ref에서 번들 가져오기| A
-    D -->|Web Worker 샌드박스에서 실행| E[당신의 그래프]
+    D -->|고정된 ref에서 팩 가져오기| A
+    D -->|클라이언트에서 실행| E[당신의 그래프]
     style B fill:#ede9fe,stroke:#7c3aed,color:#4c1d95
     style D fill:#ede9fe,stroke:#7c3aed,color:#4c1d95
 ```

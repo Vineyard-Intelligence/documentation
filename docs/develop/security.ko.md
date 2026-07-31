@@ -87,7 +87,7 @@ POST /v1/core/run-tokens/
 !!! tip "벌크 작업과 쓰기 한도"
     전체 그래프 플러그인(예: **Korean Roulette**, **Thanos Snap**)은 `ctx.graph.deleteNodes(ids[])` 또는 `ctx.graph.emit(entities, edges)`를 호출합니다. 쓰기 한도는 벌크 호출을 **단일 제한 작업**으로 계산하므로, 합법적인 대량 삭제가 무분별하게 제한되지 않으면서도 폭주 루프는 여전히 `max_writes`에 도달합니다.
 
-## 시크릿 처리
+## 시크릿 처리 {#secret-handling}
 
 API 키와 시크릿은 작업 기록이나 AI 대화 기록에 **절대** 포함되어서는 안 됩니다. 여섯 가지 규칙이 이를 강제합니다 — SPEC §6 참조.
 

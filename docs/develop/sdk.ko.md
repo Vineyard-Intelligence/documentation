@@ -71,7 +71,7 @@ ctx.progress?.status?.("waiting");   // "running" | "waiting"
 
 `status("waiting")`은 백오프/속도 제한 일시 중지를 신호하여 UI가 대기 상태를 표시할 수 있게 합니다 — 내장 경로는 [`net.fetchWithBackoff`](#scope-gated-members)를 참조하세요.
 
-### 스코프 게이트 멤버
+### 스코프 게이트 멤버 {#scope-gated-members}
 
 다음 각 항목은 해당 스코프가 부여되지 않으면 `undefined`입니다.
 
@@ -131,7 +131,7 @@ ctx.progress?.status?.("waiting");   // "running" | "waiting"
     ```
 
     !!! warning "시크릿은 절대 읽을 수 없습니다"
-        `config.secret: true` 값은 **제외**됩니다 — 호스트에 의해 네트워크 경계에서 주입되며 플러그인에 반환되지 않습니다. 웹에서는 시크릿 config가 데스크톱 플러그인으로 라우팅됩니다. [secrets handling](security.md#secret-handling)을 참조하세요.
+        `config.secret: true` 값은 **제외**됩니다 — 호스트에 의해 네트워크 경계에서 주입되며 플러그인에 반환되지 않습니다. 웹에서는 시크릿 config가 데스크톱 플러그인으로 라우팅됩니다. [시크릿 처리](security.md#secret-handling)를 참조하세요.
 
 ### 벌크 작업과 쓰기 한도
 
