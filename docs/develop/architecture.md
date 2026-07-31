@@ -43,12 +43,13 @@ See [SDK](sdk.md) for the `ctx` interface and [lifecycle](lifecycle.md) for how 
 
 ## In scope now vs. deferred
 
-!!! warning "Implementation scope (now): browser only"
-    The first build targets the **browser** runtime exclusively. Several items remain in the schemas as forward-looking design but are **not built yet** — do not treat them as shipped.
+!!! warning "Implementation scope"
+    The browser and desktop Electron shell both ship today. Several items (noted below as deferred) remain in the schemas as forward-looking design but are **not built yet** — do not treat them as shipped.
 
 === "In scope now"
 
     - **Browser runtime** — `platforms.web.runtime: "sandbox-js"`: author JS runs in a Web Worker.
+    - **Desktop runtime** — `platforms.desktop.runtime: "sandbox-js"`: Electron shell with custom `app://` scheme, hardened renderer (sandbox, contextIsolation), CORS header rewriting, and anonymous SSRF-guarded HTTP probe (`web_probe` capability).
     - **Metadata-only registry** with GitHub-hosted, locally cached bundles.
     - **One-time scoped RunToken** + server-side permission enforcement.
     - **Ephemeral, client-side task queue** (Web Worker pool, multi-tab single-execution).
@@ -56,11 +57,12 @@ See [SDK](sdk.md) for the `ctx` interface and [lifecycle](lifecycle.md) for how 
 
 === "Deferred (designed, not built)"
 
-    - **Desktop runtime** — `platforms.desktop` blocks (`sandbox-js` / `native` / `subprocess`) are allowed by the schema but not yet implemented.
+    - **`native`/`subprocess` desktop runtimes** — `platforms.desktop.runtime: "native"` and `"subprocess"` are allowed by the schema but not yet implemented. The `sandbox-js` desktop runtime ships today.
     - **`web-proxy` runtime** — the single-endpoint CORS escape hatch for web plugins that need a third-party API.
-    - **Opt-in task persistence** (`TaskSnapshot`), secret config via desktop keychain, and the open issues carried in SPEC §14 (Type Pack version pinning, deep-link on web, long-running + ephemeral reload survival).
+    - **Keychain-backed secret config** — `config.secret:true` values injected from the desktop keychain (BYOK).
+    - **Opt-in task persistence** (`TaskSnapshot`) and the open issues carried in SPEC §14 (Type Pack version pinning, deep-link on web, long-running + ephemeral reload survival).
 
-When you target only what ships today, declare `platforms.primary: "web"` with a `web` block using `sandbox-js`. The installer **greys out** (does not hide) plugins whose platforms a user's app cannot run, using the per-platform `fallback` hint. See [plugin manifest](plugin-manifest.md).
+When targeting platforms that ship today, declare `platforms.primary: "web"` with a `web` block using `sandbox-js`, or add a `desktop` block for Electron. The installer **greys out** (does not hide) plugins whose platforms a user's app cannot run, using the per-platform `fallback` hint. See [plugin manifest](plugin-manifest.md).
 
 ## Next / See also
 
