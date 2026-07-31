@@ -107,6 +107,40 @@ markdown_extensions:
 
 plugins:
   - search
+  - i18n:
+      languages:
+        - locale: en
+          name: English
+          default: true
+        - locale: ko
+          name: 한국어
+          nav_translations:
+            Home: 홈
+            Marketplace: 마켓플레이스
+            "User Guide": 사용자 가이드
+            "Getting started": 시작하기
+            "Browse & install": 둘러보기 & 설치
+            "Running plugins": 플러그인 실행
+            "Working with Type Packs": Type Pack 사용하기
+            "The canvas": 캔버스
+            "Tasks & runs": 태스크 & 실행
+            "Developer Guide": 개발자 가이드
+            "Architecture & principles": 아키텍처 & 원칙
+            "Quickstart — your first plugin": 퀵스타트 - 첫 플러그인
+            "Plugin manifest": 플러그인 매니페스트
+            "Plugin Packs": 플러그인 팩
+            "Type Packs": Type Pack
+            "SDK & host context": SDK & 호스트 컨텍스트
+            "Sandbox & security": 샌드박스 & 보안
+            "Task lifecycle": 태스크 생명주기
+            Distribution: 배포
+            "Publishing to the registry": 레지스트리에 배포하기
+            Updates: 업데이트
+            Reference: 레퍼런스
+            "Plugin manifest schema": 플러그인 매니페스트 스키마
+            "Type Pack schema": Type Pack 스키마
+            "Registry entry schemas": 레지스트리 엔트리 스키마
+            "Scopes reference": 스코프 레퍼런스
   - minify:
       minify_html: true
 

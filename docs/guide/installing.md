@@ -155,11 +155,11 @@ On the web, your **browser** fetches the bundle directly from GitHub. GitHub rel
 CORS-open today, so this works. But if a plugin's bundle is hosted somewhere that is **not**
 CORS-open, the web install will fail — **by design**, not by bug.
 
-!!! warning "Desktop fallback is DEFERRED"
+!!! warning "Desktop fallback is available"
     The intended answer for a non-CORS bundle host is "use the desktop app," which runs in the
-    app's own isolate without CORS restrictions. **The desktop runtime is deferred — not built
-    yet.** Today, web is the only shipping runtime
-    (`platforms.web.runtime: "sandbox-js"`). Treat desktop install as forward-looking design.
+    app's own isolate without CORS restrictions. **The desktop Electron shell ships today**
+    (`platforms.desktop.runtime: "sandbox-js"`). Both web and desktop are shipping runtimes;
+    `native`/`subprocess` desktop runtimes remain forward-looking design.
 
 ## Next / See also
 

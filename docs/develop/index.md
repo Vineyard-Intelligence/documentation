@@ -23,8 +23,8 @@ A plugin's `io` block references Type Pack types by their qualified `category.na
 - **A bundler** (esbuild, Vite, Rollup, or similar). A plugin ships as a single bundled module (e.g. `dist/cidr.js`) referenced from your manifest's `platforms.web.entry`.
 - **A GitHub repository** with releases. The registry stores only a pointer; your repo hosts the actual bundle that clients download and cache.
 
-!!! note "Initial scope is the browser"
-    The first build targets the **browser** runtime (`platforms.web.runtime: "sandbox-js"`). The `desktop` runtime and the `web-proxy` CORS workaround exist in the schemas as forward-looking design but are **deferred** — not built yet. Where a page mentions desktop or web-proxy, treat it as design intent, not a shipped feature.
+!!! note "Initial scope is browser + desktop"
+    Both the **browser** runtime (`platforms.web.runtime: "sandbox-js"`) and the **desktop** Electron shell (`platforms.desktop.runtime: "sandbox-js"`) ship today. The `web-proxy` CORS workaround, `native`/`subprocess` desktop runtimes, and keychain-backed secrets exist in the schemas as forward-looking design but are **deferred** — not built yet. Where a page mentions web-proxy or native/subprocess, treat it as design intent, not a shipped feature.
 
 ## Where to go next
 

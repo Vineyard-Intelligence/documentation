@@ -2,7 +2,8 @@
    VINEYARD.RUN community browser — fully static, client-side only.
    Renders the plugin + typepack registry (fetched from the registry site)
    as a searchable/filterable card grid with a detail drawer.
-   No backend, no framework — just one fetch of the merged registry.json.
+   No backend, no build: fetches the two community-*.json index files for the
+   cards, and lazy-loads each pack's full document from jsDelivr for the drawer.
    ========================================================================== */
 (function () {
   "use strict";
@@ -12,16 +13,17 @@
     var mount = document.getElementById("vy-community");
     if (!mount) return;
 
-    var dataUrl = resolveDataUrl();
     renderSkeleton(mount);
+    var base = registryBase();
 
-    fetch(dataUrl, { cache: "no-cache" })
-      .then(function (r) {
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        return r.json();
-      })
-      .then(function (data) {
-        var entries = normalize(data);
+    Promise.all([
+      fetchJson(base + "community-typepacks.json").catch(function () { return null; }),
+      fetchJson(base + "community-pluginpacks.json").catch(function () { return null; }),
+      fetchJson(base + "community-skillpacks.json").catch(function () { return null; }),
+    ])
+      .then(function (res) {
+        if (res[0] === null && res[1] === null && res[2] === null) throw new Error("registry unreachable");
+        var entries = normalize([].concat(res[0] || [], res[1] || [], res[2] || []));
         new Browser(mount, entries).render();
       })
       .catch(function (err) {
@@ -29,15 +31,29 @@
           '<div class="vy-state">' + ICON.alert +
           "<p>Could not load the registry.</p><p style=\"font-size:.72rem\">" +
           escapeHtml(String(err && err.message ? err.message : err)) +
-          " &middot; expected at <code>" + escapeHtml(dataUrl) + "</code></p></div>";
+          " &middot; expected at <code>" + escapeHtml(base) + "community-*.json</code></p></div>";
       });
   }
 
-  // The catalog is produced and published by the registry site (separate repo).
-  // Override with window.VINEYARD_REGISTRY_URL for local preview / staging.
-  function resolveDataUrl() {
-    return (typeof window !== "undefined" && window.VINEYARD_REGISTRY_URL) ||
-      "https://registry.vineyard.run/registry/registry.json";
+  // The catalog is published by the registry site (separate repo) as two index
+  // files; each pack's full document is fetched from its content repo via jsDelivr.
+  // Override the base for local preview / staging.
+  function registryBase() {
+    return (typeof window !== "undefined" && window.VINEYARD_REGISTRY_BASE) ||
+      "https://registry.vineyard.run/registry/";
+  }
+
+  function fetchJson(url) {
+    return fetch(url, { cache: "no-cache" }).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status + " for " + url);
+      return r.json();
+    });
+  }
+
+  // jsDelivr URL for a pack's full document, from its content repo at the pinned ref.
+  function detailUrl(e) {
+    if (!e.repo || !e.ref || !e.path) return null;
+    return "https://cdn.jsdelivr.net/gh/" + e.repo + "@" + e.ref + "/" + e.path;
   }
 
   // --- Inline icon set (lucide-style, 24x24, stroke=currentColor) ----------
@@ -69,6 +85,7 @@
     package: P + '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="m7.5 4.27 9 5.15"/>' + E,
     "git-branch": P + '<line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>' + E,
     inbox: P + '<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>' + E,
+    "book-open": P + '<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>' + E,
   };
   function icon(name) {
     return ICON[name] || ICON.package;
@@ -84,10 +101,14 @@
       if (Array.isArray(data.entries)) out = out.concat(data.entries);
     }
     return out.map(function (e) {
-      e.type = e.type || (e.content_type === "vineyard:typepack" ? "typepack" : "pluginpack");
+      e.type = e.type ||
+        (e.content_type === "vineyard:typepack" ? "typepack"
+          : e.content_type === "vineyard:skillpack" ? "skillpack"
+          : "pluginpack");
       e.name = e.name || e.identifier || "Untitled";
       e.author = typeof e.author === "object" && e.author ? e.author.name : e.author || "—";
       e.categories = e.categories || [];
+      e.icon = e.icon || (e.type === "typepack" ? "layers" : e.type === "skillpack" ? "book-open" : "package");
       return e;
     });
   }
@@ -137,17 +158,19 @@
     var nPlugins = this.all.filter(function (e) { return e.type === "pluginpack"; }).length;
     var nPacks = this.all.reduce(function (n, e) { return n + (e.type === "pluginpack" && e.plugin_count > 1 ? e.plugin_count : 0); }, 0);
     var nTypepacks = this.all.filter(function (e) { return e.type === "typepack"; }).length;
+    var nSkillpacks = this.all.filter(function (e) { return e.type === "skillpack"; }).length;
 
     this.mount.innerHTML =
       '<div class="vy-community">' +
         '<div class="vy-community__toolbar">' +
           '<div class="vy-search">' + ICON.search.replace("<svg", '<svg class="vy-search__ico"') +
-            '<input type="search" id="vy-q" placeholder="Search Plugin Packs & Type Packs…" autocomplete="off" aria-label="Search">' +
+            '<input type="search" id="vy-q" placeholder="Search Plugin Packs, Type Packs & Skill Packs…" autocomplete="off" aria-label="Search">' +
           "</div>" +
           '<div class="vy-seg" role="tablist" aria-label="Type filter">' +
             '<button data-type="all" class="is-active">All</button>' +
             '<button data-type="pluginpack">Plugin Packs</button>' +
             '<button data-type="typepack">Type Packs</button>' +
+            '<button data-type="skillpack">Skill Packs</button>' +
           "</div>" +
           (cats.length
             ? '<select class="vy-select" id="vy-cat" aria-label="Category"><option value="all">All categories</option>' +
@@ -191,7 +214,7 @@
     backdrop.addEventListener("click", function () { self.closeDrawer(); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") self.closeDrawer(); });
 
-    this._meta = { nPlugins: nPlugins, nPacks: nPacks, nTypepacks: nTypepacks };
+    this._meta = { nPlugins: nPlugins, nPacks: nPacks, nTypepacks: nTypepacks, nSkillpacks: nSkillpacks };
     this.paint();
   };
 
@@ -205,7 +228,8 @@
     count.innerHTML =
       "Showing <strong>" + list.length + "</strong> of " + this.all.length +
       " &middot; <strong>" + m.nPlugins + "</strong> Plugin Packs (" + m.nPacks + " bundled) &middot; <strong>" +
-      m.nTypepacks + "</strong> Type Packs";
+      m.nTypepacks + "</strong> Type Packs &middot; <strong>" +
+      m.nSkillpacks + "</strong> Skill Packs";
 
     if (!list.length) {
       grid.style.display = "block";
@@ -227,8 +251,11 @@
 
   Browser.prototype.card = function (e, i) {
     var badges = [];
-    badges.push('<span class="vy-badge ' + (e.type === "typepack" ? "vy-badge--typepack" : "vy-badge--type") + '">' +
-      (e.type === "typepack" ? "Type Pack" : (e.plugin_count > 1 ? "Pack · " + e.plugin_count : "Plugin Pack")) + "</span>");
+    var kindCls = e.type === "typepack" ? "vy-badge--typepack" : e.type === "skillpack" ? "vy-badge--skill" : "vy-badge--type";
+    var kindLabel = e.type === "typepack" ? "Type Pack"
+      : e.type === "skillpack" ? "Skill Pack"
+      : (e.plugin_count > 1 ? "Pack · " + e.plugin_count : "Plugin Pack");
+    badges.push('<span class="vy-badge ' + kindCls + '">' + kindLabel + "</span>");
 
     if (e.type === "pluginpack") {
       (e.platforms || []).forEach(function (p) {
@@ -237,6 +264,14 @@
       var ss = e.scopes_summary || {};
       if (ss.network) badges.push('<span class="vy-badge vy-badge--net">network</span>');
       if (ss.graph_write) badges.push('<span class="vy-badge vy-badge--write">graph write</span>');
+    } else if (e.type === "skillpack") {
+      if (typeof e.section_count === "number")
+        badges.push('<span class="vy-badge">' + e.section_count + " sections</span>");
+      var nReq = (e.requires || []).length;
+      if (nReq)
+        badges.push('<span class="vy-badge vy-badge--needs">needs ' + nReq + " plugin" + (nReq > 1 ? "s" : "") + "</span>");
+      else
+        badges.push('<span class="vy-badge vy-badge--schema">playbook · no permissions</span>');
     } else {
       if (typeof e.type_count === "number")
         badges.push('<span class="vy-badge">' + e.type_count + " types</span>");
@@ -263,14 +298,45 @@
 
   // --- Detail drawer -------------------------------------------------------
   Browser.prototype.openDrawer = function (e) {
+    var self = this;
     var drawer = document.getElementById("vy-drawer");
     var backdrop = document.getElementById("vy-backdrop");
-    drawer.innerHTML = this.drawerHtml(e);
+    this._openId = e.identifier || e.name;
+
+    var loading = !e._detail && !!detailUrl(e);
+    drawer.innerHTML = this.drawerHtml(e, loading);
     drawer.classList.add("is-open");
     backdrop.classList.add("is-open");
     document.body.style.overflow = "hidden";
+    this.wireDrawer();
+
+    // Lazy-load the full pack document (type palette / bundled plugins / io) from
+    // the content repo via jsDelivr, then re-render — once per entry, only while
+    // this entry is still the open one.
+    if (loading) {
+      var openId = this._openId;
+      fetchJson(detailUrl(e))
+        .then(function (doc) { mergeDetail(e, doc); })
+        .catch(function () { /* detail unavailable — keep card-level view */ })
+        .then(function () {
+          e._detail = true;
+          if (drawer.classList.contains("is-open") && self._openId === openId) {
+            drawer.innerHTML = self.drawerHtml(e, false);
+            self.wireDrawer();
+          }
+        });
+    }
+  };
+
+  Browser.prototype.wireDrawer = function () {
     var self = this;
-    drawer.querySelector(".vy-drawer__close").addEventListener("click", function () { self.closeDrawer(); });
+    var drawer = document.getElementById("vy-drawer");
+    if (!drawer) return;
+    var close = drawer.querySelector(".vy-drawer__close");
+    if (close) {
+      close.addEventListener("click", function () { self.closeDrawer(); });
+      close.focus();
+    }
     Array.prototype.forEach.call(drawer.querySelectorAll("[data-copy]"), function (btn) {
       btn.addEventListener("click", function () {
         var text = btn.getAttribute("data-copy");
@@ -278,7 +344,6 @@
         var old = btn.textContent; btn.textContent = "copied"; setTimeout(function () { btn.textContent = old; }, 1200);
       });
     });
-    drawer.querySelector(".vy-drawer__close").focus();
   };
 
   Browser.prototype.closeDrawer = function () {
@@ -289,7 +354,7 @@
     document.body.style.overflow = "";
   };
 
-  Browser.prototype.drawerHtml = function (e) {
+  Browser.prototype.drawerHtml = function (e, loading) {
     var rows = [];
     if (e.identifier)
       rows.push(kv("Identifier", '<code>' + escapeHtml(e.identifier) + "</code>" +
@@ -303,6 +368,12 @@
       if (typeof e.type_count === "number") rows.push(kv("Entity types", String(e.type_count)));
       if (typeof e.edge_count === "number") rows.push(kv("Edge types", String(e.edge_count)));
       if ((e.categories || []).length) rows.push(kv("Categories", (e.categories || []).map(cap).join(", ")));
+    }
+    if (e.type === "skillpack") {
+      if (typeof e.section_count === "number") rows.push(kv("Sections", String(e.section_count)));
+      if ((e.applies_to || []).length) rows.push(kv("Applies to", (e.applies_to || []).map(escapeHtml).join(", ")));
+      if ((e.requires || []).length)
+        rows.push(kv("Requires", (e.requires || []).map(function (r) { return "<code>" + escapeHtml(r) + "</code>"; }).join(" ")));
     }
 
     var body = "";
@@ -346,7 +417,7 @@
       body += e.types.map(function (t) {
         var color = t.color || "#8b5cf6";
         return '<span class="vy-typechip"><span class="vy-dot" style="background:' + escapeAttr(color) + '"></span>' +
-          escapeHtml(t.label || t.name) + "</span>";
+          escapeHtml(t.display_name || t.label || t.name) + "</span>";
       }).join("");
       body += "</div>";
       if ((e.edge_types || []).length) {
@@ -358,9 +429,32 @@
       }
     }
 
+    // Skill Packs are text — the whole playbook can be shown before install.
+    if (e.type === "skillpack") {
+      if (e.overview) {
+        body += "<h4>Playbook</h4><pre class=\"vy-skill-overview\">" + escapeHtml(e.overview) + "</pre>";
+      }
+      if ((e.sections || []).length) {
+        body += "<h4>Sections</h4>";
+        body += e.sections.map(function (s) {
+          return '<div class="vy-perm"><span class="vy-perm__ico">' + icon("book-open") + "</span><span><strong>" +
+            escapeHtml(s.id || "") + "</strong>" + (s.summary ? " — " + escapeHtml(s.summary) : "") + "</span></div>";
+        }).join("");
+      }
+      if ((e.requires || []).length) {
+        body += '<div class="vy-perm"><span class="vy-perm__ico">' + icon("package") + "</span><span>" +
+          "Uses " + e.requires.length + " Plugin Pack" + (e.requires.length > 1 ? "s" : "") +
+          " — installing offers to add " + (e.requires.length > 1 ? "them" : "it") + " too.</span></div>";
+      }
+    }
+
+    if (loading) body += '<p class="vy-loading" style="font-size:.85rem;color:var(--vy-text-muted);margin:.5rem 0 0">Loading details…</p>';
+
     var installNote =
       e.type === "typepack"
         ? "Activate this Type Pack from inside a Vineyard project."
+        : e.type === "skillpack"
+        ? "Install this Skill Pack from inside a Vineyard project — the agent consults it as a playbook; its required Plugin Packs are offered alongside."
         : "Install runs in the Vineyard app — scopes are shown again for approval before activation.";
 
     return (
@@ -372,14 +466,14 @@
             (e.verified ? ' <span class="vy-verified" title="Verified author">' + ICON["badge-check"] + "</span>" : "") +
           "</h2>" +
           '<div class="vy-drawer__author">by ' + escapeHtml(e.author) +
-            ' &middot; ' + (e.type === "typepack" ? "Type Pack" : (e.plugin_count > 1 ? "Plugin Pack" : "Plugin Pack")) + "</div>" +
+            ' &middot; ' + (e.type === "typepack" ? "Type Pack" : e.type === "skillpack" ? "Skill Pack" : "Plugin Pack") + "</div>" +
         "</div>" +
       "</div>" +
       '<p class="vy-drawer__desc">' + escapeHtml(e.description || "") + "</p>" +
       body +
       "<h4>Details</h4><dl class=\"vy-kv\">" + rows.join("") + "</dl>" +
       '<button class="vy-drawer__install" type="button">' + ICON.download + " " +
-        (e.type === "typepack" ? "Activate Type Pack" : "Install Plugin Pack") + "</button>" +
+        (e.type === "typepack" ? "Activate Type Pack" : e.type === "skillpack" ? "Install Skill Pack" : "Install Plugin Pack") + "</button>" +
       '<p class="vy-drawer__note">' + escapeHtml(installNote) + "</p>"
     );
   };
@@ -405,6 +499,26 @@
       out.push({ icon: "key", text: "Config: requires install-time configuration values." });
     }
     return out;
+  }
+
+  // Merge a pack's full document (jsDelivr) into the card-level entry so the
+  // drawer can show the type palette / bundled plugins / io the lean index omits.
+  function mergeDetail(e, doc) {
+    if (!doc) return;
+    if (e.type === "typepack") {
+      e.types = doc.types || doc.node_types || [];
+      e.edge_types = doc.edge_types || [];
+    } else if (e.type === "skillpack") {
+      e.overview = typeof doc.overview === "string" ? doc.overview : "";
+      e.sections = Array.isArray(doc.sections) ? doc.sections : [];
+    } else if (Array.isArray(doc.plugins)) {
+      e.plugins = doc.plugins;
+    } else {
+      e.io = doc.io;
+      e.scopes = doc.scopes;
+    }
+    if (doc.icon) e.icon = doc.icon;
+    if (!e.license && doc.license) e.license = doc.license;
   }
 
   // --- helpers -------------------------------------------------------------
