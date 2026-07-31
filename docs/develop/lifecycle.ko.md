@@ -12,7 +12,7 @@ Vineyard의 모든 플러그인 실행과 모든 AI 채팅 턴은 하나의 클�
 
 ## 7가지 상태
 
-`TaskState`는 `sdk/types.ts`에 정의되어 있습니다([SDK](sdk.md) 참조):
+`TaskState`는 `@vineyard/plugin-sdk` 패키지 타입에 정의되어 있습니다([SDK](sdk.md) 참조):
 
 ```ts
 type TaskState =

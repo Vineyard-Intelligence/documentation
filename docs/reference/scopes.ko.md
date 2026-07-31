@@ -17,7 +17,7 @@ plugin이 `manifest.scopes`에서 선언할 수 있는 모든 scope 문자열, �
 
 ## graph
 
-노드와 엣지에 대한 세분화된 동사 (`node:*` / `edge:*` × read/create/update/delete). 삭제하는 plugin은 `node:delete` / `edge:delete`를 명시적으로 선언해야 합니다. `ctx.graph`는 **하나 이상의** graph 동사가 부여된 경우에만 존재합니다. 아래 각 메서드는 해당 특정 동사가 부여된 경우에만 존재합니다. (출처: `sdk/types.ts` `GraphScope`, `HostContext.graph`.)
+노드와 엣지에 대한 세분화된 동사 (`node:*` / `edge:*` × read/create/update/delete). 삭제하는 plugin은 `node:delete` / `edge:delete`를 명시적으로 선언해야 합니다. `ctx.graph`는 **하나 이상의** graph 동사가 부여된 경우에만 존재합니다. 아래 각 메서드는 해당 특정 동사가 부여된 경우에만 존재합니다. (출처: `@vineyard/plugin-sdk` 패키지 타입 — `GraphScope`, `HostContext.graph`.)
 
 | Scope string | Grants | `ctx` member(s) |
 | --- | --- | --- |
@@ -27,7 +27,7 @@ plugin이 `manifest.scopes`에서 선언할 수 있는 모든 scope 문자열, �
 | `node:delete` | 단일 바운드 작업으로 하나 또는 여러 노드 삭제 | `ctx.graph.deleteNode`, `ctx.graph.deleteNodes` |
 | `edge:read` | 엣지 읽기 (이웃/목록 쿼리와 함께 반환됨) | `ctx.graph.neighbors`, `ctx.graph.list` |
 | `edge:create` | 엣지 생성; 벌크 upsert 엣지 | `ctx.graph.createEdge`, `ctx.graph.emit` |
-| `edge:update` | 엣지 데이터 업데이트 | *(예약됨; `sdk/types.ts`에 전용 메서드 없음)* |
+| `edge:update` | 엣지 데이터 업데이트 | *(예약됨; SDK 타입에 전용 메서드 없음)* |
 | `edge:delete` | 엣지 삭제 | `ctx.graph.deleteEdge` |
 
 !!! note "Bulk ops count as one write"
@@ -42,11 +42,11 @@ plugin이 `manifest.scopes`에서 선언할 수 있는 모든 scope 문자열, �
 | --- | --- | --- |
 | `message:post` | 프로젝트 채팅/피드에 텍스트 메시지(선택적 메타데이터 포함) 게시 | `ctx.message.post` |
 
-`ctx.message`는 `message:post`가 부여된 경우에만 존재합니다. (출처: `sdk/types.ts` `PublishScope`, `HostContext.message`.)
+`ctx.message`는 `message:post`가 부여된 경우에만 존재합니다. (출처: `@vineyard/plugin-sdk` 패키지 타입 — `PublishScope`, `HostContext.message`.)
 
 ## network
 
-각 항목은 `NetworkScope` 객체이며, **단순 문자열이 아닙니다**. `ctx.net`은 하나 이상의 network scope가 선언된 경우에만 존재합니다. (출처: `sdk/types.ts` `NetworkScope`, `HostContext.net`.)
+각 항목은 `NetworkScope` 객체이며, **단순 문자열이 아닙니다**. `ctx.net`은 하나 이상의 network scope가 선언된 경우에만 존재합니다. (출처: `@vineyard/plugin-sdk` 패키지 타입 — `NetworkScope`, `HostContext.net`.)
 
 ```jsonc
 "network": [
@@ -69,7 +69,7 @@ plugin이 `manifest.scopes`에서 선언할 수 있는 모든 scope 문자열, �
 
 ## config
 
-각 항목은 `ConfigValue`입니다. `config` 항목을 선언하면 `ctx.config`가 존재하게 됩니다 — 선언된 **비밀 아닌** 값들의 읽기 전용 맵입니다. (출처: `sdk/types.ts` `ConfigValue`, `HostContext.config`.)
+각 항목은 `ConfigValue`입니다. `config` 항목을 선언하면 `ctx.config`가 존재하게 됩니다 — 선언된 **비밀 아닌** 값들의 읽기 전용 맵입니다. (출처: `@vineyard/plugin-sdk` 패키지 타입 — `ConfigValue`, `HostContext.config`.)
 
 | Field | Type | Meaning |
 | --- | --- | --- |
@@ -86,7 +86,7 @@ plugin이 `manifest.scopes`에서 선언할 수 있는 모든 scope 문자열, �
 
 ## Not scopes
 
-다음은 **항상 사용 가능**하며 데이터나 네트워크에 대한 권한을 부여하지 않습니다. 선언이 필요하지 않습니다. (출처: SPEC §4; `sdk/types.ts` `HostContext`.)
+다음은 **항상 사용 가능**하며 데이터나 네트워크에 대한 권한을 부여하지 않습니다. 선언이 필요하지 않습니다. (출처: SPEC §4; `@vineyard/plugin-sdk` 패키지 타입 — `HostContext`.)
 
 | Capability | `ctx` member | Notes |
 | --- | --- | --- |
