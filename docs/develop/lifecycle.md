@@ -12,7 +12,7 @@ Tasks execute on the client:
 
 ## The seven states
 
-`TaskState` is defined in `sdk/types.ts` (see the [SDK](sdk.md) reference):
+`TaskState` is defined in the `@vineyard/plugin-sdk` package types (see the [SDK](sdk.md) reference):
 
 ```ts
 type TaskState =
