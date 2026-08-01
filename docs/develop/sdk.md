@@ -45,14 +45,16 @@ human-readable summary surfaced in the [task UI](../guide/tasks.md).
 
 ## HostContext (`ctx`)
 
-`ctx` is a Comlink proxy of the main-thread *HostBridge*. The bridge holds the
-[one-time RunToken](security.md) and the write caps; the worker that runs your code never
-sees a token, no ambient `fetch`, no DOM. Egress is enforced by the worker origin's CSP, not
-by anything in the SDK.
+`ctx` is a Comlink proxy of the main-thread *HostBridge*. The worker that runs your code holds
+no token, no ambient `fetch`, and no DOM — only the members its scopes granted. Your graph
+writes do not reach the API from the run: the bridge captures them, and the analyst applies
+them under their own account after reviewing the change set. Network egress is checked by the
+bridge against the endpoints your manifest declared, not by anything in the SDK. See the
+[security model](security.md).
 
 !!! warning "A member is absent unless its scope was granted"
-    `ctx.graph`, `ctx.message`, `ctx.net`, and `ctx.config` are **optional** and only exist
-    when the corresponding [scope](../reference/scopes.md) was declared *and* granted. A no-scope plugin
+    `ctx.graph`, `ctx.net`, and `ctx.config` are **optional** and only exist when the
+    corresponding [scope](../reference/scopes.md) was declared *and* granted. A no-scope plugin
     like **Dumb AI Optimizer** correctly sees `ctx.graph === undefined`. Guard with optional
     chaining or feature-test before use. Within `ctx.graph`, each *method* is likewise present
     only if its specific verb (`node:delete`, `edge:create`, …) was granted.
@@ -63,7 +65,7 @@ These members exist on every run, regardless of scopes.
 
 | Member | Type | What it gives you |
 |---|---|---|
-| `ctx.run` | `{ runId, projectId, pluginId, grantedScopes, platform }` | Identity of this run; `grantedScopes` is the server-clamped scope set; `platform` is `"web"` or `"desktop"`. |
+| `ctx.run` | `{ runId, projectId, pluginId, grantedScopes, platform }` | Identity of this run; `grantedScopes` is the manifest's scope set as approved at install; `platform` is `"web"` or `"desktop"`. |
 | `ctx.input` | `{ selection: string[] }` | The node ids the user had selected when the run launched. **Black Hole** reads `ctx.input.selection`. |
 | `ctx.params` | `Readonly<Record<string, unknown>>` | This run's user input, validated against the manifest `params` schema. A consumed node bound via a `TypeRef.as` alias is pre-bound here. |
 | `ctx.progress` | `{ set?, log?, status? }` | Drives the continuously-managed task UI (details below). |
@@ -123,18 +125,6 @@ Each of the following is `undefined` unless its scope was granted.
     re-runs upsert instead of duplicating; `EdgeDraft` references nodes by `key` or returned
     id, and `label` should match an activated [Type Pack](typepacks.md) edge type.
 
-=== "message (message:post)"
-
-    Present iff `message:post` was granted. Posts into the project chat/feed.
-
-    ```ts
-    ctx.message?.post?.(text: string, meta?: Record<string, unknown>): Promise<void>
-    ```
-
-    !!! note "Member name"
-        The host context exposes this as **`ctx.message.post`** in the SDK types. (The scope
-        string is `message:post`.)
-
 === "net (network scope)"
 
     Present iff at least one [network scope](../reference/scopes.md) is declared. Limited to the
@@ -162,12 +152,20 @@ Each of the following is `undefined` unless its scope was granted.
         boundary by the host and never returned to the plugin. On web, secret config routes
         to the desktop plugin. See [secrets handling](security.md#secret-handling).
 
-### Bulk ops and the write cap
+!!! note "There is no `publish` scope"
+    A plugin cannot post into the project chat/feed — there is no `ctx.message`, and `publish`
+    is not part of the scopes schema. `scopes` sets `additionalProperties: false`, so a draft
+    manifest still declaring it **fails validation**. Report what you found by writing it into
+    the graph instead.
 
-`deleteNodes(ids[])` and `emit(entities, edges)` each count as a **single bounded operation**
-against the RunToken's write cap. This is deliberate: a legitimate mass-delete (Korean
-Roulette wiping the whole graph) is not throttled to death the way thousands of individual
-`deleteNode` calls would be. Prefer the bulk forms for whole-graph mutations.
+### Bulk ops
+
+`deleteNodes(ids[])` and `emit(entities, edges)` are each a **single bounded operation** on the
+bridge — one call in, one fan-out under a fixed concurrency limit — rather than hundreds of
+independent round trips. Prefer the bulk forms for whole-graph mutations: a legitimate
+mass-delete (Korean Roulette wiping the whole graph) should not be thousands of individual
+`deleteNode` calls. Each affected node and edge still appears as its own line in the change set
+the analyst reviews, so bulk does not mean unreviewable.
 
 ## A complete `run(ctx)` example
 
@@ -177,14 +175,14 @@ For a full worked example (Korean Roulette) and a `createMockContext` unit test,
 ## Testing with `createMockContext`
 
 `createMockContext` lets you unit-test `run(ctx)` with no app, no GitHub, and no server. It
-builds a `HostContext` whose `graph` / `net` / `message` members exist **only for the granted
+builds a `HostContext` whose `graph` / `net` / `config` members exist **only for the granted
 scopes**, so scope gating is exercised exactly as in production. The returned context carries
 a `mock` record you can assert against.
 
 `MockContextOptions` accepts `nodes`, `edges`, `params`, `config`, `selection`, `projectId`,
 `pluginId`, `grantedScopes`, and `platform`. The `ctx.mock` record exposes `nodes`, `edges`,
-`createdNodes`, `deletedNodeIds`, `deletedEdgeIds`, `messages`, `netCalls`, and `progress`.
-See [quickstart](quickstart.md) for a full test example.
+`createdNodes`, `deletedNodeIds`, `deletedEdgeIds`, `netCalls`, and `progress`. See
+[quickstart](quickstart.md) for a full test example.
 
 !!! note "Reference implementation"
     In the SDK package, `createMockContext` is declared (`export declare function …`) with a
@@ -195,7 +193,7 @@ See [quickstart](quickstart.md) for a full test example.
 
 - [Plugin manifest](plugin-manifest.md) — the `manifest` you pass to `definePlugin`
 - [Scopes reference](../reference/scopes.md) — what gates each `ctx` member
-- [Security model](security.md) — the worker sandbox, RunToken, and write caps
+- [Security model](security.md) — the worker sandbox, egress allowlist, and staged writes
 - [Lifecycle](lifecycle.md) — progress, cancellation, and task states
 - [Quickstart](quickstart.md) — Developer Mode and the test harness
 - [Reference plugins](../guide/running-plugins.md) — the six Chaos plugins the SDK is validated against

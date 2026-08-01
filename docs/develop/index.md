@@ -18,7 +18,7 @@ Every Vineyard pack carries a `content_type` discriminator, and identifiers are 
 
 | Content type | `content_type` | Identifier form | What it is |
 |---|---|---|---|
-| **Plugin Pack** | `vineyard:pluginpack` | `run.vineyard.pluginpacks.<name>` | One or more bundled JS modules exporting `definePlugin({ manifest, run })` that read and write the graph. |
+| **Plugin Pack** | `vineyard:pluginpack` | `run.vineyard.pluginpacks.<name>` | One or more bundled JS modules exporting `definePlugin({ manifest, run })` that read the graph and stage changes to it for the analyst's review. |
 | **Type Pack** | `vineyard:typepack` | `run.vineyard.typepacks.<name>` | JSON that defines node **entity types** and optional **edge types** (icons, colors, properties, validators). |
 | **Skill Pack** | `vineyard:skillpack` | `run.vineyard.skillpacks.<name>` | JSON text: an investigation **playbook** the agent follows. No code, no permissions. |
 
@@ -61,7 +61,7 @@ their qualified `category.name` form, and a Skill Pack's steps call plugin packs
 === "Authority & shipping"
 
     - [Scopes](../reference/scopes.md) — the only authority a plugin gets.
-    - [Security](security.md) — secrets, the RunToken, and CSP egress.
+    - [Security](security.md) — the worker sandbox, staged writes, the egress allowlist, and secrets.
     - [Publishing](publishing.md) — the registry PR for any pack type.
     - [Updates](updates.md) — shipping a new version.
 

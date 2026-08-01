@@ -101,7 +101,7 @@ Every field below is required unless noted. The full schema is documented in [pl
 | `distribution` | How the bundle is fetched. `kind: "inline"` for local/dev; `git`/`zip` for published plugins (see [distribution](distribution.md)). |
 
 !!! warning "Never put secrets in `params`"
-    Install-time lint **rejects** secret-looking `params` keys (`api_key`, `token`, `secret`, `password`, `*_key`, …). Secrets must be declared as `scopes.config` with `secret: true`, and on the web they route to the desktop plugin — see [Security](security.md). Korean Roulette needs no secrets and no network, which is exactly why it's a clean first plugin.
+    Never put a secret-looking key in `params` (`api_key`, `token`, `secret`, `password`, `*_key`, …) — those values are recorded. Declare secrets as `scopes.config` with `secret: true`; on the web they route to the desktop plugin — see [Security](security.md). Nothing lints this for you yet, so it is on you. Korean Roulette needs no secrets and no network, which is exactly why it's a clean first plugin.
 
 ## 4. Unit test with `createMockContext`
 

@@ -46,7 +46,7 @@ The `VineyardReviewBot` has two tiers. **Blocking** checks must pass before a hu
 - **Immutable `ref`.** Must be a **commit SHA** (40-hex or 64-hex). Tags and branches are mutable (re-pointable to other code) and are **rejected** — pin the exact reviewed commit (`version` is the human-readable mirror).
 - **Full manifest/Type Pack validates** against the published plugin/Type Pack schema at `repo@ref/path` — not just the lean registry row.
 - **`web-proxy` ⇒ exactly one `network` endpoint, and it equals `proxy_endpoint`.** A web-proxy plugin may declare only its single proxy host. See [scopes](../reference/scopes.md).
-- **No secret-looking parameter keys.** Param keys that look like credentials (api_key, token, secret, …) are rejected; secrets belong in `scopes.config` with `secret: true` (desktop-only), not in user-facing params.
+- **No secret-looking parameter keys.** Param keys that look like credentials (api_key, token, secret, …) must not appear; secrets belong in `scopes.config` with `secret: true` (desktop-only), not in user-facing params. Review this yourself — no automated check rejects them.
 - **Type Pack cross-field invariants:** `label_property` exists and is **non-optional**; every `enum`/`default` matches its property type; each edge type's `from`/`to` resolves to a declared node type.
 
 ### Advisory (never blocking)
@@ -74,7 +74,7 @@ A **Plugin Pack** entry appended to `community-pluginpacks.json`. Note `plugin_c
   "path": "plugins/chaos-pack.manifest.json",
   "version": "1.0.0",
   "platforms": ["web"],
-  "scopes_summary": { "network": false, "graph_write": true, "publish": false, "secret_config": false },
+  "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
   "compat": { "min_app_version": "1.0.0" },
   "verified": true
