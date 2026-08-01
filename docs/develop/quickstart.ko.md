@@ -101,7 +101,7 @@ export default definePlugin({
 | `distribution` | 번들을 가져오는 방법. 로컬/개발용 `kind: "inline"`, 게시된 플러그인용 `git`/`zip`([distribution](distribution.md) 참조). |
 
 !!! warning "`params`에 시크릿을 절대 넣지 마세요"
-    설치 시 린트가 시크릿처럼 보이는 `params` 키(`api_key`, `token`, `secret`, `password`, `*_key`, …)를 **거부**합니다. 시크릿은 `secret: true`와 함께 `scopes.config`로 선언해야 하며, 웹에서는 데스크톱 플러그인으로 라우팅됩니다 — [Security](security.md)를 참조하세요. Korean Roulette은 시크릿과 네트워크가 필요 없기 때문에 깔끔한 첫 플러그인으로 적합합니다.
+    시크릿처럼 보이는 키(`api_key`, `token`, `secret`, `password`, `*_key`, …)를 `params`에 절대 넣지 마세요 — 그 값은 기록됩니다. 시크릿은 `secret: true`와 함께 `scopes.config`로 선언하며, 웹에서는 데스크톱 플러그인으로 라우팅됩니다 — [Security](security.md)를 참조하세요. 아직 이를 검사해 주는 린터는 없으니 작성자의 책임입니다. Korean Roulette은 시크릿과 네트워크가 필요 없기 때문에 깔끔한 첫 플러그인으로 적합합니다.
 
 ## 4. `createMockContext`로 단위 테스트
 

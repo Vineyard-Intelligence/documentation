@@ -18,7 +18,7 @@
 
 | 콘텐츠 유형 | `content_type` | 식별자 형식 | 설명 |
 |---|---|---|---|
-| **Plugin Pack** | `vineyard:pluginpack` | `run.vineyard.pluginpacks.<name>` | `definePlugin({ manifest, run })`을 내보내는 하나 이상의 번들 JS 모듈로, 그래프를 읽고 씁니다. |
+| **Plugin Pack** | `vineyard:pluginpack` | `run.vineyard.pluginpacks.<name>` | `definePlugin({ manifest, run })`을 내보내는 하나 이상의 번들 JS 모듈로, 그래프를 읽고 변경 사항을 분석가 검토용으로 스테이징합니다. |
 | **Type Pack** | `vineyard:typepack` | `run.vineyard.typepacks.<name>` | 노드 **엔티티 타입**과 선택적 **엣지 타입**(아이콘, 색상, 프로퍼티, 유효성 검사기)을 정의하는 JSON입니다. |
 | **Skill Pack** | `vineyard:skillpack` | `run.vineyard.skillpacks.<name>` | JSON 텍스트: 에이전트가 따르는 조사 **플레이북**. 코드도 권한도 없습니다. |
 
@@ -63,7 +63,7 @@
 === "권한 및 배포"
 
     - [Scopes](../reference/scopes.md) — 플러그인이 얻는 유일한 권한.
-    - [Security](security.md) — 시크릿, RunToken, CSP 이그레스.
+    - [Security](security.md) — 워커 샌드박스, 스테이징된 쓰기, 이그레스 허용목록, 시크릿.
     - [Publishing](publishing.md) — 모든 팩 유형에 대한 레지스트리 PR.
     - [Updates](updates.md) — 새 버전 배포.
 
