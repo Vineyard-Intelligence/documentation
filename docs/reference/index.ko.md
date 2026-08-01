@@ -1,6 +1,6 @@
 # Reference
 
-VINEYARD.RUN의 plugin 및 Type Pack 형식에 대한 규범적 참조 자료: 모든 문서가 검증되는 JSON-Schema, 권한 scope 어휘, 문서 전반에서 사용되는 공유 용어입니다. 서사적 안내보다는 정확한 필드 이름, 허용 값, 제약 조건이 필요할 때 이 페이지를 사용하세요.
+VINEYARD의 plugin 및 Type Pack 형식에 대한 규범적 참조 자료: 모든 문서가 검증되는 JSON-Schema, 권한 scope 어휘, 문서 전반에서 사용되는 공유 용어입니다. 서사적 안내보다는 정확한 필드 이름, 허용 값, 제약 조건이 필요할 때 이 페이지를 사용하세요.
 
 ## Pages
 

@@ -1,5 +1,5 @@
 ---
-title: VINEYARD.RUN Documentation
+title: VINEYARD Documentation
 hide:
   - navigation
   - toc
@@ -7,7 +7,7 @@ hide:
 
 <div class="vy-hero" markdown>
 
-# Build, share, and run packs for VINEYARD.RUN
+# Build, share, and run packs for VINEYARD
 
 Plugin Packs (JavaScript), Type Packs (JSON), and Skill Packs (investigation playbooks)
 are distributed over a metadata-only GitHub registry, but they **run on the client**.

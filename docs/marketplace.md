@@ -7,7 +7,7 @@ hide:
 
 # Marketplace
 
-Browse every Plugin Pack, Type Pack, and Skill Pack published to the VINEYARD.RUN registry.
+Browse every Plugin Pack, Type Pack, and Skill Pack published to the VINEYARD registry.
 
 <div id="vy-community" data-vy-community>
   <noscript>
