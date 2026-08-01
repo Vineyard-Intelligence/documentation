@@ -7,7 +7,7 @@ hide:
 
 # 마켓플레이스
 
-VINEYARD.RUN 레지스트리에 게시된 모든 Plugin Pack, Type Pack, Skill Pack을 둘러보세요.
+VINEYARD 레지스트리에 게시된 모든 Plugin Pack, Type Pack, Skill Pack을 둘러보세요.
 
 <div id="vy-community" data-vy-community>
   <noscript>

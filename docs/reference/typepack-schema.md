@@ -180,9 +180,9 @@ A trimmed, fully valid `vineyard:typepack` showing the top-level block, two node
   "identifier": "run.vineyard.typepacks.infrastructure", // reverse-DNS id
   "content_type": "vineyard:typepack",                 // discriminator (const)
   "version": "1.0.0",                                  // pack CONTENT SemVer
-  "name": "VINEYARD.RUN Type Pack - Infrastructure",
+  "name": "VINEYARD Type Pack - Infrastructure",
   "description": "Network infrastructure CTI entities and their relationships.",
-  "authors": [{ "name": "VINEYARD.RUN", "url": "https://vineyard.run" }],
+  "authors": [{ "name": "VINEYARD", "url": "https://vineyard.run" }],
   "license": "Apache-2.0",                             // SPDX expression
   "distribution": {                                    // immutable git source
     "kind": "git",

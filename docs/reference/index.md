@@ -1,6 +1,6 @@
 # Reference
 
-The normative reference for VINEYARD.RUN's plugin and Type Pack formats: the JSON-Schemas every document is validated against, the permission scope vocabulary, and the shared terminology used across the docs. Use these pages when you need exact field names, allowed values, and constraints rather than narrative guidance.
+The normative reference for VINEYARD's plugin and Type Pack formats: the JSON-Schemas every document is validated against, the permission scope vocabulary, and the shared terminology used across the docs. Use these pages when you need exact field names, allowed values, and constraints rather than narrative guidance.
 
 ## Pages
 
