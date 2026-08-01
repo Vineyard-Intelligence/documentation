@@ -37,13 +37,15 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `scopes_summary` | object | no | **파생된** 필터 패싯 (아래 참조). |
 | `scopes_summary.network` | boolean | no | `scopes.network`가 비어 있지 않으면 `true`. |
 | `scopes_summary.graph_write` | boolean | no | `node:`/`edge:` create/update/delete 동사가 있으면 `true`. |
-| `scopes_summary.publish` | boolean | no | `scopes.publish`가 비어 있지 않으면 `true` (예: `message:post`). |
 | `scopes_summary.secret_config` | boolean | no | `scopes.config` 항목에 `secret: true`가 있으면 `true` (데스크톱 전용 키를 의미). |
 | `plugin_count` | integer | no | **파생됨**: `identifier`가 **pack**을 명명할 때 번들된 plugin 수 (하나의 파일 → 여러 plugin). 단일 plugin 항목의 경우 생략되거나 `1`. 카드는 포함된 모든 plugin을 함께 설치합니다. 최소 `1`. |
 | `compat` | object | no | 런타임 호환성 (`versions.json`과 유사). |
 | `compat.min_app_version` | string | no | 이 `ref`가 지원하는 가장 오래된 Vineyard 런타임 (`^\d+\.\d+\.\d+$`). 업데이터가 제공할 버전을 제한합니다. |
 | `thumbnail_url` | string (uri) | no | 선택적 카드 아이콘. |
 | `verified` | boolean | no | `verified-authors.json` 멤버십의 미러. CI에 의해 설정되며, **자체 주장되지 않음**. 기본값 `false`. |
+
+!!! warning "There is no `publish` facet"
+    `scopes_summary`는 `additionalProperties: false`이므로, `"publish": false`를 여전히 담고 있는 항목 초안은 스키마 검증에 실패하고 CI에 의해 거부됩니다 — 그 키를 삭제하세요. [plugin manifest](scopes.md)에도 `publish` scope는 존재하지 않습니다.
 
 ### Example plugin row
 
@@ -61,7 +63,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
   "path": "plugins/chaos-pack.manifest.json",
   "version": "1.0.0",
   "platforms": ["web"],
-  "scopes_summary": { "network": false, "graph_write": true, "publish": false, "secret_config": false },
+  "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
   "compat": { "min_app_version": "1.0.0" },
   "verified": true
@@ -120,7 +122,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 
 ## How entries are validated and merged
 
-제출은 `vineyard-releases`에 하나의 항목을 추가하는 포크 앤 PR로, 차단 CI 검사(스키마, 식별자 고유성, 불변 `ref`, 업스트림 manifest 검증)와 사람 병합에 의해 게이트됩니다. 전체 설명은 [Publishing](../develop/publishing.md)을 참조하세요.
+제출은 registry 카탈로그에 하나의 항목을 추가하는 포크 앤 PR로, 차단 CI 검사(스키마, 식별자 고유성, 불변 `ref`, 업스트림 manifest 검증)와 사람 병합에 의해 게이트됩니다. 전체 설명은 [Publishing](../develop/publishing.md)을 참조하세요.
 
 ## Next / See also
 

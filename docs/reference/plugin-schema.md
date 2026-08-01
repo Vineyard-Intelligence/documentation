@@ -113,18 +113,21 @@ JSON-Schema (draft 2020-12) describing the pre-run form. Whatever the user fills
 | `required` | array | no | items: string | Names of required fields. |
 
 !!! warning "No secrets in params"
-    `params` MUST NOT contain secrets. Use a [`scopes.config`](#configvalue-scopesconfig-items) entry with `secret: true` for API keys and credentials. The registry rejects secret-looking param keys.
+    `params` MUST NOT contain secrets. Use a [`scopes.config`](#configvalue-scopesconfig-items) entry with `secret: true` for API keys and credentials. Nothing rejects a secret-looking param key today — this is a rule, not an enforced check.
 
 ## scopes
 
-The plugin's authority surface. `type: object`, `additionalProperties: false`. `ctx` members are absent unless granted; enforcement is by the sandbox plus a one-time scoped run-token. See the [scopes reference](scopes.md) for verb semantics.
+The plugin's authority surface. `type: object`, `additionalProperties: false`. `ctx` members are absent unless granted; enforcement is by the sandbox, and graph writes are additionally held for the analyst's review before they are applied. See the [scopes reference](scopes.md) for verb semantics.
 
 | Property | Type | Req. | Items / constraints | Meaning |
 |---|---|---|---|---|
 | `graph` | array | no | `uniqueItems`; enum items (below) | Fine-grained node/edge verbs. Backed by the project `graph_edit` tier. |
-| `publish` | array | no | `uniqueItems`; items enum: `message:post` | Post into the project chat/message stream. Backed by the `chat_send` tier. |
+| `web_probe` | object | no | `{ purpose?: string }` — an object, not an array | **Desktop only.** One anonymous request to an *arbitrary* public host, made by the shell's main process. Backs `ctx.net.probe`; in the web build the capability has no backing and `ctx.net.probe` stays absent. |
 | `network` | array | no | items: [`networkScope`](#networkscope-scopesnetwork-items) | External XHR targets. |
 | `config` | array | no | items: [`configValue`](#configvalue-scopesconfig-items) | Install-time values injected at runtime only. |
+
+!!! warning "There is no `publish` scope"
+    Those are the only keys the schema models. If a draft manifest still carries `"publish": ["message:post"]`, delete the key — `scopes` is `additionalProperties: false`, so the manifest fails validation.
 
 `scopes.graph` enum values (each may appear at most once):
 
@@ -259,7 +262,6 @@ A full, valid manifest — the **CIDR Expand** reference plugin. It consumes an 
 
   "scopes": {                                        // (8)!
     "graph": ["node:read", "node:create", "edge:create"],
-    "publish": [],
     "network": [],
     "config": []
   },

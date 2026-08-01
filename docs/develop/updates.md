@@ -32,9 +32,11 @@ This is the part that makes an update different from a silent refresh. Vineyard 
 - If the new version **requests new scopes**, the app **re-prompts** with the scope approval dialog, **highlighting the delta** — the exact verbs or network endpoints being added.
 
 !!! warning "A new version cannot quietly expand its reach"
-    Scopes are the only authority a plugin gets. A v1.1 that adds `node:delete`, `edge:delete`, a `network` endpoint, or `message:post` over what v1.0 had triggers a fresh approval showing precisely those additions. Granting an update is your decision, made on the diff — there is nothing for an author to widen behind your back.
+    Scopes are the only authority a plugin gets. A v1.1 that adds `node:delete`, `edge:delete`, a `network` endpoint, or a secret `config` value over what v1.0 had triggers a fresh approval showing precisely those additions. Granting an update is your decision, made on the diff — there is nothing for an author to widen behind your back. And an approved graph verb is not a direct write even after the update lands: a run's node and edge changes are captured into staging and applied only once you have reviewed the change set, under your own token.
 
 The dialog uses the same `scopeToBadge()` rendering as the marketplace preview.
+
+A manifest carried over from an older draft may still declare the removed `publish` scope (`message:post`). It no longer exists — plugins cannot post chat messages — and because `scopes` is `additionalProperties: false` in the [plugin schema](../reference/plugin-schema.md), a version declaring it fails validation instead of being offered as an update.
 
 === "v1.0.0 scopes (already approved)"
 

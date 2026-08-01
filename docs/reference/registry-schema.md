@@ -37,13 +37,15 @@ A row in `community-pluginpacks.json`. The schema sets `additionalProperties: fa
 | `scopes_summary` | object | no | **Derived** filter facets (see below). |
 | `scopes_summary.network` | boolean | no | `true` if `scopes.network` is non-empty. |
 | `scopes_summary.graph_write` | boolean | no | `true` if any `node:`/`edge:` create/update/delete verb is present. |
-| `scopes_summary.publish` | boolean | no | `true` if `scopes.publish` is non-empty (e.g. `message:post`). |
 | `scopes_summary.secret_config` | boolean | no | `true` if any `scopes.config` entry has `secret: true` (implies a desktop-only key). |
 | `plugin_count` | integer | no | **Derived**: number of plugins bundled when the `identifier` names a **pack** (one file → many plugins). Omitted or `1` for a single-plugin entry. The card installs all contained plugins together. Minimum `1`. |
 | `compat` | object | no | Runtime compatibility (the `versions.json` analog). |
 | `compat.min_app_version` | string | no | Oldest Vineyard runtime this `ref` supports (`^\d+\.\d+\.\d+$`). Gates the version the updater will offer. |
 | `thumbnail_url` | string (uri) | no | Optional card icon. |
 | `verified` | boolean | no | Mirror of `verified-authors.json` membership. Set by CI, **not self-asserted**. Default `false`. |
+
+!!! warning "There is no `publish` facet"
+    `scopes_summary` is `additionalProperties: false`, so a draft row still carrying `"publish": false` fails schema validation and is rejected by CI — delete the key. There is no `publish` scope in the [plugin manifest](scopes.md) either.
 
 ### Example plugin row
 
@@ -61,7 +63,7 @@ This is the real Chaos reference pack — a single `identifier` that bundles six
   "path": "plugins/chaos-pack.manifest.json",
   "version": "1.0.0",
   "platforms": ["web"],
-  "scopes_summary": { "network": false, "graph_write": true, "publish": false, "secret_config": false },
+  "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
   "compat": { "min_app_version": "1.0.0" },
   "verified": true

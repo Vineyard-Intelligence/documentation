@@ -73,7 +73,7 @@ Each platform block may set `fallback` (`desktop`/`web`/`none`) describing what 
 `params` is a **JSON Schema (draft 2020-12)** describing the form shown before the plugin runs. The submitted, validated object becomes `Task.input` and is passed to the plugin's `run` function. Standard JSON Schema keywords drive the rendered form and its client-side validation: `title` becomes the label, `description` the help text, `default` the prefilled value, and `required`/`pattern`/`minimum`/`maximum`/`enum` enforce constraints. A field bound by `io.consumes` `as` (here `cidr`) arrives pre-filled from the consumed node.
 
 !!! danger "No secrets in params — rejected at lint"
-    `params` MUST NOT carry secrets. The registry linter **rejects** secret-looking param keys (API keys, tokens, passwords, and similar). Secrets are never submitted through the run form because that value would land in `Task.input`. Declare credentials as a `scopes.config` entry with `"secret": true` instead — those are injected at runtime only and never written to any record. See [Secret handling](security.md).
+    `params` MUST NOT carry secrets — and nothing checks this for you, so it is the author's responsibility (API keys, tokens, passwords, and similar). Secrets are never submitted through the run form because that value would land in `Task.input`. Declare credentials as a `scopes.config` entry with `"secret": true` instead — those are injected at runtime only and never written to any record. See [Secret handling](security.md).
 
 ## scopes — the authority surface
 

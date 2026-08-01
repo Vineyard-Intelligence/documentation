@@ -46,7 +46,7 @@ Plugin Pack이나 Type Pack을 공개 Vineyard 마켓플레이스에 게시하�
 - **불변 `ref`.** 반드시 **커밋 SHA**(40-16진수 또는 64-16진수)여야 합니다. 태그와 브랜치는 가변적이며(다른 코드로 재지정 가능) **거부**됩니다 — 검토된 정확한 커밋을 고정하세요(`version`은 사람이 읽을 수 있는 미러).
 - **전체 매니페스트/Type Pack이** `repo@ref/path`에서 게시된 플러그인/Type Pack 스키마에 대해 유효성 검사 — 간소화된 레지스트리 행뿐만 아니라.
 - **`web-proxy` ⇒ 정확히 하나의 `network` 엔드포인트, 그리고 `proxy_endpoint`와 동일.** web-proxy 플러그인은 단일 프록시 호스트만 선언할 수 있습니다. [scopes](../reference/scopes.md)를 참조하세요.
-- **시크릿처럼 보이는 파라미터 키 없음.** 자격 증명처럼 보이는 파라미터 키(api_key, token, secret, …)는 거부됩니다. 시크릿은 사용자 대상 params가 아닌 `secret: true`와 함께 `scopes.config`에 있어야 합니다(데스크톱 전용).
+- **시크릿처럼 보이는 파라미터 키 없음.** 자격 증명처럼 보이는 파라미터 키(api_key, token, secret, …)는 넣으면 안 됩니다. 시크릿은 사용자 대상 params가 아닌 `secret: true`와 함께 `scopes.config`에 있어야 합니다(데스크톱 전용). 이를 거부하는 자동 검사는 없으니 직접 확인하세요.
 - **Type Pack 교차 필드 불변성:** `label_property`가 존재하고 **non-optional**이어야 함. 모든 `enum`/`default`가 해당 프로퍼티 타입과 일치해야 함. 각 엣지 타입의 `from`/`to`가 선언된 노드 타입으로 해석되어야 함.
 
 ### 권고 (절대 차단하지 않음)
@@ -74,7 +74,7 @@ Plugin Pack이나 Type Pack을 공개 Vineyard 마켓플레이스에 게시하�
   "path": "plugins/chaos-pack.manifest.json",
   "version": "1.0.0",
   "platforms": ["web"],
-  "scopes_summary": { "network": false, "graph_write": true, "publish": false, "secret_config": false },
+  "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
   "compat": { "min_app_version": "1.0.0" },
   "verified": true

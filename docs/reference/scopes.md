@@ -2,18 +2,21 @@
 
 A complete catalog of every scope string a plugin can declare in `manifest.scopes`, what each grants, and which `ctx` member it unlocks. Scopes are the **only** authority a plugin gets — a `ctx` member is absent unless its scope was granted, so there is nothing to bypass. Declare least privilege: pick the narrowest verbs your plugin actually needs.
 
-For how grants are enforced at runtime (the one-time RunToken, CSP egress, secret scrubbing), see [security](../develop/security.md).
+For how grants are enforced at runtime (the Web Worker sandbox, the egress allowlist, secret scrubbing), see [security](../develop/security.md).
 
 The `scopes` block has exactly four keys, all optional:
 
 ```jsonc
 "scopes": {
-  "graph":   ["node:read", "edge:create"],                 // fine-grained graph verbs
-  "publish": ["message:post"],                              // post to project feed
-  "network": [ { "endpoint": "https://...", "methods": ["POST"] } ],
-  "config":  [ { "key": "max_concurrency", "type": "number" } ]
+  "graph":     ["node:read", "edge:create"],               // fine-grained graph verbs
+  "network":   [ { "endpoint": "https://...", "methods": ["POST"] } ],
+  "web_probe": { "purpose": "check whether a profile page exists" },  // desktop only
+  "config":    [ { "key": "max_concurrency", "type": "number" } ]
 }
 ```
+
+!!! warning "There is no `publish` scope"
+    A plugin cannot post into the project chat or feed — `ctx.message` does not exist. If you have a draft manifest carrying `"publish": ["message:post"]`, delete the key: `scopes` is `additionalProperties: false`, so the manifest now fails schema validation.
 
 ## graph
 
@@ -30,23 +33,18 @@ Fine-grained verbs over nodes and edges (`node:*` / `edge:*` × read/create/upda
 | `edge:update` | Update edge data | *(reserved; no dedicated method in the SDK types)* |
 | `edge:delete` | Delete an edge | `ctx.graph.deleteEdge` |
 
-!!! note "Bulk ops count as one write"
-    `deleteNodes(ids[])` and `emit(entities, edges)` count as a **single** bounded operation against the RunToken's `max_writes` cap, so a legitimate mass-delete (Korean Roulette, Thanos Snap) is not throttled to death. See [security](../develop/security.md).
+!!! note "A write verb is not a write"
+    Granting `node:create` (or any create/update/delete verb) does not let a plugin change the case. Writes are captured into the run's change set and reach the graph only when the analyst reviews that change set and applies it, under their own account. That review — not the scope string — is what actually bounds an untrusted plugin.
+
+!!! note "Bulk ops are one operation"
+    `deleteNodes(ids[])` and `deleteEdges(ids[])` are a **single** bounded call, not N separate writes: a legitimate mass-delete (Russian Roulette, Thanos Snap) is issued once and the host caps its own concurrency.
 
 !!! info "Emit needs both verbs"
     `ctx.graph.emit(entities, edges)` upserts nodes *and* edges. To use it for both, grant `node:create` and `edge:create`. With only `node:create`, pass `emit(entities)` with no edges.
 
-## publish
-
-| Scope string | Grants | `ctx` member |
-| --- | --- | --- |
-| `message:post` | Post a text message (with optional metadata) into the project chat/feed | `ctx.message.post` |
-
-`ctx.message` is present iff `message:post` is granted. (Source: the `@vineyard/plugin-sdk` package types — `PublishScope`, `HostContext.message`.)
-
 ## network
 
-Each entry is a `NetworkScope` object, **not** a bare string. `ctx.net` is present iff at least one network scope is declared. (Source: the `@vineyard/plugin-sdk` package types — `NetworkScope`, `HostContext.net`.)
+Each entry is a `NetworkScope` object, **not** a bare string. `ctx.net.fetch` is present iff at least one network scope is declared. (Source: the `@vineyard/plugin-sdk` package types — `NetworkScope`, `HostContext.net`.)
 
 ```jsonc
 "network": [
@@ -62,10 +60,27 @@ Each entry is a `NetworkScope` object, **not** a bare string. `ctx.net` is prese
 | `methods` | `HttpMethod[]` | Allowed verbs: `GET` `POST` `PUT` `PATCH` `DELETE` |
 | `purpose` | `string` (optional) | Human-readable reason, shown at install time |
 
-`ctx.net.fetch` / `ctx.net.fetchWithBackoff` are limited to these endpoints.
+`ctx.net.fetch` / `ctx.net.fetchWithBackoff` are limited to these endpoints. A URL is matched on its **parsed origin** plus a path-segment boundary, never as a string prefix — `https://h/v1` covers `/v1/search` but not `/v1beta`, and nothing at all on `https://h.attacker.test` (`plugins/net-allowlist.ts`, `endpointCovers`).
 
 !!! warning "Web: exactly one endpoint == proxy_endpoint"
-    For a **web** plugin the `network` array MUST contain exactly **one** entry whose `endpoint` equals `platforms.web.proxy_endpoint` — no fan-out. Egress is enforced by the worker origin's `Content-Security-Policy: connect-src`, not by JS. Desktop may declare more endpoints (the user's responsibility). The bridge forces `credentials: "omit"` and drops `Authorization` / `Cookie` headers (`SafeRequestInit`).
+    For a **web** plugin the `network` array MUST contain exactly **one** entry whose `endpoint` equals `platforms.web.proxy_endpoint` — no fan-out. Desktop may declare more endpoints (the user's responsibility) and adds a CSP on top; in the web build the allowlist check is the egress boundary. The bridge forces `credentials: "omit"` and drops `Authorization` / `Cookie` headers (`SafeRequestInit`), so a plugin can never smuggle the analyst's session onto an allowed endpoint.
+
+## web_probe
+
+A single object, **not** an array. It grants `ctx.net.probe` — one anonymous request against an *arbitrary* public host. Where `network` is an allowlist (the plugin names the endpoints it will call), `web_probe` is the opposite shape: a plugin such as account discovery cannot know in advance which of hundreds of sites it will hit, so it declares the *manner* of access instead and the host constrains it. (Source: the `@vineyard/plugin-sdk` package types — `WebProbeScope`, `HostContext.net.probe`.)
+
+```jsonc
+"web_probe": { "purpose": "check whether a username has a profile page" }
+```
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `purpose` | `string` (optional) | Human-readable reason |
+
+The host, not the plugin, sets the terms: no cookies and no credentials (`Cookie` / `Authorization` / `Host` are dropped), private and loopback targets refused, and `maxBytes` / `timeoutMs` clamped to a ceiling. Redirects are **not** followed — the caller sees the true status of the URL it asked for, which is what presence detection depends on (a 302 to a login page means "no account"), with the `Location` returned as `redirectUrl`.
+
+!!! warning "Desktop only"
+    `ctx.net.probe` is performed by the Electron main process — the only place a cross-origin response can be read from a host that declines CORS. In the web build the capability has no backing, so `ctx.net.probe` is **absent** even when granted. Check for it before calling and fall back (the WhatsMyName pack does exactly this).
 
 ## config
 
@@ -99,10 +114,10 @@ The following are **always available** and grant no authority over data or netwo
 Two members are also always present and not gated: `ctx.run` (this run's identity — `runId`, `projectId`, `pluginId`, `grantedScopes`, `platform`) and `ctx.input` (the trigger context, including `selection`).
 
 !!! example "A scope-0 plugin"
-    The Chaos pack's **Dumb AI Optimizer** declares no scopes at all. It still gets `ctx.params`, `ctx.progress`, and `ctx.signal` — but `ctx.graph`, `ctx.net`, `ctx.message`, and `ctx.config` are all `undefined`.
+    The Chaos pack's **Dumb AI Optimizer** declares no scopes at all. It still gets `ctx.params`, `ctx.progress`, and `ctx.signal` — but `ctx.graph`, `ctx.net`, and `ctx.config` are all `undefined`.
 
 ## Next / See also
 
-- [Security](../develop/security.md) — RunToken, CSP egress, secret scrubbing
+- [Security](../develop/security.md) — the worker sandbox, egress allowlist, secret scrubbing
 - [Plugin schema](plugin-schema.md) — the full manifest reference
 - [SDK](../develop/sdk.md) — `ctx` interface and `definePlugin`

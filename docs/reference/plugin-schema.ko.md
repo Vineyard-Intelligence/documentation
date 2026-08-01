@@ -113,18 +113,21 @@ plugin이 Type Pack에서 참조하는 엔티티 유형. `type: object`, `additi
 | `required` | array | no | items: string | 필수 필드 이름. |
 
 !!! warning "No secrets in params"
-    `params`는 비밀을 포함해서는 **안 됩니다**. API 키 및 자격 증명에는 `secret: true`가 있는 [`scopes.config`](#configvalue-scopesconfig-items) 항목을 사용하세요. registry는 비밀로 보이는 param 키를 거부합니다.
+    `params`는 비밀을 포함해서는 **안 됩니다**. API 키 및 자격 증명에는 `secret: true`가 있는 [`scopes.config`](#configvalue-scopesconfig-items) 항목을 사용하세요. 현재 비밀로 보이는 param 키를 거부하는 검사는 없습니다 — 강제되는 검사가 아니라 규칙입니다.
 
 ## scopes
 
-plugin의 권한 범위. `type: object`, `additionalProperties: false`. `ctx` 멤버는 부여되지 않으면 존재하지 않습니다. 샌드박스와 일회성 범위 run-token에 의해 시행됩니다. 동사 의미는 [scopes reference](scopes.md)를 참조하세요.
+plugin의 권한 범위. `type: object`, `additionalProperties: false`. `ctx` 멤버는 부여되지 않으면 존재하지 않습니다. 샌드박스에 의해 시행되며, 그래프 쓰기는 추가로 분석가의 검토를 거친 뒤에야 적용됩니다. 동사 의미는 [scopes reference](scopes.md)를 참조하세요.
 
 | Property | Type | Req. | Items / constraints | Meaning |
 |---|---|---|---|---|
 | `graph` | array | no | `uniqueItems`; enum 항목 (아래) | 세분화된 노드/엣지 동사. 프로젝트 `graph_edit` 티어에 의해 지원됩니다. |
-| `publish` | array | no | `uniqueItems`; 항목 enum: `message:post` | 프로젝트 채팅/메시지 스트림에 게시. `chat_send` 티어에 의해 지원됩니다. |
+| `web_probe` | object | no | `{ purpose?: string }` — 배열이 아니라 객체 | **데스크탑 전용.** 셸의 메인 프로세스가 수행하는, *임의의* 공개 호스트에 대한 익명 요청 1회. `ctx.net.probe`를 지원하며, 웹 빌드에서는 뒷받침이 없어 `ctx.net.probe`가 존재하지 않습니다. |
 | `network` | array | no | 항목: [`networkScope`](#networkscope-scopesnetwork-items) | 외부 XHR 대상. |
 | `config` | array | no | 항목: [`configValue`](#configvalue-scopesconfig-items) | 런타임에만 주입되는 설치 시 값. |
+
+!!! warning "There is no `publish` scope"
+    스키마가 모델링하는 키는 위의 것들뿐입니다. 작성 중인 manifest에 `"publish": ["message:post"]`가 남아 있다면 해당 키를 삭제하세요 — `scopes`는 `additionalProperties: false`이므로 manifest가 검증에 실패합니다.
 
 `scopes.graph` enum 값 (각각 최대 한 번만 나타날 수 있음):
 
@@ -259,7 +262,6 @@ Task 실행 모델. `type: object`, `additionalProperties: false`. 모든 속성
 
   "scopes": {                                        // (8)!
     "graph": ["node:read", "node:create", "edge:create"],
-    "publish": [],
     "network": [],
     "config": []
   },
