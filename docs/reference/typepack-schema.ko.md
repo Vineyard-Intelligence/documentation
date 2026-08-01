@@ -180,9 +180,9 @@ plugin과 Type Pack 양쪽에서 사용되는 공유 블록 (`#/$defs/distributi
   "identifier": "run.vineyard.typepacks.infrastructure", // reverse-DNS id
   "content_type": "vineyard:typepack",                 // 판별자 (const)
   "version": "1.0.0",                                  // 팩 내용 SemVer
-  "name": "VINEYARD.RUN Type Pack - Infrastructure",
+  "name": "VINEYARD Type Pack - Infrastructure",
   "description": "Network infrastructure CTI entities and their relationships.",
-  "authors": [{ "name": "VINEYARD.RUN", "url": "https://vineyard.run" }],
+  "authors": [{ "name": "VINEYARD", "url": "https://vineyard.run" }],
   "license": "Apache-2.0",                             // SPDX 표현식
   "distribution": {                                    // 불변 git 소스
     "kind": "git",

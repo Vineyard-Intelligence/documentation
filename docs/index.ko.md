@@ -1,5 +1,5 @@
 ---
-title: VINEYARD.RUN Documentation
+title: VINEYARD Documentation
 hide:
   - navigation
   - toc
@@ -7,7 +7,7 @@ hide:
 
 <div class="vy-hero" markdown>
 
-# VINEYARD.RUN용 팩 빌드, 공유 및 실행
+# VINEYARD용 팩 빌드, 공유 및 실행
 
 Plugin Pack(JavaScript), Type Pack(JSON), Skill Pack(조사 플레이북)은
 메타데이터 전용 GitHub 레지스트리를 통해 배포되지만, **클라이언트에서 실행**됩니다.

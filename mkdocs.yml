@@ -1,10 +1,10 @@
-site_name: VINEYARD.RUN Documentation
+site_name: VINEYARD Documentation
 site_description: >-
   User guide, developer documentation, and the marketplace browser for the
-  VINEYARD.RUN Plugin Pack and Type Pack ecosystem.
+  VINEYARD Plugin Pack and Type Pack ecosystem.
 site_author: vineyard-run
 site_url: https://docs.vineyard.run/
-copyright: Copyright &copy; VINEYARD.RUN
+copyright: Copyright &copy; VINEYARD
 
 # Fully static output. `mkdocs build` produces ./site_html with no server requirement.
 docs_dir: docs
@@ -70,7 +70,7 @@ extra:
   social:
     - icon: fontawesome/solid/globe
       link: https://vineyard.run
-      name: VINEYARD.RUN homepage
+      name: VINEYARD homepage
 
 markdown_extensions:
   - abbr

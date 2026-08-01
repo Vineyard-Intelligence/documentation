@@ -223,7 +223,7 @@ A full, valid manifest — the **CIDR Expand** reference plugin. It consumes an 
   "name": "CIDR Expand",
   "version": "1.0.0",                               // (3)!
   "description": "Expand a CIDR block into its constituent IP address nodes. Pure compute, no network, runs identically on web and desktop.",
-  "author": { "name": "VINEYARD.RUN", "url": "https://vineyard.run" },
+  "author": { "name": "VINEYARD", "url": "https://vineyard.run" },
   "license": "MIT",
   "icon": "sitemap",                                // (4)!
   "thumbnail_url": "https://vineyard.run/assets/plugins/cidr-expand.png",

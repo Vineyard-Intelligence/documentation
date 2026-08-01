@@ -1,5 +1,5 @@
 /* ============================================================================
-   VINEYARD.RUN community browser — fully static, client-side only.
+   VINEYARD community browser — fully static, client-side only.
    Renders the plugin + typepack registry (fetched from the registry site)
    as a searchable/filterable card grid with a detail drawer.
    No backend, no build: fetches the two community-*.json index files for the
