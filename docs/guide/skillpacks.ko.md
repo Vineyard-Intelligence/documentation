@@ -31,7 +31,7 @@ Skill Pack은 플러그인과 정확히 같은 방식으로 [마켓플레이스]
 
 | Skill Pack | `applies_to` | 요구 사항 | 하는 일 |
 | --- | --- | --- | --- |
-| **Account & identity pivoting** (`run.vineyard.skillpacks.account_pivot`) | `identity.handle`, `identity.user_account`, `identity.email_address`, `identity.person` | `run.vineyard.pluginpacks.whatsmyname` | 하나의 계정이나 핸들을 그 사람의 다른 계정들로 확장 — 그리고 공유된 사용자명이 **같은 사람이 아닌** 경우를 구분합니다. |
+| **Account & identity pivoting** (`run.vineyard.skillpacks.account_identity_pivot`) | `identity.handle`, `identity.user_account`, `identity.email_address`, `identity.person` | `run.vineyard.pluginpacks.whatsmyname` | 하나의 계정이나 핸들을 그 사람의 다른 계정들로 확장 — 그리고 공유된 사용자명이 **같은 사람이 아닌** 경우를 구분합니다. |
 | **Infrastructure pivoting** (`run.vineyard.skillpacks.infra_pivot`) | `infrastructure.ip_address`, `infrastructure.domain`, `infrastructure.certificate`, `infrastructure.autonomous_system` | — (내장 그래프 툴) | 하나의 지표(IP/도메인/인증서)를 연결된 발자국으로, 검증 가능한 홉씩 확장합니다. |
 
 ## Skill Pack 사용
