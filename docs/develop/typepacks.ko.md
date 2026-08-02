@@ -124,7 +124,7 @@ Type Pack은 `secret` 또는 `credential` 프로퍼티 타입을 선언할 수 *
 {
   "category": "threat",
   "name": "exploits",
-  "label": "exploits",                 // Edge.label에 그대로 저장, <= 64자
+  "label": "exploits",                 // Edge.label에 그대로 저장, <= 1024자
   "directed": true,                     // 기본값 true
   "from": ["threat.malware"],           // 허용된 소스 노드 타입 참조 (category.name); '*' = 모든 것
   "to":   ["threat.vulnerability"],     // 허용된 대상 노드 타입 참조; '*' = 모든 것
