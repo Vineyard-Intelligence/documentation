@@ -17,7 +17,7 @@ repo at a pinned commit (exactly like a plugin manifest or Type Pack):
 ```jsonc
 {
   "content_type": "vineyard:skillpack",
-  "identifier": "run.vineyard.skillpacks.account_pivot",
+  "identifier": "run.vineyard.skillpacks.account_identity_pivot",
   "name": "Account & identity pivoting",
   "description": "Turn one account or handle into the person's other accounts, and know when a shared username is NOT the same person.",
   "author": "vineyard-run",
@@ -101,7 +101,7 @@ author repo, and the registry holds a single lean entry in `community-skillpacks
 
 ```json
 {
-  "identifier": "run.vineyard.skillpacks.account_pivot",
+  "identifier": "run.vineyard.skillpacks.account_identity_pivot",
   "content_type": "vineyard:skillpack",
   "name": "Account & identity pivoting",
   "author": "vineyard-run",
