@@ -124,7 +124,7 @@ The Threat pack, for example, uses lucide names like `bug` (malware), `shield-al
 {
   "category": "threat",
   "name": "exploits",
-  "label": "exploits",                 // stored verbatim in Edge.label, <= 64 chars
+  "label": "exploits",                 // stored verbatim in Edge.label, <= 1024 chars
   "directed": true,                     // default true
   "from": ["threat.malware"],           // allowed source node-type refs (category.name); '*' = any
   "to":   ["threat.vulnerability"],     // allowed target node-type refs; '*' = any

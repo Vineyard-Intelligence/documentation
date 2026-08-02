@@ -163,7 +163,7 @@ plugin과 Type Pack 양쪽에서 사용되는 공유 블록 (`#/$defs/distributi
 |-------|------|-----|-----------------------|---------|
 | `category` | identifierSegment | yes | snake_case, ≤31 | 그룹화 네임스페이스. |
 | `name` | identifierSegment | yes | snake_case, ≤31 | 엣지 type 이름. |
-| `label` | string | yes | `maxLength: 64` | `Edge.label`에 그대로 저장됨. |
+| `label` | string | yes | `maxLength: 1024` | `Edge.label`에 그대로 저장됨. |
 | `display_name` | string | no | — | 사람용 라벨. |
 | `description` | string | no | — | 관계의 의미. |
 | `directed` | boolean | no | `default: true` | 엣지가 방향성인지 여부. |
@@ -243,7 +243,7 @@ plugin과 Type Pack 양쪽에서 사용되는 공유 블록 (`#/$defs/distributi
     {
       "category": "infrastructure",
       "name": "announced_by",
-      "label": "announced_by",                         // Edge.label에 저장됨 (<=64)
+      "label": "announced_by",                         // Edge.label에 저장됨 (<=1024)
       "display_name": "Announced By",
       "description": "An IP address is announced by an autonomous system.",
       "from": ["infrastructure.ip_address"],           // 정규화된 엔드포인트 참조
