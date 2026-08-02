@@ -39,7 +39,7 @@ The current catalog ships two Skill Packs:
 
 | Skill Pack | `applies_to` | Requires | What it does |
 | --- | --- | --- | --- |
-| **Account & identity pivoting** (`run.vineyard.skillpacks.account_pivot`) | `identity.handle`, `identity.user_account`, `identity.email_address`, `identity.person` | `run.vineyard.pluginpacks.whatsmyname` | Turn one account or handle into the person's other accounts — and know when a shared username is **not** the same person. |
+| **Account & identity pivoting** (`run.vineyard.skillpacks.account_identity_pivot`) | `identity.handle`, `identity.user_account`, `identity.email_address`, `identity.person` | `run.vineyard.pluginpacks.whatsmyname` | Turn one account or handle into the person's other accounts — and know when a shared username is **not** the same person. |
 | **Infrastructure pivoting** (`run.vineyard.skillpacks.infra_pivot`) | `infrastructure.ip_address`, `infrastructure.domain`, `infrastructure.certificate`, `infrastructure.autonomous_system` | — (built-in graph tools) | Expand one indicator (IP/domain/cert) into its connected footprint, one verifiable hop at a time. |
 
 ## Using a Skill Pack
