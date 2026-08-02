@@ -163,7 +163,7 @@ Each item defines a directed relationship type (`#/$defs/edgeType`, `additionalP
 |-------|------|-----|-----------------------|---------|
 | `category` | identifierSegment | yes | snake_case, ≤31 | Grouping namespace. |
 | `name` | identifierSegment | yes | snake_case, ≤31 | Edge type name. |
-| `label` | string | yes | `maxLength: 64` | Stored verbatim in `Edge.label`. |
+| `label` | string | yes | `maxLength: 1024` | Stored verbatim in `Edge.label`. |
 | `display_name` | string | no | — | Human label. |
 | `description` | string | no | — | What the relationship means. |
 | `directed` | boolean | no | `default: true` | Whether the edge is directional. |
@@ -243,7 +243,7 @@ A trimmed, fully valid `vineyard:typepack` showing the top-level block, two node
     {
       "category": "infrastructure",
       "name": "announced_by",
-      "label": "announced_by",                         // stored in Edge.label (<=64)
+      "label": "announced_by",                         // stored in Edge.label (<=1024)
       "display_name": "Announced By",
       "description": "An IP address is announced by an autonomous system.",
       "from": ["infrastructure.ip_address"],           // qualified endpoint refs
