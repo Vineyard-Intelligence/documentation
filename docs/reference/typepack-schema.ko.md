@@ -254,7 +254,7 @@ plugin과 Type Pack 양쪽에서 사용되는 공유 블록 (`#/$defs/distributi
 ```
 
 !!! example "More patterns in the real pack"
-    출시된 Infrastructure 팩은 `reference` 속성 (`infrastructure.url.domain` → `{ "target": "infrastructure.domain" }`), `hash`/`date`/`datetime`/`text` 유형 (`whois_record` 및 `certificate` 내), 그리고 `from`/`to`가 여러 노드 유형을 나열하는 다중 소스 엣지 (예: `resolves_to`가 `infrastructure.domain` **및** `infrastructure.url`로부터)도 보여줍니다. [Type Packs guide](../guide/typepacks.md)를 참조하세요.
+    출시된 Infrastructure 팩은 `reference` 속성 (`web.url.domain` → `{ "target": "infrastructure.domain" }` — 속성 자신이 속한 유형의 카테고리(`web`)와 참조 대상 유형의 카테고리(`infrastructure`)가 다름에 유의하세요. `category`는 참조나 엣지를 가로질러 일치할 필요가 없고, 같은 팩/배포 단위 안에만 있으면 됩니다), `hash`/`date`/`datetime`/`text` 유형 (`whois_record` 및 `certificate` 내), 그리고 `from`/`to`가 여러 노드 유형을 나열하는 다중 소스 엣지 (예: `resolves_to`가 `infrastructure.domain` **및** `web.url`로부터)도 보여줍니다. [Type Packs guide](../guide/typepacks.md)를 참조하세요.
 
 ## Validation notes
 
