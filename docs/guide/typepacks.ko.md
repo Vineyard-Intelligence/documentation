@@ -37,7 +37,7 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 
 | 팩 (`identifier`) | 카테고리 | 유형 | 모델링 대상 |
 |---|---|---|---|
-| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure` | 10 | 정찰 중 매핑하는 네트워크 |
+| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 10 | 정찰 중 매핑하는 네트워크, 그리고 그 위에서 관측되는 웹 리소스(URL) |
 | **Threat** (`…typepacks.threat`) | `threat` | 9 | 위협 인텔리전스 (STIX 정렬) |
 | **Identity** (`…typepacks.identity`) | `identity` | 5 | 사람, 조직, 온라인 페르소나 |
 | **Financial** (`…typepacks.financial`) | `financial` | 4 | 자금 흐름 |
@@ -47,13 +47,12 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 ### Infrastructure — 자세히 보기
 
 `run.vineyard.typepacks.infrastructure`는 정찰 중 매핑하는 네트워크 측 엔티티를
-모델링하며, 모두 `infrastructure` 카테고리에 있습니다:
+`infrastructure` 카테고리로 모델링합니다:
 
 | 유형 (`category.name`) | 표시 라벨 | 주요 속성 |
 |---|---|---|
 | `infrastructure.ip_address` | IP 주소 | `version`, `country_code`, `asn`, `reverse_dns` |
 | `infrastructure.domain` | 도메인 이름 | `registrar`, `created_date`, `name_servers` |
-| `infrastructure.url` | URL | `domain` (→ `infrastructure.domain`), `http_status` |
 | `infrastructure.host` | 호스트 이름 | `ip_address`, `operating_system`, `open_ports` |
 | `infrastructure.autonomous_system` | ASN | `autonomous_system_name`, `registry` |
 | `infrastructure.netblock` | CIDR | `network_name`, `asn` |
@@ -62,12 +61,20 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 | `infrastructure.certificate` | SHA-256 지문 | `subject_common_name`, `issuer`, `not_after` |
 | `infrastructure.technologies` | 기술 이름 | `kind`, `vendor`, `version`, `cpe` |
 
-엣지 유형이 정찰 그래프를 연결합니다: `resolves_to`, `has_address`, `announced_by`,
-`contains`, `has_record`, `subdomain_of`, `has_domain`, `redirects_to`, `has_whois`,
-`presents_certificate`, 그리고 `runs_technology`(호스트, IP, 도메인, URL을 그것이 실행하거나
-제공받는 소프트웨어, 하드웨어, 또는 서드파티 서비스 — 예: Cloudflare — 에 연결).
-각 유형은 자체 아이콘과 색상을 가지므로, `ip_address`, `domain`, `certificate`가
-한눈에 구분됩니다.
+같은 팩이 별도의 `web` 카테고리로 유형 하나를 더 제공합니다 — 리소스 로케이터는
+관측된 웹 아티팩트(페이지 제목, HTTP 상태, 리다이렉트 후 최종 URL)이지 네트워크
+substrate가 아니므로, 별도 설치 없이 같은 팩 안에서 카테고리만 분리됩니다:
+
+| 유형 (`category.name`) | 표시 라벨 | 주요 속성 |
+|---|---|---|
+| `web.url` | URL | `domain` (→ `infrastructure.domain`), `http_status` |
+
+엣지 유형이 두 카테고리를 가로질러 정찰 그래프를 연결합니다: `resolves_to`,
+`has_address`, `announced_by`, `contains`, `has_record`, `subdomain_of`, `has_domain`,
+`redirects_to`, `has_whois`, `presents_certificate`, 그리고 `runs_technology`(호스트, IP,
+도메인, URL을 그것이 실행하거나 제공받는 소프트웨어, 하드웨어, 또는 서드파티 서비스 —
+예: Cloudflare — 에 연결). 각 유형은 자체 아이콘과 색상을 가지므로, `ip_address`,
+`domain`, `certificate`가 한눈에 구분됩니다.
 
 다른 팩도 같은 형태를 따릅니다 — 예를 들어 **Threat** 팩은 `threat.malware`,
 `threat.threat_actor`, `threat.indicator`, `threat.operation`(캠페인 내의 경계된 작업 —
