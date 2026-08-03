@@ -38,7 +38,7 @@ one pack to another (a `threat.malware` that **communicates with** an
 
 | Pack (`identifier`) | Category | Types | Models |
 |---|---|---|---|
-| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure` | 10 | The network you map during recon |
+| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 10 | The network you map during recon, plus the web resource (URL) observed on it |
 | **Threat** (`…typepacks.threat`) | `threat` | 9 | Threat-intelligence (STIX-aligned) |
 | **Identity** (`…typepacks.identity`) | `identity` | 5 | People, orgs, and online personas |
 | **Financial** (`…typepacks.financial`) | `financial` | 4 | The money trail |
@@ -48,13 +48,12 @@ one pack to another (a `threat.malware` that **communicates with** an
 ### Infrastructure — a closer look
 
 `run.vineyard.typepacks.infrastructure` models the network-side entities you map during
-reconnaissance, all in the `infrastructure` category:
+reconnaissance, in the `infrastructure` category:
 
 | Type (`category.name`) | Label shown | Notable properties |
 |---|---|---|
 | `infrastructure.ip_address` | the IP address | `version`, `country_code`, `asn`, `reverse_dns` |
 | `infrastructure.domain` | the domain name | `registrar`, `created_date`, `name_servers` |
-| `infrastructure.url` | the URL | `domain` (→ `infrastructure.domain`), `http_status` |
 | `infrastructure.host` | the hostname | `ip_address`, `operating_system`, `open_ports` |
 | `infrastructure.autonomous_system` | the ASN | `autonomous_system_name`, `registry` |
 | `infrastructure.netblock` | the CIDR | `network_name`, `asn` |
@@ -63,12 +62,20 @@ reconnaissance, all in the `infrastructure` category:
 | `infrastructure.certificate` | the SHA-256 fingerprint | `subject_common_name`, `issuer`, `not_after` |
 | `infrastructure.technologies` | the technology name | `kind`, `vendor`, `version`, `cpe` |
 
-Edge types wire the recon graph together: `resolves_to`, `has_address`, `announced_by`,
-`contains`, `has_record`, `subdomain_of`, `has_domain`, `redirects_to`, `has_whois`,
-`presents_certificate`, and `runs_technology` (which links a host, IP, domain, or URL to the
-software, hardware, or third-party service — such as Cloudflare — it runs or is served by).
-Each type ships its own icon and color, so an `ip_address`, a `domain`, and a `certificate` are
-visually distinct at a glance.
+The same pack also ships one type in a separate `web` category — a resource locator is an
+observed web artifact (page title, HTTP status, final URL after redirects), not network
+substrate, so it gets its own category without needing its own install:
+
+| Type (`category.name`) | Label shown | Notable properties |
+|---|---|---|
+| `web.url` | the URL | `domain` (→ `infrastructure.domain`), `http_status` |
+
+Edge types wire the recon graph together across both categories: `resolves_to`, `has_address`,
+`announced_by`, `contains`, `has_record`, `subdomain_of`, `has_domain`, `redirects_to`,
+`has_whois`, `presents_certificate`, and `runs_technology` (which links a host, IP, domain, or
+URL to the software, hardware, or third-party service — such as Cloudflare — it runs or is
+served by). Each type ships its own icon and color, so an `ip_address`, a `domain`, and a
+`certificate` are visually distinct at a glance.
 
 The other packs follow the same shape — for example the **Threat** pack adds
 `threat.malware`, `threat.threat_actor`, `threat.indicator`, and `threat.operation` (a bounded

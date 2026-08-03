@@ -254,7 +254,7 @@ A trimmed, fully valid `vineyard:typepack` showing the top-level block, two node
 ```
 
 !!! example "More patterns in the real pack"
-    The shipped Infrastructure pack also demonstrates a `reference` property (`infrastructure.url.domain` → `{ "target": "infrastructure.domain" }`), `hash`/`date`/`datetime`/`text` types (in `whois_record` and `certificate`), and multi-source edges where `from`/`to` list several node types (e.g. `resolves_to` from `infrastructure.domain` **and** `infrastructure.url`). See the [Type Packs guide](../guide/typepacks.md).
+    The shipped Infrastructure pack also demonstrates a `reference` property (`web.url.domain` → `{ "target": "infrastructure.domain" }` — note the property's own type, `web`, differs from its reference target's type, `infrastructure`; `category` doesn't have to match across a reference or an edge, only within the same pack/distribution unit), `hash`/`date`/`datetime`/`text` types (in `whois_record` and `certificate`), and multi-source edges where `from`/`to` list several node types (e.g. `resolves_to` from `infrastructure.domain` **and** `web.url`). See the [Type Packs guide](../guide/typepacks.md).
 
 ## Validation notes
 
