@@ -111,7 +111,10 @@ Type Pack은 `secret` 또는 `credential` 프로퍼티 타입을 선언할 수 *
     2. 그 외에는 케밥 케이스의 **lucide** 아이콘 이름(예: `shield-alert`) → SVG로 직렬화되어 `color`로 색조 지정됨;
     3. 그 외에는 리터럴 **글리프/이모지**.
 
-    `icon`이 없으면 노드는 `color`만으로 렌더링됩니다. (lucide는 기본 아이콘 세트입니다. 호스트는 알 수 없는 lucide 이름을 색상 폴백으로 렌더링합니다.)
+    `icon`이 없으면 노드는 `color`만으로 렌더링됩니다. lucide가 기본 아이콘 세트이며, 호스트가
+    **전체 세트를 번들**하므로 케밥 케이스의 모든 lucide 이름이 해석됩니다(서드파티 팩이 새
+    아이콘을 쓰기 위해 프론트엔드 변경이 필요 없습니다). lucide 아이콘이 아닌 이름은
+    `color` 폴백으로 렌더링됩니다.
 - **`color`**는 `#rrggbb`입니다. 없으면 `category.name`에서 안정적인 색상이 해시됩니다.
 
 예를 들어 Threat 팩은 `bug`(malware), `shield-alert`(vulnerability), `venetian-mask`(threat actor)와 같은 lucide 이름을 사용합니다.
@@ -139,6 +142,15 @@ Type Pack은 `secret` 또는 `credential` 프로퍼티 타입을 선언할 수 *
 ## 타입 식별 및 저장
 
 노드 타입은 정규화된 문자열 `"<category>.<name>"`으로 주소 지정됩니다 — 예: `infrastructure.ip_address` 또는 `threat.malware`. 이 정규화된 형태가 `Node.type`이 저장하는 값이며, 플러그인의 `io.consumes` / `io.produces` 및 `emit`이 참조하는 값입니다. 엣지 타입은 `Edge.label`에 매핑됩니다. 엣지 프로퍼티(사용 시)는 `Edge.data`에 저장됩니다.
+
+**중복 제거는 정확한 정규화 유형을 키로 사용합니다.** 플러그인이나 AI 작업이 노드를 추가할 때
+호스트는 `"<category>.<name>"` + 식별 값(`label_property`, 그 외 `value`, 그 외 `name`)으로
+중복을 제거합니다. 유형은 정확한 정규화 키로만 해석되며, 설치된 팩에 정의되지 않은 유형의
+노드는 원래 유형 문자열을 유지합니다 — 따라서 팩이 유형을 다른 카테고리로 이동시켜도
+(예: `url`이 `infrastructure`에서 `web`으로) 기존 노드가 새 유형의 생성물과 병합되지 않습니다.
+설치된 팩에 정의되지 않은 유형으로 노드를 생성하는 것은 거부됩니다. (플러그인은 사용하는
+팩을 `io.consumes`/`io.produces`에 선언해야 하며, 마켓플레이스가 그 팩들을 플러그인과 함께
+설치합니다.)
 
 ## 버전 관리
 

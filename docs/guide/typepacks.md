@@ -91,7 +91,10 @@ adds the people and personas behind the activity.
 !!! note "Identity & de-duplication"
     When a plugin or AI task adds a node, Vineyard de-duplicates by **type + the
     `label_property` value** — two nodes of the same type with the same label are merged and
-    their properties combined. The most useful label is therefore one that is both readable
+    their properties combined. The type is matched by its **exact qualified key**
+    (`category.name`); a node whose type no installed pack defines keeps its raw type string,
+    so moving a type between categories in a new pack version never merges old nodes with the
+    new type's creates. The most useful label is therefore one that is both readable
     *and* identifying. Most types key on a naturally-unique field (an IP, a CVE id, a tx
     hash, a WHOIS subject). Where a type's label is inherently non-unique — a
     `identity.person`'s name, an `endpoint.process`'s image name — distinct entities sharing

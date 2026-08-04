@@ -63,11 +63,15 @@ language. Approve, and the plugin becomes available to run in the project.
 For a **Type Pack** or **Skill Pack** there is no approval step — they carry no permissions —
 and the install completes immediately.
 
-!!! tip "Plugins can depend on Type Packs"
+!!! tip "Packs install their dependencies automatically"
     A plugin whose inputs/outputs reference a Type Pack's types needs that Type Pack installed
-    first. The marketplace shows an *"install the Type Pack first"* state when a dependency is
-    missing. A Skill Pack can similarly require specific Plugin Packs, which the marketplace
-    offers for co-install.
+    first — the marketplace resolves this for you: installing a Plugin Pack also installs every
+    Type Pack its plugins `consume`/`produce`, and installing a Skill Pack pulls in the Plugin
+    Packs it requires **and their Type Packs** (skill → plugin → typepack, resolved against the
+    catalog in one pass). Already-installed packs are skipped; a dependency that cannot be
+    resolved (not in the catalog) blocks the install rather than leaving a pack that fails at
+    run time. An installed plugin whose Type Packs were never installed is repaired the next
+    time its Skill Pack is installed.
 
 ## Installing into a project
 
