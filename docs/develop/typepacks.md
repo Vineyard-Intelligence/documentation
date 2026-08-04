@@ -111,7 +111,10 @@ Both are per-entity-type and optional; the canvas and the Types/Properties panel
     2. otherwise a kebab-case **lucide** icon name (e.g. `shield-alert`) → serialized to an SVG and tinted to `color`;
     3. otherwise a literal **glyph/emoji**.
 
-    When `icon` is absent, the node renders with `color` only. (lucide is the default icon set; a host renders an unknown lucide name as the color fallback.)
+    When `icon` is absent, the node renders with `color` only. lucide is the default icon set:
+    the host bundles the complete set, so **any** kebab-case lucide name resolves (a third-party
+    pack never needs a frontend change to use an icon); a name that is not a lucide icon falls
+    back to `color`.
 - **`color`** is `#rrggbb`. When absent, a stable color is hashed from `category.name`.
 
 The Threat pack, for example, uses lucide names like `bug` (malware), `shield-alert` (vulnerability), and `venetian-mask` (threat actor).
@@ -139,6 +142,15 @@ The Threat pack, for example, uses lucide names like `bug` (malware), `shield-al
 ## Type identity & storage
 
 A node type is addressed as the qualified string `"<category>.<name>"` — e.g. `infrastructure.ip_address` or `threat.malware`. This qualified form is what `Node.type` stores and what a plugin's `io.consumes` / `io.produces` and `emit` reference. Edge types map to `Edge.label`; edge properties (when used) live in `Edge.data`.
+
+**De-duplication keys on the exact qualified type.** When a plugin or AI task adds a node, the
+host de-duplicates by `"<category>.<name>"` + the identifying value (`label_property`, else
+`value`, else `name`). The type is resolved by its exact qualified key only — a node whose type
+is not defined by an installed pack keeps its raw type string, so a pack that moves a type to
+another category (e.g. `url` from `infrastructure` to `web`) never merges old nodes with the new
+type's creates. Creating a node with a type no installed pack defines is refused outright.
+(Plugins are expected to declare the packs they use in `io.consumes`/`io.produces`; the
+marketplace installs those packs alongside the plugin.)
 
 ## Versioning
 

@@ -91,7 +91,7 @@ Each item in `types` defines one **node** entity type (`#/$defs/entityType`, `ad
 The fully qualified type reference is `category.name` (e.g. `infrastructure.ip_address`). That qualified form is what edge endpoints and `reference` targets point at.
 
 !!! info "Icon resolution order"
-    `icon` is polymorphic and resolved in order: a `data:` / `http(s):` image URI; else a kebab-case [lucide](https://lucide.dev) icon name (e.g. `shield-alert`); else a literal glyph/emoji.
+    `icon` is polymorphic and resolved in order: a `data:` / `http(s):` image URI; else a kebab-case [lucide](https://lucide.dev) icon name (e.g. `shield-alert`); else a literal glyph/emoji. The host bundles the **complete** lucide set, so any kebab-case lucide name resolves — a pack never needs a frontend change to use a new icon.
 
 ## Property object
 

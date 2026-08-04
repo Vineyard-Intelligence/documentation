@@ -91,7 +91,7 @@ plugin과 Type Pack 양쪽에서 사용되는 공유 블록 (`#/$defs/distributi
 완전한 정규화 type 참조는 `category.name`입니다 (예: `infrastructure.ip_address`). 이 정규화된 형식은 엣지 엔드포인트와 `reference` 대상이 가리키는 것입니다.
 
 !!! info "Icon resolution order"
-    `icon`은 다형적이며 다음 순서로 해석됩니다: `data:` / `http(s):` 이미지 URI; 그 외 kebab-case [lucide](https://lucide.dev) 아이콘 이름 (예: `shield-alert`); 그 외 리터럴 글리프/이모지.
+    `icon`은 다형적이며 다음 순서로 해석됩니다: `data:` / `http(s):` 이미지 URI; 그 외 kebab-case [lucide](https://lucide.dev) 아이콘 이름 (예: `shield-alert`); 그 외 리터럴 글리프/이모지. 호스트가 **전체** lucide 세트를 번들하므로 어떤 kebab-case lucide 이름이든 해석됩니다 — 팩이 새 아이콘을 쓰기 위해 프론트엔드 변경이 필요 없습니다.
 
 ## Property object
 
