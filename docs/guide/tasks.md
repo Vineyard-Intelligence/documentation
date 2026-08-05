@@ -98,6 +98,18 @@ Tasks are stored in tiers, and the default is to keep them out of the server ent
 !!! tip "AI chat is stateless unless you save"
     AI chat no longer auto-persists. Each turn is a streaming task; conversations and messages are not written to the server unless you explicitly save them.
 
+## Conversation compaction (token compression)
+
+Long AI conversations are compressed **automatically** — there is no manual `/compact` command. When the conversation history would exceed the model's context window, Vineyard folds the oldest turns into a single dense summary so the agent keeps working on the whole case instead of forgetting its start.
+
+How it works:
+
+1. **Trigger.** Each turn, Vineyard estimates the history's token count (roughly 4 characters per token, deliberately crude) and compares it against a history budget — about 35% of the model's context window (32k fallback when the provider reports none). Compaction happens *before* the window is full, because the system prompt, tool schemas, tool results and the model's answer all share the same window.
+2. **What survives verbatim.** The **most recent 4 turns** (two analyst exchanges) are always kept as-is, so immediate context is never summarized.
+3. **What gets compressed.** Everything older is sent to the LLM (the same model you configured, so the summary is written in the same language and register as the conversation) with instructions to produce a dense factual summary of at most 200 words: indicators and entities discussed (domains, IPs, accounts, hashes), what was established about each and on what evidence, decisions made, what was rejected and why, and open questions. No speculation is added.
+4. **The replacement.** The summary replaces the old turns as a single message prefixed `[earlier conversation, summarized]`. A previous summary is summarized again along with what followed it, so a long session converges instead of stacking summaries.
+5. **Failure is silent-safe.** If the summarization call fails, the history is left **unchanged** — compaction never silently drops the earlier half of an investigation. You would see the provider error instead.
+
 ## Collaborator presence
 
 When you share a project, Vineyard shows a live presence beacon for collaborators — their status and the subject of what they are doing — over the project's real-time connection. This is in-memory only: it carries no secrets and is not persisted.
