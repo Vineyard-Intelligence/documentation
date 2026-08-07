@@ -115,6 +115,35 @@ plugin이 Type Pack에서 참조하는 엔티티 유형. `type: object`, `additi
 !!! warning "No secrets in params"
     `params`는 비밀을 포함해서는 **안 됩니다**. API 키 및 자격 증명에는 `secret: true`가 있는 [`scopes.config`](#configvalue-scopesconfig-items) 항목을 사용하세요. 현재 비밀로 보이는 param 키를 거부하는 검사는 없습니다 — 강제되는 검사가 아니라 규칙입니다.
 
+### 파일 필드
+
+`"format": "file"`로 선언된 필드는 드롭존으로 렌더링됩니다 — 파일을 끌어놓거나 클릭해서 고릅니다. 여기에 `"type": "array"`를 더하면 **다중 선택**이 되고, 그 외에는 파일 하나만 받습니다(두 개를 떨어뜨리면 조용히 잘라내지 않고 거부합니다). 폴더를 떨어뜨리면 재귀적으로 펼쳐집니다.
+
+| Property | Type | Req. | Meaning |
+|---|---|---|---|
+| `format` | string | yes | `file`. 없으면 일반 입력 필드입니다. |
+| `type` | string | no | 여러 파일이면 `array`. 생략하면(또는 다른 타입이면) 한 개. |
+| `accept` | string | no | MIME 필터(예: `image/*`). 맨 파일 인풋의 `accept`와 달리 **드래그 중에도** 비매칭 파일을 거부합니다. 생략하면 필터 없음. |
+
+`run(ctx)`가 받는 값은 **`File` 객체 그 자체**(또는 그 배열)입니다 — data: URL도, 경로도 아닙니다. `await file.arrayBuffer()`로 바이트를 읽고 파일명은 `file.name`에서 가져오세요. 별도의 "파일 이름" 동반 필드는 없습니다.
+
+```json
+"params": {
+  "type": "object",
+  "properties": {
+    "images": { "type": "array", "format": "file", "accept": "image/*",
+                "title": "Image files",
+                "description": "One or more JPEG photos, read locally (never uploaded)." }
+  },
+  "required": ["images"]
+}
+```
+
+!!! note "한 번의 run, 한 번의 배치"
+    다중 파일 필드는 선택된 전체를 **단일** run에 넘깁니다 — 호스트가 파일당 run 하나로 팬아웃하지 않습니다. 직접 순회하면서 `ctx.progress.set({ percent })`로 진행률을 보고하고, 매 반복마다 `ctx.signal.aborted`를 확인해 Stop이 동작하게 하세요. 의도된 설계입니다: run이 N개면 분석가가 한 번의 작업으로 여기는 일에 대해 task 행이 N개, 별개의 리뷰 다이얼로그가 N개 생깁니다.
+
+    호스트는 파일당 25 MB, run당 250 MB, 최대 50개로 선택을 제한합니다. 파일은 blob 핸들로 샌드박스에 전달되므로 실제 메모리 비용은 플러그인이 실체화하는 만큼입니다 — 배치를 `Promise.all`로 묶지 말고 한 번에 하나씩 읽으세요.
+
 ## scopes
 
 plugin의 권한 범위. `type: object`, `additionalProperties: false`. `ctx` 멤버는 부여되지 않으면 존재하지 않습니다. 샌드박스에 의해 시행되며, 그래프 쓰기는 추가로 분석가의 검토를 거친 뒤에야 적용됩니다. 동사 의미는 [scopes reference](scopes.md)를 참조하세요.
