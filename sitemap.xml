@@ -2,392 +2,392 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
     <url>
         <loc>https://docs.vineyard.run/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/marketplace/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/marketplace/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/marketplace/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/develop/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/develop/architecture/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/architecture/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/architecture/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/develop/distribution/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/distribution/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/distribution/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/develop/lifecycle/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/lifecycle/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/lifecycle/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/develop/plugin-manifest/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/plugin-manifest/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/plugin-manifest/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/develop/plugin-packs/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/plugin-packs/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/plugin-packs/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/develop/publishing/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/publishing/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/publishing/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/develop/quickstart/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/quickstart/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/quickstart/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/develop/sdk/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/sdk/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/sdk/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/develop/security/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/security/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/security/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/develop/skillpacks/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/skillpacks/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/skillpacks/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/develop/typepacks/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/typepacks/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/typepacks/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/develop/updates/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/updates/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/updates/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/guide/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/guide/canvas/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/canvas/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/canvas/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/guide/getting-started/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/getting-started/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/getting-started/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/guide/installing/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/installing/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/installing/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/guide/running-plugins/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/running-plugins/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/running-plugins/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/guide/skillpacks/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/skillpacks/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/skillpacks/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/guide/tasks/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/tasks/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/tasks/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/guide/typepacks/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/typepacks/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/typepacks/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/reference/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/reference/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/reference/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/reference/plugin-schema/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/reference/plugin-schema/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/reference/plugin-schema/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/reference/registry-schema/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/reference/registry-schema/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/reference/registry-schema/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/reference/scopes/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/reference/scopes/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/reference/scopes/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/reference/typepack-schema/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/reference/typepack-schema/"/>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/reference/typepack-schema/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/marketplace/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/marketplace/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/marketplace/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/develop/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/develop/architecture/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/architecture/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/architecture/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/develop/distribution/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/distribution/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/distribution/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/develop/lifecycle/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/lifecycle/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/lifecycle/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/develop/plugin-manifest/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/plugin-manifest/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/plugin-manifest/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/develop/plugin-packs/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/plugin-packs/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/plugin-packs/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/develop/publishing/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/publishing/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/publishing/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/develop/quickstart/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/quickstart/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/quickstart/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/develop/sdk/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/sdk/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/sdk/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/develop/security/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/security/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/security/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/develop/skillpacks/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/skillpacks/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/skillpacks/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/develop/typepacks/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/typepacks/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/typepacks/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/develop/updates/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/develop/updates/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/develop/updates/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/guide/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/guide/canvas/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/canvas/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/canvas/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/guide/getting-started/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/getting-started/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/getting-started/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/guide/installing/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/installing/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/installing/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/guide/running-plugins/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/running-plugins/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/running-plugins/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/guide/skillpacks/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/skillpacks/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/skillpacks/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/guide/tasks/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/tasks/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/tasks/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/guide/typepacks/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/typepacks/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/typepacks/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/reference/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/reference/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/reference/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/reference/plugin-schema/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/reference/plugin-schema/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/reference/plugin-schema/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/reference/registry-schema/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/reference/registry-schema/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/reference/registry-schema/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/reference/scopes/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/reference/scopes/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/reference/scopes/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/reference/typepack-schema/</loc>
-        <lastmod>2026-08-05</lastmod>
+        <lastmod>2026-08-07</lastmod>
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/reference/typepack-schema/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/reference/typepack-schema/"/>
