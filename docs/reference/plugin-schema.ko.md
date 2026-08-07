@@ -184,6 +184,26 @@ plugin의 권한 범위. `type: object`, `additionalProperties: false`. `ctx` �
 | `methods` | array | yes | `uniqueItems`; 항목 enum: `GET`, `POST`, `PUT`, `PATCH`, `DELETE` | 허용된 HTTP 메서드. |
 | `purpose` | string | no | — | 사람이 읽을 수 있는 이유, 설치 시 표시됨. |
 
+#### 자격증명 보내기
+
+`ctx.net.fetch`는 요청 헤더를 **`Authorization`을 포함해** 그대로 통과시킵니다. 엔드포인트에 키가
+필요하면 거기에 넣으십시오:
+
+```js
+await ctx.net.fetch(url, { headers: { Authorization: `Bearer ${ctx.config.api_key}` } });
+```
+
+서비스가 둘 다 받는다면 커스텀 헤더(`X-Api-Key`, `api-key` 등)보다 **`Authorization`을 쓰십시오.**
+취향 문제가 아닙니다 — 브라우저는 응답이 다른 오리진으로 리다이렉트될 때 `Authorization`을
+제거하지만 커스텀 헤더는 제거하지 않습니다. 선언한 엔드포인트가 어딘가로 302를 보내면
+`Authorization`은 경계에서 멈추고 `X-Api-Key`는 따라갑니다. 쿼리스트링에 키를 넣는 건 더 나쁩니다
+— 접근 로그와 `Referer`에 남습니다.
+
+`Cookie`는 아예 설정할 수 없습니다(forbidden header name). 호스트도 모든 플러그인 요청을
+`credentials: 'omit'`으로 보내므로 분석가 본인의 세션이 함께 나가는 일은 없습니다.
+
+재측정은 `frontend/scripts/measure-net-headers.mjs`로 합니다.
+
 ### configValue (scopes.config items)
 
 `$defs.configValue`. `type: object`, `additionalProperties: false`. **필수:** `key`, `type`. config 값은 런타임에만 주입됩니다. `secret: true` 값은 키체인(데스크톱)에 저장되며, 브라우저에 반환되지 않고 기록되지도 않습니다.

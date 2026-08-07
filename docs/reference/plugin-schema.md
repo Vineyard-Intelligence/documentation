@@ -184,6 +184,26 @@ The plugin's authority surface. `type: object`, `additionalProperties: false`. `
 | `methods` | array | yes | `uniqueItems`; items enum: `GET`, `POST`, `PUT`, `PATCH`, `DELETE` | Allowed HTTP methods. |
 | `purpose` | string | no | — | Human-readable reason, shown at install time. |
 
+#### Sending a credential
+
+`ctx.net.fetch` passes your request headers through unchanged, **including `Authorization`**. If
+your endpoint needs a key, put it there:
+
+```js
+await ctx.net.fetch(url, { headers: { Authorization: `Bearer ${ctx.config.api_key}` } });
+```
+
+Prefer `Authorization` over a custom header (`X-Api-Key`, `api-key`, …) whenever the service
+accepts both. Not style — the browser strips `Authorization` when a response redirects to another
+origin, and does **not** strip custom headers. If a declared endpoint ever 302s somewhere else,
+`Authorization` stops at the boundary and `X-Api-Key` does not. A key in the query string is worse
+again: it lands in access logs and `Referer`.
+
+`Cookie` cannot be set at all — it is a forbidden header name, and the host also sends every
+plugin request with `credentials: 'omit'`, so the analyst's own session never rides along.
+
+Re-measure any of this with `frontend/scripts/measure-net-headers.mjs`.
+
 ### configValue (scopes.config items)
 
 `$defs.configValue`. `type: object`, `additionalProperties: false`. **Required:** `key`, `type`. Config values are injected at runtime only; `secret: true` values live in the keychain (desktop), are never returned to the browser, and are never recorded.
