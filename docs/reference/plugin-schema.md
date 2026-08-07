@@ -115,6 +115,35 @@ JSON-Schema (draft 2020-12) describing the pre-run form. Whatever the user fills
 !!! warning "No secrets in params"
     `params` MUST NOT contain secrets. Use a [`scopes.config`](#configvalue-scopesconfig-items) entry with `secret: true` for API keys and credentials. Nothing rejects a secret-looking param key today — this is a rule, not an enforced check.
 
+### File fields
+
+A field declared `"format": "file"` renders as a drop zone — drag files onto it, or click to browse. Declaring it `"type": "array"` makes it **multi-select**; anything else takes a single file, and dropping two on it is refused rather than silently truncated. A dropped folder is expanded recursively.
+
+| Property | Type | Req. | Meaning |
+|---|---|---|---|
+| `format` | string | yes | `file`. Without it the field is an ordinary input. |
+| `type` | string | no | `array` for many files; omit (or use any other type) for one. |
+| `accept` | string | no | MIME filter, e.g. `image/*`. Unlike a bare file input's `accept`, this also rejects non-matching files **during the drag**. No filter when omitted. |
+
+The value your `run(ctx)` receives is the **`File` object itself** (or an array of them) — not a data: URL, not a path. Read it with `await file.arrayBuffer()`, and take the file name from `file.name`. There is no companion "file name" field.
+
+```json
+"params": {
+  "type": "object",
+  "properties": {
+    "images": { "type": "array", "format": "file", "accept": "image/*",
+                "title": "Image files",
+                "description": "One or more JPEG photos, read locally (never uploaded)." }
+  },
+  "required": ["images"]
+}
+```
+
+!!! note "One run, one batch"
+    A multi-file field hands the whole selection to a **single** run — the host does not fan out one run per file. Loop over them yourself and report progress with `ctx.progress.set({ percent })`; check `ctx.signal.aborted` each iteration so Stop works. This is deliberate: N runs would mean N task rows and N separate review dialogs for what the analyst thinks of as one action.
+
+    The host caps a pick at 25 MB per file, 250 MB per run, and 50 files. Files cross into the sandbox as blob handles, so the memory cost is whatever your plugin materialises — read one file at a time rather than `Promise.all`-ing the batch.
+
 ## scopes
 
 The plugin's authority surface. `type: object`, `additionalProperties: false`. `ctx` members are absent unless granted; enforcement is by the sandbox, and graph writes are additionally held for the analyst's review before they are applied. See the [scopes reference](scopes.md) for verb semantics.
