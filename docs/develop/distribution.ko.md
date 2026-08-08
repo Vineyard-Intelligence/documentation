@@ -18,7 +18,7 @@
 전체 필드별 참조는 [registry schema](../reference/registry-schema.md)에 있습니다. 이 블록을 임베드하는 플러그인/Type Pack 스키마는 [plugin manifest](plugin-manifest.md)와 [Type Pack schema](../reference/typepack-schema.md)에 있습니다.
 
 !!! warning "`ref`는 불변이어야 합니다 — 브랜치는 거부됨"
-    `main`, `develop` 또는 기타 움직이는 브랜치의 `ref`는 제출 시 `VineyardReviewBot`에 의해 **거부**됩니다. 40자 커밋 SHA 또는 주석 태그로 고정하여 `repo@ref`가 항상 검토된 정확한 바이트로 확인되도록 하세요. 이것이 설치된 `identifier@version`을 재현 가능하게 만드는 요소입니다. *새로운* `ref`가 제공된 업그레이드로 표시되는 방식은 [updates](updates.md)를 참조하세요.
+    커밋 SHA가 아닌 `ref` — `main` 같은 브랜치는 물론, 검토 후 옮길 수 있는 태그도 — 는 제출 시 CI에 의해 **거부**됩니다. 40자 커밋 SHA로 고정하여 `repo@ref`가 항상 검토된 정확한 바이트로 확인되도록 하세요. 이것이 설치된 `identifier@version`을 재현 가능하게 만드는 요소입니다. *새로운* `ref`가 제공된 업그레이드로 표시되는 방식은 [updates](updates.md)를 참조하세요.
 
 ## `kind` 값
 

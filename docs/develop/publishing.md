@@ -1,6 +1,6 @@
 # Publishing to the registry
 
-Publishing a Plugin Pack or Type Pack to the public Vineyard marketplace is a single pull request against the registry repo. You append **one** metadata entry, the `VineyardReviewBot` validates it, a human merges it, and your entry goes live on the next registry fetch — no app release required.
+Publishing a Plugin Pack or Type Pack to the public Vineyard marketplace is a single pull request against the registry repo. You append **one** metadata entry, CI validates it, a human merges it, and your entry goes live on the next registry fetch — no app release required.
 
 ## The registry repo holds metadata only
 
@@ -14,7 +14,7 @@ Submissions go to **`Vineyard-Intelligence/registry`**. The repo carries *pointe
 | `community-plugin-stats.json` / `community-typepack-stats.json` | Install/activation counts — maintained by Vineyard infra, **not** the submitter. |
 | `deprecation.json` / `removed.json` | Withdrawn versions / delisted entries. |
 | `verified-authors.json` | Source of the "verified" badge. CI mirrors membership into the entry — it is never self-asserted. |
-| `schemas/` | The published meta-schemas the CI bot validates entries against. |
+| `schemas/` | The published meta-schemas CI validates entries against. |
 
 You only ever edit **one** of the three catalog files in a submission, and you only append a single entry.
 
@@ -25,7 +25,7 @@ You only ever edit **one** of the three catalog files in a submission, and you o
     1. **Fork** `Vineyard-Intelligence/registry`.
     2. **Pin an immutable `ref`** — the **commit SHA** of the release in your author repo. Tags and branches are mutable and rejected; resolve a tag/branch to its commit SHA with `scripts/resolve_ref.py`.
     3. **Append one entry** to `community-pluginpacks.json` (Plugin Packs), `community-typepacks.json` (Type Packs), or `community-skillpacks.json` (Skill Packs). Do not edit the stats, deprecation, removed, or verified-authors files — those are not submitter-owned.
-    4. **Open a PR.** `VineyardReviewBot` posts its validation result as a status check.
+    4. **Open a PR.** The `validate` workflow posts its result as a status check.
     5. **Fix any blocking failures**, then wait for a human merge.
     6. After green CI + merge, the entry is **live on the next registry fetch** — clients pull the static JSON; there is no coupled app release.
 
@@ -35,9 +35,9 @@ You only ever edit **one** of the three catalog files in a submission, and you o
     - `ref` is the only thing pinning your code. Because it is immutable, publishing a new version means appending a new entry at a new `ref` — see [Updates](updates.md).
     - Derived fields (`platforms`, `scopes_summary`, `categories`, `type_count`, …) are projections of the full manifest/Type Pack so the browse page renders without fetching every manifest.
 
-## What the bot validates
+## What CI validates
 
-The `VineyardReviewBot` has two tiers. **Blocking** checks must pass before a human can merge. **Advisory** checks are surfaced as notes but never block.
+The `validate` workflow has two tiers. **Blocking** checks must pass before a human can merge. **Advisory** checks are surfaced as notes but never block.
 
 ### Blocking (must pass)
 
@@ -69,8 +69,8 @@ A **Plugin Pack** entry appended to `community-pluginpacks.json`. Note `plugin_c
   "name": "Chaos Reference Pack",
   "author": "vineyard-run",
   "description": "A bundle of 6 graph-manipulation plugins for demo/validation: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node. Installing once adds all 6 together.",
-  "repo": "Vineyard-Intelligence/chaos-pack",
-  "ref": "v1.0.0",
+  "repo": "Vineyard-Intelligence/pluginpack-chaos",
+  "ref": "7261823f654395204d9c79f7d597448d97d135f1",
   "path": "plugins/chaos-pack.manifest.json",
   "version": "1.0.0",
   "platforms": ["web"],
@@ -90,8 +90,8 @@ A Type Pack entry appended to `community-typepacks.json` (no scopes; `categories
   "name": "Infrastructure",
   "author": "vineyard-run",
   "description": "A base Type Pack defining network-infrastructure entities (IP address, domain, URL, autonomous system, certificate).",
-  "repo": "Vineyard-Intelligence/typepacks",
-  "ref": "v1.0.0",
+  "repo": "Vineyard-Intelligence/typepack-basic",
+  "ref": "a78c53defbec417eeb8b9f50029c376926cb8c6d",
   "path": "typepacks/infrastructure.json",
   "version": "1.0.0",
   "categories": ["infrastructure"],

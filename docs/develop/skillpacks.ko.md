@@ -91,7 +91,7 @@ Skill Pack은 Plugin Pack 및 Type Pack과 정확히 같은 방식으로 배포�
 }
 ```
 
-`applies_to`, `section_count`, `requires` 필드는 병합 시 **파생**되어, 찾아보기 페이지가 모든 문서를 가져오지 않고도 렌더링할 수 있습니다. 전체 워크플로 — 포크, 불변 커밋 `ref` 고정, 항목 하나 추가, `VineyardReviewBot`을 위한 PR 열기 —는 [레지스트리에 게시](publishing.md)와 동일합니다.
+`applies_to`, `section_count`, `requires` 필드는 병합 시 **파생**되어, 찾아보기 페이지가 모든 문서를 가져오지 않고도 렌더링할 수 있습니다. 전체 워크플로 — 포크, 불변 커밋 `ref` 고정, 항목 하나 추가, PR 열기 —는 [레지스트리에 게시](publishing.md)와 동일합니다.
 
 ## 다음 / 함께 보기
 
