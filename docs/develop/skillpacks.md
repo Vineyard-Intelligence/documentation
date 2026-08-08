@@ -23,7 +23,7 @@ repo at a pinned commit (exactly like a plugin manifest or Type Pack):
   "author": "vineyard-run",
   "version": "1.3.0",
 
-  "applies_to": ["identity.handle", "identity.user_account", "identity.email_address", "identity.person"],
+  "applies_to": ["identity.handle", "identity.account", "identity.email_address", "identity.person"],
   "triggers": ["account", "username", "handle", "same person", "sock puppet", "계정", "핸들"],
 
   "requires": ["run.vineyard.pluginpacks.whatsmyname"],
@@ -110,7 +110,7 @@ author repo, and the registry holds a single lean entry in `community-skillpacks
   "ref": "44305008e4ec16ec0d0d24595ffa993c0b6b6cb5",
   "path": "skillpacks/account-pivot.skill.json",
   "version": "1.2.0",
-  "applies_to": ["identity.handle", "identity.user_account", "identity.email_address", "identity.person"],
+  "applies_to": ["identity.handle", "identity.account", "identity.email_address", "identity.person"],
   "section_count": 2,
   "requires": ["run.vineyard.pluginpacks.whatsmyname"]
 }

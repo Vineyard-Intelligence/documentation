@@ -17,7 +17,7 @@ Skill Pack은 단일 JSON 문서로, `content_type: "vineyard:skillpack"`이며,
   "author": "vineyard-run",
   "version": "1.3.0",
 
-  "applies_to": ["identity.handle", "identity.user_account", "identity.email_address", "identity.person"],
+  "applies_to": ["identity.handle", "identity.account", "identity.email_address", "identity.person"],
   "triggers": ["account", "username", "handle", "same person", "sock puppet", "계정", "핸들"],
 
   "requires": ["run.vineyard.pluginpacks.whatsmyname"],
@@ -85,7 +85,7 @@ Skill Pack은 Plugin Pack 및 Type Pack과 정확히 같은 방식으로 배포�
   "ref": "44305008e4ec16ec0d0d24595ffa993c0b6b6cb5",
   "path": "skillpacks/account-pivot.skill.json",
   "version": "1.2.0",
-  "applies_to": ["identity.handle", "identity.user_account", "identity.email_address", "identity.person"],
+  "applies_to": ["identity.handle", "identity.account", "identity.email_address", "identity.person"],
   "section_count": 2,
   "requires": ["run.vineyard.pluginpacks.whatsmyname"]
 }
