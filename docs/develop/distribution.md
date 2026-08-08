@@ -18,7 +18,7 @@ The `distribution` block tells the Vineyard client **where to fetch the bundle**
 The full field-by-field reference lives in the [registry schema](../reference/registry-schema.md); the plugin/Type Pack schemas that embed this block are in [plugin manifest](plugin-manifest.md) and [Type Pack schema](../reference/typepack-schema.md).
 
 !!! warning "`ref` must be immutable — branches are rejected"
-    A `ref` of `main`, `develop`, or any other moving branch is **rejected** by `VineyardReviewBot` at submission. Pin to a 40-char commit SHA or an annotated tag so that `repo@ref` always resolves to the exact bytes that were reviewed. This is what makes an installed `identifier@version` reproducible. See [updates](updates.md) for how a *new* `ref` surfaces as an offered upgrade.
+    A `ref` that is not a commit SHA — a branch like `main`, but equally a tag, which can be moved after review — is **rejected** by CI at submission. Pin to a 40-char commit SHA so that `repo@ref` always resolves to the exact bytes that were reviewed. This is what makes an installed `identifier@version` reproducible. See [updates](updates.md) for how a *new* `ref` surfaces as an offered upgrade.
 
 ## `kind` values
 

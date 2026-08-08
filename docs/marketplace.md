@@ -12,7 +12,7 @@ Browse every Plugin Pack, Type Pack, and Skill Pack published to the VINEYARD re
 <div id="vy-community" data-vy-community>
   <noscript>
     This browser needs JavaScript enabled. You can still read the raw catalog at
-    <a href="data/registry.json"><code>data/registry.json</code></a>.
+    <a href="https://registry.vineyard.run/"><code>registry.vineyard.run</code></a>.
   </noscript>
 </div>
 

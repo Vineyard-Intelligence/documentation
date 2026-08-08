@@ -26,7 +26,7 @@ VINEYARD의 plugin 및 Type Pack 형식에 대한 규범적 참조 자료: 모�
 
 ## The Marketplace catalog the browser reads
 
-정적 [Marketplace browser](../marketplace.md)는 `docs/data/registry.json`에서 카탈로그를 로드합니다 — Plugin Pack과 Type Pack 항목을 결합한 단일 메타데이터 전용 배열입니다(각 행은 `pluginpack` 또는 `typepack`의 `type`을 가집니다). 이 파일은 목록 메타데이터(`identifier`, `name`, `version`, `repo`, `ref`, `scopes_summary` 등)만 보유하며, plugin 바이트를 절대 포함하지 않습니다. Plugin Pack 및 Type Pack 코드는 설치 시 GitHub 소스에서 가져오며, registry에서 가져오지 않습니다.
+정적 [Marketplace browser](../marketplace.md)는 `https://registry.vineyard.run/registry/`에서 카탈로그를 실시간으로 로드합니다 — 종류별로 하나씩인 메타데이터 전용 배열 `community-pluginpacks.json`, `community-typepacks.json`, `community-skillpacks.json`입니다. 이 파일들은 목록 메타데이터(`identifier`, `name`, `version`, `repo`, `ref`, `scopes_summary` 등)만 보유하며, plugin 바이트를 절대 포함하지 않습니다. Plugin Pack, Type Pack, Skill Pack 콘텐츠는 설치 시 GitHub 소스에서 가져오며, registry에서 가져오지 않습니다.
 
 ## Naming, at a glance
 

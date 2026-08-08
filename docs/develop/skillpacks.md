@@ -118,7 +118,7 @@ author repo, and the registry holds a single lean entry in `community-skillpacks
 
 The `applies_to`, `section_count`, and `requires` fields are **derived** at merge time so the browse
 page can render without fetching every document. The full workflow — fork, pin an immutable commit
-`ref`, append one entry, open a PR for `VineyardReviewBot` — is identical to [Publishing to the
+`ref`, append one entry, open a PR — is identical to [Publishing to the
 registry](publishing.md).
 
 ## Next / See also

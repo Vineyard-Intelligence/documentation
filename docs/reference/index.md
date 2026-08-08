@@ -26,7 +26,7 @@ The reference pages summarize and explain these files; when the prose and the sc
 
 ## The Marketplace catalog the browser reads
 
-The static [Marketplace browser](../marketplace.md) loads its catalog from `docs/data/registry.json` — a single metadata-only array combining Plugin Pack and Type Pack entries (each row carries a `type` of `pluginpack` or `typepack`). This file holds only listing metadata (`identifier`, `name`, `version`, `repo`, `ref`, `scopes_summary`, and similar); it never contains plugin bytes. Plugin Pack and Type Pack code is fetched from its GitHub source at install time, not from the registry.
+The static [Marketplace browser](../marketplace.md) loads its catalog live from `https://registry.vineyard.run/registry/` — one metadata-only array per kind: `community-pluginpacks.json`, `community-typepacks.json`, `community-skillpacks.json`. These hold only listing metadata (`identifier`, `name`, `version`, `repo`, `ref`, `scopes_summary`, and similar); they never contain plugin bytes. Plugin Pack, Type Pack, and Skill Pack content is fetched from its GitHub source at install time, not from the registry.
 
 ## Naming, at a glance
 
