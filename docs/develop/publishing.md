@@ -54,6 +54,18 @@ Every check below is **blocking** — a pull request cannot merge until they all
 - **The pinned document matches the entry.** The document at `repo@ref/path` is fetched and its `identifier`, `content_type`, and `version` must equal what your entry advertises. An entry whose metadata was bumped without re-pinning the `ref` fails here.
 - **Every summary field is recomputed, not trusted.** `scopes_summary`, `platforms`, `plugin_count`, `section_count`, `type_count` and `edge_count` are derived from the pinned document and compared to what you wrote. `scopes_summary.network` is true when a member declares `network` **or** `web_probe` — the probe reaches an arbitrary host, so it is the broader egress, not a lesser one. This exists because the check did not: five live entries disagreed with their own manifests when it was added, three of them understating what the pack does.
 
+### The type graph
+
+Every `io.consumes` / `io.produces` entry is resolved against the Type Packs **published in this catalog**:
+
+- the `category.name` must be a type some published Type Pack actually defines;
+- the `typepack` field must name the pack that really defines it;
+- that Type Pack must appear in your entry's `typepacks` list.
+
+A Type Pack the registry does not carry is **not** acceptable — the install flow can only offer co-installs it can resolve, so an outside reference is broken for every user, not merely unverified. Publish the Type Pack first, then the plugin that uses it.
+
+This one is blocking because its failure is invisible rather than loud. The run dialog builds the set of acceptable seed types from `consumes` and matches it against node types; a type nothing defines matches no node, so the plugin installs, is approved, and then never appears — with no error anywhere. A `produces` type nothing defines is worse in a quieter way: collection succeeds and leaves nodes with no icon, no colour and no label property. And because the install flow reads the entry's `typepacks` rather than your manifest, a Type Pack you use but did not declare simply does not get installed alongside.
+
 ### The bytes
 
 `scan.py` fetches the JavaScript that will actually execute — every `platforms.web.entry` **and** `platforms.desktop.entry` in your pack — and rejects it for:
