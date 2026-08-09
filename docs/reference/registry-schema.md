@@ -35,7 +35,7 @@ A row in `community-pluginpacks.json`. The schema sets `additionalProperties: fa
 | `version` | string | no | SemVer mirror of `manifest.version` at this `ref` (`^\d+\.\d+\.\d+(?:[-+].+)?$`). |
 | `platforms` | string[] | no | **Derived** badge set from `platforms.{web,desktop}` + `web.runtime`. Items: `web`, `web-proxy`, `desktop` (unique). |
 | `scopes_summary` | object | no | **Derived** filter facets (see below). |
-| `scopes_summary.network` | boolean | no | `true` if `scopes.network` is non-empty. |
+| `scopes_summary.network` | boolean | no | `true` if `scopes.network` is non-empty **or** the plugin declares `web_probe` — the probe reaches an arbitrary host, so it is the broader egress, not a lesser one. |
 | `scopes_summary.graph_write` | boolean | no | `true` if any `node:`/`edge:` create/update/delete verb is present. |
 | `scopes_summary.secret_config` | boolean | no | `true` if any `scopes.config` entry has `secret: true` (implies a desktop-only key). |
 | `plugin_count` | integer | no | **Derived**: number of plugins bundled when the `identifier` names a **pack** (one file → many plugins). Omitted or `1` for a single-plugin entry. The card installs all contained plugins together. Minimum `1`. |
@@ -43,6 +43,7 @@ A row in `community-pluginpacks.json`. The schema sets `additionalProperties: fa
 | `compat.min_app_version` | string | no | Oldest Vineyard runtime this `ref` supports (`^\d+\.\d+\.\d+$`). Gates the version the updater will offer. |
 | `thumbnail_url` | string (uri) | no | Optional card icon. |
 | `verified` | boolean | no | Mirror of `verified-authors.json` membership. Set by CI, **not self-asserted**. Default `false`. |
+| `status` | object | no | Present only on a **delisted** pack: `{ state: "deprecated" \| "withdrawn", reason, since, replacement? }`. The row stays in the catalog — an installed client holds an absolute pinned url and never asks again, so deleting the entry signals nothing to the projects that have it. `deprecated` still loads and warns; `withdrawn` is refused at install and dropped at load. See [Publishing → Taking a pack down](../develop/publishing.md#taking-a-pack-down). |
 
 !!! warning "There is no `publish` facet"
     `scopes_summary` is `additionalProperties: false`, so a draft row still carrying `"publish": false` fails schema validation and is rejected by CI — delete the key. There is no `publish` scope in the [plugin manifest](scopes.md) either.
@@ -95,6 +96,7 @@ A row in `community-typepacks.json`, symmetric with the plugin entry. Type Packs
 | `edge_count` | integer | no | **Derived**: `edge_types[].length`. Minimum `0`. |
 | `thumbnail_url` | string (uri) | no | Optional card icon. |
 | `verified` | boolean | no | Same as the plugin entry — CI-set mirror of `verified-authors.json`. Default `false`. |
+| `status` | object | no | Present only on a **delisted** pack: `{ state: "deprecated" \| "withdrawn", reason, since, replacement? }`. The row stays in the catalog — an installed client holds an absolute pinned url and never asks again, so deleting the entry signals nothing to the projects that have it. `deprecated` still loads and warns; `withdrawn` is refused at install and dropped at load. See [Publishing → Taking a pack down](../develop/publishing.md#taking-a-pack-down). |
 
 ### Example Type Pack row
 
