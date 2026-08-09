@@ -54,6 +54,18 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 - **고정된 문서가 항목과 일치해야 합니다.** `repo@ref/path`의 문서를 가져와 그 `identifier`, `content_type`, `version`이 항목이 광고하는 값과 같아야 합니다. `ref`를 다시 고정하지 않고 메타데이터만 올린 항목은 여기서 실패합니다.
 - **요약 필드는 신뢰하지 않고 다시 계산합니다.** `scopes_summary`, `platforms`, `plugin_count`, `section_count`, `type_count`, `edge_count`를 고정된 문서에서 유도해 작성값과 대조합니다. `scopes_summary.network`는 멤버가 `network` **또는** `web_probe`를 선언하면 true입니다 — probe는 임의 호스트에 도달하므로 더 좁은 게 아니라 더 넓은 이그레스입니다. 이 검사가 없던 탓에 도입 시점에 라이브 항목 5건이 자기 매니페스트와 어긋나 있었고, 그중 3건은 팩이 하는 일을 축소해서 광고하고 있었습니다.
 
+### 타입 그래프
+
+모든 `io.consumes` / `io.produces` 항목을 **이 카탈로그에 게시된** Type Pack에 대해 해석합니다:
+
+- `category.name`이 실제로 어떤 게시된 Type Pack이 정의하는 타입이어야 합니다.
+- `typepack` 필드가 실제 정의 주체를 가리켜야 합니다.
+- 그 Type Pack이 엔트리의 `typepacks` 목록에 있어야 합니다.
+
+레지스트리에 없는 Type Pack은 **허용되지 않습니다** — 설치 흐름은 해석 가능한 것만 동반 설치로 제안할 수 있으므로, 외부 참조는 검증이 안 된 정도가 아니라 모든 사용자에게 깨진 상태입니다. Type Pack을 먼저 게시하고, 그 다음 그것을 쓰는 플러그인을 게시하세요.
+
+이 검사가 차단인 이유는 실패가 시끄럽지 않고 **보이지 않기** 때문입니다. 실행 다이얼로그는 `consumes`에서 허용 시드 타입 집합을 만들어 노드 타입과 대조하는데, 아무것도 정의하지 않은 타입은 어떤 노드와도 매칭되지 않습니다 — 플러그인은 설치되고 승인까지 됐는데 목록에 나타나지 않고, 에러도 없습니다. 정의 없는 `produces` 타입은 더 조용히 나쁩니다: 수집은 성공하고 아이콘도 색도 label property도 없는 노드만 남습니다. 그리고 설치 흐름이 매니페스트가 아니라 엔트리의 `typepacks`를 읽으므로, 쓰면서 선언하지 않은 Type Pack은 그냥 함께 설치되지 않습니다.
+
 ### 바이트
 
 `scan.py`는 실제로 실행될 JavaScript — 팩의 모든 `platforms.web.entry` **및** `platforms.desktop.entry` — 를 가져와 다음을 거부합니다:
