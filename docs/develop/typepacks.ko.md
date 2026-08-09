@@ -167,7 +167,7 @@ Type Pack은 `secret` 또는 `credential` 프로퍼티 타입을 선언할 수 *
 설치 시 린트는 원시 JSON Schema를 넘어 교차 필드 불변성을 강제합니다:
 
 - [ ] `content_type`이 `vineyard:typepack`입니다.
-- [ ] `identifier`가 유효한 `run.vineyard.typepacks.*` reverse-DNS 문자열입니다.
+- [ ] `identifier`가 유효한 `<본인-네임스페이스>.typepacks.*` reverse-DNS 문자열입니다.
 - [ ] 최소 하나의 엔티티 타입. 모든 엔티티 타입은 ≥1개의 프로퍼티를 가집니다.
 - [ ] 각 프로퍼티가 열거형에서 명시적 `type`을 선언합니다(`secret`/`credential` 없음).
 - [ ] `validator`(존재 시)가 원시 정규식 문자열이 아닌 구조화된 객체입니다.

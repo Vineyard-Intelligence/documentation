@@ -24,7 +24,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 
 | Field | Type | Required | Meaning |
 |---|---|---|---|
-| `identifier` | string | yes | Reverse-DNS 기본 키, `^run\.vineyard\.(?:plugins\|pluginpacks)\.[a-z0-9_]+$` (`plugins.*` = 단일 plugin, `pluginpacks.*` = 번들). `manifest.identifier`와 동일. **전체** registry(두 카탈로그 모두)에서 고유합니다. |
+| `identifier` | string | yes | Reverse-DNS 기본 키, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}(?:plugins\|pluginpacks)\\.[a-z0-9_]+$` (`plugins.*` = 단일 plugin, `pluginpacks.*` = 번들). `manifest.identifier`와 동일. **전체** registry(두 카탈로그 모두)에서 고유합니다. |
 | `content_type` | string | yes | `vineyard:plugin` (단일 plugin) 또는 `vineyard:pluginpack` (번들: 하나의 파일 → 여러 plugin). |
 | `name` | string | yes | 표시 이름, 1–128자. |
 | `author` | string | yes | 저자 핸들, `verified-authors.json`과 대조됨. |
@@ -81,7 +81,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 
 | Field | Type | Required | Meaning |
 |---|---|---|---|
-| `identifier` | string | yes | Reverse-DNS 기본 키, `^run\.vineyard\.typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$`. `typepack.identifier`와 동일. |
+| `identifier` | string | yes | Reverse-DNS 기본 키, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$`. `typepack.identifier`와 동일. |
 | `content_type` | string | yes | 상수 `vineyard:typepack`. |
 | `name` | string | yes | 표시 이름, 1–128자. |
 | `author` | string | yes | 저자 핸들. |
@@ -122,7 +122,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 
 ## How entries are validated and merged
 
-제출은 registry 카탈로그에 하나의 항목을 추가하는 포크 앤 PR로, 차단 CI 검사(스키마, 식별자 고유성, 불변 `ref`, 업스트림 manifest 검증)와 사람 병합에 의해 게이트됩니다. 전체 설명은 [Publishing](../develop/publishing.md)을 참조하세요.
+제출은 `packs/<identifier>.json` 파일 하나를 추가하는 포크 앤 PR이며(카탈로그는 여기서 생성됩니다), 차단 CI 검사(스키마, 불변 `ref`, 업스트림 manifest 검증, 번들 스캔)와 사람 병합에 의해 게이트됩니다. 전체 설명은 [Publishing](../develop/publishing.md)을 참조하세요.
 
 ## Next / See also
 

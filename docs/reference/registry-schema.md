@@ -24,7 +24,7 @@ A row in `community-pluginpacks.json`. The schema sets `additionalProperties: fa
 
 | Field | Type | Required | Meaning |
 |---|---|---|---|
-| `identifier` | string | yes | Reverse-DNS primary key, `^run\.vineyard\.(?:plugins\|pluginpacks)\.[a-z0-9_]+$` (`plugins.*` = single plugin, `pluginpacks.*` = bundle). Equals `manifest.identifier`. Unique across the **whole** registry (both catalogs). |
+| `identifier` | string | yes | Reverse-DNS primary key, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}(?:plugins\|pluginpacks)\\.[a-z0-9_]+$` (`plugins.*` = single plugin, `pluginpacks.*` = bundle). Equals `manifest.identifier`. Unique across the **whole** registry (both catalogs). |
 | `content_type` | string | yes | `vineyard:plugin` (a single plugin) or `vineyard:pluginpack` (a bundle: one file → many plugins). |
 | `name` | string | yes | Display name, 1–128 chars. |
 | `author` | string | yes | Author handle, matched against `verified-authors.json`. |
@@ -81,7 +81,7 @@ A row in `community-typepacks.json`, symmetric with the plugin entry. Type Packs
 
 | Field | Type | Required | Meaning |
 |---|---|---|---|
-| `identifier` | string | yes | Reverse-DNS primary key, `^run\.vineyard\.typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$`. Equals `typepack.identifier`. |
+| `identifier` | string | yes | Reverse-DNS primary key, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$`. Equals `typepack.identifier`. |
 | `content_type` | string | yes | Constant `vineyard:typepack`. |
 | `name` | string | yes | Display name, 1–128 chars. |
 | `author` | string | yes | Author handle. |
@@ -122,7 +122,7 @@ The companion Threat pack is the same shape with `categories: ["threat"]` and `t
 
 ## How entries are validated and merged
 
-Submission is a fork-and-PR that appends one entry to the registry catalog, gated by blocking CI checks (schema, identifier uniqueness, immutable `ref`, upstream manifest validation) plus a human merge; see [Publishing](../develop/publishing.md) for the full walkthrough.
+Submission is a fork-and-PR that adds one `packs/<identifier>.json` file — the catalogs are generated from it — gated by blocking CI checks (schema, immutable `ref`, upstream manifest validation, bundle scan) plus a human merge; see [Publishing](../develop/publishing.md) for the full walkthrough.
 
 ## Next / See also
 

@@ -13,7 +13,7 @@ The root is an object with `additionalProperties: false` — unknown keys are re
 
 | Field | Type | Req | Constraints / default | Meaning |
 |-------|------|-----|-----------------------|---------|
-| `identifier` | string | yes | pattern `^run\.vineyard\.typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$` | Reverse-DNS id, e.g. `run.vineyard.typepacks.infrastructure`. |
+| `identifier` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$` | Reverse-DNS id, e.g. `run.vineyard.typepacks.infrastructure`. |
 | `content_type` | string | yes | `const: "vineyard:typepack"` | Discriminator marking the document as a Type Pack. |
 | `name` | string | yes | `minLength: 1`, `maxLength: 128` | Human-readable pack name. |
 | `version` | string | yes | SemVer pattern `^(0\|[1-9]\d*)\.(0\|[1-9]\d*)\.(0\|[1-9]\d*)$` | SemVer of the pack **content**. MAJOR = breaking type change requiring node migration. |
