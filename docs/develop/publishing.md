@@ -67,33 +67,18 @@ A Type Pack the registry does not carry is **not** acceptable — the install fl
 
 This one is blocking because its failure is invisible rather than loud. The run dialog builds the set of acceptable seed types from `consumes` and matches it against node types; a type nothing defines matches no node, so the plugin installs, is approved, and then never appears — with no error anywhere. A `produces` type nothing defines is worse in a quieter way: collection succeeds and leaves nodes with no icon, no colour and no label property. And because the install flow reads the entry's `typepacks` rather than your manifest, a Type Pack you use but did not declare simply does not get installed alongside.
 
-### The bytes
-
-`scan.py` fetches the JavaScript that will actually execute — every `platforms.web.entry` **and** `platforms.desktop.entry` in your pack — and rejects it for:
-
-| Finding | Why |
-|---|---|
-| `eval(` / `new Function(` | A pack is a data transform over `ctx`; building code at run time defeats review of the bytes you published. |
-| `import()` of anything but a complete literal | The measured exfiltration path: `import("https://…" + caseData)` carries case data past the egress allowlist in a URL. |
-| `importScripts(` | Runs arbitrary script in the worker, bypassing the published bundle. |
-| `localStorage` / `sessionStorage` / `indexedDB` / `document.cookie` | A Web Worker has none of these, so the code is dead or was written to run somewhere it should not. |
-| Bare `fetch(` / `XMLHttpRequest` / `WebSocket` | Outbound requests must go through `ctx.net.fetch`, which enforces your manifest's endpoint allowlist. |
-
-Comments and string contents are blanked before these rules run, so prose that happens to contain `fetch (` is not a finding.
-
-A `native` or `subprocess` desktop runtime is rejected outright: it runs outside the JS sandbox, so the scanner cannot read it, and reporting "no findings" on the one artifact it never opened would be its worst failure mode.
-
-Skill Pack text is scanned too, for instructions that try to countermand the agent's system prompt, route around analyst review, or solicit credentials.
-
 ### What a human weighs
 
-Not automated, and not automatic rejections — a reviewer forms a judgment:
+**There is deliberately no static analysis of your bundle.** A pattern-matching scanner is a lint carrying the authority of a gate: it is evaded by writing the same thing a different way, and publishing its rules hands over the list of shapes that pass. The boundaries that hold are structural instead — the sandbox worker has no storage and no ambient credentials, `ctx.net` enforces your manifest's endpoint allowlist by parsed origin and path segment, and every graph write is staged for the analyst to approve under their own token.
+
+So the code review is a person reading your bundle, and these are what they weigh. None is an automatic rejection:
 
 - Breadth of requested scopes against what the pack plausibly needs.
 - `node:delete` / `edge:delete` usage (graph-destructive verbs).
 - `network` + `node:read` together (data leaves the graph, and there is egress).
-- Minified-only bundles — no readable source to inspect.
+- Minified-only bundles — no readable source to inspect. Ship readable code if you want a fast review.
 - Secret-looking `params` keys. Credentials belong in `scopes.config` with `secret: true`, never in user-facing params.
+- A `native` or `subprocess` desktop runtime, which the app does not run today and which no reviewer can inspect the way they can inspect JavaScript.
 
 !!! tip "Destructive ≠ rejected"
     The Chaos pack — Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node — leans entirely on `node:delete`/`edge:delete`. It publishes fine.
