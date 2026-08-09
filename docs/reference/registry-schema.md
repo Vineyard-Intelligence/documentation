@@ -39,6 +39,7 @@ A row in `community-pluginpacks.json`. The schema sets `additionalProperties: fa
 | `scopes_summary.graph_write` | boolean | no | `true` if any `node:`/`edge:` create/update/delete verb is present. |
 | `scopes_summary.secret_config` | boolean | no | `true` if any `scopes.config` entry has `secret: true` (implies a desktop-only key). |
 | `plugin_count` | integer | no | **Derived**: number of plugins bundled when the `identifier` names a **pack** (one file → many plugins). Omitted or `1` for a single-plugin entry. The card installs all contained plugins together. Minimum `1`. |
+| `services` | string[] | no | **Derived**: Vineyard services the pack's plugins call by name (`rdap`, `telegram`). Its own field, not a `scopes_summary` flag: the destination is fixed by the host and the analyst's identity travels with the call, so "Network" would both understate and overstate it. See [scopes](scopes.md#services). |
 | `compat` | object | no | Runtime compatibility (the `versions.json` analog). |
 | `compat.min_app_version` | string | no | Oldest Vineyard runtime this `ref` supports (`^\d+\.\d+\.\d+$`). Gates the version the updater will offer. |
 | `thumbnail_url` | string (uri) | no | Optional card icon. |
