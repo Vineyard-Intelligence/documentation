@@ -35,7 +35,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `version` | string | no | 이 `ref`에서 `manifest.version`의 SemVer 미러 (`^\d+\.\d+\.\d+(?:[-+].+)?$`). |
 | `platforms` | string[] | no | `platforms.{web,desktop}` + `web.runtime`에서 **파생된** 배지 세트. 항목: `web`, `web-proxy`, `desktop` (고유). |
 | `scopes_summary` | object | no | **파생된** 필터 패싯 (아래 참조). |
-| `scopes_summary.network` | boolean | no | `scopes.network`가 비어 있지 않으면 `true`. |
+| `scopes_summary.network` | boolean | no | `scopes.network`가 비어 있지 않거나 `web_probe`를 선언하면 `true` — probe는 임의 호스트에 도달하므로 더 좁은 게 아니라 더 넓은 송신입니다. |
 | `scopes_summary.graph_write` | boolean | no | `node:`/`edge:` create/update/delete 동사가 있으면 `true`. |
 | `scopes_summary.secret_config` | boolean | no | `scopes.config` 항목에 `secret: true`가 있으면 `true` (데스크톱 전용 키를 의미). |
 | `plugin_count` | integer | no | **파생됨**: `identifier`가 **pack**을 명명할 때 번들된 plugin 수 (하나의 파일 → 여러 plugin). 단일 plugin 항목의 경우 생략되거나 `1`. 카드는 포함된 모든 plugin을 함께 설치합니다. 최소 `1`. |
@@ -43,6 +43,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `compat.min_app_version` | string | no | 이 `ref`가 지원하는 가장 오래된 Vineyard 런타임 (`^\d+\.\d+\.\d+$`). 업데이터가 제공할 버전을 제한합니다. |
 | `thumbnail_url` | string (uri) | no | 선택적 카드 아이콘. |
 | `verified` | boolean | no | `verified-authors.json` 멤버십의 미러. CI에 의해 설정되며, **자체 주장되지 않음**. 기본값 `false`. |
+| `status` | object | no | **게시가 취소된** 팩에만 존재: `{ state: "deprecated" \| "withdrawn", reason, since, replacement? }`. 행은 카탈로그에 남습니다 — 설치된 클라이언트는 절대 경로의 고정 URL을 들고 있어 다시 묻지 않으므로, 항목을 지우면 이미 설치한 프로젝트엔 아무 신호도 가지 않습니다. `deprecated`는 계속 로드되며 경고만, `withdrawn`은 설치 거부 + 로드 시 제외됩니다. [Publishing → 팩 내리기](../develop/publishing.ko.md) 참조. |
 
 !!! warning "There is no `publish` facet"
     `scopes_summary`는 `additionalProperties: false`이므로, `"publish": false`를 여전히 담고 있는 항목 초안은 스키마 검증에 실패하고 CI에 의해 거부됩니다 — 그 키를 삭제하세요. [plugin manifest](scopes.md)에도 `publish` scope는 존재하지 않습니다.
@@ -95,6 +96,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `edge_count` | integer | no | **파생됨**: `edge_types[].length`. 최소 `0`. |
 | `thumbnail_url` | string (uri) | no | 선택적 카드 아이콘. |
 | `verified` | boolean | no | plugin 항목과 동일 — CI 설정 `verified-authors.json`의 미러. 기본값 `false`. |
+| `status` | object | no | **게시가 취소된** 팩에만 존재: `{ state: "deprecated" \| "withdrawn", reason, since, replacement? }`. 행은 카탈로그에 남습니다 — 설치된 클라이언트는 절대 경로의 고정 URL을 들고 있어 다시 묻지 않으므로, 항목을 지우면 이미 설치한 프로젝트엔 아무 신호도 가지 않습니다. `deprecated`는 계속 로드되며 경고만, `withdrawn`은 설치 거부 + 로드 시 제외됩니다. [Publishing → 팩 내리기](../develop/publishing.ko.md) 참조. |
 
 ### Example Type Pack row
 
