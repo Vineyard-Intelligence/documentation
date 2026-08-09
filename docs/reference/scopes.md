@@ -82,6 +82,43 @@ The host, not the plugin, sets the terms: no cookies and no credentials (`Cookie
 !!! warning "Desktop only"
     `ctx.net.probe` is performed by the Electron main process — the only place a cross-origin response can be read from a host that declines CORS. In the web build the capability has no backing, so `ctx.net.probe` is **absent** even when granted. Check for it before calling and fall back (the WhatsMyName pack does exactly this).
 
+## services
+
+Vineyard-operated services this plugin calls **by name**. Backs `ctx.service`.
+
+```jsonc
+"services": ["rdap"]
+```
+
+| Name | What it is |
+| --- | --- |
+| `rdap` | Cached IP RDAP lookups, normalized across every RIR |
+| `telegram` | Read-only Telegram reconnaissance, on an account Vineyard operates |
+
+A closed enum, so a typo fails at review rather than at an analyst's first run, and a scope the
+install gate displays is always one that can actually work.
+
+**Why a name and not a URL.** `network` takes its destination from the plugin, so a host that
+attached the analyst's credential to that path would hand it to whatever endpoint a manifest
+declared. `ctx.service` takes a service name and a path; the base URL lives in a table in the app
+and the plugin cannot express a destination at all. That is what makes it safe for the call to
+carry the analyst's identity — and it is why a service scope is **not** covered by
+`scopes_summary.network` on the catalog card. It appears as its own `services` field, named, because
+which service it is matters: `rdap` reads public registry data, `telegram` drives an account.
+
+```js
+const res = await ctx.service('rdap', '8.8.8.8');
+const who = await ctx.service('telegram', 'resolve', {
+    method: 'POST',
+    body: JSON.stringify({ target: 'durov' }),
+});
+```
+
+`Authorization` on a service call is ignored rather than merged — the host sets it, and it is the
+one header that decides who the service thinks is calling. Some services are further restricted to
+named packs; `telegram` is, because the account it drives belongs to the operator rather than to the
+analyst who triggered the run.
+
 ## config
 
 Each entry is a `ConfigValue`. Declaring any `config` entry makes `ctx.config` present — a read-only map of the **non-secret** declared values. (Source: the `@vineyard/plugin-sdk` package types — `ConfigValue`, `HostContext.config`.)
