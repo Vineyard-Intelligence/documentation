@@ -46,7 +46,7 @@ Skill Pack은 단일 JSON 문서로, `content_type: "vineyard:skillpack"`이며,
 
 | 필드 | 역할 |
 | --- | --- |
-| `identifier` | Reverse-DNS 기본 키, `run.vineyard.skillpacks.<name>`. 매니페스트 하나 = 식별자 하나(플러그인 팩과 달리 멤버 확장 없음). |
+| `identifier` | Reverse-DNS 기본 키, `<본인-네임스페이스>.skillpacks.<name>`. 매니페스트 하나 = 식별자 하나(플러그인 팩과 달리 멤버 확장 없음). |
 | `applies_to` | 플레이북이 다루는 노드 타입(`category.name`) — 언제 관련이 있는지에 대한 힌트. |
 | `triggers` | 관련성에 대한 키워드 힌트, 분석가의 요청과 매칭됩니다. |
 | `requires` | 플레이북의 단계가 호출하는 플러그인 팩 식별자. **모두 프로젝트에 설치된 경우에만 스킬을 사용할 수 있습니다**(마켓플레이스는 설치를 이에 따라 제한하고, 런타임도 같은 사실로 가용성을 제한합니다). 비어 있거나 없으면 = 플레이북이 내장 그래프 툴만 사용합니다. |
@@ -91,7 +91,7 @@ Skill Pack은 Plugin Pack 및 Type Pack과 정확히 같은 방식으로 배포�
 }
 ```
 
-`applies_to`, `section_count`, `requires` 필드는 병합 시 **파생**되어, 찾아보기 페이지가 모든 문서를 가져오지 않고도 렌더링할 수 있습니다. 전체 워크플로 — 포크, 불변 커밋 `ref` 고정, 항목 하나 추가, PR 열기 —는 [레지스트리에 게시](publishing.md)와 동일합니다.
+`applies_to`, `section_count`, `requires` 필드는 병합 시 **파생**되어, 찾아보기 페이지가 모든 문서를 가져오지 않고도 렌더링할 수 있습니다. 전체 워크플로 — 포크, 불변 커밋 `ref` 고정, `packs/<identifier>.json` 파일 하나 추가, PR 열기 —는 [레지스트리에 게시](publishing.md)와 동일합니다.
 
 ## 다음 / 함께 보기
 

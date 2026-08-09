@@ -34,7 +34,7 @@ export default definePluginPack({
 
 | Field          | Notes |
 | -------------- | ----- |
-| `identifier`   | The **pack id**, a reverse-DNS string `run.vineyard.pluginpacks.*` (e.g. `run.vineyard.pluginpacks.chaos`). It names the bundle, not any one contained plugin. |
+| `identifier`   | The **pack id**, a reverse-DNS string `<your-namespace>.pluginpacks.*` (e.g. `run.vineyard.pluginpacks.chaos`). It names the bundle, not any one contained plugin. |
 | `content_type` | `vineyard:pluginpack` — the bundle's own kind. Each contained plugin still carries `vineyard:plugin`. |
 | `name`         | Human-readable pack name shown on the marketplace card. |
 | `version`      | SemVer for the bundle as a whole. |

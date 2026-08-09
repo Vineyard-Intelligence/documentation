@@ -91,7 +91,7 @@ Every field below is required unless noted. The full schema is documented in [pl
 
 | Field | Notes |
 |---|---|
-| `identifier` | Reverse-DNS, `run.vineyard.plugins.*`. |
+| `identifier` | Reverse-DNS, `<your-namespace>.plugins.*`. |
 | `content_type` | Must be the literal `vineyard:plugin`. |
 | `name`, `version`, `description` | `version` is SemVer. |
 | `platforms.web` | `{ runtime: "sandbox-js", entry: "dist/main.js" }`. `sandbox-js` runs your JS in the worker; `web-proxy` is the CORS escape hatch (see below). |

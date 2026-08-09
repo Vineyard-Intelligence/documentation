@@ -18,9 +18,14 @@
 
 | 콘텐츠 유형 | `content_type` | 식별자 형식 | 설명 |
 |---|---|---|---|
-| **Plugin Pack** | `vineyard:pluginpack` | `run.vineyard.pluginpacks.<name>` | `definePlugin({ manifest, run })`을 내보내는 하나 이상의 번들 JS 모듈로, 그래프를 읽고 변경 사항을 분석가 검토용으로 스테이징합니다. |
-| **Type Pack** | `vineyard:typepack` | `run.vineyard.typepacks.<name>` | 노드 **엔티티 타입**과 선택적 **엣지 타입**(아이콘, 색상, 프로퍼티, 유효성 검사기)을 정의하는 JSON입니다. |
-| **Skill Pack** | `vineyard:skillpack` | `run.vineyard.skillpacks.<name>` | JSON 텍스트: 에이전트가 따르는 조사 **플레이북**. 코드도 권한도 없습니다. |
+| **Plugin Pack** | `vineyard:pluginpack` | `<namespace>.pluginpacks.<name>` | `definePlugin({ manifest, run })`을 내보내는 하나 이상의 번들 JS 모듈로, 그래프를 읽고 변경 사항을 분석가 검토용으로 스테이징합니다. |
+| **Type Pack** | `vineyard:typepack` | `<namespace>.typepacks.<name>` | 노드 **엔티티 타입**과 선택적 **엣지 타입**(아이콘, 색상, 프로퍼티, 유효성 검사기)을 정의하는 JSON입니다. |
+| **Skill Pack** | `vineyard:skillpack` | `<namespace>.skillpacks.<name>` | JSON 텍스트: 에이전트가 따르는 조사 **플레이북**. 코드도 권한도 없습니다. |
+
+`<namespace>`는 **본인 소유의** reverse-DNS 접두사이며 레이블 두 개 이상입니다: `com.acme`,
+`io.github.yourname`, `dev.yourdomain`. `run.vineyard.*`는 Vineyard의 것이므로 여기에 게시할 수
+없습니다. 도메인을 실제로 소유하는지는 스키마가 판단할 수 없습니다 — 소유하지 않은 네임스페이스로
+제출하면 CI가 아니라 리뷰에서 거부됩니다.
 
 세 시스템은 함께 작동하도록 설계되었습니다 — 플러그인의 `io`는 Type Pack 타입을
 정규화된 `category.name` 형식으로 참조하고, Skill Pack의 단계는 `requires`에 선언된

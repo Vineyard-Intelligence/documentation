@@ -8,7 +8,7 @@
 
 ## 식별 정보
 
-식별 정보 블록은 플러그인의 이름을 지정하고 속성을 부여합니다: `identifier`(마켓플레이스와 업데이트 확인이 키로 사용하는 reverse-DNS `run.vineyard.plugins.<slug>` 문자열), 상수 `content_type`인 `vineyard:plugin`, 표시 `name`, **SemVer** `version`(레지스트리는 SemVer로 릴리스를 정렬합니다 — [Updates](updates.md) 참조), 한두 문장의 `description`, 그리고 선택적 `author`, `license`, `icon`. `icon` 값은 **다형적**이며 순서대로 해석됩니다: `data:`/`http(s):` 이미지 URI는 직접 그려집니다. 그 외에는 케밥 케이스의 **lucide** 이름(예: `sitemap`)이 SVG로 렌더링됩니다. 그 외에는 리터럴 글리프/이모지로 처리됩니다. 이는 Type Pack 노드 아이콘에 사용되는 것과 동일한 리졸버입니다. 선택적 프레젠테이션 포인터 `thumbnail_url`, `marketing_url`, `latest_url`(마지막은 업데이트 흐름에 참여)은 [schema reference](../reference/plugin-schema.md)에 있습니다.
+식별 정보 블록은 플러그인의 이름을 지정하고 속성을 부여합니다: `identifier`(마켓플레이스와 업데이트 확인이 키로 사용하는 reverse-DNS `<본인-네임스페이스>.plugins.<slug>` 문자열), 상수 `content_type`인 `vineyard:plugin`, 표시 `name`, **SemVer** `version`(레지스트리는 SemVer로 릴리스를 정렬합니다 — [Updates](updates.md) 참조), 한두 문장의 `description`, 그리고 선택적 `author`, `license`, `icon`. `icon` 값은 **다형적**이며 순서대로 해석됩니다: `data:`/`http(s):` 이미지 URI는 직접 그려집니다. 그 외에는 케밥 케이스의 **lucide** 이름(예: `sitemap`)이 SVG로 렌더링됩니다. 그 외에는 리터럴 글리프/이모지로 처리됩니다. 이는 Type Pack 노드 아이콘에 사용되는 것과 동일한 리졸버입니다. 선택적 프레젠테이션 포인터 `thumbnail_url`, `marketing_url`, `latest_url`(마지막은 업데이트 흐름에 참여)은 [schema reference](../reference/plugin-schema.md)에 있습니다.
 
 ## 플랫폼
 

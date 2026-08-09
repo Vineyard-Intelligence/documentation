@@ -16,7 +16,7 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 
 | Property | Type | Req. | Allowed / constraints | Default | Meaning |
 |---|---|---|---|---|---|
-| `identifier` | string | yes | pattern `^run\.vineyard\.plugins\.[a-z0-9_]+$` | — | Reverse-DNS 고유 ID, 예: `run.vineyard.plugins.cidr_expand`. |
+| `identifier` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$` | — | Reverse-DNS 고유 ID, 예: `run.vineyard.plugins.cidr_expand`. |
 | `content_type` | string | yes | `const`: `vineyard:plugin` | — | 문서 판별자. 정확히 이 값이어야 합니다. |
 | `name` | string | yes | minLength 1, maxLength 128 | — | 사람이 읽을 수 있는 표시 이름. |
 | `version` | string | yes | pattern `^\d+\.\d+\.\d+(?:[-+].+)?$` | — | SemVer 문자열 (레거시 float 아님), 예: `1.0.0`, `2.1.0-beta.1`. |
@@ -94,7 +94,7 @@ plugin이 Type Pack에서 참조하는 엔티티 유형. `type: object`, `additi
 
 | Property | Type | Req. | Constraints | Meaning |
 |---|---|---|---|---|
-| `typepack` | string | yes | pattern `^run\.vineyard\.typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$` | 소유 Type Pack 식별자. |
+| `typepack` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$` | 소유 Type Pack 식별자. |
 | `category` | string | yes | — | Type 카테고리, 예: `infrastructure`. |
 | `name` | string | yes | — | 카테고리 내 Type 이름, 예: `ip_address`. |
 | `as` | string | no | — | 선택적 바인딩 별칭. 소비된 노드의 값이 이 키 아래 `params`에 미리 바인딩됩니다. |
@@ -330,7 +330,7 @@ Task 실행 모델. `type: object`, `additionalProperties: false`. 모든 속성
 }
 ```
 
-1.  `^run\.vineyard\.plugins\.[a-z0-9_]+$`에 일치하는 Reverse-DNS 식별자.
+1.  `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$`에 일치하는 Reverse-DNS 식별자.
 2.  `const` 판별자 — 정확히 `vineyard:plugin`이어야 합니다.
 3.  레거시 float가 아닌 SemVer.
 4.  노드 우클릭 메뉴에 표시되는 아이콘.

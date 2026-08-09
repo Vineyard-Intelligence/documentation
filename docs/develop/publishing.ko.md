@@ -1,66 +1,93 @@
 # Publishing to the registry
 
-Plugin Pack이나 Type Pack을 공개 Vineyard 마켓플레이스에 게시하는 것은 레지스트리 저장소에 대한 단일 풀 리퀘스트입니다. **하나의** 메타데이터 항목을 추가하면, CI가 유효성을 검사하고, 사람이 병합하며, 다음 레지스트리 가져오기 시 항목이 라이브로 전환됩니다 — 앱 릴리스가 필요하지 않습니다.
+Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게시하는 것은 레지스트리 저장소에 대한 단일 풀 리퀘스트입니다. **파일 하나**를 추가하면 CI가 검증하고, 사람이 병합하며, 다음 레지스트리 가져오기 시 항목이 라이브로 전환됩니다 — 앱 릴리스가 필요하지 않습니다.
 
 ## 레지스트리 저장소는 메타데이터만 보유합니다
 
 제출은 **`Vineyard-Intelligence/registry`**로 이루어집니다. 저장소는 *포인터와 파생 측면*을 보유하며, 코드나 매니페스트 또는 번들의 복사본을 절대 보유하지 않습니다. 전체 매니페스트/Type Pack JSON, README, 스크린샷, 번들은 모두 **귀하의** 작성자 저장소에 고정된 `ref`에 남아 있습니다. 마켓플레이스 상세 페이지는 거기서 지연 하이드레이션됩니다.
 
-| 파일 | 역할 |
+| 경로 | 역할 |
 |---|---|
-| `community-pluginpacks.json` | 플러그인(또는 팩)당 하나의 간소화된 항목: identifier, name, author, description, repo, ref, path, version, platforms, `scopes_summary`, `verified`. |
-| `community-typepacks.json` | Type Pack용 대칭 항목. 스코프 대신 `categories`/`type_count`/`edge_count`를 가집니다(코드가 실행되지 않음). |
-| `community-skillpacks.json` | Skill Pack용 대칭 항목. 스코프 대신 `applies_to`/`section_count`/`requires`를 가집니다(텍스트만 있으며, 코드가 실행되지 않음). |
-| `community-plugin-stats.json` / `community-typepack-stats.json` | 설치/활성화 횟수 — Vineyard 인프라가 유지 관리하며, **제출자가 아님**. |
-| `deprecation.json` / `removed.json` | 철회된 버전 / 목록 제외된 항목. |
-| `verified-authors.json` | "verified" 배지의 출처. CI가 멤버십을 항목에 미러링하며 — 절대 자체 주장되지 않음. |
+| `packs/<identifier>.json` | **소스이자, 제출이 추가하는 유일한 파일.** 팩 하나당 파일 하나이며, 파일명은 해당 `identifier`입니다. |
+| `registry/community-pluginpacks.json` | 게시되는 Plugin Pack 인덱스 — **생성물**. 팩당 하나의 간소화된 항목: identifier, name, author, description, repo, ref, path, version, platforms, `scopes_summary`, `verified`. |
+| `registry/community-typepacks.json` | Type Pack용 대칭 항목. 스코프 대신 `categories`/`type_count`/`edge_count`를 가집니다(코드가 실행되지 않음). |
+| `registry/community-skillpacks.json` | Skill Pack용 대칭 항목. 스코프 대신 `applies_to`/`section_count`/`requires`를 가집니다(텍스트만 있으며, 코드가 실행되지 않음). |
 | `schemas/` | CI가 항목을 검증하는 기준이 되는 게시된 메타 스키마. |
+| `verified-authors.json` | verified 배지를 달 수 있는 저자와 각자가 소유한 네임스페이스. **운영자 소유** — 제출이 편집하지 않습니다. |
+| `SPEC.md` | 레지스트리 계약 전문 — 항목 형식, 고정 규칙, CI가 강제하는 항목. |
 
-제출 시 세 카탈로그 파일 중 **하나**만 편집하며, 단일 항목만 추가합니다.
+!!! warning "`registry/community-*.json`을 편집하지 마세요"
+    이 세 파일은 `scripts/build_registry.py`가 `packs/`에서 빌드하며 병합 시 재생성되므로, 직접 편집하면 덮어써집니다. 항목이 어느 카탈로그에 들어갈지는 `content_type`이 결정하며 — 제출자가 고르지 않습니다.
+
+    팩당 파일 하나라는 구조 덕분에 동시에 열린 제출들이 서로 충돌하지 않고, diff가 다른 작성자의 고정된 `ref`에 닿을 수 없으며, 식별자 중복이 누군가 기억해서 돌려야 하는 검사가 아니라 경로 충돌이 됩니다.
 
 ## 제출 워크플로
 
 === "단계"
 
     1. `Vineyard-Intelligence/registry`를 **포크**합니다.
-    2. **불변 `ref` 고정** — 작성자 저장소의 릴리스 **커밋 SHA**. 태그와 브랜치는 가변이며 거부됩니다. `scripts/resolve_ref.py`로 태그/브랜치를 커밋 SHA로 확인하세요.
-    3. `community-pluginpacks.json`(Plugin Pack), `community-typepacks.json`(Type Pack) 또는 `community-skillpacks.json`(Skill Pack)에 **항목 하나를 추가**합니다. 통계, 폐기, 제거, verified-authors 파일은 편집하지 마세요 — 이들은 제출자 소유가 아닙니다.
+    2. **불변 `ref` 고정** — 작성자 저장소의 릴리스 **커밋 SHA**. 태그와 브랜치는 가변이며 거부됩니다. `python scripts/resolve_ref.py owner/repo <태그-또는-브랜치>`로 커밋 SHA를 확인하세요.
+    3. **파일 하나** `packs/<identifier>.json`을 추가합니다. 파일명은 항목의 `identifier`와 정확히 일치해야 합니다.
     4. **PR을 엽니다.** `validate` 워크플로가 검증 결과를 상태 확인으로 게시합니다.
-    5. **차단 실패를 수정**한 다음, 사람의 병합을 기다립니다.
-    6. CI 통과 + 병합 후, 항목은 **다음 레지스트리 가져오기 시 라이브**됩니다 — 클라이언트가 정적 JSON을 가져오며, 결합된 앱 릴리스가 없습니다.
+    5. **실패를 수정**한 다음, 사람의 병합을 기다립니다.
+    6. CI 통과 + 병합 후 카탈로그가 재생성되고, 항목은 **다음 레지스트리 가져오기 시 라이브**됩니다 — 클라이언트가 정적 JSON을 가져오며, 결합된 앱 릴리스가 없습니다.
 
 === "참고"
 
-    - 항목의 `identifier`는 `manifest.identifier`(또는 `typepack.identifier`)와 동일해야 하며 reverse-DNS 형식 `run.vineyard.plugins.*` / `run.vineyard.typepacks.*`을 사용합니다.
-    - `ref`가 코드를 고정하는 유일한 요소입니다. 불변이므로, 새 버전을 게시한다는 것은 새로운 `ref`에 새 항목을 추가하는 것을 의미합니다 — [Updates](updates.md)를 참조하세요.
-    - 파생 필드(`platforms`, `scopes_summary`, `categories`, `type_count`, …)는 전체 매니페스트/Type Pack의 투영이므로, 찾아보기 페이지가 모든 매니페스트를 가져오지 않고도 렌더링됩니다.
+    - 항목의 `identifier`는 `manifest.identifier`(또는 `typepack.identifier`)와 동일해야 하며 reverse-DNS 형식 `<본인-네임스페이스>.pluginpacks.*` / `.typepacks.*` / `.skillpacks.*`을 사용합니다 — [세 가지 콘텐츠 유형](index.md) 참조.
+    - `ref`가 코드를 고정하는 유일한 요소입니다. 새 버전을 배포하려면 해당 팩의 파일을 그 자리에서 새 `ref`와 `version`으로 수정하세요 — [Updates](updates.md)를 참조하세요.
+    - 파생 필드(`platforms`, `scopes_summary`, `categories`, `type_count`, …)는 전체 매니페스트/Type Pack의 투영이므로, 찾아보기 페이지가 모든 매니페스트를 가져오지 않고도 렌더링됩니다. CI가 고정된 문서에서 이들을 전부 다시 계산해 불일치하면 항목을 거부합니다 — 카드에 뜨는 권한 배지는 설명이 아니라 사실 진술입니다.
 
-## CI가 검증하는 것
+## CI가 강제하는 것
 
-`validate` 워크플로에는 두 계층이 있습니다. **차단** 검사는 사람이 병합하기 전에 통과해야 합니다. **권고** 검사는 참고로 표시되지만 절대 차단하지 않습니다.
+아래는 모두 **차단** 검사입니다 — 전부 통과해야 풀 리퀘스트를 병합할 수 있습니다. `.github/workflows/validate.yml`에서 실행됩니다.
 
-### 차단 (통과 필수)
+### 항목
 
-- **레지스트리 항목 스키마.** 항목이 `schemas/registry-plugin-entry` 또는 `schemas/registry-typepack-entry`에 대해 유효성을 검사합니다.
-- **양쪽 카탈로그에서의 식별자 고유성.** 식별자가 기존 Plugin Pack *또는* Type Pack 항목과 충돌할 수 없습니다.
-- **불변 `ref`.** 반드시 **커밋 SHA**(40-16진수 또는 64-16진수)여야 합니다. 태그와 브랜치는 가변적이며(다른 코드로 재지정 가능) **거부**됩니다 — 검토된 정확한 커밋을 고정하세요(`version`은 사람이 읽을 수 있는 미러).
-- **전체 매니페스트/Type Pack이** `repo@ref/path`에서 게시된 플러그인/Type Pack 스키마에 대해 유효성 검사 — 간소화된 레지스트리 행뿐만 아니라.
-- **`web-proxy` ⇒ 정확히 하나의 `network` 엔드포인트, 그리고 `proxy_endpoint`와 동일.** web-proxy 플러그인은 단일 프록시 호스트만 선언할 수 있습니다. [scopes](../reference/scopes.md)를 참조하세요.
-- **시크릿처럼 보이는 파라미터 키 없음.** 자격 증명처럼 보이는 파라미터 키(api_key, token, secret, …)는 넣으면 안 됩니다. 시크릿은 사용자 대상 params가 아닌 `secret: true`와 함께 `scopes.config`에 있어야 합니다(데스크톱 전용). 이를 거부하는 자동 검사는 없으니 직접 확인하세요.
-- **Type Pack 교차 필드 불변성:** `label_property`가 존재하고 **non-optional**이어야 함. 모든 `enum`/`default`가 해당 프로퍼티 타입과 일치해야 함. 각 엣지 타입의 `from`/`to`가 선언된 노드 타입으로 해석되어야 함.
+- **파일명이 `identifier`와 일치하고, `content_type`이 알려진 네 종류 중 하나여야 합니다.** (`build_registry.py`)
+- **레지스트리 항목 스키마.** 항목이 `schemas/registry-plugin-entry`, `registry-typepack-entry`, `registry-skillpack-entry` 중 하나에 대해 유효성을 검사합니다. (`validate.py`)
+- **네임스페이스와 저자.** `verified-authors.json`에 등재된 네임스페이스는 소유자만 게시할 수 있고, 등재된 저자명은 자기 네임스페이스 안에서만 쓸 수 있습니다 — 따라서 `run.vineyard.*`도 `author: vineyard-run`도 타인이 주장할 수 없습니다. `verified`는 운영자가 정하며, 제출이 이를 선언하면 거부됩니다. (`validate.py`)
 
-### 권고 (절대 차단하지 않음)
+### 고정(pin)
 
+- **불변 `ref`.** 반드시 **커밋 SHA**(40-16진수 또는 64-16진수)여야 합니다. 태그와 브랜치는 가변적이며 — 검토 후 다른 코드로 재지정 가능 — **거부**됩니다. (`verify_pinned.py`)
+- **고정된 문서가 항목과 일치해야 합니다.** `repo@ref/path`의 문서를 가져와 그 `identifier`, `content_type`, `version`이 항목이 광고하는 값과 같아야 합니다. `ref`를 다시 고정하지 않고 메타데이터만 올린 항목은 여기서 실패합니다.
+- **요약 필드는 신뢰하지 않고 다시 계산합니다.** `scopes_summary`, `platforms`, `plugin_count`, `section_count`, `type_count`, `edge_count`를 고정된 문서에서 유도해 작성값과 대조합니다. `scopes_summary.network`는 멤버가 `network` **또는** `web_probe`를 선언하면 true입니다 — probe는 임의 호스트에 도달하므로 더 좁은 게 아니라 더 넓은 이그레스입니다. 이 검사가 없던 탓에 도입 시점에 라이브 항목 5건이 자기 매니페스트와 어긋나 있었고, 그중 3건은 팩이 하는 일을 축소해서 광고하고 있었습니다.
+
+### 바이트
+
+`scan.py`는 실제로 실행될 JavaScript — 팩의 모든 `platforms.web.entry` **및** `platforms.desktop.entry` — 를 가져와 다음을 거부합니다:
+
+| 탐지 | 이유 |
+|---|---|
+| `eval(` / `new Function(` | 팩은 `ctx`에 대한 데이터 변환입니다. 런타임에 코드를 만들면 게시된 바이트에 대한 검토가 무의미해집니다. |
+| 완전한 리터럴이 아닌 `import()` | 실측된 유출 경로입니다. `import("https://…" + caseData)`는 케이스 데이터를 URL에 실어 이그레스 허용목록을 우회합니다. |
+| `importScripts(` | 워커에서 임의 스크립트를 실행하여 게시된 번들을 완전히 우회합니다. |
+| `localStorage` / `sessionStorage` / `indexedDB` / `document.cookie` | Web Worker에는 이들이 없으므로, 죽은 코드이거나 있어서는 안 될 곳에서 실행되도록 작성된 코드입니다. |
+| 맨 `fetch(` / `XMLHttpRequest` / `WebSocket` | 아웃바운드 요청은 매니페스트의 엔드포인트 허용목록을 강제하는 `ctx.net.fetch`를 거쳐야 합니다. |
+
+주석과 문자열 내용은 이 규칙들이 돌기 전에 공백 처리되므로, `fetch (`가 우연히 들어간 산문은 탐지되지 않습니다.
+
+`native`/`subprocess` 데스크탑 런타임은 그대로 거부됩니다. JS 샌드박스 밖에서 돌아 스캐너가 읽을 수 없는데, 한 번도 열어보지 않은 산출물에 "이상 없음"을 찍는 게 스캐너의 최악의 실패 방식이기 때문입니다.
+
+Skill Pack 텍스트도 검사합니다. 에이전트의 시스템 프롬프트를 무효화하거나, 분석가 검토를 우회하거나, 자격 증명을 요구하려는 지시를 찾습니다.
+
+### 사람이 판단하는 것
+
+자동화되지 않으며, 자동 거부 사유도 아닙니다 — 검토자가 판단합니다:
+
+- 팩이 실제로 필요로 하는 것 대비 요청한 스코프의 범위.
 - `node:delete` / `edge:delete` 사용(그래프 파괴적 동사).
-- `net + node:read` 조합(데이터가 그래프를 떠남 + 네트워크 이그레스).
-- 난독화 전용 번들(검사할 읽을 수 있는 소스 없음).
+- `network` + `node:read` 조합(데이터가 그래프를 떠나고, 이그레스가 있음).
+- 난독화 전용 번들 — 검사할 읽을 수 있는 소스 없음.
+- 시크릿처럼 보이는 `params` 키. 자격 증명은 사용자 대상 params가 아니라 `secret: true`와 함께 `scopes.config`에 있어야 합니다.
 
-!!! tip "권고 ≠ 거부"
-    Chaos 팩 — Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node — 은 전적으로 `node:delete`/`edge:delete`에 의존합니다. 여전히 잘 게시됩니다. 이러한 플래그는 *정보 제공용*입니다.
+!!! tip "파괴적 ≠ 거부"
+    Chaos 팩 — Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node — 은 전적으로 `node:delete`/`edge:delete`에 의존합니다. 문제없이 게시됩니다.
 
-## 샘플 레지스트리 항목
+## 제출 예시
 
-`community-pluginpacks.json`에 추가되는 **Plugin Pack** 항목입니다. `plugin_count`는 여러 플러그인이 있는 팩(하나의 파일 → 여러 플러그인)을 표시하여 마켓플레이스가 하나의 카드를 보여주고 포함된 모든 플러그인을 함께 설치합니다:
+`packs/run.vineyard.pluginpacks.chaos.json`으로 제출하는 **Plugin Pack**입니다. `plugin_count`는 여러 플러그인이 있는 팩(하나의 파일 → 여러 플러그인)을 표시하여 마켓플레이스가 하나의 카드를 보여주고 포함된 모든 플러그인을 함께 설치합니다:
 
 ```json
 {
@@ -81,7 +108,7 @@ Plugin Pack이나 Type Pack을 공개 Vineyard 마켓플레이스에 게시하�
 }
 ```
 
-`community-typepacks.json`에 추가되는 Type Pack 항목(스코프 없음. `categories`/`type_count`/`edge_count`가 측면을 구동):
+`packs/run.vineyard.typepacks.infrastructure.json`으로 제출하는 **Type Pack**입니다(스코프 없음. `categories`/`type_count`/`edge_count`가 측면을 구동):
 
 ```json
 {
@@ -89,29 +116,29 @@ Plugin Pack이나 Type Pack을 공개 Vineyard 마켓플레이스에 게시하�
   "content_type": "vineyard:typepack",
   "name": "Infrastructure",
   "author": "vineyard-run",
-  "description": "A base Type Pack defining network-infrastructure entities (IP address, domain, URL, autonomous system, certificate).",
+  "description": "Network-infrastructure and web OSINT entities and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
   "ref": "a78c53defbec417eeb8b9f50029c376926cb8c6d",
   "path": "typepacks/infrastructure.json",
-  "version": "1.0.0",
-  "categories": ["infrastructure"],
-  "type_count": 5,
-  "edge_count": 0,
+  "version": "2.2.0",
+  "categories": ["infrastructure", "web"],
+  "type_count": 13,
+  "edge_count": 11,
   "verified": true
 }
 ```
 
 !!! note "필드 참조"
-    필수 필드는 `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`입니다. `content_type`은 리터럴 `vineyard:plugin`, `vineyard:pluginpack`, 또는 `vineyard:typepack`입니다. 전체 필드 목록과 제약 조건은 [registry-schema](../reference/registry-schema.md)에 있습니다.
+    필수 필드는 `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`입니다. `content_type`은 리터럴 `vineyard:plugin`, `vineyard:pluginpack`, `vineyard:typepack`, `vineyard:skillpack`입니다. 전체 필드 목록과 제약 조건은 [registry-schema](../reference/registry-schema.md)에 있습니다.
 
 ## 병합 후
 
-Vineyard 측 빌드 단계도 없고 앱 버전 변경도 없습니다. PR이 병합되면 정적 카탈로그 JSON이 업데이트되고, 다음에 클라이언트가 레지스트리를 가져올 때 귀하의 항목이 파생 배지와 함께 찾아보기에 나타납니다. 설치/활성화 횟수가 통계 파일에 누적되기 시작합니다(Vineyard 인프라가 유지 관리). `verified` 배지는 CI에 의해 설정된 `verified-authors.json`의 멤버십을 따릅니다.
+병합되면 `packs/`에서 세 카탈로그 파일이 재생성되어 `main`에 바로 커밋됩니다 — GitHub Pages가 브랜치를 그대로 서빙하므로 게시되는 바이트가 트리에 존재해야 하기 때문입니다. 앱 버전 변경은 없습니다. 다음에 클라이언트가 레지스트리를 가져올 때 귀하의 항목이 파생 배지와 함께 찾아보기에 나타납니다.
 
 ## 다음 / 참고
 
 - [Distribution](distribution.md) — 번들이 패키징되고 가져와지는 방식 (`distribution.kind`: zip 자산 / git 트리 / inline).
-- [Updates](updates.md) — 새로운 불변 `ref`를 추가하여 새 버전 배포.
+- [Updates](updates.md) — 새로운 불변 `ref`로 다시 고정하여 새 버전 배포.
 - [registry-schema](../reference/registry-schema.md) — 필드별 전체 스키마 참조.
-- [scopes](../reference/scopes.md) — 스코프 문자열과 web-proxy 엔드포인트 규칙.
+- [scopes](../reference/scopes.md) — 스코프 문자열과 엔드포인트 허용목록 규칙.
 - [Marketplace](../marketplace.md) — 귀하의 항목이 등록되는 정적 마켓플레이스 브라우저.
