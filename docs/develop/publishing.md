@@ -46,6 +46,7 @@ Every check below is **blocking** — a pull request cannot merge until they all
 
 - **Filename matches `identifier`, and `content_type` is one of the four known kinds.** (`build_registry.py`)
 - **Registry-entry schema.** The entry validates against `schemas/registry-plugin-entry`, `registry-typepack-entry`, or `registry-skillpack-entry`. (`validate.py`)
+- **Declared dependencies resolve.** A Skill Pack's `requires` and a Plugin Pack's `typepacks` must name packs that are in this catalog — the marketplace builds its co-install offer from those lists, so an identifier that resolves to nothing means the pack installs without the dependency it needs. A pack added in the *same* pull request counts, so a Type Pack and the plugin that uses it can land together. (`validate.py`)
 - **Namespace and authorship.** A namespace listed in `verified-authors.json` may only be published under by its owner, and an author name listed there may only be worn inside its own namespaces — so neither `run.vineyard.*` nor `author: vineyard-run` can be claimed by anyone else. `verified` is operator-set: a submission that asserts it is rejected. (`validate.py`)
 
 ### The pin
