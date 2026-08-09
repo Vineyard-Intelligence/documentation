@@ -82,6 +82,41 @@ plugin이 `manifest.scopes`에서 선언할 수 있는 모든 scope 문자열, �
 !!! warning "Desktop only"
     `ctx.net.probe`는 Electron 메인 프로세스가 수행합니다 — CORS를 허용하지 않는 호스트로부터 교차 출처 응답을 읽을 수 있는 유일한 지점입니다. web 빌드에서는 이 기능에 뒷받침이 없으므로, 부여되었더라도 `ctx.net.probe`는 **존재하지 않습니다**. 호출 전에 존재 여부를 확인하고 폴백하세요 (WhatsMyName 팩이 정확히 이렇게 합니다).
 
+## services
+
+이 플러그인이 **이름으로** 호출하는 Vineyard 운영 서비스입니다. `ctx.service`를 뒷받침합니다.
+
+```jsonc
+"services": ["rdap"]
+```
+
+| 이름 | 내용 |
+| --- | --- |
+| `rdap` | 모든 RIR을 정규화한 캐시형 IP RDAP 조회 |
+| `telegram` | Vineyard가 운영하는 계정으로 수행하는 읽기 전용 텔레그램 정찰 |
+
+닫힌 enum이라 오타는 분석가의 첫 실행이 아니라 리뷰에서 걸리고, 설치 화면에 표시되는 스코프는 항상
+실제로 동작하는 것입니다.
+
+**왜 URL이 아니라 이름인가.** `network`는 목적지를 플러그인에서 받으므로, 그 경로에 분석가의 자격증명을
+붙이면 매니페스트가 선언한 아무 엔드포인트에나 넘어갑니다. `ctx.service`는 서비스 이름과 경로만 받고
+기본 URL은 앱의 테이블에 있어서, 플러그인은 목적지를 표현할 방법 자체가 없습니다. 그래서 이 호출에
+분석가의 신원을 실어도 안전하고, 같은 이유로 서비스 스코프는 카탈로그 카드의
+`scopes_summary.network`에 **포함되지 않습니다**. 별도 `services` 필드로, 이름까지 표시됩니다 —
+어느 서비스인지가 중요하기 때문입니다: `rdap`은 공개 등록 정보를 읽고, `telegram`은 계정을 움직입니다.
+
+```js
+const res = await ctx.service('rdap', '8.8.8.8');
+const who = await ctx.service('telegram', 'resolve', {
+    method: 'POST',
+    body: JSON.stringify({ target: 'durov' }),
+});
+```
+
+서비스 호출의 `Authorization`은 병합되지 않고 무시됩니다 — 호스트가 설정하며, 서비스가 누구의
+호출로 인식할지를 정하는 유일한 헤더이기 때문입니다. 일부 서비스는 지정된 팩으로 더 제한됩니다.
+`telegram`이 그렇고, 그 계정은 실행을 시킨 분석가가 아니라 운영자의 것이기 때문입니다.
+
 ## config
 
 각 항목은 `ConfigValue`입니다. `config` 항목을 선언하면 `ctx.config`가 존재하게 됩니다 — 선언된 **비밀 아닌** 값들의 읽기 전용 맵입니다. (출처: `@vineyard/plugin-sdk` 패키지 타입 — `ConfigValue`, `HostContext.config`.)
