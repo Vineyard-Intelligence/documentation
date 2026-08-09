@@ -46,7 +46,7 @@ Every check below is **blocking** — a pull request cannot merge until they all
 
 - **Filename matches `identifier`, and `content_type` is one of the four known kinds.** (`build_registry.py`)
 - **Registry-entry schema.** The entry validates against `schemas/registry-plugin-entry`, `registry-typepack-entry`, or `registry-skillpack-entry`. (`validate.py`)
-- **Declared dependencies resolve.** A Skill Pack's `requires` and a Plugin Pack's `typepacks` must name packs that are in this catalog — the marketplace builds its co-install offer from those lists, so an identifier that resolves to nothing means the pack installs without the dependency it needs. A pack added in the *same* pull request counts, so a Type Pack and the plugin that uses it can land together. (`validate.py`)
+- **Declared dependencies resolve, and are still live.** A Skill Pack's `requires` and a Plugin Pack's `typepacks` must name packs that are in this catalog — the marketplace builds its co-install offer from those lists, so an identifier that resolves to nothing means the pack installs without the dependency it needs. A pack added in the *same* pull request counts, so a Type Pack and the plugin that uses it can land together. A dependency that has been [delisted](#taking-a-pack-down) is rejected for the same reason: the offer would hand over a pack the registry has taken back. (`validate.py`)
 - **Namespace and authorship.** A namespace listed in `verified-authors.json` may only be published under by its owner, and an author name listed there may only be worn inside its own namespaces — so neither `run.vineyard.*` nor `author: vineyard-run` can be claimed by anyone else. `verified` is operator-set: a submission that asserts it is rejected. (`validate.py`)
 
 ### The pin
@@ -132,6 +132,37 @@ A **Type Pack**, filed as `packs/run.vineyard.typepacks.infrastructure.json` (no
 ## After merge
 
 Merging triggers a rebuild of the three catalog files from `packs/`, committed straight back to `main` — GitHub Pages serves the branch directly, so the published bytes have to exist in the tree. There is no app version bump. The next time a client fetches the registry your entry appears in the browser with its derived badges.
+
+## Taking a pack down
+
+Deleting your entry is **not** how a pack is retired. A project installs a pack by storing a pointer to `repo@ref/path` — an absolute, immutable CDN url — and nothing in the load path asks the catalog for permission afterwards. Delete the row and the pack disappears from the browse page while every project that already has it goes on loading it, forever, from the pinned commit.
+
+So the row stays and gains a `status` block:
+
+```json
+"status": {
+  "state": "deprecated",
+  "reason": "Unmaintained since the API it collects from shut down.",
+  "since": "2026-08-09",
+  "replacement": "com.acme.pluginpacks.recon"
+}
+```
+
+| State | In the catalog | In a project that has it |
+|---|---|---|
+| `deprecated` | Still browsable and installable, badged | Loads normally; the analyst is told once per project open |
+| `withdrawn` | Hidden from browse unless the project has it; install refused | **Not loaded** — the reason is shown instead |
+
+`reason` reaches analysts verbatim, so write it for them: what happened, and what to do. `replacement` must name a live pack of the same kind.
+
+Deprecating your own pack is an ordinary pull request. **Withdrawal is the operator's call** — it disables a pack in projects that are working today, and is reserved for content that turned out to be harmful or has disappeared.
+
+Two things to expect:
+
+- **Fix the dependants first.** A live pack may not `require` (or list in `typepacks`) a delisted one, so CI will name every pack that depends on yours. Update them, or delist them in the same pull request.
+- **A withdrawn entry is no longer pin-verified.** Its content is allowed to be gone — usually that is *why* — so the pin check skips it. A deprecated pack still loads for its users and is still held to its pin, so it must still resolve.
+
+Removing the row outright is only for an entry nobody could have installed: a mistaken submission, or a duplicate.
 
 ## Next / See also
 
