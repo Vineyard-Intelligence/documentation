@@ -13,7 +13,7 @@
 
 | Field | Type | Req | Constraints / default | Meaning |
 |-------|------|-----|-----------------------|---------|
-| `identifier` | string | yes | pattern `^run\.vineyard\.typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$` | Reverse-DNS ID, 예: `run.vineyard.typepacks.infrastructure`. |
+| `identifier` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$` | Reverse-DNS ID, 예: `run.vineyard.typepacks.infrastructure`. |
 | `content_type` | string | yes | `const: "vineyard:typepack"` | 문서가 Type Pack임을 표시하는 판별자. |
 | `name` | string | yes | `minLength: 1`, `maxLength: 128` | 사람이 읽을 수 있는 팩 이름. |
 | `version` | string | yes | SemVer pattern `^(0\|[1-9]\d*)\.(0\|[1-9]\d*)\.(0\|[1-9]\d*)$` | 팩 **내용**의 SemVer. MAJOR = 노드 마이그레이션이 필요한 파괴적 type 변경. |

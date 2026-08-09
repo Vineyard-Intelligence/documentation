@@ -52,7 +52,7 @@ repo at a pinned commit (exactly like a plugin manifest or Type Pack):
 
 | Field | Role |
 | --- | --- |
-| `identifier` | Reverse-DNS primary key, `run.vineyard.skillpacks.<name>`. One manifest = one identifier (no member expansion, unlike a plugin pack). |
+| `identifier` | Reverse-DNS primary key, `<your-namespace>.skillpacks.<name>`. One manifest = one identifier (no member expansion, unlike a plugin pack). |
 | `applies_to` | Node types (`category.name`) the playbook is about — a hint for when it is relevant. |
 | `triggers` | Keyword hints for relevance, matched against the analyst's request. |
 | `requires` | Plugin pack identifiers the playbook's steps call. **A skill is only available when every one is installed in the project** (the marketplace gates install on this; the runtime gates availability on the same fact). Empty or absent = the playbook leans on built-in graph tools only. |
@@ -118,7 +118,7 @@ author repo, and the registry holds a single lean entry in `community-skillpacks
 
 The `applies_to`, `section_count`, and `requires` fields are **derived** at merge time so the browse
 page can render without fetching every document. The full workflow — fork, pin an immutable commit
-`ref`, append one entry, open a PR — is identical to [Publishing to the
+`ref`, add one `packs/<identifier>.json`, open a PR — is identical to [Publishing to the
 registry](publishing.md).
 
 ## Next / See also

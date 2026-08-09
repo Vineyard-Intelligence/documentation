@@ -167,7 +167,7 @@ marketplace installs those packs alongside the plugin.)
 The install-time lint enforces cross-field invariants beyond raw JSON Schema:
 
 - [ ] `content_type` is `vineyard:typepack`.
-- [ ] `identifier` is a valid `run.vineyard.typepacks.*` reverse-DNS string.
+- [ ] `identifier` is a valid `<your-namespace>.typepacks.*` reverse-DNS string.
 - [ ] At least one entity type; every entity type has ≥1 property.
 - [ ] Each property declares an explicit `type` from the enum (no `secret`/`credential`).
 - [ ] `validator`, when present, is the structured object — not a raw regex string.

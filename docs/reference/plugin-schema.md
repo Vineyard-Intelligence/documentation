@@ -16,7 +16,7 @@ The manifest is the single source of truth for a plugin; there is no separate se
 
 | Property | Type | Req. | Allowed / constraints | Default | Meaning |
 |---|---|---|---|---|---|
-| `identifier` | string | yes | pattern `^run\.vineyard\.plugins\.[a-z0-9_]+$` | — | Reverse-DNS unique id, e.g. `run.vineyard.plugins.cidr_expand`. |
+| `identifier` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$` | — | Reverse-DNS unique id, e.g. `run.vineyard.plugins.cidr_expand`. |
 | `content_type` | string | yes | `const`: `vineyard:plugin` | — | Document discriminator; must be exactly this value. |
 | `name` | string | yes | minLength 1, maxLength 128 | — | Human-readable display name. |
 | `version` | string | yes | pattern `^\d+\.\d+\.\d+(?:[-+].+)?$` | — | SemVer string (not the legacy float), e.g. `1.0.0`, `2.1.0-beta.1`. |
@@ -94,7 +94,7 @@ Entity types the plugin references from Type Packs. `type: object`, `additionalP
 
 | Property | Type | Req. | Constraints | Meaning |
 |---|---|---|---|---|
-| `typepack` | string | yes | pattern `^run\.vineyard\.typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$` | The owning Type Pack identifier. |
+| `typepack` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$` | The owning Type Pack identifier. |
 | `category` | string | yes | — | Type category, e.g. `infrastructure`. |
 | `name` | string | yes | — | Type name within the category, e.g. `ip_address`. |
 | `as` | string | no | — | Optional binding alias; the consumed node's value is pre-bound into `params` under this key. |
@@ -330,7 +330,7 @@ A full, valid manifest — the **CIDR Expand** reference plugin. It consumes an 
 }
 ```
 
-1. Reverse-DNS identifier matching `^run\.vineyard\.plugins\.[a-z0-9_]+$`.
+1. Reverse-DNS identifier matching `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$`.
 2. The `const` discriminator — must be exactly `vineyard:plugin`.
 3. SemVer, not the legacy float.
 4. Icon shown in the node right-click menu.

@@ -34,7 +34,7 @@ export default definePluginPack({
 
 | 필드          | 참고 |
 | -------------- | ----- |
-| `identifier`   | **팩 ID**, reverse-DNS 문자열 `run.vineyard.pluginpacks.*` (예: `run.vineyard.pluginpacks.chaos`). 포함된 개별 플러그인이 아닌 번들의 이름입니다. |
+| `identifier`   | **팩 ID**, reverse-DNS 문자열 `<본인-네임스페이스>.pluginpacks.*` (예: `run.vineyard.pluginpacks.chaos`). 포함된 개별 플러그인이 아닌 번들의 이름입니다. |
 | `content_type` | `vineyard:pluginpack` — 번들 자체의 종류. 포함된 각 플러그인은 여전히 `vineyard:plugin`을 가집니다. |
 | `name`         | 마켓플레이스 카드에 표시되는 사람이 읽을 수 있는 팩 이름. |
 | `version`      | 번들 전체에 대한 SemVer. |

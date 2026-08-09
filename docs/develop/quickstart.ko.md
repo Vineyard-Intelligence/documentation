@@ -91,7 +91,7 @@ export default definePlugin({
 
 | 필드 | 참고 |
 |---|---|
-| `identifier` | Reverse-DNS, `run.vineyard.plugins.*`. |
+| `identifier` | Reverse-DNS, `<본인-네임스페이스>.plugins.*`. |
 | `content_type` | 반드시 리터럴 `vineyard:plugin`이어야 합니다. |
 | `name`, `version`, `description` | `version`은 SemVer입니다. |
 | `platforms.web` | `{ runtime: "sandbox-js", entry: "dist/main.js" }`. `sandbox-js`는 워커에서 JS를 실행합니다. `web-proxy`는 CORS 탈출구입니다(아래 참조). |

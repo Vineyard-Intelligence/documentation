@@ -18,9 +18,14 @@ Every Vineyard pack carries a `content_type` discriminator, and identifiers are 
 
 | Content type | `content_type` | Identifier form | What it is |
 |---|---|---|---|
-| **Plugin Pack** | `vineyard:pluginpack` | `run.vineyard.pluginpacks.<name>` | One or more bundled JS modules exporting `definePlugin({ manifest, run })` that read the graph and stage changes to it for the analyst's review. |
-| **Type Pack** | `vineyard:typepack` | `run.vineyard.typepacks.<name>` | JSON that defines node **entity types** and optional **edge types** (icons, colors, properties, validators). |
-| **Skill Pack** | `vineyard:skillpack` | `run.vineyard.skillpacks.<name>` | JSON text: an investigation **playbook** the agent follows. No code, no permissions. |
+| **Plugin Pack** | `vineyard:pluginpack` | `<namespace>.pluginpacks.<name>` | One or more bundled JS modules exporting `definePlugin({ manifest, run })` that read the graph and stage changes to it for the analyst's review. |
+| **Type Pack** | `vineyard:typepack` | `<namespace>.typepacks.<name>` | JSON that defines node **entity types** and optional **edge types** (icons, colors, properties, validators). |
+| **Skill Pack** | `vineyard:skillpack` | `<namespace>.skillpacks.<name>` | JSON text: an investigation **playbook** the agent follows. No code, no permissions. |
+
+`<namespace>` is **your own** reverse-DNS prefix, two labels or more: `com.acme`,
+`io.github.yourname`, `dev.yourdomain`. `run.vineyard.*` is Vineyard's own and is not yours to
+publish under. Nothing in the schema can tell whether you control a domain — a submission under
+a namespace you do not own is refused at review, not by CI.
 
 The three systems are designed to work together — a plugin's `io` references Type Pack types by
 their qualified `category.name` form, and a Skill Pack's steps call plugin packs declared in its
