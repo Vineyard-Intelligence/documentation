@@ -87,6 +87,8 @@ Each item in `types` defines one **node** entity type (`#/$defs/entityType`, `ad
 | `icon` | string | no | polymorphic (see below) | Node icon. When absent, the node renders with `color` only. |
 | `color` | string | no | pattern `^#[0-9a-fA-F]{6}$` | Node color `#rrggbb`. When absent, a stable color is derived from `category.name`. |
 | `properties` | object | yes | `minProperties: 1`; keys are identifierSegment; values are [property](#property-object) | property key → property schema. Must be non-empty. |
+| `identity_properties` | array&lt;string&gt; | no | `minItems: 1`, `uniqueItems`; each item MUST name a key in `properties` | Keys that together identify one entity, for de-duplication. Defaults to `[label_property]`. Separate from `label_property` because display and identity are different questions: a `user_account` is shown as its username but identified by `(username, platform)`, since the same username on two platforms is two accounts. |
+| `label_template` | string | no | referenced keys MUST exist in `properties` | Display label built from several properties, e.g. `"{username} · {platform}"`. Falls back to `label_property` when any referenced field is empty, so a partially-filled node never shows a dangling separator. Display only — de-duplication uses `identity_properties`. |
 
 The fully qualified type reference is `category.name` (e.g. `infrastructure.ip_address`). That qualified form is what edge endpoints and `reference` targets point at.
 

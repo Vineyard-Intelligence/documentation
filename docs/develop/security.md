@@ -14,7 +14,7 @@ Three controls, listed in the order in which they carry weight:
 2. **The Web Worker sandbox** — the untrusted code has no DOM, no storage, no token and no ambient network; only the declared scopes reach it.
 3. **The egress allowlist** — every outbound request is checked against the manifest's declared endpoints, on the host side, before it is made.
 
-The whole authority surface a plugin can ask for is four manifest keys: `graph` verbs, `network`, `web_probe` (desktop only), and `config`. There is nothing else to grant.
+The whole authority surface a plugin can ask for is five manifest keys: `graph` verbs, `network`, `web_probe` (desktop only), `services`, and `config`. `services` is different in kind from `network` — it names a Vineyard-operated service (`rdap`, `telegram`) the plugin calls through `ctx.service` by name, never by URL, so the host fixes the destination and attaches the analyst's own credential. There is nothing else to grant.
 
 !!! note "Plugins cannot post chat messages"
     There is no `ctx.message`, and there is no `publish` / `message:post` scope. The published plugin schema's `scopes` block is `additionalProperties: false`, so a manifest that still declares `publish` now **fails validation** — drop it from any draft that carries it.
@@ -79,9 +79,9 @@ The desktop shell serves the app over `app://` with a CSP, and the honest readin
 
 ## REST calls carry the analyst's own token
 
-Graph reads come from the in-memory stores the WebSocket already populates. The bridge's REST helper serves those reads and the non-capture path, and it authenticates with **the analyst's own DRF token** — the same credential the rest of the app uses. The worker never sees it: it has no storage access, and no bridge member returns it.
+Graph reads come from the in-memory stores the WebSocket already populates. The bridge's REST helper serves those reads and the non-capture path, and it authenticates with **the analyst's own access token** — the same short-lived, revocable credential (`Authorization: Token <key>`) the rest of the app uses. The worker never sees it: it has no storage access, and no bridge member returns it.
 
-The server is unimpressed by who is calling. DRF authenticates with `TokenAuthentication` and then `SessionAuthentication` (the SPA never sends a session cookie; that entry is for the Django admin and the browsable API), `IsAuthenticated` is the default permission, and per-project authority is the tier system in `core/access.py` — audience rank `public < members < collaborators < owner`, with each capability naming the minimum rank allowed, so `graph_edit` is what gates node/edge writes and `chat_send` gates chat.
+The server is unimpressed by who is calling. DRF authenticates with `tenant.authentication.AccessTokenAuthentication` — an hour-lived, revocable access token issued alongside an HttpOnly refresh cookie, which replaced the old permanent `rest_framework.authentication.TokenAuthentication` — and then `SessionAuthentication` (the SPA never sends a session cookie; that entry is for the Django admin and the browsable API). `IsAuthenticated` is the default permission, and per-project authority is the tier system in `core/access.py` — audience rank `public < members < collaborators < owner`, with each capability naming the minimum rank allowed, so `graph_edit` is what gates node/edge writes and `chat_send` gates chat.
 
 !!! note "A plugin can never exceed the human"
     The tier check is the same one a manual edit passes, and the apply happens under the analyst's token after the analyst approved it — so a plugin's effect on a project is bounded by what that person may do in that project, by construction rather than by a second mechanism.

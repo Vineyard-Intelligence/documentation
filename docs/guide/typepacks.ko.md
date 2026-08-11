@@ -37,12 +37,14 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 
 | 팩 (`identifier`) | 카테고리 | 유형 | 모델링 대상 |
 |---|---|---|---|
-| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 10 | 정찰 중 매핑하는 네트워크, 그리고 그 위에서 관측되는 웹 리소스(URL) |
+| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 13 | 정찰 중 매핑하는 네트워크, 그리고 그 위에서 관측되는 웹 리소스(URL)와 웹 지문(헤더, 파비콘, DOM 해시) 엔티티 |
 | **Threat** (`…typepacks.threat`) | `threat` | 9 | 위협 인텔리전스 (STIX 정렬) |
-| **Identity** (`…typepacks.identity`) | `identity` | 5 | 사람, 조직, 온라인 페르소나 |
+| **Identity** (`…typepacks.identity`) | `identity` | 7 | 사람, 조직, 온라인 페르소나 |
 | **Financial** (`…typepacks.financial`) | `financial` | 4 | 자금 흐름 |
 | **Endpoint** (`…typepacks.endpoint`) | `endpoint` | 6 | 호스트 / DFIR 아티팩트 |
 | **Geospatial** (`…typepacks.geo`) | `geo` | 3 | 장소와 물리적 맥락 |
+| **Social Media** (`…typepacks.social`) | `social` | 5 | 플랫폼에 무관한 계정, 게시물, 해시태그, 그룹, 미디어 |
+| **Telegram** (`…typepacks.telegram`) | `telegram` | 4 | 가입 없이 수집한 계정, 채널, 슈퍼그룹, 게시물 |
 
 ### Infrastructure — 자세히 보기
 
@@ -61,13 +63,16 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 | `infrastructure.certificate` | SHA-256 지문 | `subject_common_name`, `issuer`, `not_after` |
 | `infrastructure.technologies` | 기술 이름 | `kind`, `vendor`, `version`, `cpe` |
 
-같은 팩이 별도의 `web` 카테고리로 유형 하나를 더 제공합니다 — 리소스 로케이터는
-관측된 웹 아티팩트(페이지 제목, HTTP 상태, 리다이렉트 후 최종 URL)이지 네트워크
-substrate가 아니므로, 별도 설치 없이 같은 팩 안에서 카테고리만 분리됩니다:
+같은 팩이 별도의 `web` 카테고리로 유형 네 개를 더 제공합니다 — 리소스 로케이터와
+세 가지 지문 유형은 관측된 웹 아티팩트이지 네트워크 substrate가 아니므로, 별도
+설치 없이 같은 팩 안에서 카테고리만 분리됩니다:
 
 | 유형 (`category.name`) | 표시 라벨 | 주요 속성 |
 |---|---|---|
 | `web.url` | URL | `domain` (→ `infrastructure.domain`), `http_status` |
+| `web.hhhash` | HTTP 헤더 해시 | `header_count`, `server_hint` |
+| `web.favicon_hash` | 파비콘 해시 | `hash_algorithm`, `favicon_url` |
+| `web.dom_hash` | DOM 구조 해시 | `tag_count` |
 
 엣지 유형이 두 카테고리를 가로질러 정찰 그래프를 연결합니다: `resolves_to`,
 `has_address`, `announced_by`, `contains`, `has_record`, `subdomain_of`, `has_domain`,

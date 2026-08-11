@@ -135,7 +135,7 @@ describe("Korean Roulette", () => {
 });
 ```
 
-어서션에 유용한 `ctx.mock` 필드: `deletedNodeIds`, `deletedEdgeIds`, `createdNodes`, `messages`, `netCalls`, `progress`. 6개의 참조 플러그인(Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node)은 모두 이 방식으로 테스트할 수 있습니다.
+어서션에 유용한 `ctx.mock` 필드: `deletedNodeIds`, `deletedEdgeIds`, `createdNodes`, `createdEdges`, `updatedNodes`, `progress`. 6개의 참조 플러그인(Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node)은 모두 이 방식으로 테스트할 수 있습니다.
 
 !!! tip "행복 경로뿐만 아니라 스코프 경계도 테스트하세요"
     `grantedScopes: {}`를 전달하거나 `graph`를 생략하고, `ctx.graph`가 `undefined`일 때 플러그인이 정상적으로 저하되는지 어서션하세요. 이는 선언하지 않은 기능을 가정하는 가장 흔한 런타임 놀라움을 잡아냅니다.

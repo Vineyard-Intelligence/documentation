@@ -8,16 +8,17 @@ The marketplace is a fully static catalog: every pack lives in one metadata file
 search, filtering, and sorting happen in your browser. There is no account, no server query,
 and no telemetry.
 
-You can browse from two places, which share the same components and data:
+You can browse from two places. Both read the same registry data, but they are separate,
+independently-built browsers, so their filters aren't identical:
 
 - **The [Marketplace page](../marketplace.md) on this site** — the public, read-only browser.
-- **The in-app mirror** inside the Vineyard app — the same card grid and detail view, wired so
+- **The in-app mirror** inside the Vineyard app — its own card grid and detail view, wired so
   **Install** hands off to the install pipeline immediately.
 
 ### Searching and filtering
 
 The search box matches an entry's **name**, **author**, and **description** and filters the
-grid live as you type. Three facets narrow it further, and they combine:
+grid live as you type. On this site's browser, three facets narrow it further, and they combine:
 
 | Facet | What it does |
 |---|---|
@@ -26,6 +27,9 @@ grid live as you type. Three facets narrow it further, and they combine:
 | **Verified only** | A checkbox that hides every entry whose author is not on the verified list. |
 
 A **Sort** dropdown reorders the visible cards — by name, or with verified authors first.
+
+The in-app browser has a lighter filter set: the same Type toggle and a Verified-only switch, but no
+category facet, and it sorts by name, author, or kind instead.
 
 ### Reading a card
 
@@ -42,7 +46,7 @@ when verified), a one-line **description**, and badges in the footer:
 Clicking a card opens a detail drawer. For plugins, a **Permissions** panel restates each
 requested scope as a sentence, for example *"Graph: read, delete nodes/edges in this project."*
 or *"Network: calls a declared external endpoint."* — read this before installing. The drawer
-also shows the pack's **identifier** (e.g. `run.vineyard.plugins.cidr_expand`), **version**,
+also shows the pack's **identifier** (e.g. `run.vineyard.plugins.rdap_ip`), **version**,
 **license**, and for plugins the **consumes → produces** type chips telling you which Type Packs
 it expects to be installed first.
 

@@ -1,8 +1,17 @@
 # Task lifecycle
 
-Every plugin run and every AI-chat turn in Vineyard is a **task** in one client-side queue. This page documents the seven task states, the legal transitions between them, how cooperative cancellation works, why retry mints a new task, and where task state actually lives.
+Every plugin run and every AI-chat turn in Vineyard is a **task**.
 
-## One client-side queue
+!!! warning "This page describes the intended design — the shipped system is simpler"
+    What actually runs today: `worker-host.ts`'s `runPluginInWorker` spawns one dedicated `Worker` per
+    run, directly — there is no shared worker pool, no concurrency cap, and no queued-waiting state, and
+    nothing coordinates execution across browser tabs via the Web Locks API. The real status values in
+    use are closer to `pending` / `running` / `succeeded` / `failed` / `cancelled` / `incomplete` than a
+    clean seven-state machine with named `waiting` substates. Read the rest of this page as the design
+    this is meant to grow into, not as a description of what a plugin author or task-runner integrator
+    can rely on today.
+
+## One client-side queue (design intent)
 
 Tasks execute on the client:
 

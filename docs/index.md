@@ -48,7 +48,7 @@ Field-by-field schemas for pack manifests and registry entries, plus the scopes 
 ```mermaid
 flowchart LR
     A[Author repo on GitHub] -->|PR: one metadata entry| B[(Registry<br/>metadata only)]
-    B -->|fetch reference| C[Marketplace<br/>community.vineyard.run]
+    B -->|fetch reference| C[Marketplace<br/>docs.vineyard.run]
     C -->|install reference| D[Vineyard app]
     D -->|fetch pack @ pinned ref| A
     D -->|run on the client| E[Your graph]

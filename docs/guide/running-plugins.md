@@ -1,8 +1,8 @@
 # Running plugins
 
 Once a plugin is installed in a project, you launch it from one of three surfaces — a node's
-right-click menu, a global "Run plugin" menu, or the command palette — and watch and cancel the
-run from the Tasks panel.
+right-click menu, the top menu bar's **Run** menu, or the command palette — and watch and cancel
+the run from the Tasks panel.
 
 ## Where a plugin shows up
 
@@ -11,7 +11,7 @@ Every plugin declares its inputs, and that declaration decides where it appears:
 - **Operates on a node type** (e.g. an IP-address expander that consumes a netblock node) → it
   appears on the **right-click menu** of any matching node, with that node pre-bound as input.
 - **Operates on the whole graph** (e.g. the Chaos pack's roulettes) → it is launched from the
-  global **Run plugin** menu or the palette.
+  **Run ▸ Run plugins…** menu or the palette.
 - **Uses your selection** → some plugins act on whatever node(s) you have selected, so select a
   node first — the run reads your selection as its input.
 
@@ -22,19 +22,20 @@ Every plugin declares its inputs, and that declaration decides where it appears:
     Right-click a node whose type matches what the plugin consumes — the plugin is listed in the
     menu. Selecting it opens the pre-run form with the consumed node's value already filled in.
 
-=== "The global Run plugin menu"
+=== "The Run menu"
 
-    Whole-graph plugins have no node to attach to, so they live in a global **Run plugin** menu
-    instead.
+    Whole-graph plugins have no node to attach to, so they live in the top menu bar's **Run**
+    menu instead — `Run ▸ Run plugins…`.
 
 === "The command palette"
 
     The palette runs plugins by name, handy for keyboard-first work:
 
-    - `/plugins` — lists every plugin installed in the current project, each with its run command.
+    - Type `/` to see every plugin installed in the current project as an autocomplete suggestion
+      (`/plugin <name>`), each labeled with its description.
     - `/plugin thanos_snap` — runs the named plugin. The argument is the plugin's short name (the
       part after `run.vineyard.plugins.`) or its full identifier. Naming a plugin that isn't
-      installed points you to the Marketplace.
+      installed shows an error instead of running it — install it from the Marketplace first.
 
 ## The pre-run form
 

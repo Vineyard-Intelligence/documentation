@@ -55,6 +55,8 @@ Type Pack은 그래프와 플러그인이 사용할 **노드 엔티티 타입**�
 - `category`와 `name`은 **snake_case 식별자 세그먼트**입니다(`^[a-z][a-z0-9_]*$`, ≤31자).
 - `properties`는 반드시 비어 있지 않아야 합니다. 각 프로퍼티 키도 snake_case 세그먼트입니다.
 - `label_property`는 노드의 표시 레이블로 사용되는 키를 지정합니다. 교차 필드 린트는 이 키가 `properties`에 존재하고 **non-optional**이어야 함을 요구합니다.
+- `identity_properties`(선택)는 중복 제거를 위해 하나의 엔티티를 함께 식별하는 키 목록입니다. 기본값은 `[label_property]`입니다. 표시와 식별은 서로 다른 문제입니다: `identity.account`는 `username`만으로 *표시*되지만 `(username, platform)`으로 *식별*됩니다 — 동일한 사용자명이 두 플랫폼에 있으면 서로 다른 두 계정이기 때문입니다. 나열된 모든 키는 반드시 `properties`에 존재해야 합니다.
+- `label_template`(선택)은 여러 프로퍼티로 표시 레이블을 구성합니다(예: `"{username} · {platform}"`). 참조된 필드가 비어 있으면 `label_property`로 폴백하여, 부분적으로 채워진 노드가 매달린 구분자를 보여주지 않도록 합니다. 표시 전용이며 — 중복 제거는 항상 `identity_properties`를 사용합니다.
 
 ## 프로퍼티 타입
 
@@ -144,8 +146,9 @@ Type Pack은 `secret` 또는 `credential` 프로퍼티 타입을 선언할 수 *
 노드 타입은 정규화된 문자열 `"<category>.<name>"`으로 주소 지정됩니다 — 예: `infrastructure.ip_address` 또는 `threat.malware`. 이 정규화된 형태가 `Node.type`이 저장하는 값이며, 플러그인의 `io.consumes` / `io.produces` 및 `emit`이 참조하는 값입니다. 엣지 타입은 `Edge.label`에 매핑됩니다. 엣지 프로퍼티(사용 시)는 `Edge.data`에 저장됩니다.
 
 **중복 제거는 정확한 정규화 유형을 키로 사용합니다.** 플러그인이나 AI 작업이 노드를 추가할 때
-호스트는 `"<category>.<name>"` + 식별 값(`label_property`, 그 외 `value`, 그 외 `name`)으로
-중복을 제거합니다. 유형은 정확한 정규화 키로만 해석되며, 설치된 팩에 정의되지 않은 유형의
+호스트는 `"<category>.<name>"` + 식별 값으로 중복을 제거하며, 다음 순서로 해석됩니다:
+타입이 선언한 경우 `identity_properties`(결합됨), 그 외 `label_property`, 그 외 `value`, 그 외
+`name`. 유형은 정확한 정규화 키로만 해석되며, 설치된 팩에 정의되지 않은 유형의
 노드는 원래 유형 문자열을 유지합니다 — 따라서 팩이 유형을 다른 카테고리로 이동시켜도
 (예: `url`이 `infrastructure`에서 `web`으로) 기존 노드가 새 유형의 생성물과 병합되지 않습니다.
 설치된 팩에 정의되지 않은 유형으로 노드를 생성하는 것은 거부됩니다. (플러그인은 사용하는

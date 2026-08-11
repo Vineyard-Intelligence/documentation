@@ -52,10 +52,10 @@ flowchart LR
 
     - **브라우저 런타임** — `platforms.web.runtime: "sandbox-js"`: 작성자 JS가 Web Worker에서 실행됩니다.
     - **데스크톱 런타임** — `platforms.desktop.runtime: "sandbox-js"`: 사용자 정의 `app://` 스킴, 강화된 렌더러(샌드박스, contextIsolation), CORS 헤더 재작성, 익명 SSRF 방지 HTTP 프로브(`web_probe` 기능)를 갖춘 Electron 셸.
-    - GitHub 호스팅, 로컬 캐시 번들을 사용하는 **메타데이터 전용 레지스트리**.
+    - GitHub 호스팅 번들을 jsDelivr로(불변 커밋 SHA 고정) 가져오는 **메타데이터 전용 레지스트리**. (지금은 로컬 캐시가 없습니다 — [distribution](distribution.md)의 관련 설명 참조.)
     - **스테이징된 그래프 쓰기 + 분석가 검토** — 캡처된 노드/엣지 변경을 승인 후에만 적용 — 그리고 이그레스 허용목록과 서버 측 권한 강제.
-    - **임시, 클라이언트 측 작업 큐**(Web Worker 풀, 다중 탭 단일 실행).
-    - **6개의 Chaos 참조 플러그인**, [CIDR Expand](plugin-manifest.md), [Infrastructure](../guide/typepacks.md) / [Threat](../guide/typepacks.md) Type Pack.
+    - **클라이언트 측 작업 실행, 실행마다 전용 Web Worker 1개** — [task lifecycle](lifecycle.md)에서 설명하는 풀/한도/탭 간 잠금 큐 설계는 아직 구현되지 않았습니다. 그 페이지의 경고 참조.
+    - **6개의 Chaos 참조 플러그인**, [Infrastructure](../guide/typepacks.md) / [Threat](../guide/typepacks.md) Type Pack. (다른 옛 문서에서 첫 튜토리얼 플러그인으로 이름 붙였던 `CIDR Expand`는 지금 카탈로그에 존재하지 않습니다.)
 
 === "연기됨 (설계됨, 빌드되지 않음)"
 
