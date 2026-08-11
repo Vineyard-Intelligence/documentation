@@ -153,6 +153,7 @@ plugin의 권한 범위. `type: object`, `additionalProperties: false`. `ctx` �
 | `graph` | array | no | `uniqueItems`; enum 항목 (아래) | 세분화된 노드/엣지 동사. 프로젝트 `graph_edit` 티어에 의해 지원됩니다. |
 | `web_probe` | object | no | `{ purpose?: string }` — 배열이 아니라 객체 | **데스크탑 전용.** 셸의 메인 프로세스가 수행하는, *임의의* 공개 호스트에 대한 익명 요청 1회. `ctx.net.probe`를 지원하며, 웹 빌드에서는 뒷받침이 없어 `ctx.net.probe`가 존재하지 않습니다. |
 | `network` | array | no | 항목: [`networkScope`](#networkscope-scopesnetwork-items) | 외부 XHR 대상. |
+| `services` | array | no | `uniqueItems`; enum: `rdap`, `telegram` | `ctx.service`를 통해 **이름으로** 호출하는 Vineyard 운영 서비스 — URL이 아닙니다. [scopes reference](scopes.md#services) 참조. |
 | `config` | array | no | 항목: [`configValue`](#configvalue-scopesconfig-items) | 런타임에만 주입되는 설치 시 값. |
 
 !!! warning "There is no `publish` scope"

@@ -13,16 +13,18 @@ VINEYARD의 plugin 및 Type Pack 형식에 대한 규범적 참조 자료: 모�
 
 ## Where the canonical artifacts live
 
-권위 있는 JSON-Schema는 여기에 중복되어 있지 않습니다 — spec 저장소의 `marketplace/schemas/` 아래에 있습니다:
+권위 있는 JSON-Schema는 여기에 중복되어 있지 않습니다 — registry 저장소(`Vineyard-Intelligence/registry`)의 `schemas/` 아래에 있습니다:
 
 | File | Schema for |
 |---|---|
-| `schemas/plugin.schema.json` | `vineyard:plugin` manifest. |
-| `schemas/typepack.schema.json` | `vineyard:typepack` 문서. |
-| `schemas/registry-plugin-entry.schema.json` | 하나의 `community-pluginpacks.json` 행. |
-| `schemas/registry-typepack-entry.schema.json` | 하나의 `community-typepacks.json` 행. |
+| [`schemas/plugin.schema.json`](https://vineyard.run/schemas/plugin.json) | `vineyard:plugin` manifest. |
+| [`schemas/pluginpack.schema.json`](https://vineyard.run/schemas/pluginpack.json) | `vineyard:pluginpack` manifest — 아직 별도 산문 페이지 없음, 스키마 자체가 레퍼런스. |
+| [`schemas/typepack.schema.json`](https://vineyard.run/schemas/typepack.json) | `vineyard:typepack` 문서. |
+| [`schemas/registry-plugin-entry.schema.json`](https://vineyard.run/schemas/registry/plugin-entry/1.0.0.json) | 하나의 `community-pluginpacks.json` 행. |
+| [`schemas/registry-typepack-entry.schema.json`](https://vineyard.run/schemas/registry/typepack-entry/1.0.0.json) | 하나의 `community-typepacks.json` 행. |
+| [`schemas/registry-skillpack-entry.schema.json`](https://vineyard.run/schemas/registry/skillpack-entry/1.0.0.json) | 하나의 `community-skillpacks.json` 행 — 아직 별도 산문 페이지 없음, 스키마 자체가 레퍼런스. |
 
-참조 페이지는 이 파일들을 요약하고 설명합니다. 산문과 스키마가 불일치할 경우 `marketplace/schemas/`의 스키마가 우선합니다.
+참조 페이지는 이 파일들을 요약하고 설명합니다. 산문과 스키마가 불일치할 경우 registry의 `schemas/`에 있는 스키마가 우선합니다.
 
 ## The Marketplace catalog the browser reads
 

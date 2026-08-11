@@ -14,7 +14,7 @@ Vineyard가 신뢰할 수 없는 플러그인 JavaScript를 격리하는 방법:
 2. **Web Worker 샌드박스** — 신뢰할 수 없는 코드에는 DOM도, 스토리지도, 토큰도, 주변 네트워크도 없습니다. 선언된 스코프만 도달합니다.
 3. **이그레스 허용 목록** — 모든 아웃바운드 요청은 실제로 전송되기 전에 호스트 측에서 매니페스트가 선언한 엔드포인트와 대조됩니다.
 
-플러그인이 요청할 수 있는 권한 표면 전체는 매니페스트의 네 개 키입니다: `graph` 동사, `network`, `web_probe`(데스크톱 전용), `config`. 그 외에 부여할 것은 없습니다.
+플러그인이 요청할 수 있는 권한 표면 전체는 매니페스트의 다섯 개 키입니다: `graph` 동사, `network`, `web_probe`(데스크톱 전용), `services`, `config`. `services`는 `network`와 성격이 다릅니다 — 플러그인이 `ctx.service`를 통해 URL이 아니라 이름으로 호출하는 Vineyard 운영 서비스(`rdap`, `telegram`)를 가리키며, 목적지는 호스트가 고정하고 호출에는 분석가 본인의 자격 증명이 붙습니다. 그 외에 부여할 것은 없습니다.
 
 !!! note "플러그인은 채팅 메시지를 게시할 수 없습니다"
     `ctx.message`는 존재하지 않으며, `publish` / `message:post` 스코프도 없습니다. 게시된 플러그인 스키마의 `scopes` 블록은 `additionalProperties: false`이므로, `publish`를 아직 선언하는 매니페스트는 이제 **검증에 실패**합니다 — 남아 있는 초안에서 제거하세요.
@@ -79,9 +79,9 @@ export default definePlugin({
 
 ## REST 호출은 분석가 자신의 토큰을 사용합니다
 
-그래프 읽기는 WebSocket이 이미 채워 둔 인메모리 스토어에서 옵니다. 브리지의 REST 헬퍼는 그 읽기와 비캡처 경로를 담당하며, 앱의 나머지 부분과 동일한 자격 증명인 **분석가 자신의 DRF 토큰**으로 인증합니다. 워커는 그것을 절대 보지 않습니다: 스토리지 접근이 없고, 토큰을 반환하는 브리지 멤버도 없습니다.
+그래프 읽기는 WebSocket이 이미 채워 둔 인메모리 스토어에서 옵니다. 브리지의 REST 헬퍼는 그 읽기와 비캡처 경로를 담당하며, 앱의 나머지 부분과 동일한 자격 증명인 **분석가 자신의 액세스 토큰**(단명·폐기 가능한 `Authorization: Token <key>`)으로 인증합니다. 워커는 그것을 절대 보지 않습니다: 스토리지 접근이 없고, 토큰을 반환하는 브리지 멤버도 없습니다.
 
-서버는 호출자가 누구든 개의치 않습니다. DRF는 `TokenAuthentication` 다음 `SessionAuthentication`으로 인증하고(SPA는 세션 쿠키를 보내지 않습니다. 그 항목은 Django 어드민과 브라우저블 API용입니다), 기본 권한은 `IsAuthenticated`이며, 프로젝트별 권한은 `core/access.py`의 티어 시스템입니다 — 대상 등급 `public < members < collaborators < owner`, 각 기능이 허용되는 최소 등급을 지정하므로 `graph_edit`이 노드/엣지 쓰기를, `chat_send`가 채팅을 통제합니다.
+서버는 호출자가 누구든 개의치 않습니다. DRF는 `tenant.authentication.AccessTokenAuthentication`(HttpOnly 리프레시 쿠키와 함께 발급되는, 1시간 수명의 폐기 가능한 액세스 토큰 — 기존의 영구적인 `rest_framework.authentication.TokenAuthentication`을 대체함) 다음 `SessionAuthentication`으로 인증하고(SPA는 세션 쿠키를 보내지 않습니다. 그 항목은 Django 어드민과 브라우저블 API용입니다), 기본 권한은 `IsAuthenticated`이며, 프로젝트별 권한은 `core/access.py`의 티어 시스템입니다 — 대상 등급 `public < members < collaborators < owner`, 각 기능이 허용되는 최소 등급을 지정하므로 `graph_edit`이 노드/엣지 쓰기를, `chat_send`가 채팅을 통제합니다.
 
 !!! note "플러그인은 사람을 절대 초과할 수 없습니다"
     티어 확인은 수동 편집이 통과하는 것과 동일하며, 적용은 분석가가 승인한 뒤 분석가의 토큰으로 일어납니다 — 따라서 플러그인이 프로젝트에 미칠 수 있는 영향은 두 번째 장치가 아니라 구조상 그 사람이 해당 프로젝트에서 할 수 있는 범위로 제한됩니다.

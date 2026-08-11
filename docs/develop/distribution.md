@@ -68,17 +68,24 @@ The full field-by-field reference lives in the [registry schema](../reference/re
 The most important property of Vineyard distribution is what the registry **does not** store:
 
 - The registry holds **path/metadata only**. There is **no server-side copy** of the bundle content.
-- The **client** downloads the bundle from GitHub and **caches it locally** to execute (IndexedDB on web, filesystem on desktop): the catalog points at a GitHub release, and the app pulls and caches the bytes.
+- The **client** fetches the bundle (via jsDelivr, pinned to the entry's immutable commit SHA) and runs it directly — a plain `fetch()` per run today, not a persistent local cache (no IndexedDB, no on-disk cache on desktop).
 
-### What `integrity` actually does
+### What `integrity` actually does today
 
-The optional `integrity` hash is checked at **install time** against the fetched bundle. Its single job is to detect a **malicious force-push** between submission and install — i.e. the bytes at `repo@ref` no longer match what was reviewed. (Annotated tags can be moved; a commit SHA cannot, but a hash still guards the resolved content either way.)
-
-During [local development](quickstart.md), Developer Mode may skip the integrity check entirely.
+**Not currently enforced.** The `integrity` field is accepted by the schema and can be attached to a
+submission, but nothing in the client's load path (`plugins/remote.ts`) reads or checks it — a bundle
+is fetched and run regardless of whether this field is present or matches. Treat it as reserved for a
+future enforcement layer, not as an active protection. The guarantee you can actually rely on today is
+the **immutable commit-SHA pin** on `ref` (see [publishing](publishing.md)) plus jsDelivr serving that
+exact commit — that is what stops a moved tag or a force-push from silently changing what runs, not a
+client-side hash check.
 
 ## Where it fits in the install flow
 
-The app-side install pipeline resolves the entry, fetches the full manifest at `repo@ref/path`, fetches the bundle according to `distribution.kind` (zip asset / git tree / inline), runs the **optional** hash check, caches the bytes **client-side only**, shows the scope-approval dialog, and activates. For the full pipeline and the submission/review gates, see [publishing](publishing.md).
+The app-side install pipeline resolves the entry, fetches the full manifest at `repo@ref/path`, fetches
+the bundle according to `distribution.kind` (zip asset / git tree / inline) with a plain fetch — **no
+local persistent cache and no integrity check today** — then shows the scope-approval dialog and
+activates. For the full pipeline and the submission/review gates, see [publishing](publishing.md).
 
 ## Next / See also
 

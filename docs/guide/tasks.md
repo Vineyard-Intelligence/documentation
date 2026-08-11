@@ -1,10 +1,18 @@
 # Tasks & runs
 
-Every plugin run and every AI-chat turn in Vineyard is a **task** in a single client-side queue. The Tasks panel shows each task's current state and gives you the right controls — Stop, Pause, Resume, Cancel, Retry — for whatever it is doing right now.
+Every plugin run and every AI-chat turn in Vineyard is a **task**.
+
+!!! warning "What's actually in the Tasks panel today"
+    The only control shipped in the Tasks panel right now is **Stop**, on a task that is currently
+    running. Pause/Resume are not implemented (a `paused` status exists in the styling but nothing sets
+    it yet). A retry-style action exists in the AI chat panel itself, not as a per-task Tasks-panel
+    control. The rest of this page — the full state machine, the one-worker-pool-with-a-cap execution
+    model, cross-tab coordination — describes the intended design; see [develop/lifecycle](../develop/lifecycle.md)'s
+    warning for what actually runs today (one dedicated worker per run, no pool, no cross-tab locking).
 
 ## How tasks work
 
-When you run a plugin (or send a message in AI chat), Vineyard creates a task and places it in **one client-side queue**. Tasks execute in a Web Worker pool with a concurrency cap, so a few run at once while the rest wait their turn. If you have the same project open in multiple browser tabs, a single tab actually executes each task (coordinated via the Web Locks API) so work is not duplicated.
+When you run a plugin (or send a message in AI chat), Vineyard creates a task and shows it in the Tasks panel. Design intent (not yet fully shipped, see the warning above): tasks execute in a Web Worker pool with a concurrency cap, so a few run at once while the rest wait their turn, and if you have the same project open in multiple browser tabs, a single tab actually executes each task (coordinated via the Web Locks API) so work is not duplicated.
 
 !!! info "Ephemeral by default"
     Tasks live in your browser. Nothing about a run is written to the server unless you explicitly **Save** it. See [Ephemeral by default](#ephemeral-by-default) below.
@@ -104,7 +112,7 @@ Long AI conversations are compressed **automatically** — there is no manual `/
 
 How it works:
 
-1. **Trigger.** Each turn, Vineyard estimates the history's token count (roughly 4 characters per token, deliberately crude) and compares it against a history budget — about 35% of the model's context window (32k fallback when the provider reports none). Compaction happens *before* the window is full, because the system prompt, tool schemas, tool results and the model's answer all share the same window.
+1. **Trigger.** Each turn, Vineyard estimates the history's token count — roughly 4 characters per token for Latin-script text, about 1 token per character for CJK/Hangul text (a flat divisor undercounted Korean case notes by roughly half), and self-calibrated by a correction factor learned from what the provider actually charged on prior steps — and compares it against a history budget — about 35% of the model's context window (64k-token fallback when the provider reports none). Compaction happens *before* the window is full, because the system prompt, tool schemas, tool results and the model's answer all share the same window.
 2. **What survives verbatim.** The **most recent 4 turns** (two analyst exchanges) are always kept as-is, so immediate context is never summarized.
 3. **What gets compressed.** Everything older is sent to the LLM (the same model you configured, so the summary is written in the same language and register as the conversation) with instructions to produce a dense factual summary of at most 200 words: indicators and entities discussed (domains, IPs, accounts, hashes), what was established about each and on what evidence, decisions made, what was rejected and why, and open questions. No speculation is added.
 4. **The replacement.** The summary replaces the old turns as a single message prefixed `[earlier conversation, summarized]`. A previous summary is summarized again along with what followed it, so a long session converges instead of stacking summaries.

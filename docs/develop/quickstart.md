@@ -135,7 +135,7 @@ describe("Korean Roulette", () => {
 });
 ```
 
-Useful `ctx.mock` fields for assertions: `deletedNodeIds`, `deletedEdgeIds`, `createdNodes`, `messages`, `netCalls`, and `progress`. All six reference plugins (Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node) are testable exactly this way.
+Useful `ctx.mock` fields for assertions: `deletedNodeIds`, `deletedEdgeIds`, `createdNodes`, `createdEdges`, `updatedNodes`, and `progress`. All six reference plugins (Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node) are testable exactly this way.
 
 !!! tip "Test the scope boundary, not just the happy path"
     Pass `grantedScopes: {}` (or omit `graph`) and assert your plugin degrades gracefully when `ctx.graph` is `undefined`. This catches the most common runtime surprise: assuming a capability you didn't declare.

@@ -47,7 +47,7 @@ Every check below is **blocking** — a pull request cannot merge until they all
 - **Filename matches `identifier`, and `content_type` is one of the four known kinds.** (`build_registry.py`)
 - **Registry-entry schema.** The entry validates against `schemas/registry-plugin-entry`, `registry-typepack-entry`, or `registry-skillpack-entry`. (`validate.py`)
 - **Declared dependencies resolve, and are still live.** A Skill Pack's `requires` and a Plugin Pack's `typepacks` must name packs that are in this catalog — the marketplace builds its co-install offer from those lists, so an identifier that resolves to nothing means the pack installs without the dependency it needs. A pack added in the *same* pull request counts, so a Type Pack and the plugin that uses it can land together. A dependency that has been [delisted](#taking-a-pack-down) is rejected for the same reason: the offer would hand over a pack the registry has taken back. (`validate.py`)
-- **Namespace and authorship.** A namespace listed in `verified-authors.json` may only be published under by its owner, and an author name listed there may only be worn inside its own namespaces — so neither `run.vineyard.*` nor `author: vineyard-run` can be claimed by anyone else. `verified` is operator-set: a submission that asserts it is rejected. (`validate.py`)
+- **Namespace and authorship.** A namespace listed in `verified-authors.json` may only be published under by its owner, and an author name listed there may only be worn inside its own namespaces — so neither `run.vineyard.*` nor `author: VINEYARD` can be claimed by anyone else. `verified` is operator-set: a submission that asserts it is rejected. (`validate.py`)
 
 ### The pin
 
@@ -92,7 +92,7 @@ A **Plugin Pack**, filed as `packs/run.vineyard.pluginpacks.chaos.json`. Note `p
   "identifier": "run.vineyard.pluginpacks.chaos",
   "content_type": "vineyard:pluginpack",
   "name": "Chaos Reference Pack",
-  "author": "vineyard-run",
+  "author": "VINEYARD",
   "description": "A bundle of 6 graph-manipulation plugins for demo/validation: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node. Installing once adds all 6 together.",
   "repo": "Vineyard-Intelligence/pluginpack-chaos",
   "ref": "7261823f654395204d9c79f7d597448d97d135f1",
@@ -113,7 +113,7 @@ A **Type Pack**, filed as `packs/run.vineyard.typepacks.infrastructure.json` (no
   "identifier": "run.vineyard.typepacks.infrastructure",
   "content_type": "vineyard:typepack",
   "name": "Infrastructure",
-  "author": "vineyard-run",
+  "author": "VINEYARD",
   "description": "Network-infrastructure and web OSINT entities and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
   "ref": "a78c53defbec417eeb8b9f50029c376926cb8c6d",

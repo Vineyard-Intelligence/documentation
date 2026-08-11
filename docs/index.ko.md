@@ -48,7 +48,7 @@ Plugin Pack, Type Pack 또는 Skill Pack을 작성하고 레지스트리에 게�
 ```mermaid
 flowchart LR
     A[GitHub의 작성자 저장소] -->|PR: 하나의 메타데이터 항목| B[(레지스트리<br/>메타데이터 전용)]
-    B -->|레퍼런스 가져오기| C[마켓플레이스<br/>community.vineyard.run]
+    B -->|레퍼런스 가져오기| C[마켓플레이스<br/>docs.vineyard.run]
     C -->|레퍼런스 설치| D[Vineyard 앱]
     D -->|고정된 ref에서 팩 가져오기| A
     D -->|클라이언트에서 실행| E[당신의 그래프]
