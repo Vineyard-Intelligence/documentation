@@ -13,16 +13,18 @@ The normative reference for VINEYARD's plugin and Type Pack formats: the JSON-Sc
 
 ## Where the canonical artifacts live
 
-The authoritative JSON-Schemas are not duplicated here — they live in the spec repository under `marketplace/schemas/`:
+The authoritative JSON-Schemas are not duplicated here — they live in the registry repository (`Vineyard-Intelligence/registry`) under `schemas/`:
 
 | File | Schema for |
 |---|---|
-| `schemas/plugin.schema.json` | A `vineyard:plugin` manifest. |
-| `schemas/typepack.schema.json` | A `vineyard:typepack` document. |
-| `schemas/registry-plugin-entry.schema.json` | One `community-pluginpacks.json` row. |
-| `schemas/registry-typepack-entry.schema.json` | One `community-typepacks.json` row. |
+| [`schemas/plugin.schema.json`](https://vineyard.run/schemas/plugin.json) | A `vineyard:plugin` manifest. |
+| [`schemas/pluginpack.schema.json`](https://vineyard.run/schemas/pluginpack.json) | A `vineyard:pluginpack` manifest — no dedicated prose page yet; the schema itself is the reference. |
+| [`schemas/typepack.schema.json`](https://vineyard.run/schemas/typepack.json) | A `vineyard:typepack` document. |
+| [`schemas/registry-plugin-entry.schema.json`](https://vineyard.run/schemas/registry/plugin-entry/1.0.0.json) | One `community-pluginpacks.json` row. |
+| [`schemas/registry-typepack-entry.schema.json`](https://vineyard.run/schemas/registry/typepack-entry/1.0.0.json) | One `community-typepacks.json` row. |
+| [`schemas/registry-skillpack-entry.schema.json`](https://vineyard.run/schemas/registry/skillpack-entry/1.0.0.json) | One `community-skillpacks.json` row — no dedicated prose page yet; the schema itself is the reference. |
 
-The reference pages summarize and explain these files; when the prose and the schema disagree, the schema in `marketplace/schemas/` wins.
+The reference pages summarize and explain these files; when the prose and the schema disagree, the schema in the registry's `schemas/` wins.
 
 ## The Marketplace catalog the browser reads
 

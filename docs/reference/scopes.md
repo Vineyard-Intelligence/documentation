@@ -4,13 +4,14 @@ A complete catalog of every scope string a plugin can declare in `manifest.scope
 
 For how grants are enforced at runtime (the Web Worker sandbox, the egress allowlist, secret scrubbing), see [security](../develop/security.md).
 
-The `scopes` block has exactly four keys, all optional:
+The `scopes` block has exactly five keys, all optional:
 
 ```jsonc
 "scopes": {
   "graph":     ["node:read", "edge:create"],               // fine-grained graph verbs
   "network":   [ { "endpoint": "https://...", "methods": ["POST"] } ],
   "web_probe": { "purpose": "check whether a profile page exists" },  // desktop only
+  "services":  ["rdap"],                                   // Vineyard-operated services, by name
   "config":    [ { "key": "max_concurrency", "type": "number" } ]
 }
 ```

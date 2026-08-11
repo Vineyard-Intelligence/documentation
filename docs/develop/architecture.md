@@ -52,10 +52,10 @@ See [SDK](sdk.md) for the `ctx` interface and [lifecycle](lifecycle.md) for how 
 
     - **Browser runtime** — `platforms.web.runtime: "sandbox-js"`: author JS runs in a Web Worker.
     - **Desktop runtime** — `platforms.desktop.runtime: "sandbox-js"`: Electron shell with custom `app://` scheme, hardened renderer (sandbox, contextIsolation), CORS header rewriting, and anonymous SSRF-guarded HTTP probe (`web_probe` capability).
-    - **Metadata-only registry** with GitHub-hosted, locally cached bundles.
+    - **Metadata-only registry** with GitHub-hosted bundles fetched via jsDelivr, pinned to an immutable commit SHA. (Not locally cached today — see [distribution](distribution.md)'s note on this.)
     - **Staged graph writes + analyst review** — captured node/edge changes, applied only on approval — plus the egress allowlist and server-side permission enforcement.
-    - **Ephemeral, client-side task queue** (Web Worker pool, multi-tab single-execution).
-    - **The six Chaos reference plugins**, [CIDR Expand](plugin-manifest.md), and the [Infrastructure](../guide/typepacks.md) / [Threat](../guide/typepacks.md) Type Packs.
+    - **Client-side task execution, one dedicated Web Worker per run** — the pooled/capped/cross-tab-locked queue design in [task lifecycle](lifecycle.md) is not built yet; see that page's warning.
+    - **The six Chaos reference plugins** and the [Infrastructure](../guide/typepacks.md) / [Threat](../guide/typepacks.md) Type Packs. (`CIDR Expand`, named elsewhere in older docs as a first-tutorial plugin, does not exist in the catalog today.)
 
 === "Deferred (designed, not built)"
 

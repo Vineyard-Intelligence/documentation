@@ -38,12 +38,14 @@ one pack to another (a `threat.malware` that **communicates with** an
 
 | Pack (`identifier`) | Category | Types | Models |
 |---|---|---|---|
-| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 10 | The network you map during recon, plus the web resource (URL) observed on it |
+| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 13 | The network you map during recon, plus the web resource (URL) and web-fingerprint (header, favicon, DOM hash) entities observed on it |
 | **Threat** (`…typepacks.threat`) | `threat` | 9 | Threat-intelligence (STIX-aligned) |
-| **Identity** (`…typepacks.identity`) | `identity` | 5 | People, orgs, and online personas |
+| **Identity** (`…typepacks.identity`) | `identity` | 7 | People, orgs, and online personas |
 | **Financial** (`…typepacks.financial`) | `financial` | 4 | The money trail |
 | **Endpoint** (`…typepacks.endpoint`) | `endpoint` | 6 | Host / DFIR artifacts |
 | **Geospatial** (`…typepacks.geo`) | `geo` | 3 | Places and physical context |
+| **Social Media** (`…typepacks.social`) | `social` | 5 | Platform-agnostic accounts, posts, hashtags, groups, and media |
+| **Telegram** (`…typepacks.telegram`) | `telegram` | 4 | Accounts, channels, supergroups, and posts, collected without joining |
 
 ### Infrastructure — a closer look
 
@@ -62,13 +64,16 @@ reconnaissance, in the `infrastructure` category:
 | `infrastructure.certificate` | the SHA-256 fingerprint | `subject_common_name`, `issuer`, `not_after` |
 | `infrastructure.technologies` | the technology name | `kind`, `vendor`, `version`, `cpe` |
 
-The same pack also ships one type in a separate `web` category — a resource locator is an
-observed web artifact (page title, HTTP status, final URL after redirects), not network
-substrate, so it gets its own category without needing its own install:
+The same pack also ships four types in a separate `web` category — a resource locator and three
+fingerprint types are observed web artifacts, not network substrate, so they get their own
+category without needing their own install:
 
 | Type (`category.name`) | Label shown | Notable properties |
 |---|---|---|
 | `web.url` | the URL | `domain` (→ `infrastructure.domain`), `http_status` |
+| `web.hhhash` | the HTTP header hash | `header_count`, `server_hint` |
+| `web.favicon_hash` | the favicon hash | `hash_algorithm`, `favicon_url` |
+| `web.dom_hash` | the DOM structure hash | `tag_count` |
 
 Edge types wire the recon graph together across both categories: `resolves_to`, `has_address`,
 `announced_by`, `contains`, `has_record`, `subdomain_of`, `has_domain`, `redirects_to`,

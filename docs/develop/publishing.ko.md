@@ -46,7 +46,7 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 
 - **파일명이 `identifier`와 일치하고, `content_type`이 알려진 네 종류 중 하나여야 합니다.** (`build_registry.py`)
 - **레지스트리 항목 스키마.** 항목이 `schemas/registry-plugin-entry`, `registry-typepack-entry`, `registry-skillpack-entry` 중 하나에 대해 유효성을 검사합니다. (`validate.py`)
-- **선언한 의존성이 해석되고, 아직 살아 있어야 합니다.** Skill Pack의 `requires`와 Plugin Pack의 `typepacks`는 이 카탈로그에 있는 팩을 가리켜야 합니다 — 마켓플레이스가 그 목록으로 동반 설치 제안을 만들기 때문에, 해석되지 않는 식별자는 필요한 의존성 없이 설치된다는 뜻입니다. **같은** 풀 리퀘스트에 추가된 팩도 인정되므로, Type Pack과 그것을 쓰는 플러그인을 함께 올릴 수 있습니다. 게시가 취소된(아래 「팩 내리기」) 팩을 의존성으로 두는 것도 같은 이유로 거부됩니다 — 레지스트리가 이미 거둬들인 팩을 동반 설치로 넘기게 되기 때문입니다. (`validate.py`) `verified-authors.json`에 등재된 네임스페이스는 소유자만 게시할 수 있고, 등재된 저자명은 자기 네임스페이스 안에서만 쓸 수 있습니다 — 따라서 `run.vineyard.*`도 `author: vineyard-run`도 타인이 주장할 수 없습니다. `verified`는 운영자가 정하며, 제출이 이를 선언하면 거부됩니다. (`validate.py`)
+- **선언한 의존성이 해석되고, 아직 살아 있어야 합니다.** Skill Pack의 `requires`와 Plugin Pack의 `typepacks`는 이 카탈로그에 있는 팩을 가리켜야 합니다 — 마켓플레이스가 그 목록으로 동반 설치 제안을 만들기 때문에, 해석되지 않는 식별자는 필요한 의존성 없이 설치된다는 뜻입니다. **같은** 풀 리퀘스트에 추가된 팩도 인정되므로, Type Pack과 그것을 쓰는 플러그인을 함께 올릴 수 있습니다. 게시가 취소된(아래 「팩 내리기」) 팩을 의존성으로 두는 것도 같은 이유로 거부됩니다 — 레지스트리가 이미 거둬들인 팩을 동반 설치로 넘기게 되기 때문입니다. (`validate.py`) `verified-authors.json`에 등재된 네임스페이스는 소유자만 게시할 수 있고, 등재된 저자명은 자기 네임스페이스 안에서만 쓸 수 있습니다 — 따라서 `run.vineyard.*`도 `author: VINEYARD`도 타인이 주장할 수 없습니다. `verified`는 운영자가 정하며, 제출이 이를 선언하면 거부됩니다. (`validate.py`)
 
 ### 고정(pin)
 
@@ -91,7 +91,7 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
   "identifier": "run.vineyard.pluginpacks.chaos",
   "content_type": "vineyard:pluginpack",
   "name": "Chaos Reference Pack",
-  "author": "vineyard-run",
+  "author": "VINEYARD",
   "description": "A bundle of 6 graph-manipulation plugins for demo/validation: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node. Installing once adds all 6 together.",
   "repo": "Vineyard-Intelligence/pluginpack-chaos",
   "ref": "7261823f654395204d9c79f7d597448d97d135f1",
@@ -112,7 +112,7 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
   "identifier": "run.vineyard.typepacks.infrastructure",
   "content_type": "vineyard:typepack",
   "name": "Infrastructure",
-  "author": "vineyard-run",
+  "author": "VINEYARD",
   "description": "Network-infrastructure and web OSINT entities and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
   "ref": "a78c53defbec417eeb8b9f50029c376926cb8c6d",

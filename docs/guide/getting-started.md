@@ -36,10 +36,9 @@ In the Marketplace, switch to Type Packs and install **Infrastructure** (`run.vi
 
 ## 6. Install a plugin
 
-A **plugin** is JavaScript that reads and/or writes your graph, asking your approval for the permissions it needs. Two good first installs:
+A **plugin** is JavaScript that reads and/or writes your graph, asking your approval for the permissions it needs. One good first install covers both ways a plugin can launch:
 
-- **CIDR Expand** — pure compute, no network. Turns an `infrastructure.netblock` node into the individual `infrastructure.ip_address` nodes inside it. (This is why you installed Infrastructure first.)
-- **Chaos Reference Pack** — one bundle with six small plugins (Korean Roulette, Thanos Snap, and friends) for learning the run loop on a throwaway graph.
+- **Chaos Reference Pack** — one bundle with six small, pure-compute, no-network plugins for learning the run loop on a throwaway graph. Two of them are exactly the two launch shapes below: **Black Hole** targets a node (right-click it), **Korean Roulette** targets the whole graph (global menu).
 
 When you install, an **approval dialog** lists the plugin's permissions in plain language so you can see what it can touch before you grant it. Full details in [Browse & install](installing.md).
 
@@ -47,12 +46,12 @@ When you install, an **approval dialog** lists the plugin's permissions in plain
 
 How a plugin launches depends on what it **consumes**:
 
-- **Targets a node type** (e.g. CIDR Expand) → it appears in the **right-click menu of a matching node**, with that node pre-bound as input.
+- **Targets a node type** (e.g. Black Hole, which consumes any node) → it appears in the **right-click menu of a matching node**, with that node pre-bound as input.
 - **Operates on the whole graph** (e.g. Korean Roulette) → launch it from the global **Run plugin** menu.
 
-If the plugin takes input, a small pre-run form appears (for CIDR Expand, the CIDR block — already filled from the node you right-clicked). Confirm, and the run starts.
+If the plugin takes input, a small pre-run form appears, pre-filled from the node you right-clicked where applicable. Confirm, and the run starts.
 
-Watch it in the **Tasks** panel. A task moves through `queued → running → {succeeded | failed | cancelled}`, and you get **Stop**, **Pause**, and progress controls while it runs. For CIDR Expand, you'll see new `infrastructure.ip_address` nodes appear on the canvas as it emits them.
+Watch it in the **Tasks** panel. A task moves through `pending → running → {succeeded | failed | cancelled}`, and today you get a **Stop** control while it runs (per-status controls beyond Stop are still being built — see [Tasks & runs](tasks.md)). For Black Hole, you'll see the target node's 1-hop neighbors disappear from the canvas as the run applies.
 
 ## 8. Runs are ephemeral
 

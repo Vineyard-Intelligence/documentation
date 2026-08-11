@@ -43,7 +43,7 @@
 !!! warning "데스크톱: `sandbox-js`는 배포됨; `native`/`subprocess`는 연기됨"
     스키마는 `desktop` 블록(런타임 `sandbox-js`, `native`, 또는 `subprocess`)을 허용합니다. `sandbox-js` 데스크톱 런타임은 Electron 셸을 통해 **현재 배포되어** 있습니다. `native` 및 `subprocess` 런타임은 미래 지향적 설계입니다 — 아직 실행된다고 의존하지 마세요.
 
-각 플랫폼 블록은 이 플랫폼에서 플러그인을 실행할 수 없을 때 사용자에게 표시할 내용을 설명하는 `fallback`(`desktop`/`web`/`none`)을 설정할 수 있습니다. 설치 프로그램은 지원되지 않는 플러그인을 숨기지 않고 **회색으로 표시**하므로, 웹 전용 플러그인이 명확한 비활성화 상태로 카탈로그에 계속 표시됩니다.
+각 플랫폼 블록은 이 플랫폼에서 플러그인을 실행할 수 없을 때 사용자에게 표시할 내용을 설명하는 자체 `fallback`을 설정할 수 있습니다 — `web.fallback`은 `desktop` 또는 `none`이고, `desktop.fallback`은 `web` 또는 `none`입니다. 설치 프로그램은 지원되지 않는 플러그인을 숨기지 않고 **회색으로 표시**하므로, 웹 전용 플러그인이 명확한 비활성화 상태로 카탈로그에 계속 표시됩니다.
 
 ## io — consumes 및 produces
 
@@ -72,7 +72,7 @@
 
 `params`는 플러그인이 실행되기 전에 표시되는 폼을 설명하는 **JSON Schema (draft 2020-12)**입니다. 제출되고 검증된 객체는 `Task.input`이 되어 플러그인의 `run` 함수에 전달됩니다. 표준 JSON Schema 키워드가 렌더링된 폼과 클라이언트 측 유효성 검사를 구동합니다: `title`은 레이블, `description`은 도움말 텍스트, `default`는 미리 채워진 값, `required`/`pattern`/`minimum`/`maximum`/`enum`은 제약 조건을 강제합니다. `io.consumes` `as`(여기서는 `cidr`)로 바인딩된 필드는 소비된 노드에서 미리 채워져 도착합니다.
 
-!!! danger "params에 시크릿 금지 — 린트에서 거부됨"
+!!! danger "params에 시크릿 금지 — 이를 검사해 주는 것은 없습니다"
     `params`는 시크릿을 포함해서는 **안 됩니다** — 그리고 이를 검사해 주는 것은 없으므로 작성자의 책임입니다(API 키, 토큰, 비밀번호 등). 시크릿은 실행 폼을 통해 절대 제출되지 않습니다. 해당 값이 `Task.input`에 기록되기 때문입니다. 자격 증명은 대신 `"secret": true`와 함께 `scopes.config` 항목으로 선언하세요 — 이 값들은 런타임에만 주입되며 어떤 레코드에도 기록되지 않습니다. [Secret handling](security.md)을 참조하세요.
 
 ## scopes — 권한 표면

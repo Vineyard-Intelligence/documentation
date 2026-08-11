@@ -1,6 +1,15 @@
 # Updates
 
-How Vineyard detects, gates, and applies a new version of an installed plugin or Type Pack. There is no separate "update" pipeline — an update simply re-runs [install](../guide/installing.md) at a newer immutable `ref`, with a fresh hash check and a scope diff.
+How Vineyard detects and applies a new version of an installed plugin or Type Pack.
+
+!!! warning "Current behavior is simpler — and less guarded — than the rest of this page used to claim"
+    Clicking **Update** today directly re-points your project's installed pointer to the new version. It
+    does **not** re-run the install pipeline, does **not** show a scope-approval dialog, and does **not**
+    check any integrity hash — none of that exists in the code path yet (`updateItem()` in
+    `project-install.ts`). Only a **fresh install** goes through
+    the scope-approval dialog. This means a plugin version bump can silently add scopes/endpoints today —
+    updating a plugin you trust is not yet re-verified the way installing a new one is. Treat the rest of
+    this page's description of a "scope diff on update" as the intended design, not current behavior.
 
 ## The registry entry is the latest pointer
 
@@ -13,20 +22,25 @@ The per-author `manifest.latest_url` field is a **fallback** pointer, not the pr
 
 ## How the app detects an update
 
-The app holds an install record per project/user of the form `{ identifier, version, ref }`. To find updates it diffs each installed `identifier@version` against the registry entry for the same identifier:
+The app holds an install record per project of the form `{ identifier, url, version }` (the `Pointer`
+type in `project-install.ts`) — **no `ref` field is stored**. To find updates it compares the installed
+`version` string against the registry entry's `version` for the same identifier:
 
-- If the entry `ref` matches the installed `ref`, you are current.
-- If the entry exposes a **newer `ref`** for that identifier, the marketplace shows **"Update available"** on the card and the detail page.
+- If they match, you are current.
+- If the entry's `version` is different, the marketplace shows **"Update available"** on the card and the detail page.
 
-Because the diff is on the immutable `ref` (with `version` as the SemVer mirror), the check is exact: there is no ambiguity about whether the bytes you have are the bytes the registry now points at.
+The check today is a plain string compare on `version`, not a diff on the immutable `ref` — so it relies
+on the author bumping `version` correctly rather than on a byte-exact comparison.
 
 ## Applying an update
 
-Choosing **Update** re-runs the install pipeline at the new ref — the same pipeline documented under [installing](../guide/installing.md), including a **fresh hash check** of the freshly downloaded bytes against `distribution.integrity`, followed by the **scope diff** (below) and activation. The old cached bundle is replaced by the new one; the install record is updated to the new `{ version, ref }`.
+Choosing **Update** PATCHes your project's pointer directly to the new entry's `{ identifier, url, version }`. See the warning above: there is currently no re-run of the install pipeline, no fresh hash check, and no scope-approval dialog on this path.
 
-## The scope diff
+## The scope diff (intended design — not yet wired to Update, see the warning above)
 
-This is the part that makes an update different from a silent refresh. Vineyard compares the [scopes](../reference/scopes.md) requested by the new version against the scopes you already approved.
+This is the part that is meant to make an update different from a silent refresh, once built. The
+design: Vineyard compares the [scopes](../reference/scopes.md) requested by the new version against the
+scopes you already approved.
 
 - If the new version requests **no new authority**, the update applies without re-prompting.
 - If the new version **requests new scopes**, the app **re-prompts** with the scope approval dialog, **highlighting the delta** — the exact verbs or network endpoints being added.
@@ -62,19 +76,17 @@ In this example the update dialog highlights two additions: `node:delete` and a 
 
 ## Gating: which version is even offered
 
-Two registry signals decide whether a newer ref is offered to you at all.
-
 ### `compat.min_app_version`
 
-Each registry entry may carry `compat.min_app_version` — the oldest Vineyard runtime that the entry's ref supports (a `MAJOR.MINOR.PATCH` string). The app **gates the offered version** against your running app version: if a newer ref requires a runtime newer than yours, that version is not offered as an update. You keep the version you have until you update the app itself. This prevents pulling a bundle your runtime cannot execute.
+Each registry entry may carry `compat.min_app_version` — the oldest Vineyard runtime that the entry's ref supports (a `MAJOR.MINOR.PATCH` string). Today this is informational only: the marketplace detail page shows it under "Min app version," but nothing compares it against your running app version — the field does not currently gate whether an update is offered.
 
-### `deprecation.json`
+### `status` (deprecated / withdrawn)
 
-The registry repo (`Vineyard-Intelligence/registry`) maintains a `deprecation.json` listing withdrawn versions. **Refs listed in `deprecation.json` are never installed** — not as a fresh install and not as an update target. If the latest entry has been deprecated, the app will not offer it; a previously-installed-but-now-deprecated ref keeps working from its local cache but stops being advertised as current.
+There is no separate deprecation file. Delisting a version is the registry entry's own `status` block — `{ state, reason, since, replacement }` — set by editing the pack's row in `packs/`, not a standalone list (see [Taking a pack down](publishing.md#taking-a-pack-down)). A **`withdrawn`** ref is never offered as an update, cannot be freshly installed, and a client that already has it refuses to load it from cache — the analyst sees the reason instead. A **`deprecated`** ref keeps installing and updating normally; the analyst is just shown the notice once per project open.
 
 ## Type Packs update the same way
 
-Type Packs follow the identical model: the `community-typepacks.json` entry is the latest pointer, the diff is on `identifier@version`/`ref`, and a newer ref re-installs at that ref with a fresh hash check. Type Packs declare no scopes, so there is no scope diff — but `compat.min_app_version` gating and `deprecation.json` exclusion apply equally. See [Type Packs](typepacks.md) for the schema and [registry schema](../reference/registry-schema.md) for the entry projection.
+Type Packs follow the identical model: the `community-typepacks.json` entry is the latest pointer, and the update check is the same plain `version` string compare described above. Type Packs declare no scopes, so there is no scope diff either way — and the registry-typepack-entry schema carries no `compat` field at all, so there is no min-version metadata to show. `status` (deprecated/withdrawn) exclusion applies the same as for Plugin Packs. See [Type Packs](typepacks.md) for the schema and [registry schema](../reference/registry-schema.md) for the entry projection.
 
 ## Next / See also
 

@@ -4,13 +4,14 @@ plugin이 `manifest.scopes`에서 선언할 수 있는 모든 scope 문자열, �
 
 런타임에 권한 부여가 어떻게 시행되는지(Web Worker 샌드박스, 이그레스 허용 목록, 비밀 스크러빙)는 [security](../develop/security.md)를 참조하세요.
 
-`scopes` 블록은 정확히 4개의 키를 가지며, 모두 선택 사항입니다:
+`scopes` 블록은 정확히 5개의 키를 가지며, 모두 선택 사항입니다:
 
 ```jsonc
 "scopes": {
   "graph":     ["node:read", "edge:create"],               // 세분화된 그래프 동사
   "network":   [ { "endpoint": "https://...", "methods": ["POST"] } ],
   "web_probe": { "purpose": "check whether a profile page exists" },  // 데스크톱 전용
+  "services":  ["rdap"],                                   // 이름으로 호출하는 Vineyard 운영 서비스
   "config":    [ { "key": "max_concurrency", "type": "number" } ]
 }
 ```

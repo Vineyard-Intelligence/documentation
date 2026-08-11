@@ -1,11 +1,12 @@
 # Registry entry schemas
 
-두 가지 **registry entry** 스키마에 대한 참조 — `community-pluginpacks.json`의 한 행과 `community-typepacks.json`의 한 행입니다. 각 항목은 정적 브라우저가 모든 업스트림 manifest를 가져오지 않고도 카드를 렌더링할 수 있게 하는 간결하고 비정규화된 포인터입니다.
+**registry entry** 스키마에 대한 참조 — `community-pluginpacks.json`의 한 행, `community-typepacks.json`의 한 행, `community-skillpacks.json`의 한 행입니다. 각 항목은 정적 브라우저가 모든 업스트림 manifest를 가져오지 않고도 카드를 렌더링할 수 있게 하는 간결하고 비정규화된 포인터입니다. 이 페이지는 아래에서 Plugin과 Type Pack 항목 형태를 전부 다루지만, Skill Pack 항목 스키마는 더 최근에 추가돼 아직 산문 설명이 없습니다 — 스키마 링크에서 직접 읽으세요.
 
 스키마는 다음 위치에 있습니다:
 
 - [`schemas/registry-plugin-entry.schema.json`](https://vineyard.run/schemas/registry/plugin-entry/1.0.0.json)
 - [`schemas/registry-typepack-entry.schema.json`](https://vineyard.run/schemas/registry/typepack-entry/1.0.0.json)
+- [`schemas/registry-skillpack-entry.schema.json`](https://vineyard.run/schemas/registry/skillpack-entry/1.0.0.json) — `community-skillpacks.json`의 한 행. 아래 두 항목과 같은 비정규화 포인터 형태(`identifier`, `repo`/`ref`/`path`, 의존 플러그인팩용 `requires`)이며, 이 페이지에서 따로 자세히 다루진 않습니다.
 
 ## What a registry entry is (and is not)
 
@@ -14,7 +15,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 따라서 registry 항목은 **카탈로그 프로젝션**입니다: 브라우저에서 항목을 검색, 필터링, 배지 표시하기에 충분한 필드와, 상세 페이지가 실제 항목을 하이드레이트하는 데 사용하는 `repo@ref/path` 포인터입니다.
 
 !!! info "Denormalized — the manifest is the source of truth"
-    `platforms`, `scopes_summary`, `categories`, `type_count`, `edge_count`는 **파생된** 필드로, 병합 시점에 업스트림 manifest에서 계산됩니다. 업데이트 사이에 실제 manifest와 차이가 발생할 수 있습니다. marketplace **상세 페이지는 `repo@ref/path`의 실제 manifest에서 이를 다시 파생해야 합니다**. 카탈로그 값은 탐색 그리드가 단일 JSON 페치로 렌더링되도록 하기 위해서만 존재합니다. 의심스러운 경우 manifest가 우선합니다.
+    `platforms`, `scopes_summary`, `services`, `plugin_count`, `typepacks`, `categories`, `type_count`, `edge_count`는 **파생된** 필드로, 병합 시점에 업스트림 manifest에서 계산됩니다. 업데이트 사이에 실제 manifest와 차이가 발생할 수 있습니다. marketplace **상세 페이지는 `repo@ref/path`의 실제 manifest에서 이를 다시 파생해야 합니다**. 카탈로그 값은 탐색 그리드가 단일 JSON 페치로 렌더링되도록 하기 위해서만 존재합니다. 의심스러운 경우 manifest가 우선합니다.
 
 ## Plugin entry
 
@@ -39,6 +40,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `scopes_summary.graph_write` | boolean | no | `node:`/`edge:` create/update/delete 동사가 있으면 `true`. |
 | `scopes_summary.secret_config` | boolean | no | `scopes.config` 항목에 `secret: true`가 있으면 `true` (데스크톱 전용 키를 의미). |
 | `plugin_count` | integer | no | **파생됨**: `identifier`가 **pack**을 명명할 때 번들된 plugin 수 (하나의 파일 → 여러 plugin). 단일 plugin 항목의 경우 생략되거나 `1`. 카드는 포함된 모든 plugin을 함께 설치합니다. 최소 `1`. |
+| `typepacks` | string[] | no | **파생됨**: 팩의 플러그인이 소비/생산하는 Type Pack 식별자(`io.consumes`/`io.produces`), 고유값. skillpack의 `requires`가 pluginpack을 제공하는 것과 같은 방식으로 marketplace가 이들을 함께 설치하도록 제안합니다. 프로젝트가 설치하지 않은 팩의 type을 쓰는 plugin은 노드 생성 시점에 실패합니다. |
 | `services` | string[] | no | **파생**: 팩의 플러그인이 이름으로 호출하는 Vineyard 서비스(`rdap`, `telegram`). `scopes_summary` 플래그가 아니라 별도 필드입니다 — 목적지는 호스트가 고정하고 분석가의 신원이 함께 가므로, "Network"로는 과소·과대 진술이 동시에 됩니다. [scopes](scopes.md#services) 참조. |
 | `compat` | object | no | 런타임 호환성 (`versions.json`과 유사). |
 | `compat.min_app_version` | string | no | 이 `ref`가 지원하는 가장 오래된 Vineyard 런타임 (`^\d+\.\d+\.\d+$`). 업데이터가 제공할 버전을 제한합니다. |
@@ -89,7 +91,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `author` | string | yes | 저자 핸들. |
 | `description` | string | yes | ≤250자 (plugin 항목과 동일한 산문 규칙). |
 | `repo` | string | yes | `owner/name` GitHub 경로. |
-| `ref` | string | yes | **불변**: 커밋 SHA 또는 주석 태그, `typepack.version`과 동일. |
+| `ref` | string | yes | **불변 커밋 SHA** (40자 16진수 SHA-1 또는 64자 16진수 SHA-256), PR 시점에 캡처됨. 태그와 브랜치는 거부됩니다(둘 다 재지정 가능). `version`은 사람이 읽을 수 있는 릴리스를 전달합니다. |
 | `path` | string | yes | `repo@ref` 내 Type Pack JSON 경로 (`distribution.path`와 동일). |
 | `version` | string | no | SemVer (`^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$`). |
 | `categories` | string[] | no | **파생됨**: 고유한 `types[].category` 값 (각각 `^[a-z][a-z0-9_]*$`, 고유). 카테고리 패싯을 구동합니다. |

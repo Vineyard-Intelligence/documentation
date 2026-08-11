@@ -69,7 +69,7 @@ ctx.progress?.log?.("found 12 candidate nodes");
 ctx.progress?.status?.("waiting");   // "running" | "waiting"
 ```
 
-`status("waiting")`은 백오프/속도 제한 일시 중지를 신호하여 UI가 대기 상태를 표시할 수 있게 합니다 — 내장 경로는 [`net.fetchWithBackoff`](#scope-gated-members)를 참조하세요.
+`status("waiting")`은 백오프/속도 제한 일시 중지를 신호하여 UI가 대기 상태를 표시할 수 있게 합니다 — `429`/`Retry-After` 처리는 직접 구현해야 하며, SDK에는 내장된 백오프 헬퍼가 없습니다.
 
 ### 스코프 게이트 멤버 {#scope-gated-members}
 
@@ -80,25 +80,27 @@ ctx.progress?.status?.("waiting");   // "running" | "waiting"
     최소 하나의 `graph` 동사가 부여된 경우에만 존재합니다. 각 메서드는 해당 동사가 부여된 경우에만 존재합니다.
 
     ```ts
-    // 읽기 — node:read / edge:read
+    // 읽기 — node:read
     ctx.graph?.get?(nodeId): Promise<GraphNode | null>
-    ctx.graph?.list?(opts?): Promise<{ nodes: GraphNode[]; cursor?: string }>
+    ctx.graph?.list?(opts?: { type?: string }): Promise<{ nodes: GraphNode[] }>
+
+    // 읽기 — edge:read
+    ctx.graph?.edges?(): Promise<GraphEdge[]>
     ctx.graph?.neighbors?(nodeId): Promise<{ nodes: GraphNode[]; edges: GraphEdge[] }>
 
     // 단일 쓰기 — node:create / node:update / node:delete / edge:create / edge:delete
     ctx.graph?.createNode?(draft: EntityDraft): Promise<GraphNode>
-    ctx.graph?.updateNode?(nodeId, data): Promise<GraphNode>
+    ctx.graph?.updateNode?(nodeId, data): Promise<void>
     ctx.graph?.deleteNode?(nodeId): Promise<void>
-    ctx.graph?.createEdge?(edge: EdgeDraft): Promise<GraphEdge>
+    ctx.graph?.createEdge?(edge: EdgeDraft): Promise<void>
     ctx.graph?.deleteEdge?(edgeId): Promise<void>
 
     // 벌크
     ctx.graph?.deleteNodes?(ids: string[]): Promise<{ deleted: number }>
-    ctx.graph?.emit?(entities: EntityDraft[], edges?: EdgeDraft[]):
-      Promise<{ nodes: GraphNode[]; edges: GraphEdge[] }>
+    ctx.graph?.deleteEdges?(ids: string[]): Promise<{ deleted: number }>
     ```
 
-    `list({ type, limit, cursor })`는 커서 페이지네이션 전체 그래프 열거입니다(**Thanos Snap**과 같은 전체 그래프 플러그인이 사용). `neighbors`는 1-홉 근방을 반환합니다(**Black Hole**이 사용). `EntityDraft.key`는 재실행 시 중복 대신 upsert하기 위한 선택적 클라이언트 측 중복 제거 키입니다. `EdgeDraft`는 `key` 또는 반환된 ID로 노드를 참조하며, `label`은 활성화된 [Type Pack](typepacks.md) 엣지 타입과 일치해야 합니다.
+    `list({ type })`는 노드 타입으로 필터링된 전체 그래프 열거를 한 번의 호출로 반환합니다 — 커서 페이지네이션이 아닙니다(**Thanos Snap**과 같은 전체 그래프 플러그인이 사용). `neighbors`는 1-홉 근방을 반환합니다(**Black Hole**이 사용). `updateNode`와 `createEdge`는 델타/초안을 받아 검토용으로 스테이징할 뿐 결과 레코드를 반환하지 않으므로 둘 다 `void`로 리졸브됩니다 — 적용된 상태가 필요하면 `get`/`list`로 다시 읽으세요. `EntityDraft.key`는 재실행 시 중복 대신 upsert하기 위한 선택적 클라이언트 측 중복 제거 키입니다. `EdgeDraft`는 `key` 또는 반환된 ID로 노드를 참조하며, `label`은 활성화된 [Type Pack](typepacks.md) 엣지 타입과 일치해야 합니다.
 
 === "net (network 스코프)"
 
@@ -106,10 +108,25 @@ ctx.progress?.status?.("waiting");   // "running" | "waiting"
 
     ```ts
     ctx.net?.fetch?(input: string, init?: SafeRequestInit): Promise<SafeResponse>
-    ctx.net?.fetchWithBackoff?(input, init?, opts?): Promise<SafeResponse>
     ```
 
-    `fetchWithBackoff`는 HTTP 429 / `Retry-After` 처리를 위한 단일 진입점이며 대기 상태를 자동으로 표시합니다.
+    내장된 재시도/백오프 헬퍼는 없습니다 — HTTP `429`/`Retry-After`는 직접 처리하고, 대기하는 동안 `ctx.progress?.status?.("waiting")`을 호출하세요.
+
+=== "net.probe (web_probe 스코프, 데스크톱 전용)"
+
+    `scopes.web_probe`가 선언**되고** 플러그인이 데스크톱 셸에서 실행 중일 때만 존재합니다 — 스코프가 부여되어도 웹 빌드에서는 계속 없습니다. Electron 메인 프로세스에서 임의의 공개 호스트로 단일 익명 요청을 수행합니다: 쿠키 없음, `Origin` 없음, 리다이렉트를 따라가지 않음(호출자는 요청한 URL의 실제 상태를 봅니다), 사설/루프백 호스트는 거부됩니다. 사전에 수백 개 사이트 중 어느 것을 조사할지 알 수 없는 계정 탐지형 플러그인이 사용하는 능력입니다.
+
+    ```ts
+    ctx.net?.probe?(input: string, init?: SafeProbeInit): Promise<SafeProbeResponse>
+    ```
+
+=== "service (scopes.services)"
+
+    `scopes.services`가 최소 하나의 Vineyard 운영 서비스(현재 `rdap`, `telegram`)를 지정한 경우에만 존재합니다. 목적지는 URL이 아니라 이름입니다 — 호스트가 이를 해석하고 분석가의 자격 증명을 첨부하므로, 플러그인은 호출을 다른 곳으로 리다이렉트할 수 없으며 플러그인이 전달하는 요청 헤더는 `Authorization`을 재정의할 수 없습니다.
+
+    ```ts
+    ctx.service?(name: string, path: string, init?: SafeRequestInit): Promise<SafeResponse>
+    ```
 
 === "config (scopes.config)"
 
@@ -127,7 +144,7 @@ ctx.progress?.status?.("waiting");   // "running" | "waiting"
 
 ### 벌크 작업
 
-`deleteNodes(ids[])`와 `emit(entities, edges)`은 각각 브리지에서 **단일 제한 작업**입니다 — 수백 번의 개별 왕복 대신, 하나의 호출이 들어가 고정된 동시성 한도 아래에서 한 번에 팬아웃됩니다. 전체 그래프 변이에는 벌크 형태를 선호하세요: 합법적인 대량 삭제(Korean Roulette이 전체 그래프를 지우는 경우)가 수천 번의 개별 `deleteNode` 호출이 되어서는 안 됩니다. 영향을 받은 각 노드와 엣지는 여전히 분석가가 검토하는 변경 세트에 각자의 항목으로 나타나므로, 벌크라고 해서 검토를 건너뛰는 것은 아닙니다.
+`deleteNodes(ids[])`와 `deleteEdges(ids[])`는 각각 브리지에서 **단일 제한 작업**입니다 — 수백 번의 개별 왕복 대신, 하나의 호출이 들어가 고정된 동시성 한도 아래에서 한 번에 팬아웃됩니다. 전체 그래프 변이에는 벌크 형태를 선호하세요: 합법적인 대량 삭제(Korean Roulette이 전체 그래프를 지우는 경우)가 수천 번의 개별 `deleteNode` 호출이 되어서는 안 됩니다. 영향을 받은 각 노드와 엣지는 여전히 분석가가 검토하는 변경 세트에 각자의 항목으로 나타나므로, 벌크라고 해서 검토를 건너뛰는 것은 아닙니다.
 
 ## 완전한 `run(ctx)` 예제
 
@@ -137,7 +154,7 @@ ctx.progress?.status?.("waiting");   // "running" | "waiting"
 
 `createMockContext`는 앱 없이, GitHub 없이, 서버 없이 `run(ctx)`을 단위 테스트할 수 있게 합니다. 부여된 스코프에 대해서만 `graph` / `net` / `config` 멤버가 존재하는 `HostContext`를 빌드하므로, 프로덕션과 정확히 동일하게 스코프 게이팅이 작동합니다. 반환된 컨텍스트는 어서션할 수 있는 `mock` 레코드를 가집니다.
 
-`MockContextOptions`는 `nodes`, `edges`, `params`, `config`, `selection`, `projectId`, `pluginId`, `grantedScopes`, `platform`을 허용합니다. `ctx.mock` 레코드는 `nodes`, `edges`, `createdNodes`, `deletedNodeIds`, `deletedEdgeIds`, `netCalls`, `progress`를 노출합니다. 전체 테스트 예제는 [quickstart](quickstart.md)를 참조하세요.
+`MockContextOptions`는 `nodes`, `edges`, `params`, `selection`, `grantedScopes`, `projectId`, `pluginId`, `signal`, `netHandler`, `probeHandler`를 허용합니다. `ctx.mock` 레코드는 `nodes`, `edges`, `createdNodes`, `createdEdges`, `deletedNodeIds`, `deletedEdgeIds`, `updatedNodes`, `progress`를 노출합니다. 전체 테스트 예제는 [quickstart](quickstart.md)를 참조하세요.
 
 !!! note "참조 구현"
     SDK 패키지에서 `createMockContext`는 참조 스케치와 함께 선언(`export declare function …`)되어 있습니다. 게시된 패키지가 구현을 제공합니다. 위의 이름들을 안정적인 계약으로 취급하세요.

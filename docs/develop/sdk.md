@@ -89,7 +89,8 @@ ctx.progress?.status?.("waiting");   // "running" | "waiting"
 ```
 
 `status("waiting")` is how you signal a backoff/rate-limit pause so the UI can show the
-waiting state — see [`net.fetchWithBackoff`](#scope-gated-members) for the built-in path.
+waiting state while you retry after a `429`/`Retry-After` yourself — the SDK has no built-in
+backoff helper.
 
 ### Scope-gated members
 
@@ -101,29 +102,34 @@ Each of the following is `undefined` unless its scope was granted.
     granted.
 
     ```ts
-    // reads — node:read / edge:read
+    // reads — node:read
     ctx.graph?.get?(nodeId): Promise<GraphNode | null>
-    ctx.graph?.list?(opts?): Promise<{ nodes: GraphNode[]; cursor?: string }>
+    ctx.graph?.list?(opts?: { type?: string }): Promise<{ nodes: GraphNode[] }>
+
+    // reads — edge:read
+    ctx.graph?.edges?(): Promise<GraphEdge[]>
     ctx.graph?.neighbors?(nodeId): Promise<{ nodes: GraphNode[]; edges: GraphEdge[] }>
 
     // single writes — node:create / node:update / node:delete / edge:create / edge:delete
     ctx.graph?.createNode?(draft: EntityDraft): Promise<GraphNode>
-    ctx.graph?.updateNode?(nodeId, data): Promise<GraphNode>
+    ctx.graph?.updateNode?(nodeId, data): Promise<void>
     ctx.graph?.deleteNode?(nodeId): Promise<void>
-    ctx.graph?.createEdge?(edge: EdgeDraft): Promise<GraphEdge>
+    ctx.graph?.createEdge?(edge: EdgeDraft): Promise<void>
     ctx.graph?.deleteEdge?(edgeId): Promise<void>
 
     // bulk
     ctx.graph?.deleteNodes?(ids: string[]): Promise<{ deleted: number }>
-    ctx.graph?.emit?(entities: EntityDraft[], edges?: EdgeDraft[]):
-      Promise<{ nodes: GraphNode[]; edges: GraphEdge[] }>
+    ctx.graph?.deleteEdges?(ids: string[]): Promise<{ deleted: number }>
     ```
 
-    `list({ type, limit, cursor })` is cursor-paged whole-graph enumeration (used by
-    whole-graph plugins like **Thanos Snap**). `neighbors` returns the 1-hop neighborhood
-    (used by **Black Hole**). An `EntityDraft.key` is an optional client-side dedup key so
-    re-runs upsert instead of duplicating; `EdgeDraft` references nodes by `key` or returned
-    id, and `label` should match an activated [Type Pack](typepacks.md) edge type.
+    `list({ type })` filters by node type over the whole graph in one call — it is not
+    cursor-paginated (used by whole-graph plugins like **Thanos Snap**). `neighbors` returns
+    the 1-hop neighborhood (used by **Black Hole**). `updateNode` and `createEdge` take a
+    delta/draft and stage it for review rather than returning the resulting record, so both
+    resolve `void` — re-read via `get`/`list` if you need the applied state. An
+    `EntityDraft.key` is an optional client-side dedup key so re-runs upsert instead of
+    duplicating; `EdgeDraft` references nodes by `key` or returned id, and `label` should
+    match an activated [Type Pack](typepacks.md) edge type.
 
 === "net (network scope)"
 
@@ -133,11 +139,34 @@ Each of the following is `undefined` unless its scope was granted.
 
     ```ts
     ctx.net?.fetch?(input: string, init?: SafeRequestInit): Promise<SafeResponse>
-    ctx.net?.fetchWithBackoff?(input, init?, opts?): Promise<SafeResponse>
     ```
 
-    `fetchWithBackoff` is the single home for HTTP 429 / `Retry-After` handling and surfaces
-    the waiting state for you.
+    There is no built-in retry/backoff helper — handle HTTP `429`/`Retry-After` yourself and
+    call `ctx.progress?.status?.("waiting")` while you wait.
+
+=== "net.probe (web_probe scope, desktop only)"
+
+    Present iff `scopes.web_probe` is declared **and** the plugin is running in the desktop
+    shell — it stays absent in the web build even when the scope is granted. Performs ONE
+    anonymous request to an arbitrary public host from the Electron main process: no cookies,
+    no `Origin`, redirects are not followed (the caller sees the true status), and
+    private/loopback hosts are refused. This is the capability behind account-discovery
+    plugins that cannot know in advance which of hundreds of sites they will probe.
+
+    ```ts
+    ctx.net?.probe?(input: string, init?: SafeProbeInit): Promise<SafeProbeResponse>
+    ```
+
+=== "service (scopes.services)"
+
+    Present iff `scopes.services` names at least one Vineyard-operated service (currently
+    `rdap`, `telegram`). The destination is a NAME, not a URL — the host resolves it and
+    attaches the analyst's credential, so the plugin cannot redirect the call elsewhere and
+    the request headers a plugin passes cannot override `Authorization`.
+
+    ```ts
+    ctx.service?(name: string, path: string, init?: SafeRequestInit): Promise<SafeResponse>
+    ```
 
 === "config (scopes.config)"
 
@@ -160,7 +189,7 @@ Each of the following is `undefined` unless its scope was granted.
 
 ### Bulk ops
 
-`deleteNodes(ids[])` and `emit(entities, edges)` are each a **single bounded operation** on the
+`deleteNodes(ids[])` and `deleteEdges(ids[])` are each a **single bounded operation** on the
 bridge — one call in, one fan-out under a fixed concurrency limit — rather than hundreds of
 independent round trips. Prefer the bulk forms for whole-graph mutations: a legitimate
 mass-delete (Korean Roulette wiping the whole graph) should not be thousands of individual
@@ -179,10 +208,10 @@ builds a `HostContext` whose `graph` / `net` / `config` members exist **only for
 scopes**, so scope gating is exercised exactly as in production. The returned context carries
 a `mock` record you can assert against.
 
-`MockContextOptions` accepts `nodes`, `edges`, `params`, `config`, `selection`, `projectId`,
-`pluginId`, `grantedScopes`, and `platform`. The `ctx.mock` record exposes `nodes`, `edges`,
-`createdNodes`, `deletedNodeIds`, `deletedEdgeIds`, `netCalls`, and `progress`. See
-[quickstart](quickstart.md) for a full test example.
+`MockContextOptions` accepts `nodes`, `edges`, `params`, `selection`, `grantedScopes`,
+`projectId`, `pluginId`, `signal`, `netHandler`, and `probeHandler`. The `ctx.mock` record
+exposes `nodes`, `edges`, `createdNodes`, `createdEdges`, `deletedNodeIds`, `deletedEdgeIds`,
+`updatedNodes`, and `progress`. See [quickstart](quickstart.md) for a full test example.
 
 !!! note "Reference implementation"
     In the SDK package, `createMockContext` is declared (`export declare function …`) with a

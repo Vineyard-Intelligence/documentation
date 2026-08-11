@@ -153,6 +153,7 @@ The plugin's authority surface. `type: object`, `additionalProperties: false`. `
 | `graph` | array | no | `uniqueItems`; enum items (below) | Fine-grained node/edge verbs. Backed by the project `graph_edit` tier. |
 | `web_probe` | object | no | `{ purpose?: string }` — an object, not an array | **Desktop only.** One anonymous request to an *arbitrary* public host, made by the shell's main process. Backs `ctx.net.probe`; in the web build the capability has no backing and `ctx.net.probe` stays absent. |
 | `network` | array | no | items: [`networkScope`](#networkscope-scopesnetwork-items) | External XHR targets. |
+| `services` | array | no | `uniqueItems`; enum: `rdap`, `telegram` | Vineyard-operated services called by **name** through `ctx.service` — never by URL. See the [scopes reference](scopes.md#services). |
 | `config` | array | no | items: [`configValue`](#configvalue-scopesconfig-items) | Install-time values injected at runtime only. |
 
 !!! warning "There is no `publish` scope"

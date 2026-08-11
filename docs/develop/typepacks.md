@@ -55,6 +55,8 @@ Each item in `types[]` declares one node entity type.
 - `category` and `name` are **snake_case identifier segments** (`^[a-z][a-z0-9_]*$`, ≤31 chars).
 - `properties` MUST be non-empty; each property key is also a snake_case segment.
 - `label_property` names the key used as the node's display label. The cross-field lint requires that key to exist in `properties` **and** be non-optional.
+- `identity_properties` (optional) lists the keys — together — that identify one entity for de-duplication; defaults to `[label_property]`. Display and identity are different questions: `identity.account` is *labelled* by `username` alone but *identified* by `(username, platform)`, since the same username on two platforms is two different accounts. Every listed key MUST exist in `properties`.
+- `label_template` (optional) builds the display label from several properties, e.g. `"{username} · {platform}"`. Falls back to `label_property` when a referenced field is empty, so a partially-filled node never shows a dangling separator. Display only — de-duplication always uses `identity_properties`.
 
 ## Property types
 
@@ -144,8 +146,9 @@ The Threat pack, for example, uses lucide names like `bug` (malware), `shield-al
 A node type is addressed as the qualified string `"<category>.<name>"` — e.g. `infrastructure.ip_address` or `threat.malware`. This qualified form is what `Node.type` stores and what a plugin's `io.consumes` / `io.produces` and `emit` reference. Edge types map to `Edge.label`; edge properties (when used) live in `Edge.data`.
 
 **De-duplication keys on the exact qualified type.** When a plugin or AI task adds a node, the
-host de-duplicates by `"<category>.<name>"` + the identifying value (`label_property`, else
-`value`, else `name`). The type is resolved by its exact qualified key only — a node whose type
+host de-duplicates by `"<category>.<name>"` + the identifying value, resolved in order:
+`identity_properties` (joined, when the type declares it), else `label_property`, else `value`,
+else `name`. The type is resolved by its exact qualified key only — a node whose type
 is not defined by an installed pack keeps its raw type string, so a pack that moves a type to
 another category (e.g. `url` from `infrastructure` to `web`) never merges old nodes with the new
 type's creates. Creating a node with a type no installed pack defines is refused outright.
