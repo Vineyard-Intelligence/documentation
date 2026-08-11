@@ -51,13 +51,13 @@ run(ctx: HostContext): Promise<RunResult | void>;
 |---|---|---|
 | `ctx.run` | `{ runId, projectId, pluginId, grantedScopes, platform }` | 이 실행의 식별 정보. `grantedScopes`는 설치 시 승인된 매니페스트의 스코프 세트. `platform`은 `"web"` 또는 `"desktop"`. |
 | `ctx.input` | `{ selection: string[] }` | 실행이 시작될 때 사용자가 선택한 노드 ID. **Black Hole**은 `ctx.input.selection`을 읽습니다. |
-| `ctx.params` | `Readonly<Record<string, unknown>>` | 이 실행의 사용자 입력, 매니페스트 `params` 스키마에 대해 검증됨. `TypeRef.as` 별칭을 통해 바인딩된 소비 노드가 여기에 미리 바인딩됩니다. |
+| `ctx.params` | `Readonly<Record<string, unknown>>` | 이 실행의 사용자 입력, 매니페스트 `params` 스키마에 대해 검증됨. |
 | `ctx.progress` | `{ set?, log?, status? }` | 지속 관리 작업 UI를 구동합니다(아래 상세). |
 | `ctx.signal` | `AbortSignal` | 협력적 취소 — 반드시 관찰해야 합니다. |
 | `ctx.onCancel` | `(handler) => void` | 취소 시 호출될 정리 핸들러 등록. |
 
 !!! tip "취소는 협력적입니다"
-    `run`을 강제 종료하는 것은 없습니다. `ctx.signal.aborted`를 폴링하거나, 긴 await에 `ctx.signal`을 전달하거나, `ctx.onCancel(...)`을 등록하세요. 시그널을 무시하는 플러그인은 반환할 때까지 계속 실행됩니다. 장기 실행 플러그인은 [manifest](plugin-manifest.md)에서 `lifecycle.controls: ["cancel"]`을 설정해야 합니다.
+    `run`을 강제 종료하는 것은 없습니다. `ctx.signal.aborted`를 폴링하거나, 긴 await에 `ctx.signal`을 전달하거나, `ctx.onCancel(...)`을 등록하세요. 시그널을 무시하는 플러그인은 반환하거나 `lifecycle.timeout_ms` 예산이 다할 때까지 계속 실행됩니다.
 
 ### 진행률, 상태, 로깅
 
@@ -75,69 +75,69 @@ ctx.progress?.status?.("waiting");   // "running" | "waiting"
 
 다음 각 항목은 해당 스코프가 부여되지 않으면 `undefined`입니다.
 
-=== "graph (graph:* 스코프)"
+#### `graph` (`graph:*` 스코프)
 
-    최소 하나의 `graph` 동사가 부여된 경우에만 존재합니다. 각 메서드는 해당 동사가 부여된 경우에만 존재합니다.
+최소 하나의 `graph` 동사가 부여된 경우에만 존재합니다. 각 메서드는 해당 동사가 부여된 경우에만 존재합니다.
 
-    ```ts
-    // 읽기 — node:read
-    ctx.graph?.get?(nodeId): Promise<GraphNode | null>
-    ctx.graph?.list?(opts?: { type?: string }): Promise<{ nodes: GraphNode[] }>
+```ts
+// 읽기 — node:read
+ctx.graph?.get?(nodeId): Promise<GraphNode | null>
+ctx.graph?.list?(opts?: { type?: string }): Promise<{ nodes: GraphNode[] }>
 
-    // 읽기 — edge:read
-    ctx.graph?.edges?(): Promise<GraphEdge[]>
-    ctx.graph?.neighbors?(nodeId): Promise<{ nodes: GraphNode[]; edges: GraphEdge[] }>
+// 읽기 — edge:read
+ctx.graph?.edges?(): Promise<GraphEdge[]>
+ctx.graph?.neighbors?(nodeId): Promise<{ nodes: GraphNode[]; edges: GraphEdge[] }>
 
-    // 단일 쓰기 — node:create / node:update / node:delete / edge:create / edge:delete
-    ctx.graph?.createNode?(draft: EntityDraft): Promise<GraphNode>
-    ctx.graph?.updateNode?(nodeId, data): Promise<void>
-    ctx.graph?.deleteNode?(nodeId): Promise<void>
-    ctx.graph?.createEdge?(edge: EdgeDraft): Promise<void>
-    ctx.graph?.deleteEdge?(edgeId): Promise<void>
+// 단일 쓰기 — node:create / node:update / node:delete / edge:create / edge:delete
+ctx.graph?.createNode?(draft: EntityDraft): Promise<GraphNode>
+ctx.graph?.updateNode?(nodeId, data): Promise<void>
+ctx.graph?.deleteNode?(nodeId): Promise<void>
+ctx.graph?.createEdge?(edge: EdgeDraft): Promise<void>
+ctx.graph?.deleteEdge?(edgeId): Promise<void>
 
-    // 벌크
-    ctx.graph?.deleteNodes?(ids: string[]): Promise<{ deleted: number }>
-    ctx.graph?.deleteEdges?(ids: string[]): Promise<{ deleted: number }>
-    ```
+// 벌크
+ctx.graph?.deleteNodes?(ids: string[]): Promise<{ deleted: number }>
+ctx.graph?.deleteEdges?(ids: string[]): Promise<{ deleted: number }>
+```
 
-    `list({ type })`는 노드 타입으로 필터링된 전체 그래프 열거를 한 번의 호출로 반환합니다 — 커서 페이지네이션이 아닙니다(**Thanos Snap**과 같은 전체 그래프 플러그인이 사용). `neighbors`는 1-홉 근방을 반환합니다(**Black Hole**이 사용). `updateNode`와 `createEdge`는 델타/초안을 받아 검토용으로 스테이징할 뿐 결과 레코드를 반환하지 않으므로 둘 다 `void`로 리졸브됩니다 — 적용된 상태가 필요하면 `get`/`list`로 다시 읽으세요. `EntityDraft.key`는 재실행 시 중복 대신 upsert하기 위한 선택적 클라이언트 측 중복 제거 키입니다. `EdgeDraft`는 `key` 또는 반환된 ID로 노드를 참조하며, `label`은 활성화된 [Type Pack](typepacks.md) 엣지 타입과 일치해야 합니다.
+`list({ type })`는 노드 타입으로 필터링된 전체 그래프 열거를 한 번의 호출로 반환합니다 — 커서 페이지네이션이 아닙니다(**Thanos Snap**과 같은 전체 그래프 플러그인이 사용). `neighbors`는 1-홉 근방을 반환합니다(**Black Hole**이 사용). `updateNode`와 `createEdge`는 델타/초안을 받아 검토용으로 스테이징할 뿐 결과 레코드를 반환하지 않으므로 둘 다 `void`로 리졸브됩니다 — 적용된 상태가 필요하면 `get`/`list`로 다시 읽으세요. `EntityDraft.key`는 재실행 시 중복 대신 upsert하기 위한 선택적 클라이언트 측 중복 제거 키입니다. `EdgeDraft`는 `key` 또는 반환된 ID로 노드를 참조하며, `label`은 활성화된 [Type Pack](typepacks.md) 엣지 타입과 일치해야 합니다.
 
-=== "net (network 스코프)"
+#### `net` (network 스코프)
 
-    최소 하나의 [network scope](../reference/scopes.md)가 선언된 경우에만 존재합니다. `manifest.scopes.network` 엔드포인트로 제한됩니다. 브리지는 `credentials: "omit"`을 강제하고 `Authorization`/`Cookie`를 제거합니다. 6개의 참조 플러그인은 네트워크를 **전혀** 사용하지 않습니다.
+최소 하나의 [network scope](../reference/scopes.md)가 선언된 경우에만 존재합니다. `manifest.scopes.network` 엔드포인트로 제한됩니다. 브리지는 `credentials: "omit"`을 강제하고 `Authorization`/`Cookie`를 제거합니다. 6개의 참조 플러그인은 네트워크를 **전혀** 사용하지 않습니다.
 
-    ```ts
-    ctx.net?.fetch?(input: string, init?: SafeRequestInit): Promise<SafeResponse>
-    ```
+```ts
+ctx.net?.fetch?(input: string, init?: SafeRequestInit): Promise<SafeResponse>
+```
 
-    내장된 재시도/백오프 헬퍼는 없습니다 — HTTP `429`/`Retry-After`는 직접 처리하고, 대기하는 동안 `ctx.progress?.status?.("waiting")`을 호출하세요.
+내장된 재시도/백오프 헬퍼는 없습니다 — HTTP `429`/`Retry-After`는 직접 처리하고, 대기하는 동안 `ctx.progress?.status?.("waiting")`을 호출하세요.
 
-=== "net.probe (web_probe 스코프, 데스크톱 전용)"
+#### `net.probe` (`web_probe` 스코프, 데스크톱 전용)
 
-    `scopes.web_probe`가 선언**되고** 플러그인이 데스크톱 셸에서 실행 중일 때만 존재합니다 — 스코프가 부여되어도 웹 빌드에서는 계속 없습니다. Electron 메인 프로세스에서 임의의 공개 호스트로 단일 익명 요청을 수행합니다: 쿠키 없음, `Origin` 없음, 리다이렉트를 따라가지 않음(호출자는 요청한 URL의 실제 상태를 봅니다), 사설/루프백 호스트는 거부됩니다. 사전에 수백 개 사이트 중 어느 것을 조사할지 알 수 없는 계정 탐지형 플러그인이 사용하는 능력입니다.
+`scopes.web_probe`가 선언**되고** 플러그인이 데스크톱 셸에서 실행 중일 때만 존재합니다 — 스코프가 부여되어도 웹 빌드에서는 계속 없습니다. Electron 메인 프로세스에서 임의의 공개 호스트로 단일 익명 요청을 수행합니다: 쿠키 없음, `Origin` 없음, 리다이렉트를 따라가지 않음(호출자는 요청한 URL의 실제 상태를 봅니다), 사설/루프백 호스트는 거부됩니다. 사전에 수백 개 사이트 중 어느 것을 조사할지 알 수 없는 계정 탐지형 플러그인이 사용하는 능력입니다.
 
-    ```ts
-    ctx.net?.probe?(input: string, init?: SafeProbeInit): Promise<SafeProbeResponse>
-    ```
+```ts
+ctx.net?.probe?(input: string, init?: SafeProbeInit): Promise<SafeProbeResponse>
+```
 
-=== "service (scopes.services)"
+#### `service` (`scopes.services`)
 
-    `scopes.services`가 최소 하나의 Vineyard 운영 서비스(현재 `rdap`, `telegram`)를 지정한 경우에만 존재합니다. 목적지는 URL이 아니라 이름입니다 — 호스트가 이를 해석하고 분석가의 자격 증명을 첨부하므로, 플러그인은 호출을 다른 곳으로 리다이렉트할 수 없으며 플러그인이 전달하는 요청 헤더는 `Authorization`을 재정의할 수 없습니다.
+`scopes.services`가 최소 하나의 Vineyard 운영 서비스(현재 `rdap`, `telegram`)를 지정한 경우에만 존재합니다. 목적지는 URL이 아니라 이름입니다 — 호스트가 이를 해석하고 분석가의 자격 증명을 첨부하므로, 플러그인은 호출을 다른 곳으로 리다이렉트할 수 없으며 플러그인이 전달하는 요청 헤더는 `Authorization`을 재정의할 수 없습니다.
 
-    ```ts
-    ctx.service?(name: string, path: string, init?: SafeRequestInit): Promise<SafeResponse>
-    ```
+```ts
+ctx.service?(name: string, path: string, init?: SafeRequestInit): Promise<SafeResponse>
+```
 
-=== "config (scopes.config)"
+#### `config` (`scopes.config`)
 
-    `scopes.config`가 선언된 경우에만 존재합니다. 읽기 전용, 선언된 값만.
+`scopes.config`가 선언된 경우에만 존재합니다. 읽기 전용, 선언된 값만.
 
-    ```ts
-    ctx.config?: Readonly<Record<string, string | number | boolean>>
-    ```
+```ts
+ctx.config?: Readonly<Record<string, string | number | boolean>>
+```
 
-    !!! warning "시크릿은 절대 읽을 수 없습니다"
-        `config.secret: true` 값은 **제외**됩니다 — 호스트에 의해 네트워크 경계에서 주입되며 플러그인에 반환되지 않습니다. 웹에서는 시크릿 config가 데스크톱 플러그인으로 라우팅됩니다. [시크릿 처리](security.md#secret-handling)를 참조하세요.
+!!! warning "시크릿은 절대 읽을 수 없습니다"
+    `config.secret: true` 값은 **제외**됩니다 — 호스트에 의해 네트워크 경계에서 주입되며 플러그인에 반환되지 않습니다. 웹에서는 시크릿 config가 데스크톱 플러그인으로 라우팅됩니다. [시크릿 처리](security.md#secret-handling)를 참조하세요.
 
 !!! note "`publish` 스코프는 존재하지 않습니다"
     플러그인은 프로젝트 채팅/피드에 게시할 수 없습니다 — `ctx.message`는 존재하지 않으며, `publish`는 스코프 스키마에 포함되어 있지 않습니다. `scopes`는 `additionalProperties: false`를 설정하므로, 아직 이를 선언하는 초안 매니페스트는 **검증에 실패합니다**. 찾아낸 결과는 대신 그래프에 기록하세요.

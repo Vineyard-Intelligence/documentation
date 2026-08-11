@@ -2,7 +2,7 @@
 
 The plugin manifest is a `vineyard:plugin` document that fully describes one plugin: who made it, where it runs, what graph types it reads and writes, the form it shows before running, the authority it needs, and how it is distributed. It is the single source of truth — there is no separate server-side Plugin record.
 
-This page explains how the manifest blocks fit together and the UX behaviour they drive, using the real [`cidr_expand`](plugin-manifest.md) plugin as the example. For the exhaustive, field-by-field schema — every type, pattern, and default — see the [plugin schema reference](../reference/plugin-schema.md), where the fully annotated `cidr_expand` manifest also lives.
+This page walks through the manifest blocks using two real, shipped plugins as examples: **RDAP IP** (from the [IP Recon](https://github.com/Vineyard-Intelligence/pluginpack-ip-recon) pack) and **Wayback Snapshot History** (from the Wayback Machine pack). For the exhaustive, field-by-field schema — every type, pattern, and default — see the [plugin schema reference](../reference/plugin-schema.md).
 
 The required top-level keys are `identifier`, `content_type`, `name`, `version`, `description`, `platforms`, `io`, `scopes`, `lifecycle`, and `distribution`.
 
@@ -19,11 +19,11 @@ The identity block names and attributes the plugin: `identifier` (a reverse-DNS 
     ```json
     "platforms": {
       "primary": "web",
-      "web": { "runtime": "sandbox-js", "entry": "dist/cidr.js" }
+      "web": { "runtime": "sandbox-js", "entry": "dist/pack.mjs" }
     }
     ```
 
-    `sandbox-js` runs the author's bundled JavaScript inside a dedicated module Web Worker. Egress is governed by CSP. CIDR Expand is pure compute, so this is all it needs.
+    `sandbox-js` runs the author's bundled JavaScript inside a dedicated module Web Worker, reaching out only through `ctx.net.fetch` against the host's egress allowlist. This is what RDAP IP uses.
 
 === "web (web-proxy)"
 
@@ -38,7 +38,7 @@ The identity block names and attributes the plugin: `identifier` (a reverse-DNS 
     }
     ```
 
-    `web-proxy` is the CORS escape hatch: the worker is a thin client that calls exactly **one** author-controlled endpoint. When `runtime` is `web-proxy`, `proxy_endpoint` is required and **must equal the single `scopes.network` entry** (no fan-out).
+    `web-proxy` is designed as the CORS escape hatch: the worker would be a thin client calling exactly **one** author-controlled endpoint, with `proxy_endpoint` required to equal the single `scopes.network` entry (no fan-out). **The schema accepts this value, but no runtime dispatches it yet** — do not ship a plugin that depends on it.
 
 !!! warning "Desktop: `sandbox-js` ships; `native`/`subprocess` deferred"
     The schema accepts a `desktop` block (with runtimes `sandbox-js`, `native`, or `subprocess`). The `sandbox-js` desktop runtime **ships today** via the Electron shell. `native` and `subprocess` runtimes are forward-looking design — do not rely on them executing yet.
@@ -52,66 +52,77 @@ Each platform block may set its own `fallback` describing what to tell the user 
 ```json
 "io": {
   "consumes": [
-    { "typepack": "run.vineyard.typepacks.infrastructure", "category": "infrastructure", "name": "netblock", "as": "cidr" }
+    { "typepack": "run.vineyard.typepacks.infrastructure", "category": "infrastructure", "name": "ip_address" }
   ],
   "produces": [
-    { "typepack": "run.vineyard.typepacks.infrastructure", "category": "infrastructure", "name": "ip_address" }
+    { "typepack": "run.vineyard.typepacks.infrastructure", "category": "infrastructure", "name": "netblock" }
   ]
 }
 ```
 
+This is RDAP IP's `io`: it takes an `infrastructure.ip_address` node and adds the owning `infrastructure.netblock`.
+
 `consumes` shapes the UX:
 
-- A plugin appears on a node's **right-click menu** when that node's `type` matches one of its consumed type references. CIDR Expand surfaces on any `infrastructure.netblock` node.
-- `as` (consumes only) is an optional binding alias: the consumed node's value is **pre-bound into `params` under this key** when the run form opens. Because of `"as": "cidr"`, clicking the menu item pre-fills the `cidr` param with the node's value, so the user usually just confirms and runs.
+- A plugin appears on a node's **right-click menu** when that node's `type` matches one of its consumed type references. RDAP IP surfaces on any `infrastructure.ip_address` node.
+- A type reference also accepts an optional `as` binding alias, meant to pre-bind the consumed node's value into `params` under that key. The field is accepted by the schema, but no shipped plugin declares it and the run form does not read it yet.
 - A plugin with an **empty `consumes` array** is a whole-graph plugin: it does not attach to any node and is launched from the global **"Run plugin"** menu instead.
 
 `produces` is informational — it tells the marketplace and the canvas which node types this plugin can create. See [Type Packs (develop)](typepacks.md) for how these types are defined.
 
 ## params — the pre-run form
 
-`params` is a **JSON Schema (draft 2020-12)** describing the form shown before the plugin runs. The submitted, validated object becomes `Task.input` and is passed to the plugin's `run` function. Standard JSON Schema keywords drive the rendered form and its client-side validation: `title` becomes the label, `description` the help text, `default` the prefilled value, and `required`/`pattern`/`minimum`/`maximum`/`enum` enforce constraints. A field bound by `io.consumes` `as` (here `cidr`) arrives pre-filled from the consumed node.
-
-!!! danger "No secrets in params — nothing checks this for you"
-    `params` MUST NOT carry secrets — and nothing checks this for you, so it is the author's responsibility (API keys, tokens, passwords, and similar). Secrets are never submitted through the run form because that value would land in `Task.input`. Declare credentials as a `scopes.config` entry with `"secret": true` instead — those are injected at runtime only and never written to any record. See [Secret handling](security.md).
-
-## scopes — the authority surface
-
-`scopes` is the **only** authority a plugin receives. A capability that is not declared here is simply absent at runtime — there is nothing to bypass. CIDR Expand needs only to read the source node and create nodes and edges:
+`params` is a **JSON Schema (draft 2020-12)** describing the form shown before the plugin runs. The submitted, validated object becomes `Task.input` and is passed to the plugin's `run` function. Standard JSON Schema keywords drive the rendered form and its client-side validation: `title` becomes the label, `description` the help text, `default` the prefilled value, and `required`/`pattern`/`minimum`/`maximum`/`enum` enforce constraints. Wayback Snapshot History's form:
 
 ```json
-"scopes": {
-  "graph": ["node:read", "node:create", "edge:create"]
+"params": {
+  "type": "object",
+  "properties": {
+    "from": { "type": "string", "pattern": "^\\d{8}$", "description": "Earliest capture date, YYYYMMDD. Empty = no lower bound." },
+    "to": { "type": "string", "pattern": "^\\d{8}$", "description": "Latest capture date, YYYYMMDD. Empty = no upper bound." },
+    "limit": { "type": "integer", "minimum": 1, "maximum": 500, "default": 50, "description": "Maximum captures to fetch." },
+    "drop_duplicates": { "type": "boolean", "default": true, "description": "Drop captures whose content digest repeats an earlier one." }
+  }
 }
 ```
 
-Two rules worth repeating here: for a **web** plugin, `network` must be exactly one entry equal to `platforms.web.proxy_endpoint`; and `config` entries with `"secret": true` are desktop/keychain-only and never returned to the browser. Things like reading this run's `params`, reporting `progress`, writing to `log`, and the cooperative cancel `signal` are **not scopes** — they are always available.
+!!! danger "No secrets in params"
+    `params` MUST NOT carry secrets (API keys, tokens, passwords, and similar) — a submitted value lands in `Task.input`. Declare credentials as a `scopes.config` entry with `"secret": true` instead — those are injected at runtime only and never written to any record. See [Secret handling](security.md).
+
+## scopes — the authority surface
+
+`scopes` is the **only** authority a plugin receives. A capability that is not declared here is simply absent at runtime — there is nothing to bypass. RDAP IP reads the source node, writes its result, and fetches from one endpoint:
+
+```json
+"scopes": {
+  "graph": ["node:read", "node:create", "node:update", "edge:create"],
+  "network": [
+    { "endpoint": "https://rdap.org/", "methods": ["GET"], "purpose": "RDAP bootstrap → authoritative RIR" }
+  ]
+}
+```
+
+Two rules worth repeating here: for a **web-proxy** plugin, `network` must be exactly one entry equal to `platforms.web.proxy_endpoint`; a `sandbox-js` plugin's `network` entries are checked instead against the host's egress allowlist (see [security](security.md)). `config` entries with `"secret": true` are desktop/keychain-only and never returned to the browser. Things like reading this run's `params`, reporting `progress`, writing to `log`, and the cooperative cancel `signal` are **not scopes** — they are always available.
 
 For the full scope vocabulary, the scope families, and the enforcement model, see the [scopes reference](../reference/scopes.md).
 
 ## lifecycle
 
-`lifecycle` declares how the runtime manages the task. CIDR Expand is a short, cancellable, ephemeral job that reports determinate progress:
+`lifecycle` declares the run's timeout budget. RDAP IP:
 
 ```json
 "lifecycle": {
-  "long_running": false,
-  "controls": ["cancel", "progress"],
-  "progress": "determinate",
-  "persistence": "ephemeral"
+  "persistence": "opt-in",
+  "controls": ["progress", "cancel"],
+  "progress": "determinate"
 }
 ```
 
-- **`long_running`** — when `true`, the runtime continuously manages the task (status/pause/resume/cancel/retry/progress). Defaults to `false`.
-- **`controls`** — which controls the UI exposes, from `pause`, `resume`, `cancel`, `retry`, `progress`.
-- **`progress`** — `none`, `determinate`, or `indeterminate`.
-- **`persistence`** — `ephemeral` (no Task DB row, in-memory only), `opt-in`, or `always`. Defaults to `ephemeral`.
-
-The canonical task state machine is the 7 states `queued → running → waiting → paused → cancelled → succeeded → failed`; retry mints a **new** task rather than being a state. See [Lifecycle](lifecycle.md) and the user-facing [Tasks](../guide/tasks.md) page.
+The one field the host actually enforces is `timeout_ms` — a wall-clock budget for the run, past which the host terminates the sandbox and fails the task. `controls`, `progress`, and `persistence` are accepted by the schema but not read by the host today. See [Lifecycle](lifecycle.md) and the user-facing [Tasks](../guide/tasks.md) page.
 
 ## distribution
 
-`distribution` is the shared block (used by plugins and Type Packs alike) that tells the client where to fetch the bundle. There is no server-side copy; the client caches the fetched bundle locally.
+`distribution` is the shared block (used by plugins and Type Packs alike) that tells the client where to fetch the bundle. There is no server-side copy; the client fetches it directly (via jsDelivr, pinned to the immutable commit SHA) on each run.
 
 ```json
 "distribution": {
@@ -120,7 +131,7 @@ The canonical task state machine is the 7 states `queued → running → waiting
 }
 ```
 
-`kind` is `git`, `zip`, or `inline`. For `git`, the `ref` must be an **immutable** 40-char commit SHA or annotated tag (branches are rejected by registry CI). The optional `integrity` hash detects a force-push at install. The full distribution block, including `repository`, `path`, and `archive`, is covered on the [Distribution](distribution.md) page and in the [schema reference](../reference/plugin-schema.md).
+`kind` is `git`, `zip`, or `inline`. For `git`, the `ref` must be an **immutable** 40-char commit SHA or annotated tag (branches are rejected by registry CI) — that pin, not the optional `integrity` hash, is what stops a force-push from changing what runs (see [Distribution](distribution.md#integrity)). The full distribution block, including `repository`, `path`, and `archive`, is covered on the [Distribution](distribution.md) page and in the [schema reference](../reference/plugin-schema.md).
 
 ## Bundling many plugins
 

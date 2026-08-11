@@ -1,16 +1,15 @@
 # Developer Guide
 
 Build for Vineyard by authoring a **Plugin Pack**, **Type Pack**, or **Skill Pack** in your own
-GitHub repo, then publishing a one-line pointer to the registry. This section walks you from a
-working idea to a published, installable pack.
+GitHub repo, then publishing a one-line pointer to the registry.
 
 ## The model in one paragraph
 
 You author a pack in **your own repository**. To distribute it, you open a pull request that
 adds a **single metadata entry** — a pointer, not code — to the Marketplace registry. When a
-user installs your pack, the Vineyard app fetches the pack from your repo at a pinned commit and
-caches it locally. The server never executes plugin code, never stores plugin bytes, and — by
-default — never records the runs a plugin produces.
+user installs your pack, the Vineyard app fetches it from your repo at a pinned commit. The
+server never executes plugin code, never stores plugin bytes, and — by default — never records
+the runs a plugin produces.
 
 ## The three content types
 
@@ -38,37 +37,27 @@ their qualified `category.name` form, and a Skill Pack's steps call plugin packs
   referenced from your manifest's `platforms.web.entry`.
 - **Type Packs and Skill Packs** are plain JSON — author them in any editor, no toolchain.
 - **A GitHub repository** with releases. The registry stores only a pointer; your repo hosts
-  the actual pack content that clients download and cache.
+  the actual pack content that clients fetch directly.
 
 !!! note "Initial scope is browser + desktop"
     Both the **browser** runtime (`platforms.web.runtime: "sandbox-js"`) and the **desktop**
-    Electron shell (`platforms.desktop.runtime: "sandbox-js"`) ship today. The `web-proxy` CORS
-    workaround, `native`/`subprocess` desktop runtimes, and keychain-backed secrets exist in the
-    schemas as forward-looking design but are **deferred** — not built yet.
+    Electron shell (`platforms.desktop.runtime: "sandbox-js"`) ship today, including
+    keychain-backed secret `config` on desktop. The `web-proxy` CORS workaround and
+    `native`/`subprocess` desktop runtimes exist in the schemas as forward-looking design but are
+    **deferred** — not built yet.
 
 ## Where to go next
 
-=== "Author a plugin"
-
-    - [Quickstart](quickstart.md) — scaffold, bundle, and test a plugin locally.
-    - [Plugin manifest](plugin-manifest.md) — every field, with the `cidr_expand` example.
-    - [Plugin Packs](plugin-packs.md) — one bundle, many plugins.
-    - [SDK](sdk.md) — `definePlugin`, the `HostContext`, and the sandbox.
-
-=== "Define types"
-
-    - [Type Packs](typepacks.md) — entity types, edge types, icons, validators.
-
-=== "Write a playbook"
-
-    - [Skill Packs](skillpacks.md) — the document format, sections, and starters.
-
-=== "Authority & shipping"
-
-    - [Scopes](../reference/scopes.md) — the only authority a plugin gets.
-    - [Security](security.md) — the worker sandbox, staged writes, the egress allowlist, and secrets.
-    - [Publishing](publishing.md) — the registry PR for any pack type.
-    - [Updates](updates.md) — shipping a new version.
+- [Quickstart](quickstart.md) — scaffold, bundle, and test a plugin locally.
+- [Plugin manifest](plugin-manifest.md) — every field, with real worked examples.
+- [Plugin Packs](plugin-packs.md) — one bundle, many plugins.
+- [SDK](sdk.md) — `definePlugin`, the `HostContext`, and the sandbox.
+- [Type Packs](typepacks.md) — entity types, edge types, icons, validators.
+- [Skill Packs](skillpacks.md) — the document format, sections, and starters.
+- [Scopes](../reference/scopes.md) — the only authority a plugin gets.
+- [Security](security.md) — the worker sandbox, staged writes, the egress allowlist, and secrets.
+- [Publishing](publishing.md) — the registry PR for any pack type.
+- [Updates](updates.md) — shipping a new version.
 
 ## See also
 

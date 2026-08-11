@@ -67,7 +67,7 @@ These members exist on every run, regardless of scopes.
 |---|---|---|
 | `ctx.run` | `{ runId, projectId, pluginId, grantedScopes, platform }` | Identity of this run; `grantedScopes` is the manifest's scope set as approved at install; `platform` is `"web"` or `"desktop"`. |
 | `ctx.input` | `{ selection: string[] }` | The node ids the user had selected when the run launched. **Black Hole** reads `ctx.input.selection`. |
-| `ctx.params` | `Readonly<Record<string, unknown>>` | This run's user input, validated against the manifest `params` schema. A consumed node bound via a `TypeRef.as` alias is pre-bound here. |
+| `ctx.params` | `Readonly<Record<string, unknown>>` | This run's user input, validated against the manifest `params` schema. |
 | `ctx.progress` | `{ set?, log?, status? }` | Drives the continuously-managed task UI (details below). |
 | `ctx.signal` | `AbortSignal` | Cooperative cancellation — you **must** observe it. |
 | `ctx.onCancel` | `(handler) => void` | Register a cleanup handler invoked on cancel. |
@@ -75,8 +75,7 @@ These members exist on every run, regardless of scopes.
 !!! tip "Cancellation is cooperative"
     Nothing force-kills your `run`. Poll `ctx.signal.aborted`, pass `ctx.signal` to long
     awaits, or register `ctx.onCancel(...)`. A plugin that ignores the signal will keep
-    running until it returns. Long-running plugins should set
-    `lifecycle.controls: ["cancel"]` in the [manifest](plugin-manifest.md).
+    running until it returns or its `lifecycle.timeout_ms` budget elapses.
 
 ### Progress, status, and logging
 
@@ -96,90 +95,90 @@ backoff helper.
 
 Each of the following is `undefined` unless its scope was granted.
 
-=== "graph (graph:* scopes)"
+#### `graph` (`graph:*` scopes)
 
-    Present iff at least one `graph` verb was granted. Each method present iff its verb was
-    granted.
+Present iff at least one `graph` verb was granted. Each method present iff its verb was
+granted.
 
-    ```ts
-    // reads — node:read
-    ctx.graph?.get?(nodeId): Promise<GraphNode | null>
-    ctx.graph?.list?(opts?: { type?: string }): Promise<{ nodes: GraphNode[] }>
+```ts
+// reads — node:read
+ctx.graph?.get?(nodeId): Promise<GraphNode | null>
+ctx.graph?.list?(opts?: { type?: string }): Promise<{ nodes: GraphNode[] }>
 
-    // reads — edge:read
-    ctx.graph?.edges?(): Promise<GraphEdge[]>
-    ctx.graph?.neighbors?(nodeId): Promise<{ nodes: GraphNode[]; edges: GraphEdge[] }>
+// reads — edge:read
+ctx.graph?.edges?(): Promise<GraphEdge[]>
+ctx.graph?.neighbors?(nodeId): Promise<{ nodes: GraphNode[]; edges: GraphEdge[] }>
 
-    // single writes — node:create / node:update / node:delete / edge:create / edge:delete
-    ctx.graph?.createNode?(draft: EntityDraft): Promise<GraphNode>
-    ctx.graph?.updateNode?(nodeId, data): Promise<void>
-    ctx.graph?.deleteNode?(nodeId): Promise<void>
-    ctx.graph?.createEdge?(edge: EdgeDraft): Promise<void>
-    ctx.graph?.deleteEdge?(edgeId): Promise<void>
+// single writes — node:create / node:update / node:delete / edge:create / edge:delete
+ctx.graph?.createNode?(draft: EntityDraft): Promise<GraphNode>
+ctx.graph?.updateNode?(nodeId, data): Promise<void>
+ctx.graph?.deleteNode?(nodeId): Promise<void>
+ctx.graph?.createEdge?(edge: EdgeDraft): Promise<void>
+ctx.graph?.deleteEdge?(edgeId): Promise<void>
 
-    // bulk
-    ctx.graph?.deleteNodes?(ids: string[]): Promise<{ deleted: number }>
-    ctx.graph?.deleteEdges?(ids: string[]): Promise<{ deleted: number }>
-    ```
+// bulk
+ctx.graph?.deleteNodes?(ids: string[]): Promise<{ deleted: number }>
+ctx.graph?.deleteEdges?(ids: string[]): Promise<{ deleted: number }>
+```
 
-    `list({ type })` filters by node type over the whole graph in one call — it is not
-    cursor-paginated (used by whole-graph plugins like **Thanos Snap**). `neighbors` returns
-    the 1-hop neighborhood (used by **Black Hole**). `updateNode` and `createEdge` take a
-    delta/draft and stage it for review rather than returning the resulting record, so both
-    resolve `void` — re-read via `get`/`list` if you need the applied state. An
-    `EntityDraft.key` is an optional client-side dedup key so re-runs upsert instead of
-    duplicating; `EdgeDraft` references nodes by `key` or returned id, and `label` should
-    match an activated [Type Pack](typepacks.md) edge type.
+`list({ type })` filters by node type over the whole graph in one call — it is not
+cursor-paginated (used by whole-graph plugins like **Thanos Snap**). `neighbors` returns
+the 1-hop neighborhood (used by **Black Hole**). `updateNode` and `createEdge` take a
+delta/draft and stage it for review rather than returning the resulting record, so both
+resolve `void` — re-read via `get`/`list` if you need the applied state. An
+`EntityDraft.key` is an optional client-side dedup key so re-runs upsert instead of
+duplicating; `EdgeDraft` references nodes by `key` or returned id, and `label` should
+match an activated [Type Pack](typepacks.md) edge type.
 
-=== "net (network scope)"
+#### `net` (network scope)
 
-    Present iff at least one [network scope](../reference/scopes.md) is declared. Limited to the
-    `manifest.scopes.network` endpoints; the bridge forces `credentials: "omit"` and drops
-    `Authorization`/`Cookie`. The six reference plugins use **no** network.
+Present iff at least one [network scope](../reference/scopes.md) is declared. Limited to the
+`manifest.scopes.network` endpoints; the bridge forces `credentials: "omit"` and drops
+`Authorization`/`Cookie`. The six reference plugins use **no** network.
 
-    ```ts
-    ctx.net?.fetch?(input: string, init?: SafeRequestInit): Promise<SafeResponse>
-    ```
+```ts
+ctx.net?.fetch?(input: string, init?: SafeRequestInit): Promise<SafeResponse>
+```
 
-    There is no built-in retry/backoff helper — handle HTTP `429`/`Retry-After` yourself and
-    call `ctx.progress?.status?.("waiting")` while you wait.
+There is no built-in retry/backoff helper — handle HTTP `429`/`Retry-After` yourself and
+call `ctx.progress?.status?.("waiting")` while you wait.
 
-=== "net.probe (web_probe scope, desktop only)"
+#### `net.probe` (`web_probe` scope, desktop only)
 
-    Present iff `scopes.web_probe` is declared **and** the plugin is running in the desktop
-    shell — it stays absent in the web build even when the scope is granted. Performs ONE
-    anonymous request to an arbitrary public host from the Electron main process: no cookies,
-    no `Origin`, redirects are not followed (the caller sees the true status), and
-    private/loopback hosts are refused. This is the capability behind account-discovery
-    plugins that cannot know in advance which of hundreds of sites they will probe.
+Present iff `scopes.web_probe` is declared **and** the plugin is running in the desktop
+shell — it stays absent in the web build even when the scope is granted. Performs ONE
+anonymous request to an arbitrary public host from the Electron main process: no cookies,
+no `Origin`, redirects are not followed (the caller sees the true status), and
+private/loopback hosts are refused. This is the capability behind account-discovery
+plugins that cannot know in advance which of hundreds of sites they will probe.
 
-    ```ts
-    ctx.net?.probe?(input: string, init?: SafeProbeInit): Promise<SafeProbeResponse>
-    ```
+```ts
+ctx.net?.probe?(input: string, init?: SafeProbeInit): Promise<SafeProbeResponse>
+```
 
-=== "service (scopes.services)"
+#### `service` (`scopes.services`)
 
-    Present iff `scopes.services` names at least one Vineyard-operated service (currently
-    `rdap`, `telegram`). The destination is a NAME, not a URL — the host resolves it and
-    attaches the analyst's credential, so the plugin cannot redirect the call elsewhere and
-    the request headers a plugin passes cannot override `Authorization`.
+Present iff `scopes.services` names at least one Vineyard-operated service (currently
+`rdap`, `telegram`). The destination is a NAME, not a URL — the host resolves it and
+attaches the analyst's credential, so the plugin cannot redirect the call elsewhere and
+the request headers a plugin passes cannot override `Authorization`.
 
-    ```ts
-    ctx.service?(name: string, path: string, init?: SafeRequestInit): Promise<SafeResponse>
-    ```
+```ts
+ctx.service?(name: string, path: string, init?: SafeRequestInit): Promise<SafeResponse>
+```
 
-=== "config (scopes.config)"
+#### `config` (`scopes.config`)
 
-    Present iff `scopes.config` is declared. Read-only, declared values only.
+Present iff `scopes.config` is declared. Read-only, declared values only.
 
-    ```ts
-    ctx.config?: Readonly<Record<string, string | number | boolean>>
-    ```
+```ts
+ctx.config?: Readonly<Record<string, string | number | boolean>>
+```
 
-    !!! warning "Secrets are never readable"
-        `config.secret: true` values are **excluded** — they are injected at the network
-        boundary by the host and never returned to the plugin. On web, secret config routes
-        to the desktop plugin. See [secrets handling](security.md#secret-handling).
+!!! warning "Secrets are never readable"
+    `config.secret: true` values are **excluded** — they are injected at the network
+    boundary by the host and never returned to the plugin. On web, secret config routes
+    to the desktop plugin. See [secrets handling](security.md#secret-handling).
 
 !!! note "There is no `publish` scope"
     A plugin cannot post into the project chat/feed — there is no `ctx.message`, and `publish`

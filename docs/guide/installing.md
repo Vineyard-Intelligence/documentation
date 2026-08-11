@@ -58,8 +58,8 @@ it expects to be installed first.
 ## Installing
 
 Click **Install** on a card and Vineyard takes care of the rest — it fetches the pack from the
-author's repository at a pinned commit and caches it locally, so it works offline afterwards.
-There is no server-side copy of the pack content at any point.
+author's repository at a pinned commit and runs it directly; there is no server-side copy of the
+pack content at any point, and no offline cache — each run fetches fresh.
 
 For a **plugin**, an **approval dialog** then lists the permissions it requests in plain
 language. Approve, and the plugin becomes available to run in the project.
@@ -81,8 +81,8 @@ and the install completes immediately.
 
 Installs belong to a **project**, not your account — every collaborator on the project gets the
 same vocabulary and tools. Only the project owner can change the installed set. Uninstalling a
-pack drops it from the project and its locally cached bytes; because runs are never persisted,
-there is no run history to clean up.
+pack drops it from the project's installed set; because runs are never persisted, there is no
+run history to clean up.
 
 ## Next / See also
 

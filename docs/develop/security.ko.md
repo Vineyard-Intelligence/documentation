@@ -69,7 +69,7 @@ export default definePlugin({
 전달되는 요청은 소독되기도 합니다: `SafeRequestInit`는 자격 증명을 포함하지 않으며, 브리지는 `credentials: "omit"`을 강제하고 `Authorization` / `Cookie` 헤더를 제거하며, 실행의 `AbortSignal`이 진행 중인 요청을 취소합니다. 플러그인은 사용자의 세션을 허용된 엔드포인트로 밀반입할 수 없습니다.
 
 !!! warning "웹에서는 이 허용 목록이 경계의 전부입니다"
-    워커 부트스트랩에서 `self.fetch` / `XMLHttpRequest`를 삭제하는 것은 **벨트 앤 서스펜더스**일 뿐 경계가 아닙니다 — 그리고 더 깊은 인프라 수준 통제(허용된 엔드포인트만 나열한 `Content-Security-Policy: connect-src`, 순수 연산의 경우 `'none'`을 갖는 전용 오리진에서 워커를 제공하는 것)는 **여전히 연기된 상태**입니다. 그것이 배포되기 전까지는 메인 스레드의 `endpointCovers`가 플러그인과 임의의 호스트 사이에 서 있는 유일한 것입니다. 웹 플러그인의 `network` 스코프가 **반드시 `platforms.web.proxy_endpoint`와 동일한 정확히 하나의 항목이어야** 하는 이유이기도 합니다 — 강제할 팬아웃이 없습니다([scopes](../reference/scopes.md) 및 [plugin manifest](plugin-manifest.md) 참조).
+    메인 스레드의 `endpointCovers`가 플러그인과 임의의 호스트 사이에 서 있는 유일한 것입니다 — 그 뒤에 전용 오리진 CSP는 아직 없습니다. 웹 플러그인의 `network` 스코프가 **반드시 `platforms.web.proxy_endpoint`와 동일한 정확히 하나의 항목이어야** 하는 이유이기도 합니다 — 강제할 팬아웃이 없습니다([scopes](../reference/scopes.md) 및 [plugin manifest](plugin-manifest.md) 참조).
 
 ### 데스크톱
 
@@ -88,19 +88,14 @@ export default definePlugin({
 
 ## 시크릿 처리 {#secret-handling}
 
-API 키와 시크릿은 작업 기록이나 AI 대화 기록에 **절대** 포함되어서는 안 됩니다. 여섯 가지 규칙이 이를 강제합니다 — SPEC §6 참조.
+API 키와 시크릿은 작업 기록이나 AI 대화 기록에 **절대** 포함되어서는 안 됩니다.
 
 1. **시크릿은 플러그인이 절대 읽을 수 없습니다.** `secret: true`인 `config` 값은 호스트(데스크톱 키체인, `safeStorage` / keyring 사용)에 의해 네트워크 경계에서 주입됩니다. "내 시크릿 config 읽기" 호출이 없으므로, 플러그인이 키를 자신의 출력으로 반사할 수 없습니다.
-2. **시크릿은 params가 아닙니다.** 자격 증명을 뜻하는 `params` 키 — `api_key`, `token`, `secret`, `password`, `authorization`, 모든 `*_key` — 는 작성 오류입니다. 실행 폼의 값은 `Task.input`에 기록되기 때문입니다. 자격 증명은 `secret: true`와 함께 `scopes.config`로 선언하세요. 웹에서는 시크릿 config가 지원되지 않으며 사용자는 데스크톱 플러그인으로 안내됩니다. **이것은 지켜야 할 규칙이지, 대신 실행되는 검사가 아닙니다** — 현재 이를 강제하는 린터는 없습니다.
-3. **그래프 쓰기 경로가 스크럽됩니다.** `Node.data` / `Edge.data`가 스크럽 없이 지속되므로, 브리지/서버는 생성 시 동일한 제외 목록으로 이들을 스크럽합니다 — 그렇지 않으면 플러그인이 API 응답에서 받은 키를 노드에 쓸 수 있습니다.
-4. **Type Pack은 시크릿 프로퍼티 타입을 선언할 수 없습니다.** `secret` / `credential` 프로퍼티 타입은 **강력한 스키마 거부**입니다([Type Packs](../guide/typepacks.md) 참조).
-5. **직렬화 가능한 상태는 안전 필드 허용 목록을 사용**합니다(거부 목록이 아님). 토큰과 시크릿은 작업 수명 동안 워커 메모리에만 존재하며 IndexedDB, BroadcastChannel, 존재 비콘에 직렬화되지 않습니다.
-6. **웹에서 BYOK는 설계상 지원되지 않습니다** — bring-your-own-key는 데스크톱 플러그인으로 라우팅됩니다.
+2. **시크릿은 params가 아닙니다.** 자격 증명을 뜻하는 `params` 키는 작성 오류입니다. 실행 폼의 값은 `Task.input`에 기록되기 때문입니다. 자격 증명은 `secret: true`와 함께 `scopes.config`로 선언하세요. 웹에서는 시크릿 config가 지원되지 않으며 사용자는 데스크톱 플러그인으로 안내됩니다.
+3. **Type Pack은 시크릿 프로퍼티 타입을 선언할 수 없습니다.** `secret` / `credential` 프로퍼티 타입은 **강력한 스키마 거부**입니다([Type Packs](../guide/typepacks.md) 참조).
+4. **웹에서 BYOK는 설계상 지원되지 않습니다** — bring-your-own-key는 데스크톱 플러그인으로 라우팅됩니다.
 
-!!! warning "BYOK / 데스크톱 시크릿은 연기됨"
-    데스크톱 키체인에 의존하는 시크릿 처리(규칙 1, 2, 6)는 **연기**되었습니다. 데스크톱 Electron 셸은 현재 배포되어 있으며 `sandbox-js` 격리 환경에서 플러그인을 실행하지만, 키체인 기반 `config.secret:true` 주입 및 BYOK는 아직 구현되지 않았습니다. 시크릿 키가 필요한 플러그인은 현재 어떤 플랫폼에서도 자동으로 이를 얻을 수 없습니다.
-
-## 배포된 것과 아닌 것
+## 배포된 것
 
 | 통제 | 상태 |
 |---|---|
@@ -108,10 +103,7 @@ API 키와 시크릿은 작업 기록이나 AI 대화 기록에 **절대** 포�
 | Web Worker 샌드박스 (`sandbox-js`, 브라우저) | 배포됨 |
 | 호스트 측 이그레스 허용 목록 (파싱된 오리진 + 경로 세그먼트 경계) | 배포됨 |
 | 데스크톱 Electron 셸 + 샌드박스 격리 (`sandbox-js`, 데스크톱) | 배포됨 |
-| Param 시크릿 키 린트, 그래프 쓰기 스크럽, 안전 필드 허용 목록 | **연기됨** (SPEC §5에 명세, 미구현) |
-| 웹 워커용 전용 오리진 CSP `connect-src` | **연기됨** |
-| `web-proxy` 런타임 (단일 프록시 엔드포인트) | **연기됨** |
-| 키체인 기반 시크릿 config, BYOK | **연기됨** |
+| 키체인 기반 시크릿 config (데스크톱) | 배포됨 |
 
 ## 다음 / 참고
 

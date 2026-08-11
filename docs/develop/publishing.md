@@ -23,20 +23,18 @@ Submissions go to **`Vineyard-Intelligence/registry`**. The repo carries *pointe
 
 ## Submission workflow
 
-=== "Steps"
+1. **Fork** `Vineyard-Intelligence/registry`.
+2. **Pin an immutable `ref`** — the **commit SHA** of the release in your author repo. Tags and branches are mutable and rejected; resolve a tag/branch to its commit SHA with `python scripts/resolve_ref.py owner/repo <tag-or-branch>`.
+3. **Add one file**, `packs/<identifier>.json`, holding your entry. The filename must match the entry's `identifier` exactly.
+4. **Open a PR.** The `validate` workflow posts its result as a status check.
+5. **Fix any failures**, then wait for a human merge.
+6. After green CI + merge, the catalogs are rebuilt and your entry is **live on the next registry fetch** — clients pull the static JSON; there is no coupled app release.
 
-    1. **Fork** `Vineyard-Intelligence/registry`.
-    2. **Pin an immutable `ref`** — the **commit SHA** of the release in your author repo. Tags and branches are mutable and rejected; resolve a tag/branch to its commit SHA with `python scripts/resolve_ref.py owner/repo <tag-or-branch>`.
-    3. **Add one file**, `packs/<identifier>.json`, holding your entry. The filename must match the entry's `identifier` exactly.
-    4. **Open a PR.** The `validate` workflow posts its result as a status check.
-    5. **Fix any failures**, then wait for a human merge.
-    6. After green CI + merge, the catalogs are rebuilt and your entry is **live on the next registry fetch** — clients pull the static JSON; there is no coupled app release.
+A few things worth knowing going in:
 
-=== "Notes"
-
-    - The `identifier` in the entry must equal `manifest.identifier` (or `typepack.identifier`) and uses the reverse-DNS form `<your-namespace>.pluginpacks.*` / `.typepacks.*` / `.skillpacks.*` — see [the three content types](index.md#the-three-content-types).
-    - `ref` is the only thing pinning your code. To ship a new version, edit your pack's file in place with the new `ref` and `version` — see [Updates](updates.md).
-    - Derived fields (`platforms`, `scopes_summary`, `categories`, `type_count`, …) are projections of the full manifest/Type Pack so the browse page renders without fetching every manifest. CI recomputes every one of them from the pinned document and rejects the entry if they disagree — the permission badges on your card are a statement of fact, not a description.
+- The `identifier` in the entry must equal `manifest.identifier` (or `typepack.identifier`) and uses the reverse-DNS form `<your-namespace>.pluginpacks.*` / `.typepacks.*` / `.skillpacks.*` — see [the three content types](index.md#the-three-content-types).
+- `ref` is the only thing pinning your code. To ship a new version, edit your pack's file in place with the new `ref` and `version` — see [Updates](updates.md).
+- Derived fields (`platforms`, `scopes_summary`, `categories`, `type_count`, …) are projections of the full manifest/Type Pack so the browse page renders without fetching every manifest. CI recomputes every one of them from the pinned document and rejects the entry if they disagree — the permission badges on your card are a statement of fact, not a description.
 
 ## What CI enforces
 
