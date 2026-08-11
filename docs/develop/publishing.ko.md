@@ -23,20 +23,18 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 
 ## 제출 워크플로
 
-=== "단계"
+1. `Vineyard-Intelligence/registry`를 **포크**합니다.
+2. **불변 `ref` 고정** — 작성자 저장소의 릴리스 **커밋 SHA**. 태그와 브랜치는 가변이며 거부됩니다. `python scripts/resolve_ref.py owner/repo <태그-또는-브랜치>`로 커밋 SHA를 확인하세요.
+3. **파일 하나** `packs/<identifier>.json`을 추가합니다. 파일명은 항목의 `identifier`와 정확히 일치해야 합니다.
+4. **PR을 엽니다.** `validate` 워크플로가 검증 결과를 상태 확인으로 게시합니다.
+5. **실패를 수정**한 다음, 사람의 병합을 기다립니다.
+6. CI 통과 + 병합 후 카탈로그가 재생성되고, 항목은 **다음 레지스트리 가져오기 시 라이브**됩니다 — 클라이언트가 정적 JSON을 가져오며, 결합된 앱 릴리스가 없습니다.
 
-    1. `Vineyard-Intelligence/registry`를 **포크**합니다.
-    2. **불변 `ref` 고정** — 작성자 저장소의 릴리스 **커밋 SHA**. 태그와 브랜치는 가변이며 거부됩니다. `python scripts/resolve_ref.py owner/repo <태그-또는-브랜치>`로 커밋 SHA를 확인하세요.
-    3. **파일 하나** `packs/<identifier>.json`을 추가합니다. 파일명은 항목의 `identifier`와 정확히 일치해야 합니다.
-    4. **PR을 엽니다.** `validate` 워크플로가 검증 결과를 상태 확인으로 게시합니다.
-    5. **실패를 수정**한 다음, 사람의 병합을 기다립니다.
-    6. CI 통과 + 병합 후 카탈로그가 재생성되고, 항목은 **다음 레지스트리 가져오기 시 라이브**됩니다 — 클라이언트가 정적 JSON을 가져오며, 결합된 앱 릴리스가 없습니다.
+시작하기 전에 알아둘 것:
 
-=== "참고"
-
-    - 항목의 `identifier`는 `manifest.identifier`(또는 `typepack.identifier`)와 동일해야 하며 reverse-DNS 형식 `<본인-네임스페이스>.pluginpacks.*` / `.typepacks.*` / `.skillpacks.*`을 사용합니다 — [세 가지 콘텐츠 유형](index.md) 참조.
-    - `ref`가 코드를 고정하는 유일한 요소입니다. 새 버전을 배포하려면 해당 팩의 파일을 그 자리에서 새 `ref`와 `version`으로 수정하세요 — [Updates](updates.md)를 참조하세요.
-    - 파생 필드(`platforms`, `scopes_summary`, `categories`, `type_count`, …)는 전체 매니페스트/Type Pack의 투영이므로, 찾아보기 페이지가 모든 매니페스트를 가져오지 않고도 렌더링됩니다. CI가 고정된 문서에서 이들을 전부 다시 계산해 불일치하면 항목을 거부합니다 — 카드에 뜨는 권한 배지는 설명이 아니라 사실 진술입니다.
+- 항목의 `identifier`는 `manifest.identifier`(또는 `typepack.identifier`)와 동일해야 하며 reverse-DNS 형식 `<본인-네임스페이스>.pluginpacks.*` / `.typepacks.*` / `.skillpacks.*`을 사용합니다 — [세 가지 콘텐츠 유형](index.md) 참조.
+- `ref`가 코드를 고정하는 유일한 요소입니다. 새 버전을 배포하려면 해당 팩의 파일을 그 자리에서 새 `ref`와 `version`으로 수정하세요 — [Updates](updates.md)를 참조하세요.
+- 파생 필드(`platforms`, `scopes_summary`, `categories`, `type_count`, …)는 전체 매니페스트/Type Pack의 투영이므로, 찾아보기 페이지가 모든 매니페스트를 가져오지 않고도 렌더링됩니다. CI가 고정된 문서에서 이들을 전부 다시 계산해 불일치하면 항목을 거부합니다 — 카드에 뜨는 권한 배지는 설명이 아니라 사실 진술입니다.
 
 ## CI가 강제하는 것
 

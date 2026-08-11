@@ -16,7 +16,7 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 
 | Property | Type | Req. | Allowed / constraints | Default | Meaning |
 |---|---|---|---|---|---|
-| `identifier` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$` | — | Reverse-DNS 고유 ID, 예: `run.vineyard.plugins.cidr_expand`. |
+| `identifier` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$` | — | Reverse-DNS 고유 ID, 예: `run.vineyard.plugins.rdap_ip`. |
 | `content_type` | string | yes | `const`: `vineyard:plugin` | — | 문서 판별자. 정확히 이 값이어야 합니다. |
 | `name` | string | yes | minLength 1, maxLength 128 | — | 사람이 읽을 수 있는 표시 이름. |
 | `version` | string | yes | pattern `^\d+\.\d+\.\d+(?:[-+].+)?$` | — | SemVer 문자열 (레거시 float 아님), 예: `1.0.0`, `2.1.0-beta.1`. |
@@ -64,7 +64,7 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
 | `runtime` | string | yes | `sandbox-js`, `web-proxy` | — | `sandbox-js` = 브라우저 worker에서 저자 JS 실행; `web-proxy` = 하나의 저자 엔드포인트를 호출하는 씬 클라이언트 (연기됨). |
-| `entry` | string | yes | — | — | 번들 내 진입 경로, 예: `dist/cidr.js`. |
+| `entry` | string | yes | — | — | 번들 내 진입 경로, 예: `dist/pack.mjs`. |
 | `proxy_endpoint` | string | conditional | `format: uri` | — | **`runtime: web-proxy`일 때 필수.** 단일 엔드포인트. 반드시 하나의 `scopes.network` 항목과 동일해야 합니다. |
 | `fallback` | string | no | `desktop`, `none` | `none` | web이 plugin을 실행할 수 없을 때 폴백할 곳. |
 
@@ -97,7 +97,7 @@ plugin이 Type Pack에서 참조하는 엔티티 유형. `type: object`, `additi
 | `typepack` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$` | 소유 Type Pack 식별자. |
 | `category` | string | yes | — | Type 카테고리, 예: `infrastructure`. |
 | `name` | string | yes | — | 카테고리 내 Type 이름, 예: `ip_address`. |
-| `as` | string | no | — | 선택적 바인딩 별칭. 소비된 노드의 값이 이 키 아래 `params`에 미리 바인딩됩니다. |
+| `as` | string | no | — | 소비된 노드의 값을 이 키 아래 `params`에 미리 바인딩하도록 설계된 별칭. 스키마는 허용하지만, 이를 선언하는 배포된 plugin은 없고 실행 폼도 아직 읽지 않습니다. |
 
 !!! note "Open issue"
     `typeRef`는 아직 Type Pack 버전을 포함하지 **않습니다** — type 호환성은 식별자 + 정규화된 이름만으로 해결됩니다. 버전이 지정된 type 참조는 진행 중인 이슈입니다.
@@ -113,7 +113,7 @@ plugin이 Type Pack에서 참조하는 엔티티 유형. `type: object`, `additi
 | `required` | array | no | items: string | 필수 필드 이름. |
 
 !!! warning "No secrets in params"
-    `params`는 비밀을 포함해서는 **안 됩니다**. API 키 및 자격 증명에는 `secret: true`가 있는 [`scopes.config`](#configvalue-scopesconfig-items) 항목을 사용하세요. 현재 비밀로 보이는 param 키를 거부하는 검사는 없습니다 — 강제되는 검사가 아니라 규칙입니다.
+    `params`는 비밀을 포함해서는 **안 됩니다**. API 키 및 자격 증명에는 `secret: true`가 있는 [`scopes.config`](#configvalue-scopesconfig-items) 항목을 대신 사용하세요.
 
 ### 파일 필드
 
@@ -173,7 +173,7 @@ plugin의 권한 범위. `type: object`, `additionalProperties: false`. `ctx` �
 | `edge:delete` | 엣지 삭제. |
 
 !!! warning "Network fan-out rule"
-    **web**에서 `scopes.network`는 정확히 **하나**의 항목을 포함해야 하며, `platforms.web.proxy_endpoint`와 동일해야 합니다 (팬아웃 없음). **데스크톱**에서는 더 많은 항목이 허용됩니다 — 사용자의 책임하에.
+    **web-proxy** plugin은 `scopes.network`가 정확히 **하나**의 항목이어야 하며, `platforms.web.proxy_endpoint`와 동일해야 합니다 (팬아웃 없음). **sandbox-js** plugin의 항목은 대신 호스트의 이그레스 허용 목록으로 검사됩니다 — [security](../develop/security.md) 참조. **데스크톱**에서는 더 많은 항목이 허용됩니다 — 사용자의 책임하에.
 
 ### networkScope (scopes.network items)
 
@@ -231,12 +231,12 @@ Task 실행 모델. `type: object`, `additionalProperties: false`. 모든 속성
 | `persistence` | string | no | `ephemeral`, `opt-in`, `always` | `ephemeral` | `ephemeral` = Task DB 행 없음, 인메모리 전용. |
 | `states` | array | no | enum: `queued`, `running`, `waiting`, `paused`, `cancelled`, `succeeded`, `failed` | 모든 7개 상태 | 표준 7-상태 머신. |
 
-!!! note "Retry mints a new task"
-    `retry`는 상태가 아니라 컨트롤입니다. 재시도는 기존 task를 전환하는 대신 **새로운** task를 생성합니다. 기본 `states` 배열은 전체 표준 세트입니다: `queued`, `running`, `waiting`, `paused`, `cancelled`, `succeeded`, `failed`.
+!!! warning "호스트가 실제로 읽는 것"
+    `controls`, `progress`, `persistence`, `states`는 여기서 허용되지만 호스트가 오늘 읽지는 않습니다 — Tasks 패널의 유일한 컨트롤은 Stop이고, task의 실제 종료 상태는 `succeeded` / `failed` / `cancelled`(AI 턴의 경우 `incomplete` 추가)입니다. [Lifecycle](../develop/lifecycle.md) 참조.
 
 ## distribution
 
-`$defs.distribution` — plugin과 Type Pack 양쪽에서 사용되는 공유 distribution 블록. `type: object`, `additionalProperties: false`. **필수:** `kind`. 번들의 서버 측 복사본은 없습니다. 클라이언트가 가져온 번들을 로컬에 캐시합니다.
+`$defs.distribution` — plugin과 Type Pack 양쪽에서 사용되는 공유 distribution 블록. `type: object`, `additionalProperties: false`. **필수:** `kind`. 번들의 서버 측 복사본은 없습니다. 클라이언트는 실행마다 직접 가져옵니다.
 
 | Property | Type | Req. | Allowed values / constraints | Meaning |
 |---|---|---|---|---|
@@ -249,7 +249,7 @@ Task 실행 모델. `type: object`, `additionalProperties: false`. 모든 속성
 
 ### distribution.integrity
 
-`type: object`, `additionalProperties: false`. **필수:** `algo`, `hash`. **선택적** 블록 — 설치 시 force-push를 감지합니다.
+`type: object`, `additionalProperties: false`. **필수:** `algo`, `hash`. **선택적** 블록이며, 스키마는 허용하지만 클라이언트는 오늘 이를 확인하지 않습니다 — [distribution](../develop/distribution.md#integrity) 참조.
 
 | Property | Type | Req. | Allowed values / constraints | Meaning |
 |---|---|---|---|---|
@@ -267,80 +267,58 @@ Task 실행 모델. `type: object`, `additionalProperties: false`. 모든 속성
 
 ## Complete annotated example
 
-완전하고 유효한 manifest — **CIDR Expand** 참조 plugin. `infrastructure.netblock` 노드를 소비하고, `infrastructure.ip_address` 노드를 출력하며, 순수 계산(네트워크 없음)을 수행하고, web과 데스크톱에서 동일하게 실행됩니다.
+실제로 배포된 plugin manifest — [IP Recon](https://github.com/Vineyard-Intelligence/pluginpack-ip-recon) 팩의 멤버인 **RDAP IP**. `infrastructure.ip_address` 노드를 소비하고 그 소유 `infrastructure.netblock`을 추가합니다.
 
-```json title="cidr_expand.manifest.json"
+```json title="ip-recon.manifest.json (rdap_ip 멤버)"
 {
-  "identifier": "run.vineyard.plugins.cidr_expand", // (1)!
-  "content_type": "vineyard:plugin",                // (2)!
-  "name": "CIDR Expand",
-  "version": "1.0.0",                               // (3)!
-  "description": "Expand a CIDR block into its constituent IP address nodes. Pure compute, no network, runs identically on web and desktop.",
-  "author": { "name": "VINEYARD", "url": "https://vineyard.run" },
-  "license": "MIT",
-  "icon": "sitemap",                                // (4)!
-  "thumbnail_url": "https://vineyard.run/assets/plugins/cidr-expand.png",
+  "identifier": "run.vineyard.plugins.rdap_ip", // (1)!
+  "content_type": "vineyard:plugin",            // (2)!
+  "name": "RDAP IP",
+  "version": "1.0.0",                           // (3)!
+  "description": "Looks up each selected IP's allocation in RDAP: adds the owning Netblock node (CIDR / network name / country) and fills the IP's organization + country. Keyless, CORS-native.",
+  "icon": "boxes",                              // (4)!
 
   "platforms": {
-    "primary": "web",                               // (5)!
-    "web": { "runtime": "sandbox-js", "entry": "dist/cidr.js" },
-    "desktop": { "runtime": "sandbox-js", "entry": "dist/cidr.js" }
+    "primary": "web",                           // (5)!
+    "web": { "runtime": "sandbox-js", "entry": "dist/pack.mjs" }
   },
 
   "io": {
     "consumes": [
       { "typepack": "run.vineyard.typepacks.infrastructure",
-        "category": "infrastructure", "name": "netblock", "as": "cidr" } // (6)!
+        "category": "infrastructure", "name": "ip_address" }
     ],
     "produces": [
       { "typepack": "run.vineyard.typepacks.infrastructure",
-        "category": "infrastructure", "name": "ip_address" }
+        "category": "infrastructure", "name": "netblock" }
     ]
   },
 
-  "params": {                                        // (7)!
-    "type": "object",
-    "required": ["cidr"],
-    "properties": {
-      "cidr": { "type": "string", "title": "CIDR block",
-                "pattern": "^\\d{1,3}(\\.\\d{1,3}){3}/\\d{1,2}$",
-                "description": "Pre-filled from the right-clicked netblock node." },
-      "max_hosts": { "type": "integer", "title": "Max hosts to emit",
-                     "minimum": 1, "maximum": 65536, "default": 1024 }
-    }
+  "scopes": {                                    // (6)!
+    "graph": ["node:read", "node:create", "node:update", "edge:create"],
+    "network": [
+      { "endpoint": "https://rdap.org/", "methods": ["GET"],
+        "purpose": "RDAP bootstrap → authoritative RIR (both send CORS *)." }
+    ]
   },
 
-  "scopes": {                                        // (8)!
-    "graph": ["node:read", "node:create", "edge:create"],
-    "network": [],
-    "config": []
-  },
-
-  "lifecycle": {                                     // (9)!
-    "long_running": false,
-    "controls": ["cancel", "progress"],
-    "progress": "determinate",
-    "persistence": "ephemeral"
-  },
-
-  "distribution": {                                  // (10)!
-    "kind": "inline",
-    "integrity": { "algo": "sha256",
-                   "hash": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad" }
+  "lifecycle": {                                 // (7)!
+    "persistence": "opt-in",
+    "controls": ["progress", "cancel"],
+    "progress": "determinate"
   }
 }
 ```
 
+이 manifest에는 최상위 `distribution` 블록이 없습니다: IP Recon 팩 안에 세 멤버 중 하나로 배포되며, 스키마는 팩 멤버가 `distribution`을 생략하고 팩 자체의 것을 타도록 허용합니다([Plugin Packs](../develop/plugin-packs.md) 참조).
+
 1.  `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$`에 일치하는 Reverse-DNS 식별자.
 2.  `const` 판별자 — 정확히 `vineyard:plugin`이어야 합니다.
 3.  레거시 float가 아닌 SemVer.
-4.  노드 우클릭 메뉴에 표시되는 아이콘.
-5.  `primary: web`이 선호됩니다. `sandbox-js`를 사용하는 `desktop` 블록은 현재 제공됩니다. `native`/`subprocess` 런타임은 연기되었습니다. 여기서는 둘 다 동일한 `sandbox-js` 진입점을 재사용합니다.
-6.  `as: "cidr"`은 우클릭된 노드의 값을 `params.cidr`에 미리 바인딩합니다. 이 참조들의 런타임 `Node.type`은 `infrastructure.netblock` / `infrastructure.ip_address`입니다.
-7.  실행 전 폼을 위한 JSON-Schema. `Task.input`이 됩니다. 여기에 비밀은 없습니다.
-8.  순수 계산: 그래프 동사만, `network`나 `config` 없음.
-9.  단기 실행, 취소 가능, 결정적 진행률, 임시 (Task DB 행 없음).
-10. 선택적 무결성 해시가 있는 `inline` distribution.
+4.  노드 우클릭 메뉴에 표시되는 아이콘 — 여기서는 lucide 이름.
+5.  `primary: web`이며 `sandbox-js` 런타임 — 오늘 실제로 실행되는 유일한 web 런타임입니다.
+6.  그래프 동사와 네트워크 엔드포인트 하나. 런타임에 호스트의 이그레스 허용 목록으로 검사됩니다.
+7.  `persistence`/`controls`/`progress`는 선언적일 뿐입니다 — 위 경고 참조.
 
 ## Next / See also
 

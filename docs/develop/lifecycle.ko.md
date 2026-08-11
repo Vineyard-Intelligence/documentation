@@ -1,89 +1,24 @@
 # Task lifecycle
 
-Vineyard의 모든 플러그인 실행과 모든 AI 채팅 턴은 **작업(task)**입니다.
+Vineyard의 모든 플러그인 실행과 모든 AI 채팅 턴은 **작업(task)**이며, 클라이언트 측 `useTaskStore`에서 추적됩니다.
 
-!!! warning "이 페이지는 의도된 설계입니다 — 실제 구현은 더 단순합니다"
-    실제로 지금 동작하는 방식: `worker-host.ts`의 `runPluginInWorker`는 실행마다 전용 `Worker`를
-    하나씩 직접 띄웁니다 — 공유 워커 풀도, 동시성 한도도, `queued` 대기 상태도 없고, 여러 탭 사이에
-    Web Locks API로 실행을 조율하는 것도 없습니다. 실제 쓰이는 상태값은 깔끔한 7단계 상태머신+
-    `waiting` 하위상태보다는 `pending`/`running`/`succeeded`/`failed`/`cancelled`/`incomplete`에
-    가깝습니다. 이 페이지의 나머지는 "앞으로 이렇게 자라날 설계"로 읽으시고, 플러그인 작성자나
-    태스크 러너 연동자가 지금 당장 기대할 수 있는 동작으로 읽지 마세요.
+## 상태
 
-## 하나의 클라이언트 측 큐 (설계 의도)
+작업은 곧바로 `running`으로 생성되어 다음 종료 상태 중 하나로 끝납니다:
 
-작업은 클라이언트에서 실행됩니다:
-
-- **동시성 한도**가 있는 **Web Worker 풀**이 한도까지 작업을 병렬로 실행합니다. 나머지는 `queued`로 대기합니다.
-- **멀티 탭 단일 실행**이 **Web Locks API**를 통해 강제되므로, 동일한 프로젝트가 두 탭에 열려 있을 때 작업이 두 번 실행되지 않습니다.
-- 플러그인 실행과 AI 채팅 턴 모두 이 하나의 큐를 공유합니다 — Tasks 패널이 이들을 함께 표시합니다. 사용자 대상 보기는 [guide/tasks](../guide/tasks.md)를 참조하세요.
-
-## 7가지 상태
-
-`TaskState`는 `@vineyard/plugin-sdk` 패키지 타입에 정의되어 있습니다([SDK](sdk.md) 참조):
-
-```ts
-type TaskState =
-  | "queued" | "running" | "waiting"
-  | "paused" | "succeeded" | "failed" | "cancelled";
+```text
+running → succeeded | failed | cancelled | incomplete
 ```
 
 | 상태 | 의미 |
 | --- | --- |
-| `queued` | 수락됨, 동시성 한도 아래 빈 워커 슬롯 대기 중. |
-| `running` | 워커에서 실행 중. |
-| `waiting` | 외부 요소에 의해 차단됨. 차단이 해제되면 자동 재개. 대기 중에 워커 슬롯이 **해제될 수 있음**. |
-| `paused` | 사용자에 의해 일시 중단됨. Resume 시 큐에 재진입. |
-| `succeeded` | 정상 완료. **종료 상태.** |
-| `failed` | 오류로 완료. **종료 상태.** |
-| `cancelled` | 협력적으로 중지됨(또는 백스톱에 의해). **종료 상태.** |
+| `running` | 실행 중. |
+| `succeeded` | 정상 완료. |
+| `failed` | 오류로 완료. |
+| `cancelled` | Tasks 패널의 Stop 버튼으로 중지됨. |
+| `incomplete` | AI 채팅 전용 — 턴이 응답 없이, 미해결 tool call을 남긴 채 중단됨. |
 
-## 전환 테이블
-
-```text
-queued  → running | cancelled
-running → waiting | paused | succeeded | failed | cancelled
-waiting → running | paused | cancelled        (차단 해제 시 자동 재개)
-paused  → queued  | cancelled
-succeeded | failed | cancelled = 종료
-```
-
-```mermaid
-stateDiagram-v2
-    [*] --> queued
-    queued --> running
-    queued --> cancelled
-    running --> waiting
-    running --> paused
-    running --> succeeded
-    running --> failed
-    running --> cancelled
-    waiting --> running: block clears
-    waiting --> paused
-    waiting --> cancelled
-    paused --> queued: resume
-    paused --> cancelled
-    succeeded --> [*]
-    failed --> [*]
-    cancelled --> [*]
-```
-
-!!! note "`paused`는 재큐잉되며 직접 재개되지 않습니다"
-    `paused` 작업을 재개하면 `queued`로 돌아가며, 워커 슬롯을 다시 획득해야 합니다. 반면 `waiting` 작업은 차단이 해제되면 (한도에 따라) `running`으로 바로 **자동 재개**됩니다.
-
-## `waiting`은 일반화되었습니다
-
-`waiting`은 HTTP `Retry-After` 백오프 이상입니다. 차단 이유는 다음 중 하나입니다:
-
-| 이유 | 트리거 |
-| --- | --- |
-| `rate_limit` | HTTP 429 / `Retry-After`. 백오프의 단일 진입점은 [`ctx.net.fetchWithBackoff()`](sdk.md)입니다. |
-| `awaiting_user_input` | 계속하기 전에 실행에 추가 입력이 필요합니다. |
-| `external_poll` | 준비될 때까지 외부 작업/리소스를 폴링합니다. |
-| `cors_blocked` | 웹 요청이 브라우저 교차 출처 정책에 의해 차단되었습니다. |
-| `token_refresh` | 범위 지정 자격 증명이 갱신 중입니다. |
-
-작업이 `waiting` 상태일 때 슬롯이 해제될 수 있으므로, 긴 백오프가 동시성 한도를 점유하지 않습니다 — 그동안 다른 큐잉된 작업이 실행될 수 있습니다. Tasks 패널은 대기 중인 작업에 대해 **Resume-now**와 **카운트다운**을 노출합니다.
+실행마다 전용 Web Worker(`worker-host.ts`의 `runPluginInWorker`) 하나가 직접 생성됩니다 — 워커 풀이나 큐는 없습니다.
 
 ## 취소는 협력적입니다
 
@@ -97,54 +32,22 @@ stateDiagram-v2
 !!! warning "사용자 Stop에 `worker.terminate()`를 사용하지 마세요"
     사용자 Stop 시 워커를 강제 종료하면 부분 결과가 버려집니다. 호스트는 일반 Stop에 `worker.terminate()`를 호출하지 **않습니다**. 이는 중단 신호를 따르기를 거부하는 워커를 위한 **최후의 수단 타임아웃 백스톱**으로 예약되어 있습니다. `run()`을 중단 가능하게 설계하세요 — [SDK](sdk.md) 및 [매니페스트의 lifecycle controls](plugin-manifest.md)를 참조하세요.
 
-## 재시도는 상태가 아닙니다
+## `manifest.lifecycle.timeout_ms`
 
-`retry` 상태도 없고 제자리 재시작도 없습니다. 종료된 작업을 재시도하면 `retry_of: <prevId>`를 기록하는 **완전히 새로운 작업**이 발행됩니다. 원래 종료 레코드는 그대로 남아 있으므로, 해당 (임시) 결과와 로그가 계속 검사 가능합니다. AI 턴은 동일한 정신으로 **Reopen**을 제공합니다.
-
-Tasks 패널의 상태별 컨트롤:
-
-| 상태 | 컨트롤 |
-| --- | --- |
-| `queued` | Cancel |
-| `running` | Stop / Pause (+ 스피너, 진행률) |
-| `waiting` | Resume-now / Cancel (+ 카운트다운) |
-| `paused` | Resume / Cancel |
-| `succeeded` / `failed` / `cancelled` | Retry / (AI) Reopen / Save-to-history |
-
-## 임시 저장 계층
-
-작업 상태는 **기본적으로 임시**입니다. 권위 순서대로 세 계층이 있습니다:
-
-=== "Tier 1 — 탭 메모리"
-    **권위 있는** 저장소는 인탭 `zustand` 저장소입니다. 실시간 상태, 진행률, 결과가 탭 세션 기간 동안 여기에 존재합니다.
-
-=== "Tier 2 — IndexedDB 미러 (선택적)"
-    **선택적, 스크럽된** IndexedDB 미러는 인탭 리로드에서도 상태가 생존하도록 존재합니다. 이는 **캐시**입니다: 어디에도 동기화되지 않으며 진실 공급원이 아닙니다.
-
-=== "Tier 3 — Postgres (opt-in 전용)"
-    기본적으로 Postgres는 작업에 대해 **아무것도** 저장하지 않습니다. 명시적인 사용자 주도 **Save**가 단일 소독된 `TaskSnapshot` 행을 기록합니다. 해당 작업 없이는 아무것도 기록되지 않습니다.
-
-!!! tip "AI 채팅은 상태 비저장 스트리밍입니다"
-    이 모델에서 `AIChatView`는 **상태 비저장 스트리밍**(`POST {messages, model}` → stream)이 됩니다. 사용자가 명시적으로 저장하지 않는 한 `ChatSession` / `ChatMessage` / 세션별 `Task` 행은 없습니다. 협업자 존재는 기존 프로젝트 WebSocket을 통한 실시간 인메모리 비콘입니다(상태 + 주제만, 시크릿 없음, 절대 지속되지 않음).
-
-## 매니페스트의 라이프사이클 힌트
-
-플러그인은 `manifest.lifecycle`에서 라이프사이클 형태를 알려 호스트가 실행이 시작되기도 전에 올바른 컨트롤을 렌더링할 수 있게 합니다:
+호스트가 실제로 강제하는 유일한 lifecycle 힌트는 실행 하나에 대한 wall-clock 예산입니다. 이를 넘으면 호스트가 샌드박스를 종료하고 작업을 실패시킵니다 — 이벤트 루프에 양보하지 않아 `ctx.signal`을 볼 기회조차 없는 플러그인을 위한 백스톱입니다.
 
 ```json
 "lifecycle": {
-  "persistence": "ephemeral",
-  "controls": ["cancel", "progress"],
-  "progress": "determinate"
+  "timeout_ms": 30000
 }
 ```
 
-Chaos 팩의 **Thanos Snap**이나 **Black Hole**과 같은 전체 그래프 변형자는 일반적으로 결정적 진행률과 `cancel`을 선언하므로, 사용자가 대량 삭제 중간에 Stop하고 이미 반환된 것은 유지할 수 있습니다. 전체 `Lifecycle` 형태는 [plugin manifest](plugin-manifest.md)를, `ctx.progress` 표면은 [SDK](sdk.md)를 참조하세요.
+매니페스트 스키마는 `lifecycle` 아래 `controls`, `progress`, `persistence`도 받아들이지만, 호스트는 오늘 이들을 읽지 않습니다 — [plugin manifest](plugin-manifest.md)를 참조하세요.
 
 ## 다음 / 참고
 
-- [SDK](sdk.md) — `ctx.signal`, `ctx.progress`, `ctx.net.fetchWithBackoff`
-- [Plugin manifest](plugin-manifest.md) — `lifecycle` 컨트롤 및 진행률 선언
-- [Security model](security.md) — 샌드박스, 실행 토큰, 작업 상태
-- [Architecture](architecture.md) — 워커 풀과 HostBridge의 위치
+- [SDK](sdk.md) — `ctx.signal`, `ctx.progress`
+- [Plugin manifest](plugin-manifest.md) — `lifecycle.timeout_ms` 선언
+- [Security model](security.md) — 샌드박스와 작업 스테이징
+- [Architecture](architecture.md) — 워커와 HostBridge의 위치
 - [Tasks (user guide)](../guide/tasks.md) — 사용자 관점의 Tasks 패널

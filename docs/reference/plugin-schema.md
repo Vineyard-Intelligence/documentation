@@ -16,7 +16,7 @@ The manifest is the single source of truth for a plugin; there is no separate se
 
 | Property | Type | Req. | Allowed / constraints | Default | Meaning |
 |---|---|---|---|---|---|
-| `identifier` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$` | — | Reverse-DNS unique id, e.g. `run.vineyard.plugins.cidr_expand`. |
+| `identifier` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$` | — | Reverse-DNS unique id, e.g. `run.vineyard.plugins.rdap_ip`. |
 | `content_type` | string | yes | `const`: `vineyard:plugin` | — | Document discriminator; must be exactly this value. |
 | `name` | string | yes | minLength 1, maxLength 128 | — | Human-readable display name. |
 | `version` | string | yes | pattern `^\d+\.\d+\.\d+(?:[-+].+)?$` | — | SemVer string (not the legacy float), e.g. `1.0.0`, `2.1.0-beta.1`. |
@@ -64,7 +64,7 @@ Per-platform execution flags. `type: object`, `additionalProperties: false`, `mi
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
 | `runtime` | string | yes | `sandbox-js`, `web-proxy` | — | `sandbox-js` = author JS in the browser worker; `web-proxy` = thin client calling ONE author endpoint (deferred). |
-| `entry` | string | yes | — | — | Entry path within the bundle, e.g. `dist/cidr.js`. |
+| `entry` | string | yes | — | — | Entry path within the bundle, e.g. `dist/pack.mjs`. |
 | `proxy_endpoint` | string | conditional | `format: uri` | — | **Required when `runtime: web-proxy`.** The single endpoint; MUST equal the one `scopes.network` entry. |
 | `fallback` | string | no | `desktop`, `none` | `none` | Where to fall back if web cannot run the plugin. |
 
@@ -97,7 +97,7 @@ Entity types the plugin references from Type Packs. `type: object`, `additionalP
 | `typepack` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$` | The owning Type Pack identifier. |
 | `category` | string | yes | — | Type category, e.g. `infrastructure`. |
 | `name` | string | yes | — | Type name within the category, e.g. `ip_address`. |
-| `as` | string | no | — | Optional binding alias; the consumed node's value is pre-bound into `params` under this key. |
+| `as` | string | no | — | Designed as a binding alias to pre-bind the consumed node's value into `params` under this key. Accepted by the schema; no shipped plugin declares it and the run form does not read it yet. |
 
 !!! note "Open issue"
     `typeRef` does **not** yet carry a Type Pack version — type compatibility is resolved by identifier + qualified name only. Versioned type references are a carried open issue.
@@ -113,7 +113,7 @@ JSON-Schema (draft 2020-12) describing the pre-run form. Whatever the user fills
 | `required` | array | no | items: string | Names of required fields. |
 
 !!! warning "No secrets in params"
-    `params` MUST NOT contain secrets. Use a [`scopes.config`](#configvalue-scopesconfig-items) entry with `secret: true` for API keys and credentials. Nothing rejects a secret-looking param key today — this is a rule, not an enforced check.
+    `params` MUST NOT contain secrets. Use a [`scopes.config`](#configvalue-scopesconfig-items) entry with `secret: true` for API keys and credentials instead.
 
 ### File fields
 
@@ -173,7 +173,7 @@ The plugin's authority surface. `type: object`, `additionalProperties: false`. `
 | `edge:delete` | Delete edges. |
 
 !!! warning "Network fan-out rule"
-    On **web**, `scopes.network` must contain exactly **one** entry, equal to `platforms.web.proxy_endpoint` (no fan-out). On **desktop** more entries are allowed — at the user's responsibility.
+    For a **web-proxy** plugin, `scopes.network` must contain exactly **one** entry, equal to `platforms.web.proxy_endpoint` (no fan-out). A **sandbox-js** plugin's entries are checked instead against the host's egress allowlist — see [security](../develop/security.md). On **desktop** more entries are allowed — at the user's responsibility.
 
 ### networkScope (scopes.network items)
 
@@ -231,12 +231,12 @@ Task execution model. `type: object`, `additionalProperties: false`. All propert
 | `persistence` | string | no | `ephemeral`, `opt-in`, `always` | `ephemeral` | `ephemeral` = no Task DB row, in-memory only. |
 | `states` | array | no | enum: `queued`, `running`, `waiting`, `paused`, `cancelled`, `succeeded`, `failed` | all 7 states | Canonical 7-state machine. |
 
-!!! note "Retry mints a new task"
-    `retry` is a control, not a state. Retrying creates a **new** task rather than transitioning the existing one. The default `states` array is the full canonical set: `queued`, `running`, `waiting`, `paused`, `cancelled`, `succeeded`, `failed`.
+!!! warning "What the host actually reads"
+    `controls`, `progress`, `persistence`, and `states` are accepted here but not read by the host today — the Tasks panel's only control is Stop, and a task's real terminal states are `succeeded` / `failed` / `cancelled` (plus `incomplete` for AI turns). See [Lifecycle](../develop/lifecycle.md).
 
 ## distribution
 
-`$defs.distribution` — the shared distribution block used by both plugins and Type Packs. `type: object`, `additionalProperties: false`. **Required:** `kind`. There is no server-side copy of the bundle; the client caches the fetched bundle locally.
+`$defs.distribution` — the shared distribution block used by both plugins and Type Packs. `type: object`, `additionalProperties: false`. **Required:** `kind`. There is no server-side copy of the bundle; the client fetches it directly on each run.
 
 | Property | Type | Req. | Allowed values / constraints | Meaning |
 |---|---|---|---|---|
@@ -249,7 +249,7 @@ Task execution model. `type: object`, `additionalProperties: false`. All propert
 
 ### distribution.integrity
 
-`type: object`, `additionalProperties: false`. **Required:** `algo`, `hash`. **Optional** block — detects a force-push at install.
+`type: object`, `additionalProperties: false`. **Required:** `algo`, `hash`. **Optional** block, accepted by the schema but not checked by the client today — see [distribution](../develop/distribution.md#integrity).
 
 | Property | Type | Req. | Allowed values / constraints | Meaning |
 |---|---|---|---|---|
@@ -267,80 +267,58 @@ Task execution model. `type: object`, `additionalProperties: false`. All propert
 
 ## Complete annotated example
 
-A full, valid manifest — the **CIDR Expand** reference plugin. It consumes an `infrastructure.netblock` node, emits `infrastructure.ip_address` nodes, does pure compute (no network), and runs identically on web and desktop.
+A real, shipped plugin manifest — **RDAP IP**, a member of the [IP Recon](https://github.com/Vineyard-Intelligence/pluginpack-ip-recon) pack. It consumes an `infrastructure.ip_address` node and adds the owning `infrastructure.netblock`.
 
-```json title="cidr_expand.manifest.json"
+```json title="ip-recon.manifest.json (rdap_ip member)"
 {
-  "identifier": "run.vineyard.plugins.cidr_expand", // (1)!
-  "content_type": "vineyard:plugin",                // (2)!
-  "name": "CIDR Expand",
-  "version": "1.0.0",                               // (3)!
-  "description": "Expand a CIDR block into its constituent IP address nodes. Pure compute, no network, runs identically on web and desktop.",
-  "author": { "name": "VINEYARD", "url": "https://vineyard.run" },
-  "license": "MIT",
-  "icon": "sitemap",                                // (4)!
-  "thumbnail_url": "https://vineyard.run/assets/plugins/cidr-expand.png",
+  "identifier": "run.vineyard.plugins.rdap_ip", // (1)!
+  "content_type": "vineyard:plugin",            // (2)!
+  "name": "RDAP IP",
+  "version": "1.0.0",                           // (3)!
+  "description": "Looks up each selected IP's allocation in RDAP: adds the owning Netblock node (CIDR / network name / country) and fills the IP's organization + country. Keyless, CORS-native.",
+  "icon": "boxes",                              // (4)!
 
   "platforms": {
-    "primary": "web",                               // (5)!
-    "web": { "runtime": "sandbox-js", "entry": "dist/cidr.js" },
-    "desktop": { "runtime": "sandbox-js", "entry": "dist/cidr.js" }
+    "primary": "web",                           // (5)!
+    "web": { "runtime": "sandbox-js", "entry": "dist/pack.mjs" }
   },
 
   "io": {
     "consumes": [
       { "typepack": "run.vineyard.typepacks.infrastructure",
-        "category": "infrastructure", "name": "netblock", "as": "cidr" } // (6)!
+        "category": "infrastructure", "name": "ip_address" }
     ],
     "produces": [
       { "typepack": "run.vineyard.typepacks.infrastructure",
-        "category": "infrastructure", "name": "ip_address" }
+        "category": "infrastructure", "name": "netblock" }
     ]
   },
 
-  "params": {                                        // (7)!
-    "type": "object",
-    "required": ["cidr"],
-    "properties": {
-      "cidr": { "type": "string", "title": "CIDR block",
-                "pattern": "^\\d{1,3}(\\.\\d{1,3}){3}/\\d{1,2}$",
-                "description": "Pre-filled from the right-clicked netblock node." },
-      "max_hosts": { "type": "integer", "title": "Max hosts to emit",
-                     "minimum": 1, "maximum": 65536, "default": 1024 }
-    }
+  "scopes": {                                    // (6)!
+    "graph": ["node:read", "node:create", "node:update", "edge:create"],
+    "network": [
+      { "endpoint": "https://rdap.org/", "methods": ["GET"],
+        "purpose": "RDAP bootstrap → authoritative RIR (both send CORS *)." }
+    ]
   },
 
-  "scopes": {                                        // (8)!
-    "graph": ["node:read", "node:create", "edge:create"],
-    "network": [],
-    "config": []
-  },
-
-  "lifecycle": {                                     // (9)!
-    "long_running": false,
-    "controls": ["cancel", "progress"],
-    "progress": "determinate",
-    "persistence": "ephemeral"
-  },
-
-  "distribution": {                                  // (10)!
-    "kind": "inline",
-    "integrity": { "algo": "sha256",
-                   "hash": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad" }
+  "lifecycle": {                                 // (7)!
+    "persistence": "opt-in",
+    "controls": ["progress", "cancel"],
+    "progress": "determinate"
   }
 }
 ```
 
+This manifest has no top-level `distribution` block: it ships as one of three members inside the IP Recon pack, which the schema allows to omit `distribution` and ride the pack's own (see [Plugin Packs](../develop/plugin-packs.md)).
+
 1. Reverse-DNS identifier matching `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$`.
 2. The `const` discriminator — must be exactly `vineyard:plugin`.
 3. SemVer, not the legacy float.
-4. Icon shown in the node right-click menu.
-5. `primary: web` is preferred. The `desktop` block with `sandbox-js` ships today; `native`/`subprocess` runtimes are deferred. Here both reuse the same `sandbox-js` entry.
-6. `as: "cidr"` pre-binds the right-clicked node's value into `params.cidr`. Runtime `Node.type` for these refs is `infrastructure.netblock` / `infrastructure.ip_address`.
-7. JSON-Schema for the pre-run form; becomes `Task.input`. No secrets here.
-8. Pure compute: graph verbs only, no `network` or `config`.
-9. Short-lived, cancellable, determinate progress, ephemeral (no Task DB row).
-10. `inline` distribution with an optional integrity hash.
+4. Icon shown in the node right-click menu — here a lucide name.
+5. `primary: web` with the `sandbox-js` runtime, the only web runtime that actually executes today.
+6. `graph` verbs plus one `network` endpoint, checked against the host's egress allowlist at runtime.
+7. `persistence`/`controls`/`progress` are declarative only — see the warning above.
 
 ## Next / See also
 
