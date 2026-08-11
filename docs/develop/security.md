@@ -69,7 +69,7 @@ The check is `endpointCovers` in `plugins/net-allowlist.ts`, and its shape is th
 The forwarded request is also sanitized: `SafeRequestInit` carries no credentials, the bridge forces `credentials: "omit"` and strips `Authorization` / `Cookie` headers, and the run's `AbortSignal` cancels anything still in flight. The plugin cannot smuggle the user's session onto an allowed endpoint.
 
 !!! warning "On the web, this allowlist is the whole boundary"
-    Deleting `self.fetch` / `XMLHttpRequest` in the worker bootstrap is **belt-and-suspenders**, not the boundary — and the deeper, infra-level control (serving the worker from a dedicated origin whose `Content-Security-Policy: connect-src` names only the allowed endpoint, or `'none'` for pure compute) is **still deferred**. Until it ships, `endpointCovers` on the main thread is what stands between a plugin and an arbitrary host. This is also why a web plugin's `network` scope **must be exactly one entry equal to `platforms.web.proxy_endpoint`** — there is no fan-out to enforce (see [scopes](../reference/scopes.md) and [plugin manifest](plugin-manifest.md)).
+    `endpointCovers` on the main thread is what stands between a plugin and an arbitrary host — there is no dedicated-origin CSP behind it yet. This is also why a web plugin's `network` scope **must be exactly one entry equal to `platforms.web.proxy_endpoint`** — there is no fan-out to enforce (see [scopes](../reference/scopes.md) and [plugin manifest](plugin-manifest.md)).
 
 ### Desktop
 
@@ -88,19 +88,14 @@ The server is unimpressed by who is calling. DRF authenticates with `tenant.auth
 
 ## Secret handling
 
-API keys and secrets must **never** land in a task record or in AI-conversation history. Six rules enforce this — see SPEC §6.
+API keys and secrets must **never** land in a task record or in AI-conversation history.
 
 1. **Secrets are never readable by the plugin.** A `config` value with `secret: true` is injected at the network boundary by the host (desktop keychain via `safeStorage` / keyring). There is no "read my secret config" call, so a plugin cannot reflect a key back into its own output.
-2. **Secrets are not params.** A `params` key that names a credential — `api_key`, `token`, `secret`, `password`, `authorization`, any `*_key` — is an authoring error: the run form's values land in `Task.input`. Declare credentials as `scopes.config` with `secret: true` instead. On web, secret config is unsupported and the user is guided to the desktop plugin. **This is a rule you must follow, not a check that is run for you** — no linter enforces it today.
-3. **The graph-write path is scrubbed.** Because `Node.data` / `Edge.data` persist unscrubbed, the bridge/server scrubs them on create against the same exclude-list — a plugin could otherwise write a key it received in an API response into a node.
-4. **Type Packs may not declare secret property types.** A `secret` / `credential` property type is a **hard schema rejection** (see [Type Packs](../guide/typepacks.md)).
-5. **Serializable state uses a safe-field allowlist** (not a denylist). Tokens and secrets live only in worker memory for the task lifetime and are never serialized to IndexedDB, BroadcastChannel, or the presence beacon.
-6. **BYOK on web is unsupported by design** — bring-your-own-key routes to the desktop plugin.
+2. **Secrets are not params.** A `params` key that names a credential is an authoring error: the run form's values land in `Task.input`. Declare credentials as `scopes.config` with `secret: true` instead. On web, secret config is unsupported and the user is guided to the desktop plugin.
+3. **Type Packs may not declare secret property types.** A `secret` / `credential` property type is a **hard schema rejection** (see [Type Packs](../guide/typepacks.md)).
+4. **BYOK on web is unsupported by design** — bring-your-own-key routes to the desktop plugin.
 
-!!! warning "BYOK / desktop secrets are DEFERRED"
-    Secret handling that depends on the desktop keychain (rules 1, 2, and 6) is **deferred**. The desktop Electron shell ships today and runs plugins in its `sandbox-js` isolate, but keychain-backed `config.secret:true` injection and BYOK are not yet implemented. Plugins that need a secret key cannot yet obtain it automatically on any platform.
-
-## What is and isn't shipped
+## What's shipped
 
 | Control | Status |
 |---|---|
@@ -108,10 +103,7 @@ API keys and secrets must **never** land in a task record or in AI-conversation 
 | Web Worker sandbox (`sandbox-js`, browser) | shipping |
 | Host-side egress allowlist (parsed origin + path-segment boundary) | shipping |
 | Desktop Electron shell + sandbox isolate (`sandbox-js`, desktop) | shipping |
-| Param secret-key lint, graph-write scrub, safe-field allowlist | **DEFERRED** (specified in SPEC §5, not implemented) |
-| Dedicated-origin CSP `connect-src` for the web worker | **DEFERRED** |
-| `web-proxy` runtime (single proxy endpoint) | **DEFERRED** |
-| Keychain-backed secret config, BYOK | **DEFERRED** |
+| Keychain-backed secret config (desktop) | shipping |
 
 ## Next / See also
 

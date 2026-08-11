@@ -1,6 +1,6 @@
 # Type Packs
 
-Type Pack은 그래프와 플러그인이 사용할 **노드 엔티티 타입**과 (선택적으로) **엣지 타입**을 정의하는 `vineyard:typepack` 문서입니다. 이 페이지는 엔드 투 엔드 작성을 다룹니다. 필드별 계약은 [Type Pack schema reference](../reference/typepack-schema.md)를 참조하세요.
+Type Pack은 그래프와 플러그인이 사용할 **노드 엔티티 타입**과 (선택적으로) **엣지 타입**을 정의하는 `vineyard:typepack` 문서입니다. 필드별 계약은 [Type Pack schema reference](../reference/typepack-schema.md)를 참조하세요.
 
 ## Type Pack이란 무엇인가
 
@@ -163,7 +163,7 @@ Type Pack은 `secret` 또는 `credential` 프로퍼티 타입을 선언할 수 *
 - **MINOR / PATCH** = 기존 `Node.type` 값을 깨뜨리지 않는 추가 또는 수정 수준의 변경.
 
 !!! note "미해결 이슈: Type Pack 버전 고정"
-    플러그인의 `typeRef`는 아직 Type Pack 버전이나 범위를 포함하지 않으므로, MAJOR Type Pack 변경이 조용히 플러그인의 `io`를 깨뜨릴 수 있습니다. 해결책(`typeRef.version_range` + CI 교차 검사, 또는 활성화된 버전 기준 해석)은 여전히 추적 중인 미해결 이슈이며, 배포된 동작이 아닙니다. MAJOR 변경은 보수적으로 다루세요.
+    플러그인의 `typeRef`는 Type Pack 버전이나 범위를 포함하지 않으므로, MAJOR Type Pack 변경이 조용히 플러그인의 `io`를 깨뜨릴 수 있습니다. MAJOR 변경은 보수적으로 다루세요.
 
 ## 유효성 검사 체크리스트
 

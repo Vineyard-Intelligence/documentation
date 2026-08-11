@@ -70,14 +70,9 @@ Vineyard 배포의 가장 중요한 속성은 레지스트리가 **저장하지 
 - 레지스트리는 **경로/메타데이터만** 보유합니다. 번들 콘텐츠의 **서버 측 복사본이 없습니다**.
 - **클라이언트**가 번들을 가져와(jsDelivr 경유, 엔트리의 불변 커밋 SHA에 고정) 바로 실행합니다 — 지금은 매 실행마다 단순 `fetch()`이고, 영속적인 로컬 캐시가 아닙니다(IndexedDB도, 데스크톱 디스크 캐시도 없음).
 
-### `integrity`가 실제로 하는 일 (현재)
+### `integrity`
 
-**현재는 강제되지 않습니다.** `integrity` 필드는 스키마상 허용되고 제출물에 붙일 수 있지만, 클라이언트의
-로드 경로(`plugins/remote.ts`) 어디에서도 이 값을 읽거나 검증하지 않습니다 — 이 필드가 있든 없든,
-값이 맞든 안 맞든 번들은 그대로 가져와 실행됩니다. 지금은 향후 강제 계층을 위해 예약된 필드로 볼 것이지,
-실제로 작동하는 보호장치로 여기지 말 것. 지금 실제로 믿을 수 있는 보장은 `ref`의 **불변 커밋 SHA 고정**
-([publishing](publishing.md) 참조)과 jsDelivr가 정확히 그 커밋을 서빙한다는 사실입니다 — 태그 이동이나
-강제 푸시로 실행 코드가 조용히 바뀌는 걸 막는 건 클라이언트 측 해시 검증이 아니라 이것입니다.
+스키마상 허용되지만 강제되지 않습니다 — 클라이언트는 번들을 실행하기 전에 이 값을 검증하지 않습니다. 실제로 태그 이동이나 강제 푸시로 실행 코드가 조용히 바뀌는 걸 막는 것은 `ref`의 **불변 커밋 SHA 고정**([publishing](publishing.md) 참조)과 jsDelivr가 정확히 그 커밋을 서빙한다는 사실입니다.
 
 ## 설치 흐름에서의 위치
 
@@ -89,7 +84,7 @@ Vineyard 배포의 가장 중요한 속성은 레지스트리가 **저장하지 
 ## 다음 / 참고
 
 - [publishing](publishing.md) — 단일 항목 PR 제출. 불변 `ref` 및 무결성 게이트.
-- [updates](updates.md) — 새로운 `ref`가 스코프 차이와 함께 제공된 업그레이드로 표시되는 방식.
+- [updates](updates.md) — 새로운 `ref`가 제공된 업그레이드로 표시되는 방식.
 - [quickstart](quickstart.md) — Developer Mode는 GitHub 없이 번들을 로드합니다.
 - [plugin manifest](plugin-manifest.md) 및 [Type Pack schema](../reference/typepack-schema.md) — 둘 다 이 블록을 임베드합니다.
 - [registry schema](../reference/registry-schema.md) — 메타데이터 전용 항목이 저장하는 것.

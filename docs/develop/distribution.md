@@ -70,15 +70,9 @@ The most important property of Vineyard distribution is what the registry **does
 - The registry holds **path/metadata only**. There is **no server-side copy** of the bundle content.
 - The **client** fetches the bundle (via jsDelivr, pinned to the entry's immutable commit SHA) and runs it directly — a plain `fetch()` per run today, not a persistent local cache (no IndexedDB, no on-disk cache on desktop).
 
-### What `integrity` actually does today
+### `integrity`
 
-**Not currently enforced.** The `integrity` field is accepted by the schema and can be attached to a
-submission, but nothing in the client's load path (`plugins/remote.ts`) reads or checks it — a bundle
-is fetched and run regardless of whether this field is present or matches. Treat it as reserved for a
-future enforcement layer, not as an active protection. The guarantee you can actually rely on today is
-the **immutable commit-SHA pin** on `ref` (see [publishing](publishing.md)) plus jsDelivr serving that
-exact commit — that is what stops a moved tag or a force-push from silently changing what runs, not a
-client-side hash check.
+Accepted by the schema, not enforced — the client does not check it before running a bundle. The **immutable commit-SHA pin** on `ref` (see [publishing](publishing.md)) plus jsDelivr serving that exact commit is what actually stops a moved tag or a force-push from silently changing what runs.
 
 ## Where it fits in the install flow
 
@@ -90,7 +84,7 @@ activates. For the full pipeline and the submission/review gates, see [publishin
 ## Next / See also
 
 - [publishing](publishing.md) — submit a one-entry PR; the immutable-`ref` and integrity gates.
-- [updates](updates.md) — how a newer `ref` becomes an offered upgrade with a scope diff.
+- [updates](updates.md) — how a newer `ref` becomes an offered upgrade.
 - [quickstart](quickstart.md) — Developer Mode loads bundles without GitHub.
 - [plugin manifest](plugin-manifest.md) and [Type Pack schema](../reference/typepack-schema.md) — both embed this block.
 - [registry schema](../reference/registry-schema.md) — what the metadata-only entry stores.

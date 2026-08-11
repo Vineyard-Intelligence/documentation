@@ -1,6 +1,6 @@
 # Type Packs
 
-A Type Pack is a `vineyard:typepack` document that defines the **node entity types** and (optionally) the **edge types** your graph and plugins work with. This page covers authoring one end to end; for the field-by-field contract see the [Type Pack schema reference](../reference/typepack-schema.md).
+A Type Pack is a `vineyard:typepack` document that defines the **node entity types** and (optionally) the **edge types** your graph and plugins work with. For the field-by-field contract see the [Type Pack schema reference](../reference/typepack-schema.md).
 
 ## What a Type Pack is
 
@@ -163,7 +163,7 @@ marketplace installs those packs alongside the plugin.)
 - **MINOR / PATCH** = additive or fix-level changes that don't break existing `Node.type` values.
 
 !!! note "Open issue: Type Pack version pinning"
-    A plugin's `typeRef` does **not** yet carry a Type Pack version or range, so a MAJOR Type Pack bump can silently break a plugin's `io`. The resolution (`typeRef.version_range` + CI cross-check, or resolve-against-activated-version) is still a tracked open issue, not shipped behavior. Treat MAJOR bumps conservatively.
+    A plugin's `typeRef` does **not** carry a Type Pack version or range, so a MAJOR Type Pack bump can silently break a plugin's `io`. Treat MAJOR bumps conservatively.
 
 ## Validation checklist
 
