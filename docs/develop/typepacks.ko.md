@@ -32,8 +32,6 @@ Type Pack은 그래프와 플러그인이 사용할 **노드 엔티티 타입**�
 
 ## 엔티티 타입
 
-`types[]`의 각 항목은 하나의 노드 엔티티 타입을 선언합니다.
-
 ```jsonc
 {
   "category": "infrastructure",        // snake_case 식별자 세그먼트
@@ -139,7 +137,7 @@ Type Pack은 `secret` 또는 `credential` 프로퍼티 타입을 선언할 수 *
 }
 ```
 
-`from`/`to`는 정규화된 `category.name`으로 엔드포인트 노드 타입을 제한합니다. 설치 시 린트는 이러한 참조가 해석되는지 확인합니다. `label`은 `Edge.label`에 그대로 저장됩니다. 선택적 엣지 `properties`는 노드와 동일한 프로퍼티 문법을 따르며 `Edge.data`에 저장됩니다.
+설치 시 린트는 `from`/`to` 참조가 해석되는지 확인합니다.
 
 ## 타입 식별 및 저장
 

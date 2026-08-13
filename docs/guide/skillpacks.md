@@ -1,8 +1,6 @@
 # Working with Skill Packs
 
-Skill Packs are the third kind of marketplace content, after Type Packs (the vocabulary) and Plugin
-Packs (the collectors). A Skill Pack is **text**: a reusable investigation *playbook* the AI agent
-can consult — never code it runs.
+A Skill Pack is **text**: a reusable investigation *playbook* the AI agent can consult.
 
 Where a plugin changes your graph, a Skill Pack changes **how the agent works**: it is guidance the
 agent follows, surfaced to it through the `list_skills` / `load_skill` tools. It requests no

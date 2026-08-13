@@ -78,8 +78,7 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 `has_address`, `announced_by`, `contains`, `has_record`, `subdomain_of`, `has_domain`,
 `redirects_to`, `has_whois`, `presents_certificate`, 그리고 `runs_technology`(호스트, IP,
 도메인, URL을 그것이 실행하거나 제공받는 소프트웨어, 하드웨어, 또는 서드파티 서비스 —
-예: Cloudflare — 에 연결). 각 유형은 자체 아이콘과 색상을 가지므로, `ip_address`,
-`domain`, `certificate`가 한눈에 구분됩니다.
+예: Cloudflare — 에 연결). 각 유형은 자체 아이콘과 색상을 제공합니다.
 
 다른 팩도 같은 형태를 따릅니다 — 예를 들어 **Threat** 팩은 `threat.malware`,
 `threat.threat_actor`, `threat.indicator`, `threat.operation`(캠페인 내의 경계된 작업 —

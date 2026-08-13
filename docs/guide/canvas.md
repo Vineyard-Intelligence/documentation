@@ -9,11 +9,9 @@ The view controls are exposed twice, and both drive the **same** live graph stat
 - **On-canvas toolbar** — a compact vertical bar pinned to the top-left edge of the canvas, for the controls you reach for most while working.
 - **Top menu bar** — the `Project`, `Edit`, and `View` menus, which add data and navigation actions alongside the view toggles (a fourth menu, `Run`, launches plugins and the AI agent — see [Running plugins](running-plugins.md)).
 
-Toggling the grid from the menu bar, for example, flips the same switch the toolbar button shows, and vice versa.
-
 ## View controls (toolbar + View menu)
 
-These controls appear in both the on-canvas toolbar and the `View` menu and drive the same state. Toolbar toggle buttons appear highlighted when on; menu items are checkmarked when on.
+Toolbar toggle buttons appear highlighted when on; menu items are checkmarked when on.
 
 | Control | Action | Surfaces |
 | --- | --- | --- |
@@ -67,7 +65,7 @@ These controls appear in both the on-canvas toolbar and the `View` menu and driv
 
 ## Layouts
 
-Both the toolbar's layout menu and the `View ▸ Layout` submenu offer the same set. Applying a layout re-computes node positions and then fits the view.
+Applying a layout re-computes node positions and then fits the view.
 
 | Layout | Description |
 | --- | --- |

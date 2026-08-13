@@ -28,7 +28,7 @@ Submissions go to **`Vineyard-Intelligence/registry`**. The repo carries *pointe
 3. **Add one file**, `packs/<identifier>.json`, holding your entry. The filename must match the entry's `identifier` exactly.
 4. **Open a PR.** The `validate` workflow posts its result as a status check.
 5. **Fix any failures**, then wait for a human merge.
-6. After green CI + merge, the catalogs are rebuilt and your entry is **live on the next registry fetch** — clients pull the static JSON; there is no coupled app release.
+6. After green CI + merge, the catalogs are rebuilt and your entry is **live on the next registry fetch** — clients pull the static JSON.
 
 A few things worth knowing going in:
 
@@ -83,7 +83,7 @@ So the code review is a person reading your bundle, and these are what they weig
 
 ## Sample submissions
 
-A **Plugin Pack**, filed as `packs/run.vineyard.pluginpacks.chaos.json`. Note `plugin_count` marks a pack with multiple plugins (one file → many plugins) so the marketplace shows one card and installs all contained plugins together:
+A **Plugin Pack**, filed as `packs/run.vineyard.pluginpacks.chaos.json`. Note `plugin_count` marks a pack with multiple plugins (one file → many plugins):
 
 ```json
 {
@@ -129,7 +129,7 @@ A **Type Pack**, filed as `packs/run.vineyard.typepacks.infrastructure.json` (no
 
 ## After merge
 
-Merging triggers a rebuild of the three catalog files from `packs/`, committed straight back to `main` — GitHub Pages serves the branch directly, so the published bytes have to exist in the tree. There is no app version bump. The next time a client fetches the registry your entry appears in the browser with its derived badges.
+Merging triggers a rebuild of the three catalog files from `packs/`, committed straight back to `main` — GitHub Pages serves the branch directly, so the published bytes have to exist in the tree. The next time a client fetches the registry your entry appears in the browser with its derived badges.
 
 ## Taking a pack down
 

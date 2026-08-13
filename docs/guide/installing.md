@@ -1,7 +1,5 @@
 # Browse & install
 
-This page covers browsing the Marketplace and what happens when you click **Install**.
-
 ## Browsing the marketplace
 
 The marketplace is a fully static catalog: every pack lives in one metadata file, and all

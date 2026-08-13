@@ -32,8 +32,6 @@ Plugins do not invent their own data shapes. They `consume` and `produce` node t
 
 ## Entity types
 
-Each item in `types[]` declares one node entity type.
-
 ```jsonc
 {
   "category": "infrastructure",        // snake_case identifier segment
@@ -139,7 +137,7 @@ The Threat pack, for example, uses lucide names like `bug` (malware), `shield-al
 }
 ```
 
-`from`/`to` constrain the endpoint node types by qualified `category.name`; the install-time lint verifies those refs resolve. `label` is stored verbatim in `Edge.label`. Optional edge `properties` follow the same property grammar as nodes and are stored in `Edge.data`.
+The install-time lint verifies those refs resolve.
 
 ## Type identity & storage
 
