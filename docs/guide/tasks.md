@@ -4,7 +4,7 @@ Every plugin run and every AI-chat turn in Vineyard is a **task**, shown in the 
 
 ## How tasks work
 
-When you run a plugin (or send a message in AI chat), Vineyard creates a task, runs it in its own dedicated worker, and shows it in the Tasks panel with a spinner and (when reported) a progress bar.
+Each task runs in its own dedicated worker, with a spinner and (when reported) a progress bar.
 
 ## Task states
 

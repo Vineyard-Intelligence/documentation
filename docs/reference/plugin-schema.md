@@ -8,7 +8,7 @@ The authoritative, field-by-field reference for `plugin.schema.json` — the JSO
     - `title`: *VINEYARD Plugin Manifest*
     - Root: `type: object`, `additionalProperties: false` — unknown top-level keys are rejected.
 
-The manifest is the single source of truth for a plugin; there is no separate server-side plugin record. Same naming family as the [Type Pack manifest](typepack-schema.md).
+The manifest is the single source of truth for a plugin; there is no separate server-side plugin record.
 
 ## Top-level properties
 

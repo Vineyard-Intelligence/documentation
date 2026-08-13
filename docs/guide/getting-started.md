@@ -1,6 +1,6 @@
 # Getting started
 
-A first-run walkthrough: open the Vineyard app, create a project, install a **Type Pack** and a **plugin** from the Marketplace, then run that plugin against your graph. The core loop is *project → types → plugins → ephemeral runs*.
+A first-run walkthrough: open the Vineyard app, create a project, install a **Type Pack** and a **plugin** from the Marketplace, then run that plugin against your graph.
 
 ## 1. Open the app
 

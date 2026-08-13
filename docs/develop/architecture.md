@@ -12,8 +12,6 @@ Vineyard executes plugins and Type Packs **in the user's app**, never on a serve
 
 ## End-to-end flow
 
-The lifecycle of a plugin spans five actors: the **author**, the **registry**, the **app** (host), the **sandbox** where code actually runs, and the **analyst** who approves what comes back out of it.
-
 ```mermaid
 flowchart LR
     A["Author<br/>repo + GitHub release<br/>(tag = version)"]

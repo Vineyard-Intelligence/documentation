@@ -1,6 +1,6 @@
 # Plugin Packs
 
-A **Plugin Pack** is one bundle that ships many plugins — the plugin-side analog of a Type Pack carrying many `types`. The host flattens the pack into individually addressed plugins, the registry shows it as a single card, and installing it adds every contained plugin at once.
+A **Plugin Pack** is one bundle that ships many plugins — the plugin-side analog of a Type Pack carrying many `types`.
 
 ## One file, many plugins
 
@@ -40,11 +40,9 @@ export default definePluginPack({
 | `version`      | SemVer for the bundle as a whole. |
 | `plugins`      | The array of `definePlugin(...)` entries. Each carries its **own** `identifier`, `scopes`, `io`, and `lifecycle`. |
 
-Contained plugins are not subordinate: each declares its own `identifier`, `scopes`, and lifecycle. The pack is purely a packaging convenience — once flattened, the contained plugins behave exactly like independently published ones.
-
 ## How the host flattens a pack
 
-When the client loads a bundle, it calls `flattenPlugins` on whatever the module default-exported. Packs, arrays, and singles all collapse to the same thing: a flat list of plugins, **each addressed by its own `identifier`**.
+When the client loads a bundle, it calls `flattenPlugins` on whatever the module default-exported.
 
 ```text
 default export (pack | array | single)
@@ -68,8 +66,6 @@ The Marketplace registry is **metadata-only** (it stores pointers, not code), an
 - `scopes_summary` — a roll-up of the contained plugins' authority (e.g. `graph_write: true`) so the card can summarize what the whole pack does without fetching each manifest.
 
 The full list of contained plugin identifiers lives in the **manifest** at `repo@ref/path`; the lean catalog row carries the count, and the client resolves the individual plugins from the fetched bundle. The exact registry-entry shape — `plugin_count`, `scopes_summary`, and the lean projection — is documented in [Publishing](publishing.md).
-
-The marketplace shows a pack as **one card** and installs all contained plugins together — but once installed, each is launched, scoped, and run on its own.
 
 ## When to use a pack
 

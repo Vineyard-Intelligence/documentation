@@ -12,8 +12,6 @@ Vineyard는 플러그인과 Type Pack을 **서버가 아닌 사용자의 앱에�
 
 ## 엔드 투 엔드 흐름
 
-플러그인의 수명 주기는 **작성자**, **레지스트리**, **앱**(호스트), 코드가 실제 실행되는 **샌드박스**, 그리고 샌드박스에서 나온 결과를 승인하는 **분석가**의 다섯 가지 행위자에 걸쳐 있습니다.
-
 ```mermaid
 flowchart LR
     A["Author<br/>repo + GitHub release<br/>(tag = version)"]

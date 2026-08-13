@@ -8,7 +8,7 @@
     - `title`: *VINEYARD Plugin Manifest*
     - Root: `type: object`, `additionalProperties: false` — 알 수 없는 최상위 키는 거부됩니다.
 
-manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 측 plugin 레코드는 없습니다. [Type Pack manifest](typepack-schema.md)와 동일한 네이밍 체계를 사용합니다.
+manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 측 plugin 레코드는 없습니다.
 
 ## Top-level properties
 
