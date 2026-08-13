@@ -79,8 +79,7 @@ Edge types wire the recon graph together across both categories: `resolves_to`, 
 `announced_by`, `contains`, `has_record`, `subdomain_of`, `has_domain`, `redirects_to`,
 `has_whois`, `presents_certificate`, and `runs_technology` (which links a host, IP, domain, or
 URL to the software, hardware, or third-party service — such as Cloudflare — it runs or is
-served by). Each type ships its own icon and color, so an `ip_address`, a `domain`, and a
-`certificate` are visually distinct at a glance.
+served by). Each type ships its own icon and color.
 
 The other packs follow the same shape — for example the **Threat** pack adds
 `threat.malware`, `threat.threat_actor`, `threat.indicator`, and `threat.operation` (a bounded

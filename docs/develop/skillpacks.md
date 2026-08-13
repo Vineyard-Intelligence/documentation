@@ -1,9 +1,6 @@
 # Skill Packs
 
-A Skill Pack is the third kind of marketplace content — after Plugin Packs (the collectors) and Type
-Packs (the vocabulary). It is **text**: a reusable investigation *playbook* the agent can consult,
-never code it runs. This page covers the document format, the safety model, and how a pack reaches
-the registry.
+A Skill Pack is **text**: a reusable investigation *playbook* the agent can consult.
 
 > **A Skill Pack runs no code and requests no permissions of its own.** It is guidance the agent
 > follows, surfaced through the `list_skills` / `load_skill` tools. Its only dependency surface is

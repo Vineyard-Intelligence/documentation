@@ -20,8 +20,7 @@ There are three kinds of pack:
 You **browse the Marketplace** for a pack, **install** that reference
 into the app, and then the app **runs it client-side on your graph**. The Vineyard
 server only serves metadata pointers — it never executes plugin code, never stores
-plugin bytes, and by default never records your runs. Each run is **ephemeral**
-unless you choose to save it, much like a temporary chat.
+plugin bytes, and by default never records your runs.
 
 ## Where to go next
 
