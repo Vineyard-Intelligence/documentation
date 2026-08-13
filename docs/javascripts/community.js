@@ -284,10 +284,9 @@
         '<div class="vy-pcard__head">' +
           '<div class="vy-pcard__icon">' + icon(e.icon) + "</div>" +
           '<div class="vy-pcard__title">' +
-            '<div class="vy-pcard__name">' + escapeHtml(e.name) +
-              (e.verified ? '<span class="vy-verified" title="Verified author">' + ICON["badge-check"] + "</span>" : "") +
-            "</div>" +
-            '<div class="vy-pcard__author">by ' + escapeHtml(e.author) + "</div>" +
+            '<div class="vy-pcard__name">' + escapeHtml(e.name) + "</div>" +
+            '<div class="vy-pcard__author">by ' + escapeHtml(e.author) +
+              (e.verified ? ' <span class="vy-verified" title="Verified author">' + ICON["badge-check"] + "</span>" : "") + "</div>" +
           "</div>" +
         "</div>" +
         '<p class="vy-pcard__desc">' + escapeHtml(e.description || "") + "</p>" +
@@ -462,10 +461,9 @@
       '<div class="vy-drawer__head">' +
         '<div class="vy-drawer__icon">' + icon(e.icon) + "</div>" +
         "<div>" +
-          "<h2>" + escapeHtml(e.name) +
-            (e.verified ? ' <span class="vy-verified" title="Verified author">' + ICON["badge-check"] + "</span>" : "") +
-          "</h2>" +
+          "<h2>" + escapeHtml(e.name) + "</h2>" +
           '<div class="vy-drawer__author">by ' + escapeHtml(e.author) +
+            (e.verified ? ' <span class="vy-verified" title="Verified author">' + ICON["badge-check"] + "</span>" : "") +
             ' &middot; ' + (e.type === "typepack" ? "Type Pack" : e.type === "skillpack" ? "Skill Pack" : "Plugin Pack") + "</div>" +
         "</div>" +
       "</div>" +
