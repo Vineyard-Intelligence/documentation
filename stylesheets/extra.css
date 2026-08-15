@@ -119,8 +119,26 @@ body:has(#vy-skyline) .md-main { position: relative; z-index: 1; }
    at exactly the moment someone is trying to leave the page. */
 body:has(#vy-skyline) .md-footer { position: relative; z-index: 1; }
 
+/* A soft scrim between the skyline and the words.
+   The brightest part of the image — the lit windows of the near towers — sits exactly where the
+   centred lede paragraph does, and text-shadow alone was not enough: every glyph had a different
+   backdrop, which is the specific thing that makes a line tiring to read rather than merely
+   low-contrast. Darkest at the top centre, gone by the card row, so the skyline is still the
+   background and not a wash.
+
+   `z-index: -1` inside .vy-home's own stacking context, so it lands above the canvas (z 0) and
+   below this block's text — one pseudo-element, no extra markup. */
+.vy-home::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse 68% 52% at 50% 20%, rgba(1, 3, 10, .86), rgba(1, 3, 10, .45) 55%, transparent 78%);
+}
+
 .vy-home {
-  max-width: 56rem;
+  max-width: 58rem;
   margin: 0 auto;
   padding: 4rem 0 5rem;
   text-align: center;
@@ -134,13 +152,87 @@ body:has(#vy-skyline) .md-footer { position: relative; z-index: 1; }
   margin: 0 0 .8rem;
   text-shadow: 0 2px 24px rgba(1, 4, 5, .9);
 }
-.vy-home > p {
-  color: rgba(255, 255, 255, .82);
-  font-size: .95rem;
-  margin: 0 auto 2.6rem;
-  max-width: 30rem;
+/* The one-line promise under the title.
+   `h1 + p` — the paragraph IMMEDIATELY after the title, and nothing else. The first version of
+   this was `> p:not(.vy-home__lede)`, which also caught the paragraph holding the two closing
+   buttons: it inherited `max-width: 32rem`, so the pair no longer fitted on one 640px line and
+   the second button wrapped underneath. A rule that describes a POSITION beats one that lists
+   the things it is not. */
+.vy-home > h1 + p {
+  color: rgba(255, 255, 255, .92);
+  font-size: 1.15rem;
+  font-weight: 500;
+  margin: 0 auto .9rem;
+  max-width: 32rem;
   text-shadow: 0 1px 12px rgba(1, 4, 5, .9);
 }
+/* What the product actually is, for the reader who does not know yet. Narrower and quieter than
+   the line above it — the title states the promise, this states the scope. */
+.vy-home .vy-home__lede {
+  color: rgba(255, 255, 255, .74);
+  font-size: .88rem;
+  line-height: 1.7;
+  margin: 0 auto 3rem;
+  max-width: 36rem;
+  text-shadow: 0 1px 12px rgba(1, 4, 5, .9);
+}
+.vy-home .vy-home__lede strong { color: rgba(255, 255, 255, .95); }
+
+/* Section headings between the card blocks. Small and lettered rather than large, so they label
+   the groups without competing with the title. */
+.vy-home h2 {
+  color: rgba(255, 255, 255, .78);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  margin: 2.6rem 0 1rem;
+  border: 0;
+  text-shadow: 0 1px 3px rgba(1, 4, 5, 1), 0 1px 14px rgba(1, 4, 5, .95);
+}
+.vy-home h2:first-of-type { margin-top: 0; }
+
+/* The secondary row: deeper links into the guide, as a two-column list rather than more cards.
+   Cards for these would give four more boxes equal in weight to "Start here", and the point of
+   this row is that it is subordinate to it. */
+/* Its own surface, for the same reason the cards have one: this row sits lower down the page
+   where the scrim has faded and the near towers are at their brightest, and four lines of small
+   grey text over lit windows is not readable at any weight. */
+.vy-home .vy-linkrow {
+  background: rgba(12, 8, 26, .62);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(177, 151, 252, .2);
+  border-radius: .8rem;
+  padding: .4rem 1.4rem;
+}
+/* Two columns, not three: four items across three tracks leaves a 3 + 1 orphan, which reads as a
+   layout that ran out rather than a set of four. */
+.vy-home .vy-linkrow ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+  gap: 0 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+.vy-home .vy-linkrow li {
+  margin: 0;
+  padding: .7rem 0;
+  font-size: .82rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, .72);
+  border-bottom: 1px solid rgba(177, 151, 252, .14);
+}
+/* The last row of the grid has nothing under it, so its rules would float. */
+.vy-home .vy-linkrow li:nth-last-child(-n + 2) { border-bottom: 0; }
+.vy-home .vy-linkrow li strong a { color: #fff; text-decoration: none; }
+.vy-home .vy-linkrow li strong a:hover { color: var(--vy-300, #c4b5fd); }
+.vy-home .vy-linkrow .twemoji,
+.vy-home .vy-linkrow svg { width: .95rem; height: .95rem; vertical-align: -.15em; fill: var(--vy-300, #c4b5fd); }
+
+/* The two closing buttons need room between them and the row above. */
+.vy-home .md-button { margin: 2.2rem .3rem 0; }
 .vy-home .md-button {
   border-radius: .55rem;
   border-color: rgba(255, 255, 255, .35);
