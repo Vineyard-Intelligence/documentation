@@ -81,7 +81,6 @@
     search: P + '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>' + E,
     x: P + '<path d="M18 6 6 18M6 6l12 12"/>' + E,
     alert: P + '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/>' + E,
-    download: P + '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/>' + E,
     package: P + '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="m7.5 4.27 9 5.15"/>' + E,
     "git-branch": P + '<line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>' + E,
     inbox: P + '<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>' + E,
@@ -449,13 +448,11 @@
 
     if (loading) body += '<p class="vy-loading" style="font-size:.85rem;color:var(--vy-text-muted);margin:.5rem 0 0">Loading details…</p>';
 
-    var installNote =
-      e.type === "typepack"
-        ? "Activate this Type Pack from inside a Vineyard project."
-        : e.type === "skillpack"
-        ? "Install this Skill Pack from inside a Vineyard project — the agent consults it as a playbook; its required Plugin Packs are offered alongside."
-        : "Install runs in the Vineyard app — scopes are shown again for approval before activation.";
-
+    // NO install button here, deliberately. This site is a read-only browser — installing happens
+    // inside the app, and nothing on this page can start it. The button that used to sit at the
+    // bottom of this drawer had no click handler at all (wireDrawer binds only .vy-drawer__close
+    // and [data-copy]), so it was a control that looked like the primary action of the page and
+    // did nothing when pressed. A dead primary button is worse than no button.
     return (
       '<button class="vy-drawer__close" aria-label="Close">' + ICON.x + "</button>" +
       '<div class="vy-drawer__head">' +
@@ -469,10 +466,7 @@
       "</div>" +
       '<p class="vy-drawer__desc">' + escapeHtml(e.description || "") + "</p>" +
       body +
-      "<h4>Details</h4><dl class=\"vy-kv\">" + rows.join("") + "</dl>" +
-      '<button class="vy-drawer__install" type="button">' + ICON.download + " " +
-        (e.type === "typepack" ? "Activate Type Pack" : e.type === "skillpack" ? "Install Skill Pack" : "Install Plugin Pack") + "</button>" +
-      '<p class="vy-drawer__note">' + escapeHtml(installNote) + "</p>"
+      "<h4>Details</h4><dl class=\"vy-kv\">" + rows.join("") + "</dl>"
     );
   };
 
