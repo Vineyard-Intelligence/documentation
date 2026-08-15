@@ -33,8 +33,6 @@
   --vy-text-muted:     #5b5470;
   --vy-chip-bg:        var(--vy-100);
   --vy-chip-fg:        var(--vy-800);
-  --vy-hero-grad-1:    var(--vy-600);
-  --vy-hero-grad-2:    var(--vy-900);
 }
 
 /* ---- Material primary/accent override (dark / slate) --------------------- */
@@ -56,8 +54,6 @@
   --vy-text-muted:     #b3a9cc;
   --vy-chip-bg:        rgba(139, 92, 246, 0.16);
   --vy-chip-fg:        var(--vy-200);
-  --vy-hero-grad-1:    var(--vy-700);
-  --vy-hero-grad-2:    #1a1030;
 }
 
 /* Header tint: subtle gradient instead of flat fill */
@@ -75,56 +71,115 @@
 ::selection { background: var(--vy-300); color: var(--vy-950); }
 
 /* ============================================================================
-   Landing hero
+   Landing page
+   ==========================================================================
+
+   The hero block that used to live here is gone, and with it its gradient panel, kicker pill and
+   three-button CTA row. What replaces it is the same procedural skyline the product site paints
+   (docs/javascripts/skyline.js), so the two front doors read as one product.
+
+   Everything below is scoped by `body:has(#vy-skyline)` rather than a body class, because
+   mkdocs-material offers no per-page body class and adding one means a custom theme template for
+   what is otherwise a stylesheet change. `:has()` keys the whole treatment off the single element
+   only the home page renders — so a page that does not draw the canvas cannot accidentally
+   inherit a transparent content area.
    ========================================================================== */
-.vy-hero {
-  margin: 0 0 2.4rem;
-  padding: 3rem 2rem 3.2rem;
-  border-radius: 1rem;
-  color: #fff;
-  background:
-    radial-gradient(1200px 400px at 12% -10%, rgba(196,181,253,.35), transparent 60%),
-    linear-gradient(120deg, var(--vy-hero-grad-1), var(--vy-hero-grad-2));
-  border: 1px solid var(--vy-border-strong);
-  box-shadow: 0 24px 60px -28px rgba(76, 29, 149, .65);
+#vy-skyline {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
+  background: #010405; /* the sky itself is painted in-canvas */
 }
-.vy-hero h1 {
+
+/* The canvas is behind the content but in front of Material's own backgrounds, so those have to
+   step out of the way — otherwise the page paints an opaque sheet over the skyline and the only
+   visible symptom is "the background did nothing". */
+body:has(#vy-skyline),
+body:has(#vy-skyline) .md-main,
+body:has(#vy-skyline) .md-container,
+body:has(#vy-skyline) .md-content,
+body:has(#vy-skyline) .md-content__inner {
+  background: transparent;
+}
+
+/* Above the canvas — and it has to be the CONTENT that is lifted, not just .md-main.
+   The canvas is `position: fixed` and therefore paints above every STATIC sibling in the same
+   stacking context no matter what order they are in, so lifting .md-main alone moved the canvas
+   with it and the heading stayed underneath. The symptom was specific enough to be misleading:
+   the cards were visible and the title was not, because `backdrop-filter` on .vy-card happens to
+   create a stacking context of its own and the h1 has nothing. Measured with elementFromPoint,
+   which named CANVAS as the topmost element over the title. */
+body:has(#vy-skyline) .md-main { position: relative; z-index: 1; }
+.vy-home { position: relative; z-index: 1; }
+
+/* The header keeps a solid fill: translucent over a moving skyline makes the nav text unreadable
+   at exactly the moment someone is trying to leave the page. */
+body:has(#vy-skyline) .md-footer { position: relative; z-index: 1; }
+
+.vy-home {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 4rem 0 5rem;
+  text-align: center;
+}
+.vy-home h1 {
   color: #fff;
   font-weight: 800;
-  font-size: 2.4rem;
+  font-size: 2.6rem;
   line-height: 1.1;
-  margin: 0 0 .6rem;
   letter-spacing: -0.02em;
+  margin: 0 0 .8rem;
+  text-shadow: 0 2px 24px rgba(1, 4, 5, .9);
 }
-.vy-hero p { color: rgba(255,255,255,.86); font-size: .92rem; max-width: 46rem; margin: .2rem 0 0; }
-.vy-hero .vy-kicker {
-  display: inline-block;
-  font-size: .62rem;
-  font-weight: 700;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  padding: .3rem .6rem;
-  border-radius: 999px;
-  background: rgba(255,255,255,.16);
-  border: 1px solid rgba(255,255,255,.3);
-  margin-bottom: 1rem;
+.vy-home > p {
+  color: rgba(255, 255, 255, .82);
+  font-size: .95rem;
+  margin: 0 auto 2.6rem;
+  max-width: 30rem;
+  text-shadow: 0 1px 12px rgba(1, 4, 5, .9);
 }
-.vy-hero-cta { margin-top: 1.6rem; display: flex; gap: .7rem; flex-wrap: wrap; }
-.vy-hero-cta .md-button {
+.vy-home .md-button {
   border-radius: .55rem;
+  border-color: rgba(255, 255, 255, .35);
+  color: #fff;
 }
-.vy-hero-cta .md-button--primary {
-  background: #fff;
-  color: var(--vy-800);
-  border-color: #fff;
+.vy-home .md-button--primary {
+  background: var(--md-primary-fg-color);
+  border-color: var(--md-primary-fg-color);
+  color: #fff;
 }
-.vy-hero-cta .md-button--primary:hover { background: var(--vy-100); border-color: var(--vy-100); color: var(--vy-900); }
+
+/* Cards sit on the skyline rather than on the page, so they carry their own translucent surface.
+   `backdrop-filter` is what keeps the text legible over the brightest part of the image without
+   making the panel opaque enough to hide it. */
+body:has(#vy-skyline) .vy-card {
+  background: rgba(12, 8, 26, .62);
+  backdrop-filter: blur(6px);
+  border-color: rgba(177, 151, 252, .28);
+  text-align: left;
+}
+body:has(#vy-skyline) .vy-card:hover {
+  border-color: rgba(177, 151, 252, .6);
+  background: rgba(18, 12, 36, .72);
+}
+body:has(#vy-skyline) .vy-card h3 { color: #fff; }
+body:has(#vy-skyline) .vy-card,
+body:has(#vy-skyline) .vy-card p { color: rgba(255, 255, 255, .78); }
+body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
+
+@media (max-width: 44rem) {
+  .vy-home { padding: 2.4rem 0 3rem; }
+  .vy-home h1 { font-size: 1.9rem; }
+}
 
 /* Feature card grid (markdown via .grid.cards already styled by Material;
    add a lighter custom variant) */
 .vy-cardgrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
   gap: 1rem;
   margin: 1.2rem 0 2rem;
 }
