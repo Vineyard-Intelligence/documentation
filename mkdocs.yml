@@ -64,6 +64,9 @@ extra_css:
 
 extra_javascript:
   - javascripts/community.js
+  # Home-page background. Global because extra_javascript has no per-page form; the script itself
+  # returns immediately when #vy-skyline is absent, which it is on every page but one.
+  - javascripts/skyline.js
 
 extra:
   generator: false
