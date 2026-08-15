@@ -363,16 +363,9 @@
   border-radius: .4rem; padding: .15rem .4rem; cursor: pointer; font-size: .68rem;
   color: var(--md-default-fg-color); margin-left: .4rem;
 }
-.vy-drawer__install {
-  display: inline-flex; align-items: center; gap: .35rem; justify-content: center;
-  width: auto; margin-top: 1.1rem;
-  padding: .4rem .8rem; border-radius: .45rem;
-  background: var(--md-primary-fg-color); color: #fff; font-weight: 600; font-size: .76rem;
-  border: 0; cursor: pointer; text-decoration: none;
-}
-.vy-drawer__install svg { width: .95rem; height: .95rem; }
-.vy-drawer__install:hover { background: var(--md-primary-fg-color--dark); }
-.vy-drawer__note { font-size: .7rem; color: var(--vy-text-muted); text-align: left; margin-top: .5rem; }
+/* .vy-drawer__install / .vy-drawer__note were here and are gone with the button they styled —
+   see the note above the drawer template in community.js. The drawer's own bottom padding
+   (.vy-drawer, 3rem) already holds the spacing they used to contribute. */
 
 @media (max-width: 44rem) {
   .vy-community__toolbar { top: 0; }
