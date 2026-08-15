@@ -11,6 +11,28 @@ user installs your pack, the Vineyard app fetches it from your repo at a pinned 
 server never executes plugin code, never stores plugin bytes, and — by default — never records
 the runs a plugin produces.
 
+```mermaid
+flowchart LR
+    A[Author repo on GitHub] -->|PR: one metadata entry| B[(Registry<br/>metadata only)]
+    B -->|fetch reference| C[Marketplace<br/>docs.vineyard.run]
+    C -->|install reference| D[Vineyard app]
+    D -->|fetch pack @ pinned ref| A
+    D -->|run on the client| E[Your graph]
+    style B fill:#ede9fe,stroke:#7c3aed,color:#4c1d95
+    style D fill:#ede9fe,stroke:#7c3aed,color:#4c1d95
+```
+
+## Key principles
+
+- **Client-side execution** — the server never executes plugin code.
+- **Ephemeral by default** — a run is not written to the database unless you opt in to save.
+- **Least authority** — untrusted plugin JS runs in a Web Worker sandbox with only the
+  scopes you approve, reached through a host bridge that holds a one-time, project-scoped,
+  write-capped token — never your account token.
+- **Distribution = GitHub + a metadata-only registry** — pointers, never code.
+
+See [Architecture &amp; principles](architecture.md) for the full design.
+
 ## The three content types
 
 Every Vineyard pack carries a `content_type` discriminator, and identifiers are reverse-DNS:
