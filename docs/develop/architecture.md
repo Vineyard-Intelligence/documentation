@@ -53,7 +53,7 @@ See [SDK](sdk.md) for the `ctx` interface and [lifecycle](lifecycle.md) for how 
 - **Metadata-only registry** with GitHub-hosted bundles fetched via jsDelivr, pinned to an immutable commit SHA.
 - **Staged graph writes + analyst review** — captured node/edge changes, applied only on approval — plus the egress allowlist and server-side permission enforcement.
 - **Client-side task execution, one dedicated Web Worker per run.**
-- **Keychain-backed secret config** — `config.secret:true` values injected from the desktop keychain (BYOK, desktop only).
+- **Keychain-backed secret config** — `config.secret:true` values stored in the desktop keychain and read by the declaring plugin (BYOK; the browser keeps them for the session only).
 - **The six Chaos reference plugins** and the [Infrastructure](../guide/typepacks.md) / [Threat](../guide/typepacks.md) Type Packs.
 
 ### Deferred (designed, not built)

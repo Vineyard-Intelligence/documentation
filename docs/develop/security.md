@@ -90,10 +90,10 @@ The server is unimpressed by who is calling. DRF authenticates with `tenant.auth
 
 API keys and secrets must **never** land in a task record or in AI-conversation history.
 
-1. **Secrets are never readable by the plugin.** A `config` value with `secret: true` is injected at the network boundary by the host (desktop keychain via `safeStorage` / keyring). There is no "read my secret config" call, so a plugin cannot reflect a key back into its own output.
-2. **Secrets are not params.** A `params` key that names a credential is an authoring error: the run form's values land in `Task.input`. Declare credentials as `scopes.config` with `secret: true` instead. On web, secret config is unsupported and the user is guided to the desktop plugin.
+1. **A secret goes to the plugin that declared it — that is the design.** A `config` value with `secret: true` reaches the plugin as `ctx.config[key]` at run time, deliberately (SPEC §6.1): a plugin whose job is calling an API with the analyst's key needs the key, and there is no host-side seam that could send it for them. There is no "network boundary" injection anywhere in the code. What `secret: true` actually buys is **storage and display**: the install/run form renders it as a password field, and the value lives in the desktop keychain (Electron `safeStorage`, encrypted at rest, this machine only) or, in the browser, in `sessionStorage` for that tab. It is protection from the sandbox (a Web Worker has no storage of any kind, and `configFor` hands a pack only the keys its OWN manifest declared) and, on desktop, from another user of the same machine — not from the plugin holding it. See `frontend/…/plugins/plugin-config.ts`.
+2. **Secrets are not params.** A `params` key that names a credential is an authoring error: the run form's values land in `Task.input`. Declare credentials as `scopes.config` with `secret: true` instead — those are never written to a task record or an AI conversation.
 3. **Type Packs may not declare secret property types.** A `secret` / `credential` property type is a **hard schema rejection** (see [Type Packs](../guide/typepacks.md)).
-4. **BYOK on web is unsupported by design** — bring-your-own-key routes to the desktop plugin.
+4. **BYOK on web works, but only for the session.** The browser store is `sessionStorage`, so a key typed there is gone when the tab closes and has to be re-entered; the desktop app is what persists it. The form says which of the two is in effect, because "I typed my key and it vanished" is otherwise indistinguishable from a bug.
 
 ## What's shipped
 
