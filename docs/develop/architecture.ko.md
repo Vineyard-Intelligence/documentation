@@ -53,7 +53,7 @@ flowchart LR
 - GitHub 호스팅 번들을 jsDelivr로(불변 커밋 SHA 고정) 가져오는 **메타데이터 전용 레지스트리**.
 - **스테이징된 그래프 쓰기 + 분석가 검토** — 캡처된 노드/엣지 변경을 승인 후에만 적용 — 그리고 이그레스 허용목록과 서버 측 권한 강제.
 - **클라이언트 측 작업 실행, 실행마다 전용 Web Worker 1개.**
-- **키체인 기반 시크릿 설정** — 데스크톱 키체인에서 주입되는 `config.secret:true` 값 (BYOK, 데스크톱 전용).
+- **키체인 기반 시크릿 설정** — 데스크톱 키체인에 저장되어 선언한 플러그인이 읽는 `config.secret:true` 값 (BYOK, 브라우저는 세션 동안만 보관).
 - **6개의 Chaos 참조 플러그인**, [Infrastructure](../guide/typepacks.md) / [Threat](../guide/typepacks.md) Type Pack.
 
 ### 연기됨 (설계됨, 빌드되지 않음)

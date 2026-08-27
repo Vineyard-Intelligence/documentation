@@ -207,7 +207,7 @@ await ctx.net.fetch(url, { headers: { Authorization: `Bearer ${ctx.config.api_ke
 
 ### configValue (scopes.config items)
 
-`$defs.configValue`. `type: object`, `additionalProperties: false`. **필수:** `key`, `type`. config 값은 런타임에만 주입됩니다. `secret: true` 값은 키체인(데스크톱)에 저장되며, 브라우저에 반환되지 않고 기록되지도 않습니다.
+`$defs.configValue`. `type: object`, `additionalProperties: false`. **필수:** `key`, `type`. config 값은 분석가로부터 수집되어 선언한 플러그인이 `ctx.config`로 읽습니다. `secret: true` 값은 폼에서 마스킹되고 키체인(데스크톱) 또는 `sessionStorage`(브라우저)에 저장되며, 작업이나 대화에는 기록되지 않습니다.
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
@@ -215,7 +215,7 @@ await ctx.net.fetch(url, { headers: { Authorization: `Bearer ${ctx.config.api_ke
 | `label` | string | no | — | — | 설치 폼의 표시 라벨. |
 | `type` | string | yes | `string`, `number`, `boolean`, `url`, `enum` | — | 값 유형. |
 | `enum` | array | no | items: string | — | `type: enum`일 때 허용된 선택지. |
-| `secret` | boolean | no | — | `false` | BYOK 방식 비밀. web에서는 권장되지 않음 → 데스크톱으로 안내. 어떤 레코드에도 기록되지 않음. |
+| `secret` | boolean | no | — | `false` | BYOK 방식 비밀: 폼에서 마스킹, 데스크톱은 키체인에 암호화 저장(브라우저는 세션 한정). 어떤 레코드에도 기록되지 않음. |
 | `scope` | string | no | `plugin`, `project`, `user` | `user` | 값이 저장/공유되는 위치. |
 | `optional` | boolean | no | — | `false` | 사용자가 비워둘 수 있는지 여부. |
 

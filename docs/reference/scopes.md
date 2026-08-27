@@ -135,7 +135,7 @@ Each entry is a `ConfigValue`. Declaring any `config` entry makes `ctx.config` p
 | `optional` | `boolean` (optional) | If false/absent, the value is required at install |
 
 !!! danger "secret semantics"
-    `secret: true` means **keychain/desktop only**. The value is injected at the network boundary by the host (desktop keychain via `safeStorage`/keyring); it is **never returned to the browser**, **never recorded** in any task record or AI conversation, and the plugin gets no "read my secret config" call — it cannot reflect a key into its own output. Secret values are therefore **excluded from `ctx.config`** on web; a web install with secret config guides the user to the desktop plugin. BYOK in the browser is unsupported by design. See [security](../develop/security.md) and SPEC §6.
+    `secret: true` is about **storage and display, not about hiding the value from the plugin**. The value IS delivered to the declaring plugin as `ctx.config[key]` (SPEC §6.1) — it has to be, since the plugin is what calls the API with it — and `configFor` gives a pack only the keys its own manifest declared. What the flag changes: the form field is masked, and the value is stored in the desktop keychain (`safeStorage`, encrypted at rest, this machine only) or, in the browser, in `sessionStorage` for that tab, so a browser-entered key does not outlive the session. It is **never recorded** in a task record or an AI conversation — that is enforced by keeping credentials out of `params`, not by withholding them from `ctx.config`. See [security](../develop/security.md) and SPEC §6.
 
 ## Not scopes
 
