@@ -87,7 +87,7 @@ RDAP IP의 실제 `io`입니다: `infrastructure.ip_address` 노드를 받아 �
 ```
 
 !!! danger "params에 시크릿 금지"
-    `params`는 시크릿(API 키, 토큰, 비밀번호 등)을 포함해서는 **안 됩니다** — 제출된 값은 `Task.input`에 기록됩니다. 자격 증명은 대신 `"secret": true`와 함께 `scopes.config` 항목으로 선언하세요 — 이 값들은 런타임에만 주입되며 어떤 레코드에도 기록되지 않습니다. [Secret handling](security.md)을 참조하세요.
+    `params`는 시크릿(API 키, 토큰, 비밀번호 등)을 포함해서는 **안 됩니다** — 제출된 값은 `Task.input`에 기록됩니다. 자격 증명은 대신 `"secret": true`와 함께 `scopes.config` 항목으로 선언하세요 — 이 값들은 플러그인 자체 설정 폼에서 수집되며 어떤 레코드에도 기록되지 않습니다. [Secret handling](security.md)을 참조하세요.
 
 ## scopes — 권한 표면
 
@@ -102,7 +102,7 @@ RDAP IP의 실제 `io`입니다: `infrastructure.ip_address` 노드를 받아 �
 }
 ```
 
-여기서 반복할 가치가 있는 두 가지 규칙: **web-proxy** 플러그인의 경우 `network`는 반드시 `platforms.web.proxy_endpoint`와 동일한 정확히 하나의 항목이어야 하고, `sandbox-js` 플러그인의 `network` 항목은 대신 호스트의 이그레스 허용 목록으로 검사됩니다([security](security.md) 참조). `"secret": true`인 `config` 항목은 데스크톱/키체인 전용이며 브라우저에 반환되지 않습니다. 이 실행의 `params` 읽기, `progress` 보고, `log` 쓰기, 협력적 취소 `signal`과 같은 것들은 **스코프가 아닙니다** — 항상 사용 가능합니다.
+여기서 반복할 가치가 있는 두 가지 규칙: **web-proxy** 플러그인의 경우 `network`는 반드시 `platforms.web.proxy_endpoint`와 동일한 정확히 하나의 항목이어야 하고, `sandbox-js` 플러그인의 `network` 항목은 대신 호스트의 이그레스 허용 목록으로 검사됩니다([security](security.md) 참조). `"secret": true`인 `config` 항목은 폼에서 마스킹되고 데스크톱 키체인(브라우저에서는 세션 동안 `sessionStorage`)에 저장됩니다. 값 자체는 그것을 선언한 플러그인에게 전달되며, 그것이 선언하는 이유입니다. 이 실행의 `params` 읽기, `progress` 보고, `log` 쓰기, 협력적 취소 `signal`과 같은 것들은 **스코프가 아닙니다** — 항상 사용 가능합니다.
 
 전체 스코프 어휘, 스코프 패밀리, 강제 모델은 [scopes reference](../reference/scopes.md)를 참조하세요.
 

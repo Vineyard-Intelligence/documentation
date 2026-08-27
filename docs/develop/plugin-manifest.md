@@ -87,7 +87,7 @@ This is RDAP IP's `io`: it takes an `infrastructure.ip_address` node and adds th
 ```
 
 !!! danger "No secrets in params"
-    `params` MUST NOT carry secrets (API keys, tokens, passwords, and similar) — a submitted value lands in `Task.input`. Declare credentials as a `scopes.config` entry with `"secret": true` instead — those are injected at runtime only and never written to any record. See [Secret handling](security.md).
+    `params` MUST NOT carry secrets (API keys, tokens, passwords, and similar) — a submitted value lands in `Task.input`. Declare credentials as a `scopes.config` entry with `"secret": true` instead — those are collected in the plugin's own settings form and never written to any record. See [Secret handling](security.md).
 
 ## scopes — the authority surface
 
@@ -102,7 +102,7 @@ This is RDAP IP's `io`: it takes an `infrastructure.ip_address` node and adds th
 }
 ```
 
-Two rules worth repeating here: for a **web-proxy** plugin, `network` must be exactly one entry equal to `platforms.web.proxy_endpoint`; a `sandbox-js` plugin's `network` entries are checked instead against the host's egress allowlist (see [security](security.md)). `config` entries with `"secret": true` are desktop/keychain-only and never returned to the browser. Things like reading this run's `params`, reporting `progress`, writing to `log`, and the cooperative cancel `signal` are **not scopes** — they are always available.
+Two rules worth repeating here: for a **web-proxy** plugin, `network` must be exactly one entry equal to `platforms.web.proxy_endpoint`; a `sandbox-js` plugin's `network` entries are checked instead against the host's egress allowlist (see [security](security.md)). `config` entries with `"secret": true` are masked in the form and stored in the desktop keychain (or, in the browser, in `sessionStorage` for the session); the value itself is handed to the plugin that declared it, which is the point of declaring it. Things like reading this run's `params`, reporting `progress`, writing to `log`, and the cooperative cancel `signal` are **not scopes** — they are always available.
 
 For the full scope vocabulary, the scope families, and the enforcement model, see the [scopes reference](../reference/scopes.md).
 

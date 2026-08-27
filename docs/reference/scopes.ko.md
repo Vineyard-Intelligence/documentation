@@ -133,7 +133,7 @@ const who = await ctx.service('telegram', 'resolve', {
 | `optional` | `boolean` (선택 사항) | false/없으면 설치 시 값이 필수 |
 
 !!! danger "secret semantics"
-    `secret: true`는 **키체인/데스크톱 전용**을 의미합니다. 값은 호스트(`safeStorage`/keyring을 통한 데스크톱 키체인)에 의해 네트워크 경계에서 주입됩니다. **브라우저에 반환되지 않으며**, 어떤 task 기록이나 AI 대화에도 **기록되지 않으며**, plugin은 "내 비밀 config 읽기" 호출을 받지 않습니다 — 키를 자신의 출력에 반영할 수 없습니다. 따라서 비밀 값은 web에서 `ctx.config`에서 **제외됩니다**. 비밀 config가 있는 web 설치는 사용자를 데스크톱 plugin으로 안내합니다. 브라우저에서의 BYOK는 설계상 지원되지 않습니다. [security](../develop/security.md) 및 SPEC §6을 참조하세요.
+    `secret: true`는 **값을 plugin으로부터 숨기는 것이 아니라 저장과 표시**에 관한 것입니다. 값은 선언한 plugin에게 `ctx.config[key]`로 실제 전달됩니다(SPEC §6.1) — API를 호출하는 주체가 plugin이므로 그래야 하며, `configFor`는 팩 자신의 매니페스트가 선언한 키만 넘겨줍니다. 플래그가 바꾸는 것: 폼 필드가 마스킹되고, 값이 데스크톱 키체인(`safeStorage`, 저장 시 암호화, 해당 머신 한정) 또는 브라우저의 해당 탭 `sessionStorage`에 저장되어 브라우저에서 입력한 키는 세션을 넘기지 못합니다. task 기록이나 AI 대화에는 **절대 기록되지 않으며**, 이는 `ctx.config`에서 값을 빼서가 아니라 자격 증명을 `params`에 두지 않음으로써 보장됩니다. [security](../develop/security.md) 및 SPEC §6을 참조하세요.
 
 ## Not scopes
 

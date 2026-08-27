@@ -207,7 +207,7 @@ Re-measure any of this with `frontend/scripts/measure-net-headers.mjs`.
 
 ### configValue (scopes.config items)
 
-`$defs.configValue`. `type: object`, `additionalProperties: false`. **Required:** `key`, `type`. Config values are injected at runtime only; `secret: true` values live in the keychain (desktop), are never returned to the browser, and are never recorded.
+`$defs.configValue`. `type: object`, `additionalProperties: false`. **Required:** `key`, `type`. Config values are collected from the analyst and read by the declaring plugin as `ctx.config`; `secret: true` values are masked in the form and stored in the keychain (desktop) or `sessionStorage` (browser), and are never recorded in a task or conversation.
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
@@ -215,7 +215,7 @@ Re-measure any of this with `frontend/scripts/measure-net-headers.mjs`.
 | `label` | string | no | — | — | Display label in the install form. |
 | `type` | string | yes | `string`, `number`, `boolean`, `url`, `enum` | — | Value type. |
 | `enum` | array | no | items: string | — | Allowed choices when `type: enum`. |
-| `secret` | boolean | no | — | `false` | BYOK-style secret. On web, discouraged → guide to desktop. Never written to any record. |
+| `secret` | boolean | no | — | `false` | BYOK-style secret: masked field, keychain at rest on desktop (session-only in the browser). Never written to any record. |
 | `scope` | string | no | `plugin`, `project`, `user` | `user` | Where the value is stored/shared. |
 | `optional` | boolean | no | — | `false` | Whether the user may leave it blank. |
 
