@@ -11,7 +11,7 @@ A plugin is **third-party code the installing user chose to run**. Registry revi
 Three controls, listed in the order in which they carry weight:
 
 1. **Staged writes + analyst review** — a plugin's graph writes never hit the API directly. They are captured and applied only after a person approves them. This is the real boundary.
-2. **The Web Worker sandbox** — the untrusted code has no DOM, no storage, no token and no ambient network; only the declared scopes reach it.
+2. **The Web Worker sandbox** — the untrusted code has no DOM, no storage and no token; only the declared scopes reach it. It does **not** close egress (see the warning under *Egress* below), so treat it as isolation from the app's state rather than as a network boundary.
 3. **The egress allowlist** — every outbound request is checked against the manifest's declared endpoints, on the host side, before it is made.
 
 The whole authority surface a plugin can ask for is five manifest keys: `graph` verbs, `network`, `web_probe` (desktop only), `services`, and `config`. `services` is different in kind from `network` — it names a Vineyard-operated service (`rdap`, `telegram`) the plugin calls through `ctx.service` by name, never by URL, so the host fixes the destination and attaches the analyst's own credential. There is nothing else to grant.
@@ -37,7 +37,8 @@ Untrusted `main.js` runs in a **dedicated module Web Worker**, not on the page. 
 - no `DOM` and no `window`,
 - no `localStorage` / `sessionStorage`,
 - no account token, cookie, or session of any kind,
-- no `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource` or `importScripts` — the bootstrap deletes them.
+- no `XMLHttpRequest`, `WebSocket` or `EventSource` — the bootstrap deletes those, and they are own properties of the worker global, so the deletion takes.
+- **`fetch` is NOT removed**, though the bootstrap tries. It is inherited from `WorkerGlobalScope.prototype`, so `self.fetch = undefined` installs a shadow and leaves the original callable. Nor would deleting it hold: `new Worker` is present, and a nested worker starts with an unstripped global. (`importScripts` is already absent in a module worker; stripping it is a no-op.)
 
 Everything with real authority — staging, the REST helper, progress and notifications — lives on the main thread, in the **HostBridge**. The worker reaches it through a [Comlink](sdk.md) proxy whose shape is **exactly the granted scopes**. A `ctx` member is *absent* unless its scope was granted, so there is nothing to bypass: a plugin with no graph scope literally has `ctx.graph === undefined`. Desktop runs the same plugin through the same worker, inside the shell's renderer.
 
@@ -55,7 +56,20 @@ export default definePlugin({
 
 ## Egress is allowlisted on the host side
 
-The worker cannot open a connection at all — it holds no request primitive. Every outbound call is `ctx.net.fetch`, which crosses the Comlink boundary to the HostBridge and is checked *there*, before any request is made.
+Every outbound call a plugin is *meant* to make is `ctx.net.fetch`, which crosses the Comlink boundary to the HostBridge and is checked *there*, before any request is made.
+
+!!! danger "The allowlist governs `ctx.net.fetch`, not the worker"
+    This page used to say "the worker cannot open a connection at all — it holds no request
+    primitive". That was false, and measured to be false on 2026-09-02 against the production
+    origin: `Object.getPrototypeOf(self).fetch` survives the bootstrap and returns `200`, and a
+    nested `new Worker(URL.createObjectURL(...))` gets an unstripped global regardless. A plugin
+    that declines to use `ctx.net.fetch` is not stopped by anything on this page.
+
+    What holds the line today is the **supply chain**, not the sandbox: a pack must be pinned to a
+    commit, digest-checked and on the approved list before its code runs, and `script-src` admits
+    executable pack code only from the registry's org path. Closing worker egress properly means
+    `connect-src 'none'` on the worker asset's own response; both builds currently ship
+    `connect-src 'self' https: http: ws: wss:`, so that is **not** done.
 
 The check is `endpointCovers` in `plugins/net-allowlist.ts`, and its shape is the control:
 
@@ -66,7 +80,11 @@ The check is `endpointCovers` in `plugins/net-allowlist.ts`, and its shape is th
 | The method must be in the scope's `methods` list | a `GET`-only endpoint cannot be `POST`ed to |
 | A URL that will not parse on either side **denies** | this is an allowlist: "I could not tell" is not "yes" |
 
-The forwarded request is also sanitized: `SafeRequestInit` carries no credentials, the bridge forces `credentials: "omit"` and strips `Authorization` / `Cookie` headers, and the run's `AbortSignal` cancels anything still in flight. The plugin cannot smuggle the user's session onto an allowed endpoint.
+The forwarded request carries no credential of its own: `SafeRequestInit` has no credentials field, the bridge forces `credentials: "omit"` so the analyst's cookie jar never rides along, and the run's `AbortSignal` cancels anything still in flight.
+
+The bridge does **not** strip `Authorization` or `Cookie`. This page claimed it did, long after the strip was deliberately removed: `Cookie` is a forbidden header name a script cannot set anyway, and dropping `Authorization` only pushed packs onto custom headers — which survive a cross-origin redirect, where `Authorization` does not. Your header reaches the endpoint as written.
+
+One consequence to know before you send one: the main thread's `fetch` is patched for token renewal, and on a request to Vineyard's own API it **replaces** an existing `Authorization: Token …` with the analyst's live token. Aim a request at `BACKEND_URL` and it is authenticated as the analyst, whatever you put in that header.
 
 !!! warning "On the web, this allowlist is the whole boundary"
     `endpointCovers` on the main thread is what stands between a plugin and an arbitrary host — there is no dedicated-origin CSP behind it yet. This is also why a web plugin's `network` scope **must be exactly one entry equal to `platforms.web.proxy_endpoint`** — there is no fan-out to enforce (see [scopes](../reference/scopes.md) and [plugin manifest](plugin-manifest.md)).
