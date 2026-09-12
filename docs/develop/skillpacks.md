@@ -85,11 +85,9 @@ tool output:
   description); section bodies are capped (~8,000 chars) and stripped of control characters except
   newlines; starters are capped hard (~1,200 chars — a starter is a paragraph, not a document).
 - **A per-turn load budget bounds context.** Each turn may read at most 12 (skill, section)
-  documents and ~40,000 chars total. A repeat is answered from the ledger without re-sending the
-  body — a model that follows every pointer cannot spend the whole turn reading documentation.
-- **The audit trail records what was consulted.** Which skill **revision** (pinned commit) informed
-  a conclusion is reported to the project's append-only audit log — identifier, section, and commit
-  SHA. Chat content never leaves the browser; only the *document consulted* is recorded.
+  documents and ~40,000 chars total. A re-read is allowed (the earlier copy may have been elided
+  from context) but is charged like any other read — a model that follows every pointer cannot
+  spend the whole turn reading documentation.
 
 ## Publishing to the registry
 
