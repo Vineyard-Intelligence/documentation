@@ -60,14 +60,6 @@ playbook into context.
     (say, the hop needs a plugin the project does not have), the agent says so and stops that branch
     rather than filling the gap from memory.
 
-## Where the evidence goes
-
-Which skill pack **revision** informed a conclusion is a chain-of-custody question: the same
-identifier points at different text after the pack is updated. Every section the agent actually reads
-during a turn is recorded — identifier, section, and the pinned commit it was served from — and
-reported to the project's append-only **audit trail**. Chat content itself never leaves the browser;
-only *which document was consulted* is recorded.
-
 ## Next / See also
 
 - [Browse & install](installing.md) — the install flow shared with plugins and Type Packs
