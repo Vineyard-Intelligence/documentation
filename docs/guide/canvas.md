@@ -28,19 +28,26 @@ Toolbar toggle buttons appear highlighted when on; menu items are checkmarked wh
 !!! note "Reset panel layout resets panels, not the graph"
     *Reset panel layout* restores the surrounding workspace panels (the canvas, side panels, etc.) to their initial split. It does **not** re-run a graph layout or move your nodes. To re-arrange nodes, pick a **Layout** instead.
 
+## Other toolbar buttons
+
+Below the view controls, the toolbar repeats the **Edit** menu's selection actions (Select all, connected neighbors, outbound, inbound (1 hop), Invert, Select isolated, Clear). It ends with **Run plugins**, whose tooltip names the scope — "Run plugins on N selected nodes", or "nothing selected" for the whole project — and **Ask the AI agent**; with nodes selected, the agent's chat opens pre-filled with a question about them.
+
 ## Top menu bar
 
 ### Project
 
 | Item | Action |
 | --- | --- |
-| **Share…** | Opens the share dialog to manage who can view and edit the project. |
-| **Members…** | Opens the project's members page to manage who has access. |
+| **Share…** | Opens the Share & permissions dialog with the project link. Only the project owner or an owner/admin of its workspace can change who can view and edit it; others see the settings read-only, and a public-link viewer sees only the link. |
+| **Members…** | Opens the project's members page. The project owner or a workspace owner/admin can invite members (View only / Can edit). An invitee gets access only after accepting the invitation, which appears on their dashboard; until then the member shows as "Invitation pending" and the invite can be cancelled. |
 | **Project settings…** | Opens the project's settings page. |
+| **Leave project…** | Shown to collaborators only. Opens the project settings page, where the **Leave** card removes you from the project. |
 | **Export graph (JSON)** | Downloads the current graph as a JSON file (see [Export graph](#export-graph-json)). |
 | **Import graph (JSON)…** | Opens a dialog to load a previously exported JSON file back into the project. |
 | **Activity log…** | Opens the project's activity log. |
 | **Add from Marketplace…** | Opens the [Marketplace](../marketplace.md) scoped to this project so you can add plugins and Type Packs. |
+
+If you opened the case only through its public link, **Members…**, **Project settings…** and **Activity log…** are disabled — they are for case members only.
 
 ### Edit
 
@@ -48,9 +55,13 @@ Toolbar toggle buttons appear highlighted when on; menu items are checkmarked wh
 | --- | --- |
 | **Select all** | Marks every node as selected. |
 | **Select connected neighbors (1 hop)** | Adds the 1-hop neighbors of the current selection to it. |
+| **Select outbound 1-hop nodes** | Adds the nodes the selection points to (follows only edges leaving a selected node). |
+| **Select inbound 1-hop nodes** | Adds the nodes that point to the selection (follows only edges entering a selected node). |
 | **Invert selection** | Selects every unselected node and deselects every selected one. |
 | **Select isolated nodes** | Selects every node with no edges. |
 | **Clear selection** | Deselects all nodes and clears the selection count. |
+
+The three 1-hop actions add to the selection, so pressing one again walks one more hop; they are disabled until something is selected.
 
 !!! note "Adding a node"
     New nodes are created from the **Types** panel — pick an active type there — not from this menu.
@@ -63,6 +74,13 @@ Toolbar toggle buttons appear highlighted when on; menu items are checkmarked wh
 | **Run plugins…** | Opens the run panel, scoped to the current selection if any nodes are selected. |
 | *(Skill packs)* | Every skill pack installed in the project is listed below a divider; picking one opens it for reading, it does not run anything (see [Skill Packs](skillpacks.md)). |
 
+## Right-click menus
+
+- **Node** — Run plugins… (on this node), Duplicate, Connect to… (see [Drawing edges](#drawing-edges)), Disconnect all (deletes every edge touching the node), Delete.
+- **Edge** — Reverse direction, Delete.
+- **Selection** — right-click empty canvas with anything selected, or a node inside a multi-item selection; the header shows the count (*Selected: N nodes, M edges*). Run plugins… and Connect to… (when nodes are selected), Delete (N), Select all, Fit view.
+- **Empty canvas** (nothing selected, headed *Nothing selected — whole project*) — Run plugins… on the whole project, Select all, Fit view.
+
 ## Layouts
 
 Applying a layout re-computes node positions and then fits the view.
@@ -70,17 +88,21 @@ Applying a layout re-computes node positions and then fits the view.
 | Layout | Description |
 | --- | --- |
 | **Concentric** | Arranges nodes in concentric rings; overlap is prevented. |
-| **Force** | Force-directed layout that pushes nodes apart and pulls connected ones together. |
+| **ForceAtlas2** | Force-directed layout (Gephi's ForceAtlas2) that pushes nodes apart and pulls connected ones together; built for link-analysis graphs. |
 | **D3 Force** | A D3-based force-directed variant. |
 | **Circular** | Places nodes evenly around a single circle. |
-| **Radial** | Spreads nodes outward from a focal node. |
 | **Grid** | Lays nodes out on a regular grid; overlap is prevented. |
 | **Hierarchical (Dagre)** | Top-down layered layout, good for directed / tree-like graphs. |
+| **Hierarchical (AntV Dagre)** | AntV's own Dagre variant — also top-down and layered, typically faster on wide graphs. |
 
 !!! tip
-    Force and D3 Force are the best starting point for an unfamiliar graph; switch to Hierarchical (Dagre) when the relationships are directional and you want clear layers.
+    ForceAtlas2 and D3 Force are the best starting point for an unfamiliar graph; switch to Hierarchical (Dagre) when the relationships are directional and you want clear layers.
 
 ## Overlays
+
+### Search
+
+The **Search entities…** field at the top-right of the canvas finds nodes by type or by any of their property values. Picking a result selects that node and centers it. While the case is still loading, an empty result means the node has not arrived yet, not that it doesn't exist.
 
 ### Grid
 
@@ -92,9 +114,13 @@ A translucent overview panel docked at the bottom-right corner. It shows the who
 
 ### Legend
 
-A translucent, minimap-style panel at the bottom-left that lists the node **types currently present** in the graph. Each entry shows a colored swatch matching the node's type color, the type's display name, and a per-type **count** of how many nodes of that type exist. Entries are sorted alphabetically by label. When the graph is empty the legend reads "No nodes."
+A translucent, minimap-style panel at the bottom-left that lists the node **types currently present** in the graph. Each entry shows a colored swatch matching the node's type color, the type's name (the raw type string if no installed pack defines it), and a per-type **count** of how many nodes of that type exist. Entries are sorted alphabetically by label. When the graph is empty the legend reads "No nodes."
 
-The legend reflects whatever Type Packs the project uses — for example, an investigation built on the [Infrastructure Type Pack](typepacks.md) might show counts for `infrastructure.ip_address`, `infrastructure.domain`, and so on, each resolved to its Type Pack-defined label and color.
+Click a row to select every node of that type, or Shift-click to add them to the current selection. Hovering (or focusing) a row dims every other type on the canvas.
+
+Below the types, an **Evidence** key lists the edge confidence grades present in the case (assessed, asserted, recorded, circumstantial, contested, unassessed), strongest first, each drawn with the same line style (dash, width, opacity) the canvas uses for that grade and with a count. Hover a grade for what it means.
+
+The legend reflects whatever Type Packs the project uses — for example, an investigation built on the [Infrastructure Type Pack](typepacks.md) might show counts for `infrastructure.ip_address`, `infrastructure.domain`, and so on, each resolved to its Type Pack-defined name and color.
 
 ### Snapline
 
@@ -106,6 +132,10 @@ When two or more edges connect the same pair of nodes — in either direction �
 them apart into arcs instead of drawing one on top of the other, so each edge stays visible and
 individually clickable. This matters because an edge's label is its own finding with its own
 provenance: two overlapping edges are two distinct pieces of evidence, not one.
+
+## Drawing edges
+
+Select the node(s) you want to link from, then **⌘-click** (Mac) or **Ctrl-click** (Windows/Linux) the node to link them to. A small box opens at the click; type the relation (free text, e.g. `resolves to`) and press **Enter**. One edge is created from every selected node to the clicked node, all in a single request. Hold **Shift** while clicking, or press **Reverse** in the box, to link the other way (clicked node → selection). You can also right-click a node or a selection and choose **Connect to…**, then plain-click the target. **Esc** cancels at either step, and nothing is written until you press Enter. An edge is unique per ordered pair of nodes, so pairs that are already connected are skipped and counted as "already connected"; the reverse direction is a separate edge. If nothing is selected, the click only shows a hint to select the nodes first.
 
 ## Export graph (JSON) {#export-graph-json}
 
@@ -119,6 +149,8 @@ provenance: two overlapping edges are two distinct pieces of evidence, not one.
   "edges": [ /* … */ ]
 }
 ```
+
+While the case is still loading (for example while it re-syncs after a reconnect), export is refused with *The case is still loading — export again once it has finished.* This stops a partial graph from being saved as the whole case. When the export succeeds, a toast reports how many nodes and edges were written.
 
 ## Add from Marketplace
 

@@ -52,7 +52,7 @@ repo at a pinned commit (exactly like a plugin manifest or Type Pack):
 | `identifier` | Reverse-DNS primary key, `<your-namespace>.skillpacks.<name>`. One manifest = one identifier (no member expansion, unlike a plugin pack). |
 | `applies_to` | Node types (`category.name`) the playbook is about — a hint for when it is relevant. |
 | `triggers` | Keyword hints for relevance, matched against the analyst's request. |
-| `requires` | Plugin pack identifiers the playbook's steps call. **A skill is only available when every one is installed in the project** (the marketplace gates install on this; the runtime gates availability on the same fact). Empty or absent = the playbook leans on built-in graph tools only. |
+| `requires` | Plugin pack identifiers the playbook's steps call. **A skill is only available when every one is installed in the project and can run on this build** (the marketplace co-installs them; at runtime a required pack that is blocked on the current platform, such as a desktop-only pack on the web, hides the skill even though it is installed). Empty or absent = the playbook leans on built-in graph tools only. |
 | `overview` | The router, not the procedure: what the pack is for and what sections it holds. The agent reads this first. |
 | `sections` | The actual steps. Each has an `id` (addressed by `load_skill(id, section)`, never by path — the manifest is the allowlist), a one-line `summary` (so the agent can pick a section without loading them all), and the `body`. Loaded on demand — progressive disclosure. |
 | `starters` | Ready-made ways to start a run: a `prompt` with `{{key}}` blanks and a `variables` list (key, label, placeholder, `required`, `multiline`). `category` groups them in the picker, rendered in first-appearance order. |
@@ -99,7 +99,7 @@ author repo, and the registry holds a single lean entry in `community-skillpacks
   "identifier": "run.vineyard.skillpacks.account_identity_pivot",
   "content_type": "vineyard:skillpack",
   "name": "Account & identity pivoting",
-  "author": "vineyard-run",
+  "author": "VINEYARD",
   "description": "Turn one account or handle into the person's other accounts, and know when a shared username is NOT the same person.",
   "repo": "Vineyard-Intelligence/skillpack-account-identity-pivoting",
   "ref": "44305008e4ec16ec0d0d24595ffa993c0b6b6cb5",
@@ -111,14 +111,16 @@ author repo, and the registry holds a single lean entry in `community-skillpacks
 }
 ```
 
-The `applies_to`, `section_count`, and `requires` fields are **derived** at merge time so the browse
-page can render without fetching every document. The full workflow — fork, pin an immutable commit
+You write `applies_to`, `section_count` and `requires` into the entry so the browse page can render
+without fetching every document. CI recomputes `section_count` from the pinned document and rejects a
+mismatch. It checks that every `requires` identifier is a live pack in the catalog. `applies_to` is
+not checked, so copy it from your document. The full workflow — fork, pin an immutable commit
 `ref`, add one `packs/<identifier>.json`, open a PR — is identical to [Publishing to the
 registry](publishing.md).
 
 ## Next / See also
 
 - [Publishing to the registry](publishing.md) — the shared fork-and-PR workflow
-- [Distribution](distribution.md) — pinned refs, integrity hashes, client-side caching
+- [Distribution](distribution.md) — pinned refs and how fetched documents are verified
 - [Working with Skill Packs (user guide)](../guide/skillpacks.md) — installing and using a pack
 - [SDK & host context](sdk.md) — the plugin surface a skill's steps call

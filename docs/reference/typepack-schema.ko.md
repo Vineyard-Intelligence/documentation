@@ -56,7 +56,7 @@ plugin과 Type Pack 양쪽에서 사용되는 공유 블록 (`#/$defs/distributi
 | `repository` | string | no | `format: uri`, pattern `^https://github\.com/[^/]+/[^/]+$` | HTTPS 저장소 URL, `.git`이나 슬래시 접미사 없음. |
 | `ref` | string | no | — | **불변** ref: 40자 커밋 SHA 또는 주석 태그. 브랜치는 registry CI에서 거부됩니다. |
 | `path` | string | no | — | `repo@ref` 내 문서 경로, 예: `typepacks/infrastructure.json`. |
-| `integrity` | object | no | 아래 참조 | 선택적 무결성 블록. 설치 시 force-push를 감지합니다. |
+| `integrity` | object | no | 아래 참조 | 선택적 무결성 블록. 스키마는 허용하지만 클라이언트는 오늘 이를 확인하지 않습니다 — [distribution](../develop/distribution.md#integrity) 참조. |
 | `archive` | object | no | 아래 참조 | 선택적 검증 가능 zip 미러 (`kind=zip`). |
 
 **`integrity`** (`additionalProperties: false`; 필수 `algo`, `hash`):
@@ -104,6 +104,7 @@ plugin과 Type Pack 양쪽에서 사용되는 공유 블록 (`#/$defs/distributi
 | `type` | string (enum) | yes | [type enum](#property-type-enum) 참조 | 논리적 속성 유형. |
 | `description` | string | no | — | 속성에 대한 사람용 설명. |
 | `optional` | boolean | no | `default: false` | `false` (기본값) ⇒ `Node.data`의 필수 키. |
+| `case_insensitive` | boolean | no | `default: false` | 이 속성이 중복 제거 식별자에 포함될 때 대소문자를 접습니다. 표시와 저장은 작성된 그대로 유지됩니다. 핸들, 도메인, 호스트명, 이메일, 16진 다이제스트에는 맞고, Base58/EIP-55 암호화폐 주소, URL 경로, 대소문자를 구분하는 파일 경로에는 틀립니다. 플래그가 빠지면 눈에 보이고 병합 가능한 중복이 생기지만, 잘못 붙이면 두 엔티티가 조용히 하나로 병합됩니다. |
 | `default` | any | no | type이 `type`과 일치해야 함 | 키가 없을 때 적용되는 기본값. |
 | `validator` | object | no | [validator](#validator-object) 참조 | 구조화된 검증 규칙. |
 | `enum` | array | conditional | `minItems: 1`; 항목 `string`\|`number`\|`boolean` | **`type = "enum"`일 때 필수.** |
@@ -256,7 +257,7 @@ plugin과 Type Pack 양쪽에서 사용되는 공유 블록 (`#/$defs/distributi
 ```
 
 !!! example "More patterns in the real pack"
-    출시된 Infrastructure 팩은 `reference` 속성 (`web.url.domain` → `{ "target": "infrastructure.domain" }` — 속성 자신이 속한 유형의 카테고리(`web`)와 참조 대상 유형의 카테고리(`infrastructure`)가 다름에 유의하세요. `category`는 참조나 엣지를 가로질러 일치할 필요가 없고, 같은 팩/배포 단위 안에만 있으면 됩니다), `hash`/`date`/`datetime`/`text` 유형 (`whois_record` 및 `certificate` 내), 그리고 `from`/`to`가 여러 노드 유형을 나열하는 다중 소스 엣지 (예: `resolves_to`가 `infrastructure.domain` **및** `web.url`로부터)도 보여줍니다. [Type Packs guide](../guide/typepacks.md)를 참조하세요.
+    출시된 Infrastructure 팩은 `category`가 한 팩 안에서나 엣지를 가로질러 일치할 필요가 없다는 점(`infrastructure.*`와 `web.*` 유형을 모두 정의함), `hash`/`date`/`datetime`/`text` 유형 (`whois_record` 및 `certificate` 내), 그리고 `from`/`to`가 여러 노드 유형을 나열하는 다중 소스 엣지 (예: `resolves_to`가 `infrastructure.domain` **및** `web.url`로부터)도 보여줍니다. [Type Packs guide](../guide/typepacks.md)를 참조하세요.
 
 ## Validation notes
 

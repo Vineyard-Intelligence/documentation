@@ -23,6 +23,13 @@ Type Pack은 **엔티티(노드) 유형**과 선택적으로 **엣지(관계) �
 노드 생성 시 선택 가능해집니다. 최소 하나의 Type Pack이 활성화될 때까지 선택할 수
 있는 엔티티 유형이 없습니다.
 
+유형 패널에서 유형은 팩이 아니라 **카테고리**별로 묶이므로, 한 팩이 여러 그룹을 채울 수
+있습니다(Infrastructure 팩은 Infrastructure와 Web 양쪽에 나타남). 각 그룹에는 개수가
+표시됩니다. 유형에 마우스를 올리면 설명과 **Category:**, 그리고 출처인 **Type pack:**이
+표시됩니다. 유형을 클릭하면 해당 유형의 새 노드(`New <유형>` 라벨의 자리표시자)가 생성되고
+바로 선택되어 속성을 채울 수 있습니다. 설치된 Type Pack이 없으면 패널이 그렇게 알려 주고
+**Browse the marketplace** 버튼을 제공합니다.
+
 노드를 생성할 때 활성화된 Type Pack에서 유형을 선택합니다. Vineyard는 해당 선택을
 `category.name` 형식의 **정규화된 문자열**로 저장합니다 — 예:
 `infrastructure.ip_address` 또는 `threat.malware`. 플러그인은 자신이 소비하고 생성하는
@@ -37,8 +44,8 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 
 | 팩 (`identifier`) | 카테고리 | 유형 | 모델링 대상 |
 |---|---|---|---|
-| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 13 | 정찰 중 매핑하는 네트워크, 그리고 그 위에서 관측되는 웹 리소스(URL)와 웹 지문(헤더, 파비콘, DOM 해시) 엔티티 |
-| **Threat** (`…typepacks.threat`) | `threat` | 9 | 위협 인텔리전스 (STIX 정렬) |
+| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 14 | 정찰 중 매핑하는 네트워크, 그리고 그 위에서 관측되는 웹 리소스(URL), 웹 지문(헤더, 파비콘, DOM 해시), 트래킹 ID 엔티티 |
+| **Threat** (`…typepacks.threat`) | `threat` | 10 | 위협 인텔리전스 (STIX 정렬) |
 | **Identity** (`…typepacks.identity`) | `identity` | 7 | 사람, 조직, 온라인 페르소나 |
 | **Financial** (`…typepacks.financial`) | `financial` | 4 | 자금 흐름 |
 | **Endpoint** (`…typepacks.endpoint`) | `endpoint` | 6 | 호스트 / DFIR 아티팩트 |
@@ -55,7 +62,7 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 |---|---|---|
 | `infrastructure.ip_address` | IP 주소 | `version`, `country_code`, `asn`, `reverse_dns` |
 | `infrastructure.domain` | 도메인 이름 | `registrar`, `created_date`, `name_servers` |
-| `infrastructure.host` | 호스트 이름 | `ip_address`, `operating_system`, `open_ports` |
+| `infrastructure.host` | 호스트 이름 | `operating_system`, `open_ports`, `hosting_provider` |
 | `infrastructure.autonomous_system` | ASN | `autonomous_system_name`, `registry` |
 | `infrastructure.netblock` | CIDR | `network_name`, `asn` |
 | `infrastructure.dns_record` | 레코드 이름 | `record_type`, `record_value`, `ttl` |
@@ -63,8 +70,8 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 | `infrastructure.certificate` | SHA-256 지문 | `subject_common_name`, `issuer`, `not_after` |
 | `infrastructure.technologies` | 기술 이름 | `kind`, `vendor`, `version`, `cpe` |
 
-같은 팩이 별도의 `web` 카테고리로 유형 네 개를 더 제공합니다 — 리소스 로케이터와
-세 가지 지문 유형은 관측된 웹 아티팩트이지 네트워크 substrate가 아니므로, 별도
+같은 팩이 별도의 `web` 카테고리로 유형 다섯 개를 더 제공합니다 — 리소스 로케이터,
+세 가지 지문 유형, 트래킹/광고 계정 ID는 관측된 웹 아티팩트이지 네트워크 substrate가 아니므로, 별도
 설치 없이 같은 팩 안에서 카테고리만 분리됩니다:
 
 | 유형 (`category.name`) | 표시 라벨 | 주요 속성 |
@@ -73,12 +80,15 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 | `web.hhhash` | HTTP 헤더 해시 | `header_count`, `server_hint` |
 | `web.favicon_hash` | 파비콘 해시 | `hash_algorithm`, `favicon_url` |
 | `web.dom_hash` | DOM 구조 해시 | `tag_count` |
+| `web.tracking_id` | 네임스페이스가 붙은 식별자 (예: `adsense:ca-pub-…`) | `provider`, `kind` |
 
 엣지 유형이 두 카테고리를 가로질러 정찰 그래프를 연결합니다: `resolves_to`,
 `has_address`, `announced_by`, `contains`, `has_record`, `subdomain_of`, `has_domain`,
-`redirects_to`, `has_whois`, `presents_certificate`, 그리고 `runs_technology`(호스트, IP,
+`redirects_to`, `has_whois`, `presents_certificate`, `runs_technology`(호스트, IP,
 도메인, URL을 그것이 실행하거나 제공받는 소프트웨어, 하드웨어, 또는 서드파티 서비스 —
-예: Cloudflare — 에 연결). 각 유형은 자체 아이콘과 색상을 제공합니다.
+예: Cloudflare — 에 연결), `carries_tracking_id`(페이지, 도메인, IP가 서드파티 광고/분석
+계정 ID를 포함), 그리고 `payment_recipient`(페이지의 결제 양식이 `identity.email_address`
+앞으로 되어 있음). 각 유형은 자체 아이콘과 색상을 제공합니다.
 
 다른 팩도 같은 형태를 따릅니다 — 예를 들어 **Threat** 팩은 `threat.malware`,
 `threat.threat_actor`, `threat.indicator`, `threat.operation`(캠페인 내의 경계된 작업 —
@@ -93,14 +103,18 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
     추적할 수 있습니다.
 
 !!! note "신원 및 중복 제거"
-    플러그인이나 AI 작업이 노드를 추가할 때, Vineyard는 **유형 + `label_property` 값**으로
-    중복을 제거합니다 — 같은 유형과 같은 라벨의 두 노드는 병합되고 속성이 결합됩니다.
+    플러그인이나 AI 작업이 노드를 추가할 때, Vineyard는 **유형 + 유형의 식별 필드**로
+    중복을 제거합니다 — 유형이 `identity_properties`를 선언하면 그 필드들(예:
+    `identity.account` → username + platform, `endpoint.file` → SHA-256·파일 이름·경로·호스트,
+    `endpoint.process` → 프로세스 GUID·이름·PID), 아니면 `label_property` 값입니다. 같은
+    유형과 같은 식별 값의 두 노드는 병합되고 속성이 결합됩니다. 팩이 대소문자 무시로 표시한
+    필드(도메인, 호스트 이름, 이메일, 핸들 등)는 대소문자와 관계없이 일치합니다.
     유형은 **정확한 정규화 키**(`category.name`)로만 일치하며, 설치된 팩에 정의되지 않은
     유형의 노드는 원래 유형 문자열을 유지합니다 — 따라서 새 팩 버전에서 유형이 다른
     카테고리로 이동해도 기존 노드가 새 유형의 생성물과 병합되지 않습니다. 가장 유용한
     라벨은 읽기 쉽고 *식별적인* 것입니다. 대부분의 유형은 자연적으로
     고유한 필드(IP, CVE ID, 트랜잭션 해시, WHOIS 주체)를 키로 사용합니다. 라벨이
-    본질적으로 고유하지 않은 유형(`identity.person`의 이름, `endpoint.process`의 이미지
+    본질적으로 고유하지 않은 유형(`identity.person`의 이름, `identity.organization`의
     이름)은 같은 라벨을 공유하는 서로 다른 엔티티가 병합되므로, 구분되는 라벨
     (예: `John Smith (DOB 1990)`)을 주거나 유형이 제공하는 안정 ID를 채우세요.
     **수동으로** 추가한 노드는 절대 자동 병합되지 않습니다.

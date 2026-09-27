@@ -14,10 +14,10 @@ The host accepts all three shapes and normalizes them. This lets one author repo
 
 ## `definePluginPack`
 
-A pack is declared with `definePluginPack` from the SDK (`@vineyard/plugin-sdk`). The pack-level fields describe the *bundle*, while each entry in `plugins` is a full plugin definition with its own manifest and `run`.
+A pack is declared with `definePluginPack` from the SDK (`sdk.ts`, vendored into your repo — see [SDK](sdk.md)). The pack-level fields describe the *bundle*, while each entry in `plugins` is a full plugin definition with its own manifest and `run`.
 
 ```ts
-import { definePlugin, definePluginPack } from "@vineyard/plugin-sdk";
+import { definePlugin, definePluginPack } from "./sdk";
 
 export default definePluginPack({
   identifier: "run.vineyard.pluginpacks.chaos",   // the pack id
@@ -36,7 +36,7 @@ export default definePluginPack({
 | -------------- | ----- |
 | `identifier`   | The **pack id**, a reverse-DNS string `<your-namespace>.pluginpacks.*` (e.g. `run.vineyard.pluginpacks.chaos`). It names the bundle, not any one contained plugin. |
 | `content_type` | `vineyard:pluginpack` — the bundle's own kind. Each contained plugin still carries `vineyard:plugin`. |
-| `name`         | Human-readable pack name shown on the marketplace card. |
+| `name`         | Pack name in the bundle (not shown by the host; the marketplace card uses the registry entry's `name`). |
 | `version`      | SemVer for the bundle as a whole. |
 | `plugins`      | The array of `definePlugin(...)` entries. Each carries its **own** `identifier`, `scopes`, `io`, and `lifecycle`. |
 
@@ -65,7 +65,7 @@ The Marketplace registry is **metadata-only** (it stores pointers, not code), an
 - `plugin_count` — the number of plugins bundled (6 for the Chaos pack; omitted or `1` for an ordinary single-plugin entry). The marketplace uses it to label the card ("6 plugins") and to signal that installing once adds all of them together.
 - `scopes_summary` — a roll-up of the contained plugins' authority (e.g. `graph_write: true`) so the card can summarize what the whole pack does without fetching each manifest.
 
-The full list of contained plugin identifiers lives in the **manifest** at `repo@ref/path`; the lean catalog row carries the count, and the client resolves the individual plugins from the fetched bundle. The exact registry-entry shape — `plugin_count`, `scopes_summary`, and the lean projection — is documented in [Publishing](publishing.md).
+The plugins a pack offers are read from its JSON manifest at `repo@ref/path` (content_type `vineyard:pluginpack`, with `identifier`, `name`, `version`, `description`, `platforms.web.entry` pointing at the bundle, and a `plugins` array of member manifests). When a member runs, the client imports the bundle in a fresh worker, flattens its default export, and picks the member whose identifier matches — so every member in the JSON must exist in the bundle under the same identifier. A member without its own `platforms.web.entry` (or with `"inline"`) inherits the pack's. The exact registry-entry shape — `plugin_count`, `scopes_summary`, and the lean projection — is documented in [Publishing](publishing.md).
 
 ## When to use a pack
 

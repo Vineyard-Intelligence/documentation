@@ -1,13 +1,13 @@
 # SDK & host context
 
-`@vineyard/plugin-sdk`는 플러그인을 빌드할 때 사용하는 작은 작성자 대상 TypeScript 표면입니다. 두 가지 define 헬퍼, `run` 함수가 받는 타입이 지정된 `HostContext`(`ctx`), 그리고 단위 테스트용 인프로세스 mock을 제공합니다. `npm i @vineyard/plugin-sdk`로 npm에서 설치하세요. 아래 모든 멤버는 게시된 패키지 타입의 일부입니다.
+플러그인 SDK는 플러그인을 빌드할 때 사용하는 작은 작성자 대상 TypeScript 표면입니다. 두 가지 define 헬퍼, `run` 함수가 받는 타입이 지정된 `HostContext`(`ctx`), 그리고 단위 테스트용 인프로세스 mock을 제공합니다. SDK는 단일 TypeScript 파일 `sdk.ts`입니다(인앱 런타임 사본 — 예: `pluginpack-otx` 저장소에 포함된 `src/sdk.ts`). 이를 저장소에 복사하고 `./sdk`에서 가져오세요.
 
 ## 두 가지 define 헬퍼
 
 플러그인의 번들은 두 가지 팩토리 함수 중 하나를 통해 기본 내보내기를 수행합니다. 둘 다 식별 함수입니다 — SDK 형태에 대한 타입 검사를 제공하기 위해서만 존재합니다.
 
 ```ts
-import { definePlugin, definePluginPack } from "@vineyard/plugin-sdk";
+import { definePlugin, definePluginPack } from "./sdk";
 
 // 단일 플러그인
 export default definePlugin({ manifest, run });
@@ -50,14 +50,14 @@ run(ctx: HostContext): Promise<RunResult | void>;
 | 멤버 | 타입 | 제공하는 것 |
 |---|---|---|
 | `ctx.run` | `{ runId, projectId, pluginId, grantedScopes, platform }` | 이 실행의 식별 정보. `grantedScopes`는 설치 시 승인된 매니페스트의 스코프 세트. `platform`은 `"web"` 또는 `"desktop"`. |
-| `ctx.input` | `{ selection: string[] }` | 실행이 시작될 때 사용자가 선택한 노드 ID. **Black Hole**은 `ctx.input.selection`을 읽습니다. |
-| `ctx.params` | `Readonly<Record<string, unknown>>` | 이 실행의 사용자 입력, 매니페스트 `params` 스키마에 대해 검증됨. |
+| `ctx.input` | `{ selection: string[] }` | 이 실행이 대상으로 하는 노드 ID. Run plugins 패널에서 실행하면: `consumes`가 있는 플러그인은 소비 타입인 선택 노드(범위 *Selected*) 또는 케이스 안의 그 타입 노드 전체(범위 *Whole project*), consumes가 없는 플러그인은 현재 선택. `run`은 전체 목록으로 **한 번** 호출되므로 전부 순회하세요. **Black Hole**은 `ctx.input.selection[0]`을 읽습니다. |
+| `ctx.params` | `Readonly<Record<string, unknown>>` | 실행 전 폼에서 받은 이 실행의 사용자 입력(`required`만 강제됨 — `pattern`/`minimum`/`maximum`/`default`는 적용되지 않으므로 검증과 기본값은 `run`에서 처리). 파일 필드는 `File` 객체로 옵니다. |
 | `ctx.progress` | `{ set?, log?, status? }` | 지속 관리 작업 UI를 구동합니다(아래 상세). |
 | `ctx.signal` | `AbortSignal` | 협력적 취소 — 반드시 관찰해야 합니다. |
 | `ctx.onCancel` | `(handler) => void` | 취소 시 호출될 정리 핸들러 등록. |
 
 !!! tip "취소는 협력적입니다"
-    `run`을 강제 종료하는 것은 없습니다. `ctx.signal.aborted`를 폴링하거나, 긴 await에 `ctx.signal`을 전달하거나, `ctx.onCancel(...)`을 등록하세요. 시그널을 무시하는 플러그인은 반환하거나 `lifecycle.timeout_ms` 예산이 다할 때까지 계속 실행됩니다.
+    취소는 협력적이지만 한도가 있습니다. `ctx.signal.aborted`를 폴링하거나, 긴 await에 `ctx.signal`을 전달하거나, `ctx.onCancel(...)`을 등록하세요: Stop 후 호스트는 `run`이 반환하기를 3초 기다린 뒤 워커를 종료합니다. 중지 전에 실행이 스테이징한 것은 검토용으로 유지됩니다. 이와 별개로 모든 실행에는 wall-clock 예산(`lifecycle.timeout_ms`, 기본 10분, 최대 60분)이 있으며, 이를 넘으면 워커가 종료되고 실행은 실패합니다.
 
 ### 진행률, 상태, 로깅
 
@@ -69,7 +69,7 @@ ctx.progress?.log?.("found 12 candidate nodes");
 ctx.progress?.status?.("waiting");   // "running" | "waiting"
 ```
 
-`status("waiting")`은 백오프/속도 제한 일시 중지를 신호하여 UI가 대기 상태를 표시할 수 있게 합니다 — `429`/`Retry-After` 처리는 직접 구현해야 하며, SDK에는 내장된 백오프 헬퍼가 없습니다.
+`set`만 표시됩니다: `percent`는 Tasks 행의 진행률을 구동하고 `message`는 플러그인 이름 뒤에 표시됩니다(`phase`는 무시됨). `log`와 `status`는 허용되지만 현재 버려집니다 — 속도 제한 일시 중지를 보여주려면 `set({ message: "waiting for rate limit…" })`으로 보고하세요. SDK에는 내장된 백오프 헬퍼가 없습니다.
 
 ### 스코프 게이트 멤버 {#scope-gated-members}
 
@@ -93,6 +93,7 @@ ctx.graph?.createNode?(draft: EntityDraft): Promise<GraphNode>
 ctx.graph?.updateNode?(nodeId, data): Promise<void>
 ctx.graph?.deleteNode?(nodeId): Promise<void>
 ctx.graph?.createEdge?(edge: EdgeDraft): Promise<void>
+ctx.graph?.updateEdge?(edgeId, patch: { label?: string; data?: Record<string, unknown> }): Promise<void>   // edge:create
 ctx.graph?.deleteEdge?(edgeId): Promise<void>
 
 // 벌크
@@ -100,21 +101,23 @@ ctx.graph?.deleteNodes?(ids: string[]): Promise<{ deleted: number }>
 ctx.graph?.deleteEdges?(ids: string[]): Promise<{ deleted: number }>
 ```
 
-`list({ type })`는 노드 타입으로 필터링된 전체 그래프 열거를 한 번의 호출로 반환합니다 — 커서 페이지네이션이 아닙니다(**Thanos Snap**과 같은 전체 그래프 플러그인이 사용). `neighbors`는 1-홉 근방을 반환합니다(**Black Hole**이 사용). `updateNode`와 `createEdge`는 델타/초안을 받아 검토용으로 스테이징할 뿐 결과 레코드를 반환하지 않으므로 둘 다 `void`로 리졸브됩니다 — 적용된 상태가 필요하면 `get`/`list`로 다시 읽으세요. `EntityDraft.key`는 재실행 시 중복 대신 upsert하기 위한 선택적 클라이언트 측 중복 제거 키입니다. `EdgeDraft`는 `key` 또는 반환된 ID로 노드를 참조하며, `label`은 활성화된 [Type Pack](typepacks.md) 엣지 타입과 일치해야 합니다.
+`list({ type })`는 노드 타입으로 필터링된 전체 그래프 열거를 한 번의 호출로 반환합니다 — 커서 페이지네이션이 아닙니다(**Thanos Snap**과 같은 전체 그래프 플러그인이 사용). `neighbors`는 1-홉 근방을 반환합니다(**Black Hole**이 사용). `updateNode`와 `createEdge`는 델타/초안을 받아 검토용으로 스테이징할 뿐 결과 레코드를 반환하지 않으므로 둘 다 `void`로 리졸브됩니다 — 적용된 상태가 필요하면 `get`/`list`로 다시 읽으세요. `createNode`는 동일성으로 중복을 제거합니다 — 정규 타입과 그 타입의 `identity_properties`(없으면 레이블 속성, 그다음 `value`): 라이브 노드(또는 이 실행이 이미 만든 노드)가 같은 동일성을 가지면 그 노드를 재사용해 필드를 병합하고 그 노드를 반환합니다. `type`이 설치된 [Type Pack](typepacks.md)에 정의되어 있지 않거나 데이터가 타입의 속성 검사를 통과하지 못하면 예외를 던집니다. `EdgeDraft.from`/`to`는 노드 ID입니다 — 라이브 ID 또는 `createNode`가 반환한 ID. `label`은 관계를 설명하는 자유 텍스트입니다(Type Pack `edge_types`는 참조되지 않음).
+
+`updateEdge`는 `edge:create`로 게이트됩니다(`edge:update` 스코프는 현재 아무것도 부여하지 않음). `label`을 생략하면 문구와 그 등급이 그대로 유지됩니다. `EdgeDraft`/`updateEdge`는 엣지에 병합되는 선택적 `data` 객체를 받으며, `confidence`, `confidence_source`, `label_source`, `corroborated_by`는 호스트 소유이므로 거부됩니다. 순서가 있는 노드 쌍마다 엣지는 하나이므로, 이미 연결된 쌍에 대한 `createEdge`는 엣지를 추가하는 대신 그 엣지의 레이블 변경을 제안합니다.
 
 #### `net` (network 스코프)
 
-최소 하나의 [network scope](../reference/scopes.md)가 선언된 경우에만 존재합니다. `manifest.scopes.network` 엔드포인트로 제한됩니다. 브리지는 `credentials: "omit"`을 강제하고 `Authorization`/`Cookie`를 제거합니다. 6개의 참조 플러그인은 네트워크를 **전혀** 사용하지 않습니다.
+[`network` 스코프](../reference/scopes.md)가 선언된 경우에만 존재합니다(또는 데스크톱 앱에서 `web_probe`만 있으면 `probe`만 존재). `fetch`는 `manifest.scopes.network` 엔드포인트와 그 선언된 `methods`로 제한됩니다. 브리지는 `credentials: "omit"`을 강제해 분석가의 쿠키가 따라가지 않게 하고, 리다이렉트를 따라가며, `Authorization`을 포함한 요청 헤더를 그대로 전달합니다 — 따라서 API 키는 커스텀 헤더가 아닌 거기에 넣으세요. 6개의 참조 플러그인은 네트워크를 **전혀** 사용하지 않습니다.
 
 ```ts
 ctx.net?.fetch?(input: string, init?: SafeRequestInit): Promise<SafeResponse>
 ```
 
-내장된 재시도/백오프 헬퍼는 없습니다 — HTTP `429`/`Retry-After`는 직접 처리하고, 대기하는 동안 `ctx.progress?.status?.("waiting")`을 호출하세요.
+내장된 재시도/백오프 헬퍼는 없습니다 — HTTP `429`/`Retry-After`는 직접 처리하고, 대기하는 동안 `ctx.progress?.set?.({ message: "waiting for rate limit…" })`으로 일시 중지를 보고하세요.
 
 #### `net.probe` (`web_probe` 스코프, 데스크톱 전용)
 
-`scopes.web_probe`가 선언**되고** 플러그인이 데스크톱 셸에서 실행 중일 때만 존재합니다 — 스코프가 부여되어도 웹 빌드에서는 계속 없습니다. Electron 메인 프로세스에서 임의의 공개 호스트로 단일 익명 요청을 수행합니다: 쿠키 없음, `Origin` 없음, 리다이렉트를 따라가지 않음(호출자는 요청한 URL의 실제 상태를 봅니다), 사설/루프백 호스트는 거부됩니다. 사전에 수백 개 사이트 중 어느 것을 조사할지 알 수 없는 계정 탐지형 플러그인이 사용하는 능력입니다.
+`scopes.web_probe`가 선언**되고** 플러그인이 데스크톱 셸에서 실행 중일 때만 존재합니다 — 스코프가 부여되어도 웹 빌드에서는 계속 없습니다. Electron 메인 프로세스에서 임의의 공개 호스트로 단일 익명 요청을 수행합니다: 쿠키 없음, `Origin` 없음, 리다이렉트를 따라가지 않음(호출자는 요청한 URL의 실제 상태를 봅니다), 사설/루프백 호스트는 거부됩니다. 사전에 수백 개 사이트 중 어느 것을 조사할지 알 수 없는 계정 탐지형 플러그인이 사용하는 능력입니다. 기본 포트(80/443)와 GET/HEAD/POST 메서드만 허용되며, `cookie`, `authorization`, `host`와 포워딩 헤더는 제거됩니다. `maxBytes`는 기본 512 KiB(최대 2 MiB), `timeoutMs`는 기본 8초(최대 20초)이며, 셸은 한 번에 최대 48개의 프로브를 실행합니다. 거부되거나 실패한 프로브는 예외를 던지지 않고 `status: 0`과 `error`가 설정된 채로 리졸브됩니다.
 
 ```ts
 ctx.net?.probe?(input: string, init?: SafeProbeInit): Promise<SafeProbeResponse>
@@ -122,7 +125,7 @@ ctx.net?.probe?(input: string, init?: SafeProbeInit): Promise<SafeProbeResponse>
 
 #### `service` (`scopes.services`)
 
-`scopes.services`가 최소 하나의 Vineyard 운영 서비스(현재 `rdap`, `telegram`)를 지정한 경우에만 존재합니다. 목적지는 URL이 아니라 이름입니다 — 호스트가 이를 해석하고 분석가의 자격 증명을 첨부하므로, 플러그인은 호출을 다른 곳으로 리다이렉트할 수 없으며 플러그인이 전달하는 요청 헤더는 `Authorization`을 재정의할 수 없습니다.
+`scopes.services`가 최소 하나의 Vineyard 운영 서비스(현재 모든 팩에 열린 `rdap`, 그리고 `run.vineyard.pluginpacks.telegram` 전용인 `telegram` — 다른 팩이 호출하면 오류)를 지정한 경우에만 존재합니다. Vineyard 계정 없이 실행되는 빌드(로컬 모드)에서는 호출이 예외를 던집니다. 목적지는 URL이 아니라 이름입니다 — 호스트가 이를 해석하고 분석가의 자격 증명을 첨부하므로, 플러그인은 호출을 다른 곳으로 리다이렉트할 수 없으며 플러그인이 전달하는 요청 헤더는 `Authorization`을 재정의할 수 없습니다.
 
 ```ts
 ctx.service?(name: string, path: string, init?: SafeRequestInit): Promise<SafeResponse>
@@ -130,21 +133,21 @@ ctx.service?(name: string, path: string, init?: SafeRequestInit): Promise<SafeRe
 
 #### `config` (`scopes.config`)
 
-`scopes.config`가 선언된 경우에만 존재합니다. 읽기 전용, 선언된 값만.
+`scopes.config`가 선언**되고** 분석가가 그 키 중 하나 이상을 설정한 경우에만 존재합니다. 읽기 전용, 선언된 값만.
 
 ```ts
 ctx.config?: Readonly<Record<string, string | number | boolean>>
 ```
 
-!!! warning "시크릿은 절대 읽을 수 없습니다"
-    `config.secret: true` 값은 **제외**됩니다 — 호스트에 의해 네트워크 경계에서 주입되며 플러그인에 반환되지 않습니다. 웹에서는 시크릿 config가 데스크톱 플러그인으로 라우팅됩니다. [시크릿 처리](security.md#secret-handling)를 참조하세요.
+!!! warning "시크릿은 이를 선언한 플러그인에게만 전달됩니다"
+    `secret: true`는 값을 입력하는 방식(마스킹된 필드)만 바꿉니다 — 값은 여전히 이를 선언한 플러그인에게 `ctx.config.<key>`로 전달되며, 자신의 매니페스트가 선언한 키만 전달됩니다. 값은 데스크톱에서는 OS 키체인으로 암호화되어, 브라우저에서는 탭의 `sessionStorage`에 보관되며 어떤 레코드에도 기록되지 않습니다. [시크릿 처리](security.md#secret-handling)를 참조하세요.
 
 !!! note "`publish` 스코프는 존재하지 않습니다"
     플러그인은 프로젝트 채팅/피드에 게시할 수 없습니다 — `ctx.message`는 존재하지 않으며, `publish`는 스코프 스키마에 포함되어 있지 않습니다. `scopes`는 `additionalProperties: false`를 설정하므로, 아직 이를 선언하는 초안 매니페스트는 **검증에 실패합니다**. 찾아낸 결과는 대신 그래프에 기록하세요.
 
 ### 벌크 작업
 
-`deleteNodes(ids[])`와 `deleteEdges(ids[])`는 각각 브리지에서 **단일 제한 작업**입니다 — 수백 번의 개별 왕복 대신, 하나의 호출이 들어가 고정된 동시성 한도 아래에서 한 번에 팬아웃됩니다. 전체 그래프 변이에는 벌크 형태를 선호하세요: 합법적인 대량 삭제(Korean Roulette이 전체 그래프를 지우는 경우)가 수천 번의 개별 `deleteNode` 호출이 되어서는 안 됩니다. 영향을 받은 각 노드와 엣지는 여전히 분석가가 검토하는 변경 세트에 각자의 항목으로 나타나므로, 벌크라고 해서 검토를 건너뛰는 것은 아닙니다.
+`deleteNodes(ids[])`와 `deleteEdges(ids[])`는 각각 수백 번의 왕복 대신 ID마다 삭제 하나를 한 배치로 스테이징하는 **단일 브리지 호출**입니다. ID 중 하나라도 알 수 없으면 호출 전체가 거부되므로(`no node <id> in this project` / `no edge <id> in this project`), 그래프에서 읽은 ID만 전달하세요. 전체 그래프 변이에는 벌크 형태를 선호하세요: 합법적인 대량 삭제(Korean Roulette이 전체 그래프를 지우는 경우)가 수천 번의 개별 `deleteNode` 호출이 되어서는 안 됩니다. 영향을 받은 각 노드와 엣지는 여전히 분석가가 검토하는 변경 세트에 각자의 항목으로 나타나므로, 벌크라고 해서 검토를 건너뛰는 것은 아닙니다.
 
 ## 완전한 `run(ctx)` 예제
 
@@ -152,12 +155,12 @@ ctx.config?: Readonly<Record<string, string | number | boolean>>
 
 ## `createMockContext`로 테스트하기
 
-`createMockContext`는 앱 없이, GitHub 없이, 서버 없이 `run(ctx)`을 단위 테스트할 수 있게 합니다. 부여된 스코프에 대해서만 `graph` / `net` / `config` 멤버가 존재하는 `HostContext`를 빌드하므로, 프로덕션과 정확히 동일하게 스코프 게이팅이 작동합니다. 반환된 컨텍스트는 어서션할 수 있는 `mock` 레코드를 가집니다.
+`createMockContext`는 앱 없이, GitHub 없이, 서버 없이 `run(ctx)`을 단위 테스트할 수 있게 합니다. 인메모리 그래프 위에 `HostContext`를 빌드합니다: `graph`는 graph 동사가 하나라도 부여되면 존재하고 그 **쓰기** 메서드는 해당 동사에 대해서만 존재합니다(mock에서는 읽기 메서드가 항상 존재 — 프로덕션은 `node:read`/`edge:read`도 요구). `net.fetch`/`net.probe`는 `netHandler`/`probeHandler`를 전달했을 때 존재하고, `config`는 전달한 값입니다(기본 `{}`). `updateEdge`와 동일성 중복 제거는 mock되지 않습니다. 반환된 컨텍스트는 어서션할 수 있는 `mock` 레코드를 가집니다.
 
-`MockContextOptions`는 `nodes`, `edges`, `params`, `selection`, `grantedScopes`, `projectId`, `pluginId`, `signal`, `netHandler`, `probeHandler`를 허용합니다. `ctx.mock` 레코드는 `nodes`, `edges`, `createdNodes`, `createdEdges`, `deletedNodeIds`, `deletedEdgeIds`, `updatedNodes`, `progress`를 노출합니다. 전체 테스트 예제는 [quickstart](quickstart.md)를 참조하세요.
+`MockContextOptions`는 `nodes`, `edges`, `params`, `config`, `selection`, `grantedScopes`, `projectId`, `pluginId`, `signal`, `netHandler`, `probeHandler`를 허용합니다. `ctx.mock` 레코드는 `nodes`, `edges`, `createdNodes`, `createdEdges`, `deletedNodeIds`, `deletedEdgeIds`, `updatedNodes`, `progress`를 노출합니다. 전체 테스트 예제는 [quickstart](quickstart.md)를 참조하세요.
 
 !!! note "참조 구현"
-    SDK 패키지에서 `createMockContext`는 참조 스케치와 함께 선언(`export declare function …`)되어 있습니다. 게시된 패키지가 구현을 제공합니다. 위의 이름들을 안정적인 계약으로 취급하세요.
+    `createMockContext`는 `sdk.ts` 자체에 구현되어 있습니다. 위의 이름들을 안정적인 계약으로 취급하세요.
 
 ## 다음 / 참고
 
@@ -165,5 +168,5 @@ ctx.config?: Readonly<Record<string, string | number | boolean>>
 - [Scopes reference](../reference/scopes.md) — 각 `ctx` 멤버를 게이트하는 것
 - [Security model](security.md) — 워커 샌드박스, 이그레스 허용목록, 스테이징된 쓰기
 - [Lifecycle](lifecycle.md) — 진행률, 취소, 작업 상태
-- [Quickstart](quickstart.md) — Developer Mode 및 테스트 하네스
+- [Quickstart](quickstart.md) — 개발 로더 및 테스트 하네스
 - [Reference plugins](../guide/running-plugins.md) — SDK가 검증된 6개의 Chaos 플러그인

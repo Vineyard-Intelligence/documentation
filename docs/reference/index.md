@@ -9,7 +9,7 @@ The normative reference for VINEYARD's plugin and Type Pack formats: the JSON-Sc
 | [Plugin manifest schema](plugin-schema.md) | The `vineyard:plugin` manifest — `identifier`, `version`, `platforms`, `io`, `scopes`, `lifecycle`, `distribution`. |
 | [Type Pack schema](typepack-schema.md) | The `vineyard:typepack` document — type definitions in the qualified `category.name` form (e.g. `infrastructure.ip_address`). |
 | [Registry entry schemas](registry-schema.md) | One row of `community-pluginpacks.json` / `community-typepacks.json` — the metadata-only catalog rows the browser reads. |
-| [Scopes](scopes.md) | The complete permission vocabulary: the `graph` verbs (`node:read`, `edge:delete`, …), `network`, `web_probe`, and `config`. |
+| [Scopes](scopes.md) | The complete permission vocabulary: the `graph` verbs (`node:read`, `edge:delete`, …), `network`, `web_probe`, `services`, and `config`. |
 
 ## Where the canonical artifacts live
 
@@ -17,12 +17,12 @@ The authoritative JSON-Schemas are not duplicated here — they live in the regi
 
 | File | Schema for |
 |---|---|
-| [`schemas/plugin.schema.json`](https://vineyard.run/schemas/plugin.json) | A `vineyard:plugin` manifest. |
-| [`schemas/pluginpack.schema.json`](https://vineyard.run/schemas/pluginpack.json) | A `vineyard:pluginpack` manifest — no dedicated prose page yet; the schema itself is the reference. |
-| [`schemas/typepack.schema.json`](https://vineyard.run/schemas/typepack.json) | A `vineyard:typepack` document. |
-| [`schemas/registry-plugin-entry.schema.json`](https://vineyard.run/schemas/registry/plugin-entry/1.0.0.json) | One `community-pluginpacks.json` row. |
-| [`schemas/registry-typepack-entry.schema.json`](https://vineyard.run/schemas/registry/typepack-entry/1.0.0.json) | One `community-typepacks.json` row. |
-| [`schemas/registry-skillpack-entry.schema.json`](https://vineyard.run/schemas/registry/skillpack-entry/1.0.0.json) | One `community-skillpacks.json` row — no dedicated prose page yet; the schema itself is the reference. |
+| [`schemas/plugin.schema.json`](https://registry.vineyard.run/schemas/plugin.schema.json) | A `vineyard:plugin` manifest. |
+| [`schemas/pluginpack.schema.json`](https://registry.vineyard.run/schemas/pluginpack.schema.json) | A `vineyard:pluginpack` manifest — no dedicated prose page yet; the schema itself is the reference. |
+| [`schemas/typepack.schema.json`](https://registry.vineyard.run/schemas/typepack.schema.json) | A `vineyard:typepack` document. |
+| [`schemas/registry-plugin-entry.schema.json`](https://registry.vineyard.run/schemas/registry-plugin-entry.schema.json) | One `community-pluginpacks.json` row. |
+| [`schemas/registry-typepack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-typepack-entry.schema.json) | One `community-typepacks.json` row. |
+| [`schemas/registry-skillpack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-skillpack-entry.schema.json) | One `community-skillpacks.json` row — no dedicated prose page yet; the schema itself is the reference. |
 
 The reference pages summarize and explain these files; when the prose and the schema disagree, the schema in the registry's `schemas/` wins.
 
@@ -32,8 +32,8 @@ The static [Marketplace browser](../marketplace.md) loads its catalog live from 
 
 ## Naming, at a glance
 
-- **Identifiers** are reverse-DNS: `run.vineyard.plugins.<name>`, `run.vineyard.pluginpacks.<name>`, and `run.vineyard.typepacks.<name>`.
-- Every document carries a `content_type` discriminator: `vineyard:plugin`, `vineyard:pluginpack`, or `vineyard:typepack`.
+- **Identifiers** are reverse-DNS: `run.vineyard.plugins.<name>`, `run.vineyard.pluginpacks.<name>`, `run.vineyard.typepacks.<name>`, and `run.vineyard.skillpacks.<name>`.
+- Every document carries a `content_type` discriminator: `vineyard:plugin`, `vineyard:pluginpack`, `vineyard:typepack`, or `vineyard:skillpack`.
 - `version` is a SemVer string everywhere.
 - Types are referenced in qualified `category.name` form (e.g. `infrastructure.ip_address`).
 

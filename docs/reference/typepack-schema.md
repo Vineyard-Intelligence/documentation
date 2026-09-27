@@ -56,7 +56,7 @@ Shared block used by both plugins and Type Packs (`#/$defs/distribution`). `addi
 | `repository` | string | no | `format: uri`, pattern `^https://github\.com/[^/]+/[^/]+$` | HTTPS repo URL, no trailing `.git` or slash. |
 | `ref` | string | no | — | **Immutable** ref: 40-char commit SHA or annotated tag. Branches are rejected by registry CI. |
 | `path` | string | no | — | Path to the document within `repo@ref`, e.g. `typepacks/infrastructure.json`. |
-| `integrity` | object | no | see below | Optional integrity block; detects a force-push at install. |
+| `integrity` | object | no | see below | Optional integrity block. Accepted by the schema but not checked by the client today — see [distribution](../develop/distribution.md#integrity). |
 | `archive` | object | no | see below | Optional verifiable zip mirror (`kind=zip`). |
 
 **`integrity`** (`additionalProperties: false`; required `algo`, `hash`):
@@ -104,6 +104,7 @@ The schema for each value in a `properties` map (`#/$defs/property`, `additional
 | `type` | string (enum) | yes | see [type enum](#property-type-enum) | Logical property type. |
 | `description` | string | no | — | Human description of the property. |
 | `optional` | boolean | no | `default: false` | `false` (default) ⇒ required key in `Node.data`. |
+| `case_insensitive` | boolean | no | `default: false` | Fold case when this property is part of the de-duplication identity; display and storage keep what was written. Right for handles, domains, hostnames, emails and hex digests; wrong for Base58/EIP-55 crypto addresses, URL paths and case-sensitive file paths. A missing flag produces a visible, mergeable duplicate, while a wrong one silently merges two entities. |
 | `default` | any | no | type must match `type` | Default applied when the key is absent. |
 | `validator` | object | no | see [validator](#validator-object) | Structured validation rules. |
 | `enum` | array | conditional | `minItems: 1`; items `string`\|`number`\|`boolean` | **Required when `type = "enum"`.** |
@@ -256,7 +257,7 @@ A trimmed, fully valid `vineyard:typepack` showing the top-level block, two node
 ```
 
 !!! example "More patterns in the real pack"
-    The shipped Infrastructure pack also demonstrates a `reference` property (`web.url.domain` → `{ "target": "infrastructure.domain" }` — note the property's own type, `web`, differs from its reference target's type, `infrastructure`; `category` doesn't have to match across a reference or an edge, only within the same pack/distribution unit), `hash`/`date`/`datetime`/`text` types (in `whois_record` and `certificate`), and multi-source edges where `from`/`to` list several node types (e.g. `resolves_to` from `infrastructure.domain` **and** `web.url`). See the [Type Packs guide](../guide/typepacks.md).
+    The shipped Infrastructure pack also shows that `category` does not have to match within one pack or across an edge (it defines both `infrastructure.*` and `web.*` types), `hash`/`date`/`datetime`/`text` types (in `whois_record` and `certificate`), and multi-source edges where `from`/`to` list several node types (e.g. `resolves_to` from `infrastructure.domain` **and** `web.url`). See the [Type Packs guide](../guide/typepacks.md).
 
 ## Validation notes
 

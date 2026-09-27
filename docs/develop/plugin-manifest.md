@@ -8,7 +8,7 @@ The required top-level keys are `identifier`, `content_type`, `name`, `version`,
 
 ## Identity
 
-The identity block names and attributes the plugin: `identifier` (a reverse-DNS `<your-namespace>.plugins.<slug>` string that the marketplace and update checks key off), the constant `content_type` of `vineyard:plugin`, the display `name`, a **SemVer** `version` (the registry orders releases by SemVer — see [Updates](updates.md)), a one- to two-sentence `description`, and the optional `author`, `license`, and `icon`. The `icon` value is **polymorphic**, resolved in order: a `data:`/`http(s):` image URI is drawn directly; otherwise a kebab-case **lucide** name (e.g. `sitemap`) renders as an SVG; otherwise a literal glyph/emoji. This is the same resolver used for Type Pack node icons. The optional presentation pointers `thumbnail_url`, `marketing_url`, and `latest_url` (the last participates in the update flow) are in the [schema reference](../reference/plugin-schema.md).
+The identity block names and attributes the plugin: `identifier` (a reverse-DNS `<your-namespace>.plugins.<slug>` string that the marketplace and update checks key off), the constant `content_type` of `vineyard:plugin`, the display `name`, a **SemVer** `version`, a one- to two-sentence `description`, and the optional `author`, `license`, and `icon`. `icon` is a kebab-case **lucide** icon name (e.g. `sitemap`); anything else renders as the default puzzle icon. The optional presentation pointers `thumbnail_url`, `marketing_url`, and `latest_url` are in the [schema reference](../reference/plugin-schema.md) (the update check does not use `latest_url`: an update is offered when the catalog's `version` differs from the installed one — see [Updates](updates.md)).
 
 ## Platforms
 
@@ -23,7 +23,7 @@ The identity block names and attributes the plugin: `identifier` (a reverse-DNS 
     }
     ```
 
-    `sandbox-js` runs the author's bundled JavaScript inside a dedicated module Web Worker, reaching out only through `ctx.net.fetch` against the host's egress allowlist. This is what RDAP IP uses.
+    `sandbox-js` runs the author's bundled JavaScript inside a dedicated module Web Worker whose own CSP forbids direct network access; it reaches out only through the host: `ctx.net.fetch` (limited to the declared `scopes.network` endpoints), `ctx.service` (`scopes.services`), or, in the desktop app, `ctx.net.probe` (`scopes.web_probe`). This is what RDAP IP uses (`ctx.net.fetch`).
 
 === "web (web-proxy)"
 
@@ -40,10 +40,10 @@ The identity block names and attributes the plugin: `identifier` (a reverse-DNS 
 
     `web-proxy` is designed as the CORS escape hatch: the worker would be a thin client calling exactly **one** author-controlled endpoint, with `proxy_endpoint` required to equal the single `scopes.network` entry (no fan-out). **The schema accepts this value, but no runtime dispatches it yet** — do not ship a plugin that depends on it.
 
-!!! warning "Desktop: `sandbox-js` ships; `native`/`subprocess` deferred"
-    The schema accepts a `desktop` block (with runtimes `sandbox-js`, `native`, or `subprocess`). The `sandbox-js` desktop runtime **ships today** via the Electron shell. `native` and `subprocess` runtimes are forward-looking design — do not rely on them executing yet.
+!!! warning "Desktop: the app runs the `web` entry; `native`/`subprocess` deferred"
+    The schema accepts a `desktop` block (with runtimes `sandbox-js`, `native`, or `subprocess`), but the host does not read it: the Electron shell runs the plugin's `platforms.web` `sandbox-js` entry in the same sandbox worker, not a separate desktop runtime. `native` and `subprocess` runtimes are forward-looking design — do not rely on them executing yet.
 
-Each platform block may set its own `fallback` describing what to tell the user when this platform cannot run the plugin — `web.fallback` is `desktop` or `none`; `desktop.fallback` is `web` or `none`. The installer **greys out** unsupported plugins rather than hiding them, so a web-only plugin still appears in the catalog with a clear, disabled state.
+The host executes `platforms.web` (runtime `sandbox-js`) on both the web and the desktop app — the `desktop` block and both `fallback` fields are accepted by the schema but not read, so every plugin needs a `web` block. `primary: "desktop"` marks the plugin desktop-only: in a browser it stays listed in the Run plugins panel under **Desktop only**, greyed out and not runnable, rather than hidden. The marketplace itself does not check platforms.
 
 ## io — consumes and produces
 
@@ -64,15 +64,15 @@ This is RDAP IP's `io`: it takes an `infrastructure.ip_address` node and adds th
 
 `consumes` shapes the UX:
 
-- A plugin appears on a node's **right-click menu** when that node's `type` matches one of its consumed type references. RDAP IP surfaces on any `infrastructure.ip_address` node.
+- `consumes` decides where a plugin is offered in the **Run plugins…** panel (opened from a node's or the canvas's right-click menu, the toolbar, or the menu bar): a plugin is listed under *Matches selection* / *Matches project data* when any consumed type is present in the chosen scope (Selected or Whole project). RDAP IP is offered whenever an `infrastructure.ip_address` node is in scope.
 - A type reference also accepts an optional `as` binding alias, meant to pre-bind the consumed node's value into `params` under that key. The field is accepted by the schema, but no shipped plugin declares it and the run form does not read it yet.
-- A plugin with an **empty `consumes` array** is a whole-graph plugin: it does not attach to any node and is launched from the global **"Run plugin"** menu instead.
+- A plugin with an **empty `consumes` array** is a whole-graph plugin: it is listed in the panel's *Whole-graph / input via form* section instead.
 
 `produces` is informational — it tells the marketplace and the canvas which node types this plugin can create. See [Type Packs (develop)](typepacks.md) for how these types are defined.
 
 ## params — the pre-run form
 
-`params` is a **JSON Schema (draft 2020-12)** describing the form shown before the plugin runs. The submitted, validated object becomes `Task.input` and is passed to the plugin's `run` function. Standard JSON Schema keywords drive the rendered form and its client-side validation: `title` becomes the label, `description` the help text, `default` the prefilled value, and `required`/`pattern`/`minimum`/`maximum`/`enum` enforce constraints. Wayback Snapshot History's form:
+`params` is a **JSON Schema (draft 2020-12)** describing the form shown before the plugin runs. The submitted object is passed to `run` as `ctx.params` (and kept on the run's task row). The form reads `title` (label), `description` (help text), `type` (text / number / switch), `enum` (a select) and `required` (Run stays disabled until filled); `default`, `pattern`, `minimum` and `maximum` are not applied, so validate and default inside `run`. A property with `"format": "file"` renders a local file picker (`accept` filters it; `"type": "array"` allows several files) and the plugin receives the `File` object(s). Wayback Snapshot History's form:
 
 ```json
 "params": {
@@ -118,11 +118,11 @@ For the full scope vocabulary, the scope families, and the enforcement model, se
 }
 ```
 
-The one field the host actually enforces is `timeout_ms` — a wall-clock budget for the run, past which the host terminates the sandbox and fails the task. `controls`, `progress`, and `persistence` are accepted by the schema but not read by the host today. See [Lifecycle](lifecycle.md) and the user-facing [Tasks](../guide/tasks.md) page.
+The one field the host actually enforces is `timeout_ms` — a wall-clock budget for the run, past which the host terminates the sandbox and fails the task. When `timeout_ms` is omitted the host applies a 10-minute default, and a declared value is clamped to 60 minutes — a manifest can raise its budget but not opt out of one. `controls`, `progress`, and `persistence` are accepted by the schema but not read by the host today. See [Lifecycle](lifecycle.md) and the user-facing [Tasks](../guide/tasks.md) page.
 
 ## distribution
 
-`distribution` is the shared block (used by plugins and Type Packs alike) that tells the client where to fetch the bundle. There is no server-side copy; the client fetches it directly (via jsDelivr, pinned to the immutable commit SHA) on each run.
+`distribution` is the shared descriptive block (used by plugins and Type Packs alike); the host does not read it. There is no server-side copy of the code: what the client runs is decided by the registry entry — it fetches the manifest from `repo@ref/path` via jsDelivr, verifies it against the digest the registry recorded, and loads `platforms.web.entry` from the same commit.
 
 ```json
 "distribution": {
@@ -131,7 +131,7 @@ The one field the host actually enforces is `timeout_ms` — a wall-clock budget
 }
 ```
 
-`kind` is `git`, `zip`, or `inline`. For `git`, the `ref` must be an **immutable** 40-char commit SHA or annotated tag (branches are rejected by registry CI) — that pin, not the optional `integrity` hash, is what stops a force-push from changing what runs (see [Distribution](distribution.md#integrity)). The full distribution block, including `repository`, `path`, and `archive`, is covered on the [Distribution](distribution.md) page and in the [schema reference](../reference/plugin-schema.md).
+`kind` is `git`, `zip`, or `inline`. The registry entry's `ref` must be a full commit SHA (40- or 64-hex) — registry CI rejects tags and branches — and that pin, not the optional `integrity` hash, is what stops a force-push from changing what runs (see [Distribution](distribution.md#integrity)). The full distribution block, including `repository`, `path`, and `archive`, is covered on the [Distribution](distribution.md) page and in the [schema reference](../reference/plugin-schema.md).
 
 ## Bundling many plugins
 

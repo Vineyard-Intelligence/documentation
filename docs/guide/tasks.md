@@ -1,10 +1,10 @@
 # Tasks & runs
 
-Every plugin run and every AI-chat turn in Vineyard is a **task**, shown in the Tasks panel.
+Every plugin run you start, and every AI-chat conversation, is a **task** shown in the Tasks panel (one row per conversation; each new turn updates it).
 
 ## How tasks work
 
-Each task runs in its own dedicated worker, with a spinner and (when reported) a progress bar.
+Each plugin run executes in its own dedicated sandbox worker. A running task shows a **running** badge and, when the plugin reports it, a progress bar.
 
 ## Task states
 
@@ -16,17 +16,17 @@ Each task runs in its own dedicated worker, with a spinner and (when reported) a
 | `cancelled` | You stopped it before it finished (terminal). |
 | `incomplete` | AI chat only — the turn stopped before finishing, with no answer yet (terminal). |
 
-The only control on a running task is **Stop**.
+A running plugin task has a **Stop** button (stop an AI turn from the AI chat panel). Click a row to open it: an AI task reopens its conversation, a plugin task opens its review. After a run with changes, the badge shows the review state instead — **needs review** (or **N to review**), **applied**, or **discarded** — and an AI task with pending changes also has a **Review staged changes** button.
 
 !!! note "Stop is cooperative"
-    **Stop** asks the task to wind down cleanly and preserves partial results. Vineyard does not terminate the worker out from under a running task on your Stop — a forced terminate is reserved as a last-resort backstop for a task that blows past its timeout.
+    **Stop** asks the plugin to wind down cleanly. If it has not returned within about 3 seconds, the worker is terminated. Either way, the changes it had already staged are kept and offered for review. A run that exceeds its time budget (10 minutes by default, at most 60) is terminated and marked failed.
 
 ## Ephemeral by default
 
-Tasks live in your browser tab's memory for the duration of the session — nothing about a run is written to the server. Close the tab, and the task list is gone.
+Plugin-run tasks live only in your browser tab's memory; close the tab and they are gone. AI conversations are saved in this browser (localStorage, per project) and come back as Tasks rows after a reload, so you can reopen them. Staged changes that were still waiting for review do not survive a reload. Neither task rows nor AI chat content are sent to the Vineyard server; only changes you apply are written to the case.
 
-!!! tip "AI chat is stateless"
-    Each AI turn is a streaming task; conversations and messages are not written to the server.
+!!! tip "AI chat stays in your browser"
+    Conversations and messages are kept in this browser only and are never written to the server.
 
 ## Conversation compaction (token compression)
 
@@ -42,7 +42,7 @@ How it works:
 
 ## Collaborator presence
 
-When you share a project, Vineyard shows a live presence beacon for collaborators — their status and the subject of what they are doing — over the project's real-time connection. This is in-memory only: it carries no secrets and is not persisted.
+When you share a project, participants see collaborator badges next to the project title, each with the collaborator's avatar and colour and what they currently have selected; click a badge to jump to it. Presence is sent only to project participants — people viewing through a public link see no roster or headcount. The live roster is not stored, but each signed-in connection is recorded as a session (who, when it started and ended) so that edits in the audit log can be attributed to it.
 
 ## Next / See also
 

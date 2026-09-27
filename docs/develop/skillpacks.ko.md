@@ -49,7 +49,7 @@ Skill Pack은 단일 JSON 문서로, `content_type: "vineyard:skillpack"`이며,
 | `identifier` | Reverse-DNS 기본 키, `<본인-네임스페이스>.skillpacks.<name>`. 매니페스트 하나 = 식별자 하나(플러그인 팩과 달리 멤버 확장 없음). |
 | `applies_to` | 플레이북이 다루는 노드 타입(`category.name`) — 언제 관련이 있는지에 대한 힌트. |
 | `triggers` | 관련성에 대한 키워드 힌트, 분석가의 요청과 매칭됩니다. |
-| `requires` | 플레이북의 단계가 호출하는 플러그인 팩 식별자. **모두 프로젝트에 설치된 경우에만 스킬을 사용할 수 있습니다**(마켓플레이스는 설치를 이에 따라 제한하고, 런타임도 같은 사실로 가용성을 제한합니다). 비어 있거나 없으면 = 플레이북이 내장 그래프 툴만 사용합니다. |
+| `requires` | 플레이북의 단계가 호출하는 플러그인 팩 식별자. **모두 프로젝트에 설치되어 있고 현재 빌드에서 실행 가능한 경우에만 스킬을 사용할 수 있습니다**(마켓플레이스가 함께 설치하며, 런타임에는 필요한 팩이 현재 플랫폼에서 차단된 경우 — 예: 웹에서의 데스크탑 전용 팩 — 설치되어 있어도 스킬이 숨겨집니다). 비어 있거나 없으면 = 플레이북이 내장 그래프 툴만 사용합니다. |
 | `overview` | 라우터이지 절차가 아닙니다: 팩이 무엇을 위한 것인지, 어떤 섹션이 있는지. 에이전트가 먼저 읽습니다. |
 | `sections` | 실제 단계. 각각 `id`(경로가 아닌 `load_skill(id, section)`으로 주소 지정 — 매니페스트가 허용 목록), 한 줄 `summary`(전부 로드하지 않고 섹션을 고를 수 있게), `body`를 가집니다. 요청 시 로드 — 점진적 공개. |
 | `starters` | 실행을 시작하는 준비된 방법: `{{key}}` 빈칸이 있는 `prompt`와 `variables` 목록(key, label, placeholder, `required`, `multiline`). `category`가 선택기에서 그룹화하며, 첫 등장 순서로 렌더링됩니다. |
@@ -67,8 +67,7 @@ Skill Pack은 단일 JSON 문서로, `content_type: "vineyard:skillpack"`이며,
 - **스킬은 프롬프트에 주입되지 않습니다.** 툴을 통해 제공되고 요청 시 읽히므로, 사용하지 않을 때 비용이 들지 않고, 툴 출력을 기본적으로 신뢰하지 않는 기존 신뢰 경계 내부에 도착합니다.
 - **로드된 모든 본문에는 프레임이 감싸집니다.** 에이전트가 섹션을 읽을 때, 호스트는 텍스트가 *콘텐츠이지 명령이 아님*을 명시하는 프레임을 앞에 붙입니다: 어떤 부분이 규칙을 무시하거나, 분석가의 검토를 건너뛰거나, 신뢰할 수 없는 텍스트를 명령처럼 다루라고 말한다면, 모델은 거부하고 그렇게 말해야 합니다. 앱의 안전에 중요한 프롬프트 블록은 항상 플레이북보다 우선합니다.
 - **원격 필드는 경계에서 정화됩니다.** 라벨은 한 줄로 접히고 제어 문자를 제거합니다(매니페스트가 설명에 두 번째로 보이는 "SYSTEM: …" 줄을 밀반입할 수 없도록); 섹션 본문은 제한되며(~8,000자) 개행을 제외한 제어 문자를 제거합니다; starter는 단단히 제한됩니다(~1,200자 — starter는 문단이지 문서가 아닙니다).
-- **턴당 로드 예산이 컨텍스트를 제한합니다.** 각 턴은 최대 12개의 (스킬, 섹션) 문서와 총 ~40,000자를 읽을 수 있습니다. 반복은 본문을 재전송하지 않고 장부에서 답변됩니다 — 모든 포인터를 따라가는 모델은 턴 전체를 문서를 읽는 데 쓸 수 없습니다.
-- **감사 추적이 무엇을 참고했는지 기록합니다.** 어떤 스킬 **리비전**(고정 커밋)이 결론에 영향을 주었는지는 프로젝트의 추가 전용 감사 로그에 보고됩니다 — 식별자, 섹션, 커밋 SHA. 채팅 콘텐츠는 브라우저를 떠나지 않습니다; *참고된 문서*만 기록됩니다.
+- **턴당 로드 예산이 컨텍스트를 제한합니다.** 각 턴은 최대 12개의 (스킬, 섹션) 문서와 총 ~40,000자를 읽을 수 있습니다. 재읽기는 허용되지만(앞서 읽은 사본이 컨텍스트에서 생략되었을 수 있음) 다른 읽기와 똑같이 예산에 계상됩니다 — 모든 포인터를 따라가는 모델은 턴 전체를 문서를 읽는 데 쓸 수 없습니다.
 
 ## 레지스트리에 게시
 
@@ -79,7 +78,7 @@ Skill Pack은 Plugin Pack 및 Type Pack과 정확히 같은 방식으로 배포�
   "identifier": "run.vineyard.skillpacks.account_identity_pivot",
   "content_type": "vineyard:skillpack",
   "name": "Account & identity pivoting",
-  "author": "vineyard-run",
+  "author": "VINEYARD",
   "description": "Turn one account or handle into the person's other accounts, and know when a shared username is NOT the same person.",
   "repo": "Vineyard-Intelligence/skillpack-account-identity-pivoting",
   "ref": "44305008e4ec16ec0d0d24595ffa993c0b6b6cb5",
@@ -91,11 +90,11 @@ Skill Pack은 Plugin Pack 및 Type Pack과 정확히 같은 방식으로 배포�
 }
 ```
 
-`applies_to`, `section_count`, `requires` 필드는 병합 시 **파생**되어, 찾아보기 페이지가 모든 문서를 가져오지 않고도 렌더링할 수 있습니다. 전체 워크플로 — 포크, 불변 커밋 `ref` 고정, `packs/<identifier>.json` 파일 하나 추가, PR 열기 —는 [레지스트리에 게시](publishing.md)와 동일합니다.
+`applies_to`, `section_count`, `requires`는 찾아보기 페이지가 모든 문서를 가져오지 않고도 렌더링할 수 있도록 작성자가 항목에 직접 적습니다. CI는 고정된 문서에서 `section_count`를 다시 계산해 불일치하면 거부하고, 모든 `requires` 식별자가 카탈로그의 살아 있는 팩인지 확인합니다. `applies_to`는 검사하지 않으므로 문서에서 그대로 옮겨 적으세요. 전체 워크플로 — 포크, 불변 커밋 `ref` 고정, `packs/<identifier>.json` 파일 하나 추가, PR 열기 —는 [레지스트리에 게시](publishing.md)와 동일합니다.
 
 ## 다음 / 함께 보기
 
 - [레지스트리에 게시](publishing.md) — 공유되는 포크 앤 PR 워크플로
-- [배포](distribution.md) — 고정 ref, 무결성 해시, 클라이언트 측 캐싱
+- [배포](distribution.md) — 고정 ref와 가져온 문서를 검증하는 방식
 - [Skill Pack 사용하기 (사용자 가이드)](../guide/skillpacks.md) — 팩 설치 및 사용
 - [SDK & 호스트 컨텍스트](sdk.md) — 스킬의 단계가 호출하는 플러그인 표면

@@ -4,7 +4,7 @@ A Type Pack is a `vineyard:typepack` document that defines the **node entity typ
 
 ## What a Type Pack is
 
-Plugins do not invent their own data shapes. They `consume` and `produce` node types that a Type Pack declares, addressed by a qualified string. A Type Pack that ships only `types` contributes node types; adding `edge_types` lets it describe the relationships between them. The six shipping reference packs are [Infrastructure, Threat, Identity, Financial, Endpoint, and Geospatial](../guide/typepacks.md).
+Plugins do not invent their own data shapes. They `consume` and `produce` node types that a Type Pack declares, addressed by a qualified string. A Type Pack that ships only `types` contributes node types; adding `edge_types` lets it describe the relationships between them. The shipping reference packs are [Infrastructure, Threat, Identity, Financial, Endpoint, Geospatial, Social Media, and Telegram](../guide/typepacks.md).
 
 ## Top-level fields
 
@@ -52,7 +52,7 @@ Plugins do not invent their own data shapes. They `consume` and `produce` node t
 
 - `category` and `name` are **snake_case identifier segments** (`^[a-z][a-z0-9_]*$`, ≤31 chars).
 - `properties` MUST be non-empty; each property key is also a snake_case segment.
-- `label_property` names the key used as the node's display label. The cross-field lint requires that key to exist in `properties` **and** be non-optional.
+- `label_property` names the key used as the node's display label. That key must exist in `properties` **and** be non-optional.
 - `identity_properties` (optional) lists the keys — together — that identify one entity for de-duplication; defaults to `[label_property]`. Display and identity are different questions: `identity.account` is *labelled* by `username` alone but *identified* by `(username, platform)`, since the same username on two platforms is two different accounts. Every listed key MUST exist in `properties`.
 - `label_template` (optional) builds the display label from several properties, e.g. `"{username} · {platform}"`. Falls back to `label_property` when a referenced field is empty, so a partially-filled node never shows a dangling separator. Display only — de-duplication always uses `identity_properties`.
 
@@ -127,37 +127,42 @@ The Threat pack, for example, uses lucide names like `bug` (malware), `shield-al
 {
   "category": "threat",
   "name": "exploits",
-  "label": "exploits",                 // stored verbatim in Edge.label, <= 1024 chars
+  "label": "exploits",                 // <= 1024 chars
   "directed": true,                     // default true
   "from": ["threat.malware"],           // allowed source node-type refs (category.name); '*' = any
   "to":   ["threat.vulnerability"],     // allowed target node-type refs; '*' = any
-  "properties": {                       // optional, stored in Edge.data; same grammar as node props
+  "properties": {                       // optional; same grammar as node props
     "confidence": { "type": "enum", "enum": ["low", "medium", "high"], "optional": true }
   }
 }
 ```
 
-The install-time lint verifies those refs resolve.
+`edge_types[]` is accepted by the schema and counted in the registry's `edge_count`, but the app does not read it. An edge's relationship is its free-text `label` (up to 1024 chars), written by the analyst or the plugin. Nothing checks `from`/`to` against node types, and no declared edge type is offered or enforced when edges are drawn.
 
 ## Type identity & storage
 
-A node type is addressed as the qualified string `"<category>.<name>"` — e.g. `infrastructure.ip_address` or `threat.malware`. This qualified form is what `Node.type` stores and what a plugin's `io.consumes` / `io.produces` and `emit` reference. Edge types map to `Edge.label`; edge properties (when used) live in `Edge.data`.
+A node type is addressed as the qualified string `"<category>.<name>"` — e.g. `infrastructure.ip_address` or `threat.malware`. This qualified form is what `Node.type` stores and what a plugin's `io.consumes` / `io.produces` and `emit` reference. Edges have no type field; the relationship is stated in the free-text `Edge.label`.
 
 **De-duplication keys on the exact qualified type.** When a plugin or AI task adds a node, the
 host de-duplicates by `"<category>.<name>"` + the identifying value, resolved in order:
 `identity_properties` (joined, when the type declares it), else `label_property`, else `value`,
-else `name`. The type is resolved by its exact qualified key only — a node whose type
+else `name`. Values are compared exactly unless the property sets `"case_insensitive": true`,
+which folds case for de-duplication only (display and storage keep what was written). Set it where
+case carries no meaning, such as handles, domains, hostnames, emails and hex digests. Never set it on
+Base58/EIP-55 crypto addresses, URL paths or case-sensitive file paths, where two different entities
+can differ by case alone. The type is resolved by its exact qualified key only — a node whose type
 is not defined by an installed pack keeps its raw type string, so a pack that moves a type to
 another category (e.g. `url` from `infrastructure` to `web`) never merges old nodes with the new
 type's creates. Creating a node with a type no installed pack defines is refused outright.
-(Plugins are expected to declare the packs they use in `io.consumes`/`io.produces`; the
-marketplace installs those packs alongside the plugin.)
+(Each `io.consumes`/`io.produces` typeRef resolves to the Type Pack that defines it. The plugin's
+registry entry must list those packs in `typepacks`, which CI enforces. The marketplace installs the
+packs in that list alongside the plugin.)
 
 ## Versioning
 
 `version` is the SemVer of the **pack content**.
 
-- **MAJOR** = a breaking change: a renamed or removed type. This requires a **node migration pass on activation** so existing nodes are remapped.
+- **MAJOR** = a breaking change: a renamed or removed type. Nothing remaps existing nodes when a new MAJOR is activated. Nodes keep the old `type` string and render unresolved. Nodes record, at write time, the pack revision that resolved their type as `Node.type_pack` (`"<identifier>@<version>"`), so a later migration can tell which revision produced them.
 - **MINOR / PATCH** = additive or fix-level changes that don't break existing `Node.type` values.
 
 !!! note "Open issue: Type Pack version pinning"
@@ -165,7 +170,7 @@ marketplace installs those packs alongside the plugin.)
 
 ## Validation checklist
 
-The install-time lint enforces cross-field invariants beyond raw JSON Schema:
+Nothing validates a Type Pack against this checklist at install time: the app loads any document with `content_type: vineyard:typepack`. Treat it as an authoring checklist. Registry CI enforces only these: the pinned document's `identifier`, `content_type` and `version` match the entry; `type_count`/`edge_count` match; every `identity_properties` key names an existing, scalar (not `array`/`object`/`json`) property; and no `category.name` is already defined by another published Type Pack.
 
 - [ ] `content_type` is `vineyard:typepack`.
 - [ ] `identifier` is a valid `<your-namespace>.typepacks.*` reverse-DNS string.
@@ -183,4 +188,4 @@ The install-time lint enforces cross-field invariants beyond raw JSON Schema:
 - [Plugin manifest](plugin-manifest.md) — how a plugin's `io` references Type Pack types.
 - [Security](security.md) — why secrets never become graph properties.
 - [Distribution](distribution.md) — the shared `git`/`zip`/`inline` block.
-- Catalog: the [six reference packs](../guide/typepacks.md) — Infrastructure, Threat, Identity, Financial, Endpoint, Geospatial.
+- Catalog: the [reference packs](../guide/typepacks.md) — Infrastructure, Threat, Identity, Financial, Endpoint, Geospatial, Social Media, Telegram.
