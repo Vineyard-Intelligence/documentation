@@ -4,9 +4,9 @@ Reference for the **registry entry** schemas — one row in `community-pluginpac
 
 The schemas live at:
 
-- [`schemas/registry-plugin-entry.schema.json`](https://vineyard.run/schemas/registry/plugin-entry/1.0.0.json)
-- [`schemas/registry-typepack-entry.schema.json`](https://vineyard.run/schemas/registry/typepack-entry/1.0.0.json)
-- [`schemas/registry-skillpack-entry.schema.json`](https://vineyard.run/schemas/registry/skillpack-entry/1.0.0.json) — one `community-skillpacks.json` row; same denormalized-pointer shape as the two below (`identifier`, `repo`/`ref`/`path`, `requires` for dependency pluginpacks), not detailed separately on this page yet.
+- [`schemas/registry-plugin-entry.schema.json`](https://registry.vineyard.run/schemas/registry-plugin-entry.schema.json)
+- [`schemas/registry-typepack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-typepack-entry.schema.json)
+- [`schemas/registry-skillpack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-skillpack-entry.schema.json) — one `community-skillpacks.json` row; same denormalized-pointer shape as the two below (`identifier`, `repo`/`ref`/`path`, `requires` for dependency pluginpacks), not detailed separately on this page yet.
 
 ## What a registry entry is (and is not)
 
@@ -38,12 +38,12 @@ A row in `community-pluginpacks.json`. The schema sets `additionalProperties: fa
 | `scopes_summary` | object | no | **Derived** filter facets (see below). |
 | `scopes_summary.network` | boolean | no | `true` if `scopes.network` is non-empty **or** the plugin declares `web_probe` — the probe reaches an arbitrary host, so it is the broader egress, not a lesser one. |
 | `scopes_summary.graph_write` | boolean | no | `true` if any `node:`/`edge:` create/update/delete verb is present. |
-| `scopes_summary.secret_config` | boolean | no | `true` if any `scopes.config` entry has `secret: true` (implies a desktop-only key). |
+| `scopes_summary.secret_config` | boolean | no | `true` if any `scopes.config` entry has `secret: true` (a key the analyst must supply; kept for the session only in the browser, in the OS keychain on desktop). |
 | `plugin_count` | integer | no | **Derived**: number of plugins bundled when the `identifier` names a **pack** (one file → many plugins). Omitted or `1` for a single-plugin entry. The card installs all contained plugins together. Minimum `1`. |
 | `typepacks` | string[] | no | **Derived**: Type Pack identifiers the pack's plugins consume/produce (`io.consumes`/`io.produces`), unique. The marketplace offers these for co-install the same way a skillpack's `requires` offers pluginpacks; a plugin that writes a type from a pack the project never installed fails at node-create time. |
 | `services` | string[] | no | **Derived**: Vineyard services the pack's plugins call by name (`rdap`, `telegram`). Its own field, not a `scopes_summary` flag: the destination is fixed by the host and the analyst's identity travels with the call, so "Network" would both understate and overstate it. See [scopes](scopes.md#services). |
 | `compat` | object | no | Runtime compatibility (the `versions.json` analog). |
-| `compat.min_app_version` | string | no | Oldest Vineyard runtime this `ref` supports (`^\d+\.\d+\.\d+$`). Gates the version the updater will offer. |
+| `compat.min_app_version` | string | no | Oldest Vineyard runtime this `ref` supports (`^\d+\.\d+\.\d+$`). Shown as "Min app version" on the Marketplace detail; not enforced by the client today. |
 | `thumbnail_url` | string (uri) | no | Optional card icon. |
 | `verified` | boolean | no | Mirror of `verified-authors.json` membership. Set by CI, **not self-asserted**. Default `false`. |
 | `status` | object | no | Present only on a **delisted** pack: `{ state: "deprecated" \| "withdrawn", reason, since, replacement? }`. The row stays in the catalog — an installed client holds an absolute pinned url and never asks again, so deleting the entry signals nothing to the projects that have it. `deprecated` still loads and warns; `withdrawn` is refused at install and dropped at load. See [Publishing → Taking a pack down](../develop/publishing.md#taking-a-pack-down). |
@@ -60,16 +60,17 @@ This is the real Chaos reference pack — a single `identifier` that bundles six
   "identifier": "run.vineyard.pluginpacks.chaos",
   "content_type": "vineyard:pluginpack",
   "name": "Chaos Reference Pack",
-  "author": "vineyard-run",
+  "author": "VINEYARD",
   "description": "A bundle of 6 graph-manipulation plugins for demo/validation: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node. Installing once adds all 6 together.",
-  "repo": "Vineyard-Intelligence/chaos-pack",
-  "ref": "a62f42b507e495fda884289fce5316915475d4f5",
+  "repo": "Vineyard-Intelligence/pluginpack-chaos",
+  "ref": "b7e60de109ae40831644e0b8234aab62015c3099",
   "path": "plugins/chaos-pack.manifest.json",
   "version": "1.0.0",
   "platforms": ["web"],
   "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
   "compat": { "min_app_version": "1.0.0" },
+  "typepacks": [],
   "verified": true
 }
 ```
@@ -103,27 +104,27 @@ A row in `community-typepacks.json`, symmetric with the plugin entry. Type Packs
 
 ### Example Type Pack row
 
-The real Infrastructure base pack, defining five network-infrastructure entity types (e.g. the qualified type `infrastructure.ip_address`, plus domain, URL, autonomous system, and certificate):
+The real Infrastructure base pack, defining fourteen infrastructure and web entity types and thirteen edge types:
 
 ```json
 {
   "identifier": "run.vineyard.typepacks.infrastructure",
   "content_type": "vineyard:typepack",
   "name": "Infrastructure",
-  "author": "vineyard-run",
-  "description": "A base Type Pack defining network-infrastructure entities (IP address, domain, URL, autonomous system, certificate).",
-  "repo": "Vineyard-Intelligence/typepacks",
-  "ref": "ef35dab0513de207dc32a54a42e7e93d57d15af3",
+  "author": "VINEYARD",
+  "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
+  "repo": "Vineyard-Intelligence/typepack-basic",
+  "ref": "0ad28beb55ed354eb5fcdaa2f162d48e898d59ae",
   "path": "typepacks/infrastructure.json",
-  "version": "1.0.0",
-  "categories": ["infrastructure"],
-  "type_count": 5,
-  "edge_count": 0,
+  "version": "2.4.0",
+  "categories": ["infrastructure", "web"],
+  "type_count": 14,
+  "edge_count": 13,
   "verified": true
 }
 ```
 
-The companion Threat pack is the same shape with `categories: ["threat"]` and `type_count: 4`.
+The companion Threat pack is the same shape with `categories: ["threat"]`, `type_count: 10` and `edge_count: 10`.
 
 ## How entries are validated and merged
 

@@ -4,7 +4,7 @@ A first-run walkthrough: open the Vineyard app, create a project, install a **Ty
 
 ## 1. Open the app
 
-Vineyard runs in your browser today. Sign in, and you land on your project list.
+Vineyard runs in your browser, or as the Vineyard desktop app. Sign in, and you land on your dashboard (reopening the app while still signed in goes to the last case you opened instead, if you chose that under **Settings → General → Start view**). The desktop app can also run in local mode with no account, and then it opens on your project list.
 
 Plugins and Type Packs **execute on the client**: the server stores your graph and brokers collaboration, but it never runs plugin code.
 
@@ -13,7 +13,7 @@ Plugins and Type Packs **execute on the client**: the server stores your graph a
 A **project** owns a graph (nodes + edges), its collaborators, and its installed set of packs.
 
 - **Existing project:** pick it from the list.
-- **New project:** choose *Create*, give it a name, and you're dropped straight onto its canvas.
+- **New project:** choose **Add New** on the project list (the dashboard's **New case** takes you there), give it a name and optionally an organization, click **Create**, and you're dropped straight onto its canvas.
 
 !!! note "Installs belong to the project"
     Packs are installed **onto a project**, not your account, so every collaborator on that project gets the same vocabulary and tools. Only the project owner can change the installed set.
@@ -26,7 +26,7 @@ A brand-new project has **no entity types** yet. That's what a Type Pack fixes.
 
 ## 4. Open the Marketplace
 
-From the canvas, choose **Project → Add from Marketplace…**. Search by name/author/description, filter by type, category, and verified status, then open a card for details. See [Browse & install](installing.md) for the full tour.
+From the canvas, choose **Project → Add from Marketplace…**. Search by name/author/description, filter by type and verified status, sort by name, author, or kind, then open a card for details. See [Browse & install](installing.md) for the full tour.
 
 ## 5. Add a Type Pack (entity types)
 
@@ -36,26 +36,26 @@ In the Marketplace, switch to Type Packs and install **Infrastructure** (`run.vi
 
 ## 6. Install a plugin
 
-A **plugin** is JavaScript that reads and/or writes your graph, asking your approval for the permissions it needs. One good first install covers both ways a plugin can launch:
+A **plugin** is JavaScript that reads and/or writes your graph, asking your approval for the permissions it needs. One good first install covers both scopes a run can have:
 
-- **Chaos Reference Pack** — one bundle with six small, pure-compute, no-network plugins for learning the run loop on a throwaway graph. Two of them are exactly the two launch shapes below: **Black Hole** targets a node (right-click it), **Korean Roulette** targets the whole graph (global menu).
+- **Chaos Reference Pack** — one bundle with six small, pure-compute, no-network plugins for learning the run loop on a throwaway graph. Two of them show the two scopes a run can have: **Black Hole** acts on the node you have selected (right-click it → **Run plugins…**), and **Korean Roulette** acts on the whole graph (**Run ▸ Run plugins…**).
 
 When you install, an **approval dialog** lists the plugin's permissions in plain language so you can see what it can touch before you grant it. Full details in [Browse & install](installing.md).
 
 ## 7. Run it
 
-How a plugin launches depends on what it **consumes**:
+Every plugin launches from the same **Run plugins** panel; what it **consumes** decides when it is listed:
 
-- **Targets a node type** (e.g. Black Hole, which consumes any node) → it appears in the **right-click menu of a matching node**, with that node pre-bound as input.
-- **Operates on the whole graph** (e.g. Korean Roulette) → launch it from the global **Run plugin** menu.
+- **Right-click a node → Run plugins…** opens the Run plugins panel scoped to your selection. It lists the plugins that consume the selected node types, plus plugins that take no node type (such as Black Hole, which acts on the selected node).
+- **Run ▸ Run plugins…** with nothing selected (or right-clicking empty canvas) opens the same panel on the whole project. Use it for whole-graph plugins such as Korean Roulette.
 
-If the plugin takes input, a small pre-run form appears, pre-filled from the node you right-clicked where applicable. Confirm, and the run starts.
+Tick the plugins you want. If a plugin takes input, its fields appear under it in the panel; fill in the required ones. Then press **Run**. The node you right-clicked is the run's target, not a form value.
 
-Watch it in the **Tasks** panel. A task moves through `pending → running → {succeeded | failed | cancelled}`, and today you get a **Stop** control while it runs (per-status controls beyond Stop are still being built — see [Tasks & runs](tasks.md)). For Black Hole, you'll see the target node's 1-hop neighbors disappear from the canvas as the run applies.
+Watch it in the **Tasks** panel. A task starts `running` and ends `succeeded`, `failed`, or `cancelled`, with a **Stop** control while it runs. A run never edits the graph directly: its changes are staged, and the task shows **needs review**. Click it to open the Review dialog, check the changes, and press **Apply** (or **Discard all**). For Black Hole, the target node's 1-hop neighbours disappear from the canvas when you apply.
 
 ## 8. Runs are ephemeral
 
-By default nothing about a run is saved to the server — use the explicit **Save** action on a finished task to keep a result. See [Tasks & runs](tasks.md) for details.
+Nothing about a run is written to the server by the run itself. Its changes reach your graph only when you approve them with **Apply** in the run's review; **Discard all** throws them away. See [Tasks & runs](tasks.md) for details.
 
 ## Next / See also
 

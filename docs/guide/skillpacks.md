@@ -30,23 +30,29 @@ Skill Packs install from the [Marketplace](../marketplace.md) exactly like plugi
 
 !!! note "Availability is gated on dependencies"
     A Skill Pack is only **available** in a project when every plugin pack in its `requires` is
-    installed there. If you uninstall one later, the skill quietly stops being offered — the agent is
-    never pointed at a playbook whose steps call a plugin the project does not have.
+    installed there **and can run on this platform**. If you uninstall one later, or open the project
+    in a browser when a required pack is desktop-only, the skill quietly stops being offered — the
+    agent is never pointed at a playbook whose steps call a plugin the project does not have. For
+    example, Account & identity pivoting requires the WhatsMyName pack, which runs only in the
+    desktop app, so this skill is available only there.
 
 The current catalog ships two Skill Packs:
 
 | Skill Pack | `applies_to` | Requires | What it does |
 | --- | --- | --- | --- |
-| **Account & identity pivoting** (`run.vineyard.skillpacks.account_identity_pivot`) | `identity.handle`, `identity.account`, `identity.email_address`, `identity.person` | `run.vineyard.pluginpacks.whatsmyname` | Turn one account or handle into the person's other accounts — and know when a shared username is **not** the same person. |
-| **Infrastructure pivoting** (`run.vineyard.skillpacks.infra_pivot`) | `infrastructure.ip_address`, `infrastructure.domain`, `infrastructure.certificate`, `infrastructure.autonomous_system` | — (built-in graph tools) | Expand one indicator (IP/domain/cert) into its connected footprint, one verifiable hop at a time. |
+| **Account & identity pivoting** (`run.vineyard.skillpacks.account_identity_pivot`) | `identity.handle`, `identity.account`, `identity.email_address`, `identity.person` | `run.vineyard.pluginpacks.whatsmyname` (desktop app only) | Turn one account or handle into the person's other accounts — and know when a shared username is **not** the same person. |
+| **Infrastructure pivoting** (`run.vineyard.skillpacks.infra_pivot`) | `infrastructure.ip_address`, `infrastructure.domain`, `infrastructure.certificate`, `infrastructure.autonomous_system` | — (none required; uses the graph tools plus whatever DNS/RDAP/certificate/ASN collection plugins the project has, and says which hops it cannot take without them) | Expand one indicator (IP/domain/cert) into its connected footprint, one verifiable hop at a time. |
 
 ## Using a Skill Pack
 
-Start a run in the AI chat, then either:
+Open **Run ▸ Skill packs** in the top menu bar and pick an installed pack. The **Skill pack** reader
+shows what it is about, which plugins it needs, and its full text (the overview and every section).
+Then either:
 
-- pick a **starter** — the pack's ready-made prompt shapes appear as one-click options, grouped by
-  category (`Find accounts`, `Corroborate`, `Report`, …). Fill the blanks, hit **Use this**, and the
-  agent starts the run following that shape; or
+- start a run from it: pick a category (`Find accounts`, `Corroborate`, `Report`, …) and a
+  **starter**, fill the blanks (required ones are marked), set the run options and answer language
+  if you want, check the preview, and press **Ask the agent to follow this**. The prompt is placed in
+  the AI chat composer for you to edit and send; or
 - just ask in your own words — the agent decides a pack is relevant (via `applies_to` / `triggers`)
   and reads it on its own.
 

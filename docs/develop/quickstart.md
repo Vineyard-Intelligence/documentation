@@ -1,6 +1,6 @@
 # Quickstart — your first plugin
 
-Build, test, and locally load a working Vineyard plugin end to end. By the end you will have a single `main.js` bundle that does `export default definePlugin({ manifest, run })`, a unit test that runs `run(ctx)` with no app at all, and the plugin loaded in the app via Developer Mode.
+Build, test, and locally load a working Vineyard plugin end to end. By the end you will have a single `main.js` bundle that does `export default definePlugin({ manifest, run })`, a unit test that runs `run(ctx)` with no app at all, and the plugin loaded in the app through the dev loader.
 
 ## What a plugin is
 
@@ -13,9 +13,10 @@ You ship one JavaScript file. Use any bundler that can produce a single ESM file
 ```bash
 mkdir my-plugin && cd my-plugin
 npm init -y
-npm i -D esbuild typescript
-npm i @vineyard/plugin-sdk
+npm i -D esbuild typescript vitest
 ```
+
+There is no SDK package to install: the SDK is a single file. Copy `sdk.ts` — the app's SDK runtime copy, vendored e.g. as `src/sdk.ts` in the `pluginpack-otx` repo — into `src/` and import from `./sdk`.
 
 === "esbuild"
 
@@ -24,7 +25,7 @@ npm i @vineyard/plugin-sdk
     {
       "scripts": {
         "build": "esbuild src/main.ts --bundle --format=esm --outfile=dist/main.js",
-        "watch": "esbuild src/main.ts --bundle --format=esm --outfile=dist/main.js --watch --servedir=dist"
+        "watch": "esbuild src/main.ts --bundle --format=esm --outfile=dist/main.js --watch --servedir=. --cors-origin=http://localhost:3000"
       }
     }
     ```
@@ -36,20 +37,20 @@ npm i @vineyard/plugin-sdk
     {
       "scripts": {
         "build": "vite build",
-        "dev": "vite"   // serves a hot-reloading dev URL for Developer Mode
+        "dev": "vite"   // serves a hot-reloading dev URL for the dev loader
       }
     }
     ```
 
-The build output (`dist/main.js`) is what the `entry` field in your manifest points at, and what Developer Mode loads.
+The build output (`dist/main.js`) is what the `entry` field in your manifest points at, and what the dev loader imports when the plugin runs.
 
 ## 2. Write `definePlugin({ manifest, run })`
 
-Here is a minimal but real whole-graph plugin — **Korean Roulette**, from the reference set: it keeps one random node and deletes everything else. (`consumes: []` means it operates on the whole graph and is launched from the global "Run plugin" menu rather than a node's right-click menu.)
+Here is a minimal but real whole-graph plugin — **Korean Roulette**, from the reference set: it keeps one random node and deletes everything else. (`consumes: []` means it operates on the whole graph: it appears in the **Run plugins…** panel's "Whole-graph / input via form" section, whether the panel was opened from a node, the canvas, the toolbar or the menu bar.)
 
 ```ts
 // src/main.ts
-import { definePlugin } from "@vineyard/plugin-sdk";
+import { definePlugin } from "./sdk";
 
 export default definePlugin({
   manifest: {
@@ -94,23 +95,23 @@ Every field below is required unless noted. The full schema is documented in [pl
 | `identifier` | Reverse-DNS, `<your-namespace>.plugins.*`. |
 | `content_type` | Must be the literal `vineyard:plugin`. |
 | `name`, `version`, `description` | `version` is SemVer. |
-| `platforms.web` | `{ runtime: "sandbox-js", entry: "dist/main.js" }`. `sandbox-js` runs your JS in the worker; `web-proxy` is the CORS escape hatch (see below). |
-| `io` | `{ consumes: [], produces: [] }` — empty `consumes` = whole-graph plugin. Non-empty entries are qualified types like `infrastructure.ip_address` and drive the node menu. See [Type Packs](typepacks.md). |
+| `platforms.web` | `{ runtime: "sandbox-js", entry: "dist/main.js" }`. `sandbox-js` runs your JS in the worker — it is the only runtime the host executes. (`web-proxy` is accepted by the schema but not dispatched; see [plugin-manifest](plugin-manifest.md#platforms).) |
+| `io` | `{ consumes: [], produces: [] }` — empty `consumes` = whole-graph plugin. Non-empty entries are qualified types like `infrastructure.ip_address` and decide where the plugin is offered in the **Run plugins…** panel. See [Type Packs](typepacks.md). |
 | `scopes` | The only authority your plugin gets. Here, `scopes.graph` lists `node:read`, `node:delete`, `edge:delete`. See [scopes](../reference/scopes.md). |
 | `lifecycle` | `persistence: "ephemeral"` plus the `controls` you support (`progress`, `cancel`, …). See [lifecycle](lifecycle.md). |
-| `distribution` | How the bundle is fetched. `kind: "inline"` for local/dev; `git`/`zip` for published plugins (see [distribution](distribution.md)). |
+| `distribution` | Schema-required descriptive block (`kind`: `git`, `zip` or `inline`); the host does not read it. Installed code is fetched from the registry entry's pinned commit, dev code from the URL you load in the dev loader (see [distribution](distribution.md)). |
 
 !!! warning "Never put secrets in `params`"
-    Never put a secret-looking key in `params` — those values are recorded. Declare secrets as `scopes.config` with `secret: true`; on the web they route to the desktop plugin — see [Security](security.md). Korean Roulette needs no secrets and no network, which is exactly why it's a clean first plugin.
+    Never put a secret-looking key in `params` — those values are recorded. Declare secrets as `scopes.config` with `secret: true`: they are entered in the plugin's settings form (masked), encrypted with the OS keychain on desktop or kept in `sessionStorage` for the tab in the browser, never written to a record, and handed only to the plugin that declared them via `ctx.config` — see [Security](security.md). Korean Roulette needs no secrets and no network, which is exactly why it's a clean first plugin.
 
 ## 4. Unit test with `createMockContext`
 
-The SDK ships a test harness so you can exercise `run(ctx)` with **no app, no GitHub, no server**. `createMockContext({ nodes, edges, grantedScopes })` builds a `HostContext` whose `graph`/`net`/`message` members exist **only** for the granted scopes, and records what the plugin did under `ctx.mock` for assertions.
+The SDK ships a test harness so you can exercise `run(ctx)` with **no app, no GitHub, no server**. `createMockContext({ nodes, edges, grantedScopes })` builds a `HostContext` whose `graph` member (and each write method on it) exists only for the granted graph verbs; `net.fetch`/`net.probe` exist only when you pass `netHandler`/`probeHandler`, and `config` comes from the `config` option. It records what the plugin did under `ctx.mock` for assertions.
 
 ```ts
 // test/korean_roulette.test.ts
 import { describe, it, expect } from "vitest";
-import { createMockContext } from "@vineyard/plugin-sdk";
+import { createMockContext } from "../src/sdk";
 import plugin from "../src/main";
 
 describe("Korean Roulette", () => {
@@ -140,30 +141,48 @@ Useful `ctx.mock` fields for assertions: `deletedNodeIds`, `deletedEdgeIds`, `cr
 !!! tip "Test the scope boundary, not just the happy path"
     Pass `grantedScopes: {}` (or omit `graph`) and assert your plugin degrades gracefully when `ctx.graph` is `undefined`. This catches the most common runtime surprise: assuming a capability you didn't declare.
 
-## 5. Load it in the app (Developer Mode)
+## 5. Load it in the app (dev loader)
 
-GitHub and the registry are a **distribution** layer; development is fully local. Open **Developer Mode** in the app and load your plugin one of three ways:
+GitHub and the registry are a **distribution** layer; during development the app loads your plugin from a URL you serve. The dev loader reads a JSON **manifest document**, not the bundle, so first write one next to `src/` — the manifest from step 2, as JSON:
 
-1. **File picker** — point it at `dist/main.js`. This is the `kind: "inline"` path.
-2. **Local dev-server URL** — `esbuild --watch --servedir` or `vite`, with hot reload as you edit.
-3. **Local plugins folder** — desktop only.
+```jsonc
+// plugin.manifest.json
+{
+  "identifier": "run.vineyard.plugins.korean_roulette",
+  "content_type": "vineyard:plugin",
+  "name": "Korean Roulette",
+  "version": "1.0.0",
+  "description": "Keep one random node; delete everything else.",
+  "platforms": { "primary": "web", "web": { "runtime": "sandbox-js", "entry": "dist/main.js" } },
+  "io": { "consumes": [], "produces": [] },
+  "scopes": { "graph": ["node:read", "node:delete", "edge:delete"] },
+  "lifecycle": { "persistence": "ephemeral", "controls": ["progress", "cancel"] },
+  "distribution": { "kind": "inline" }
+}
+```
+
+Open **Settings → Plugins → Development → Load a pack from a URL**, choose **Plugin Pack**, and enter the absolute URL of your plugin's manifest document (a JSON file with `content_type: "vineyard:plugin"`, or a `vineyard:pluginpack` document, whose `platforms.web.entry` points at your bundle, e.g. `dist/main.js`, relative to the manifest's folder). Serve both from your dev server (`esbuild --watch --servedir` or `vite`). The URL is kept in this browser only and loads into every case you open on this device — reopen the case after adding it. The `identifier` in the JSON manifest must match the one in `definePlugin`, or the run fails with `plugin not loadable: <identifier>`.
 
 !!! example "Try Korean Roulette on a throwaway project"
-    Because it deletes nearly everything, run it against a scratch project first. Watch the [task](../guide/tasks.md) panel show the run, then the survivor node standing alone in the canvas.
+    Because it deletes nearly everything, run it against a scratch project first. Watch the [task](../guide/tasks.md) panel show the run, review and apply the staged deletions, then see the survivor node standing alone in the canvas.
 
 ## 6. Integration testing in the app
 
-When unit tests pass, exercise the plugin end-to-end against a real graph in the app you
-actually use — the web app at [vineyard.run](https://vineyard.run/) or the desktop build. You
-do not need Vineyard's source code or a local development stack for this: sideload your bundle
-through **Developer Mode** (the dev-server URL mode is ideal while you iterate), trigger a run
-on a throwaway project, and watch nodes and edges appear, change, or vanish in the canvas in
-real time as `run(ctx)` executes. This is the closest thing to production behavior before you
-publish: real writes, real run token, real WebSocket fan-out — just sourced from your local
-bundle instead of the registry.
+When unit tests pass, exercise the plugin end-to-end against a real graph. A plugin pack's
+module must satisfy the app's script policy. On [vineyard.run](https://vineyard.run/) (and the
+packaged desktop app) only the registry's CDN path may serve plugin code, so a dev-loaded plugin
+pack's manifest loads but its code is refused when you run it. Iterate against a local dev build
+of the app (e.g. `npm run dev`, which serves no CSP): load your manifest through the dev loader
+(a dev-server URL is ideal while you iterate), trigger a run on a throwaway project, watch the
+run in the Tasks panel, then open its staged change set and apply it to see the nodes and edges
+change. This is the closest thing to production behavior before you publish: the same sandbox,
+the same staged change set, and the same Review dialog — just sourced from your local bundle
+instead of the registry. Remember that a dev build also lacks the worker's `connect-src 'none'`:
+any direct `fetch`/XHR from your plugin will work there and fail in production — go through
+`ctx.net`/`ctx.service` only.
 
-!!! warning "Dev Mode relaxes two protections"
-    To keep the loop fast, Developer Mode **may auto-approve scopes and skip the integrity check**. That means a dev-loaded plugin can run with scopes you never explicitly granted, and its bytes are not pinned by hash the way a published, registry-installed plugin is (see [Distribution](distribution.md) and [Updates](updates.md)). Use Dev Mode only for code you wrote or trust, and re-test the *published* artifact through the normal install path before relying on it.
+!!! warning "The dev loader relaxes two protections"
+    To keep the loop fast, the dev loader **may auto-approve scopes and skip the integrity check**. That means a dev-loaded plugin can run with scopes you never explicitly granted, and its manifest is not checked against a registry digest nor its code pinned to a commit, as a published, registry-installed plugin's are (see [Distribution](distribution.md) and [Updates](updates.md)). Use the dev loader only for code you wrote or trust, and re-test the *published* artifact through the normal install path before relying on it.
 
 ## 7. Going live
 
@@ -171,7 +190,7 @@ When the plugin works locally, publish it: author repo → GitHub release (tag =
 
 ## Next / See also
 
-- [Architecture](architecture.md) — worker sandbox, HostBridge, and the run token
+- [Architecture](architecture.md) — worker sandbox, HostBridge, and staged writes
 - [Plugin manifest](plugin-manifest.md) and the [plugin schema](../reference/plugin-schema.md)
 - [Scopes](../reference/scopes.md) and the [scopes reference](../reference/scopes.md)
 - [SDK](sdk.md) — the full `ctx` surface and `definePlugin`

@@ -25,23 +25,20 @@ plugin이 `manifest.scopes`에서 선언할 수 있는 모든 scope 문자열, �
 
 | Scope string | Grants | `ctx` member(s) |
 | --- | --- | --- |
-| `node:read` | 개별 노드 읽기, 그래프 열거, 이웃 나열 | `ctx.graph.get`, `ctx.graph.list`, `ctx.graph.neighbors` |
-| `node:create` | `EntityDraft`에서 노드 생성; 벌크 upsert | `ctx.graph.createNode`, `ctx.graph.emit` |
+| `node:read` | 개별 노드 읽기, 노드 나열 (선택적으로 유형별) | `ctx.graph.get`, `ctx.graph.list` |
+| `node:create` | `EntityDraft`에서 노드 생성 | `ctx.graph.createNode` |
 | `node:update` | 노드의 `data` 패치 | `ctx.graph.updateNode` |
 | `node:delete` | 단일 바운드 작업으로 하나 또는 여러 노드 삭제 | `ctx.graph.deleteNode`, `ctx.graph.deleteNodes` |
-| `edge:read` | 엣지 읽기 (이웃/목록 쿼리와 함께 반환됨) | `ctx.graph.neighbors`, `ctx.graph.list` |
-| `edge:create` | 엣지 생성; 벌크 upsert 엣지 | `ctx.graph.createEdge`, `ctx.graph.emit` |
-| `edge:update` | 엣지 데이터 업데이트 | *(예약됨; SDK 타입에 전용 메서드 없음)* |
-| `edge:delete` | 엣지 삭제 | `ctx.graph.deleteEdge` |
+| `edge:read` | 모든 엣지 읽기; 노드의 1-홉 이웃 | `ctx.graph.edges`, `ctx.graph.neighbors` |
+| `edge:create` | 엣지 생성; 기존 엣지를 id로 수정 (label/data) | `ctx.graph.createEdge`, `ctx.graph.updateEdge` |
+| `edge:update` | 스키마가 허용함 | *(뒷받침하는 메서드 없음 — `updateEdge`는 `edge:create`로 부여됨)* |
+| `edge:delete` | 단일 바운드 작업으로 하나 또는 여러 엣지 삭제 | `ctx.graph.deleteEdge`, `ctx.graph.deleteEdges` |
 
 !!! note "A write verb is not a write"
     `node:create`(또는 create/update/delete 동사 전부)를 부여한다고 해서 plugin이 케이스를 변경할 수 있게 되는 것은 아닙니다. 쓰기는 해당 실행의 변경 세트로 캡처되며, 분석가가 그 변경 세트를 검토하고 자신의 계정으로 적용할 때에만 그래프에 반영됩니다. 신뢰할 수 없는 plugin의 실질적 경계는 scope 문자열이 아니라 바로 이 검토입니다.
 
 !!! note "Bulk ops are one operation"
     `deleteNodes(ids[])`와 `deleteEdges(ids[])`는 N개의 개별 쓰기가 아니라 **단일** 바운드 호출입니다: 정당한 대량 삭제(Russian Roulette, Thanos Snap)는 한 번만 발행되며 호스트가 자체적으로 동시성을 제한합니다.
-
-!!! info "Emit needs both verbs"
-    `ctx.graph.emit(entities, edges)`는 노드*와* 엣지를 upsert합니다. 둘 다에 사용하려면 `node:create`와 `edge:create`를 부여하세요. `node:create`만 있는 경우, 엣지 없이 `emit(entities)`를 전달하세요.
 
 ## network
 
@@ -61,10 +58,10 @@ plugin이 `manifest.scopes`에서 선언할 수 있는 모든 scope 문자열, �
 | `methods` | `HttpMethod[]` | 허용된 동사: `GET` `POST` `PUT` `PATCH` `DELETE` |
 | `purpose` | `string` (선택 사항) | 사람이 읽을 수 있는 이유, 설치 시 표시됨 |
 
-`ctx.net.fetch` / `ctx.net.fetchWithBackoff`는 이 엔드포인트로 제한됩니다. URL은 문자열 접두사가 아니라 **파싱된 origin**과 경로 세그먼트 경계로 매칭됩니다 — `https://h/v1`은 `/v1/search`를 포함하지만 `/v1beta`는 포함하지 않으며, `https://h.attacker.test`는 전혀 포함하지 않습니다 (`plugins/net-allowlist.ts`, `endpointCovers`).
+`ctx.net.fetch`는 이 엔드포인트로 제한됩니다. URL은 문자열 접두사가 아니라 **파싱된 origin**과 경로 세그먼트 경계로 매칭됩니다 — `https://h/v1`은 `/v1/search`를 포함하지만 `/v1beta`는 포함하지 않으며, `https://h.attacker.test`는 전혀 포함하지 않습니다 (`plugins/net-allowlist.ts`, `endpointCovers`).
 
-!!! warning "Web: exactly one endpoint == proxy_endpoint"
-    **web** plugin의 경우 `network` 배열은 정확히 **하나**의 항목을 포함해야 하며, 그 `endpoint`는 `platforms.web.proxy_endpoint`와 동일해야 합니다 — 팬아웃 없음. 데스크톱은 더 많은 엔드포인트를 선언할 수 있으며(사용자의 책임하에) 그 위에 CSP가 추가됩니다. web 빌드에서는 이 허용 목록 검사가 이그레스 경계입니다. 브릿지는 `credentials: "omit"`을 강제하고 `Authorization` / `Cookie` 헤더를 제거하므로 (`SafeRequestInit`), plugin이 분석가의 세션을 허용된 엔드포인트로 몰래 실어보낼 수 없습니다.
+!!! warning "The host bridge is the only way out"
+    plugin worker 자체의 응답에는 web과 데스크톱 셸 모두에서 두 번째 CSP `connect-src 'none'; worker-src 'none'`이 붙습니다. plugin이 직접 여는 `fetch`, XHR, WebSocket, 중첩 worker는 모두 거부되므로, 호스트 브릿지가 유일한 네트워크 경로입니다: 이 엔드포인트들로 검사되는 `ctx.net.fetch`, 그리고 [`ctx.net.probe`](#web_probe)와 [`ctx.service`](#services). (`vite dev`에서는 이 CSP가 제공되지 않으므로, `fetch`를 직접 호출하는 팩은 거기서는 동작하고 프로덕션에서는 실패합니다.) sandbox-js plugin은 여러 엔드포인트를 선언할 수 있습니다. 항목 하나짜리 `proxy_endpoint` 규칙은 연기된 `web-proxy` 런타임의 것입니다. 브릿지는 `credentials: "omit"`을 강제하므로 분석가의 쿠키는 plugin 요청에 절대 실리지 않으며, 요청 헤더는 `Authorization`을 포함해 그대로 전달합니다([Sending a credential](plugin-schema.md#sending-a-credential) 참조). 데스크톱에서는 셸이 추가로 `Origin`을 제거하고 선언된 origin에 대해 CORS 헤더를 채워 주므로, CORS 헤더를 보내지 않는 선언된 엔드포인트에도 접근할 수 있습니다.
 
 ## web_probe
 
@@ -120,20 +117,20 @@ const who = await ctx.service('telegram', 'resolve', {
 
 ## config
 
-각 항목은 `ConfigValue`입니다. `config` 항목을 선언하면 `ctx.config`가 존재하게 됩니다 — 선언된 **비밀 아닌** 값들의 읽기 전용 맵입니다. (출처: `@vineyard/plugin-sdk` 패키지 타입 — `ConfigValue`, `HostContext.config`.)
+각 항목은 `ConfigValue`입니다. `ctx.config`는 분석가가 값을 설정한 선언된 키들(비밀 키 포함)을 선언된 `type`으로 변환해 담은 읽기 전용 맵입니다. 그중 어느 것에도 값이 없는 동안에는 존재하지 않으므로, `ctx.config?.key ?? DEFAULT`로 읽으세요. (출처: `@vineyard/plugin-sdk` 패키지 타입 — `ConfigValue`, `HostContext.config`.)
 
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `key` | `string` | 식별자, 패턴 `^[a-z0-9_]+$` |
-| `label` | `string` (선택 사항) | 설치 폼의 표시 라벨 |
+| `label` | `string` (선택 사항) | Run plugins 대화상자의 해당 plugin Settings 섹션에 표시되는 필드 라벨 |
 | `type` | `"string" \| "number" \| "boolean" \| "url" \| "enum"` | 값 유형 |
 | `enum` | `string[]` (선택 사항) | `type`이 `enum`일 때 허용된 값 |
 | `secret` | `boolean` (선택 사항) | BYOK 방식 자격 증명; 아래 참조 |
-| `scope` | `"plugin" \| "project" \| "user"` (선택 사항) | 값이 저장되는 위치 |
-| `optional` | `boolean` (선택 사항) | false/없으면 설치 시 값이 필수 |
+| `scope` | `"plugin" \| "project" \| "user"` (선택 사항) | 값이 저장되는 위치. 허용되지만 오늘은 읽히지 않으며, 값은 plugin별로 저장됨 |
+| `optional` | `boolean` (선택 사항) | false/없으면 필드에 "required by this plugin"이 표시됨 (강제되지 않음; plugin이 값이 없는 경우를 처리해야 함) |
 
 !!! danger "secret semantics"
-    `secret: true`는 **값을 plugin으로부터 숨기는 것이 아니라 저장과 표시**에 관한 것입니다. 값은 선언한 plugin에게 `ctx.config[key]`로 실제 전달됩니다(SPEC §6.1) — API를 호출하는 주체가 plugin이므로 그래야 하며, `configFor`는 팩 자신의 매니페스트가 선언한 키만 넘겨줍니다. 플래그가 바꾸는 것: 폼 필드가 마스킹되고, 값이 데스크톱 키체인(`safeStorage`, 저장 시 암호화, 해당 머신 한정) 또는 브라우저의 해당 탭 `sessionStorage`에 저장되어 브라우저에서 입력한 키는 세션을 넘기지 못합니다. task 기록이나 AI 대화에는 **절대 기록되지 않으며**, 이는 `ctx.config`에서 값을 빼서가 아니라 자격 증명을 `params`에 두지 않음으로써 보장됩니다. [security](../develop/security.md) 및 SPEC §6을 참조하세요.
+    `secret: true`는 **값을 plugin으로부터 숨기는 것이 아니라 저장과 표시**에 관한 것입니다. 값은 선언한 plugin에게 `ctx.config[key]`로 실제 전달됩니다(SPEC §6.1) — API를 호출하는 주체가 plugin이므로 그래야 하며, `configFor`는 팩 자신의 매니페스트가 선언한 키만 넘겨줍니다. 플래그가 바꾸는 것: 폼 필드가 마스킹됩니다. 비밀 여부와 무관하게 모든 config 값은 데스크톱 키체인(`safeStorage`, 저장 시 암호화, 해당 머신 한정) 또는 브라우저의 해당 탭 `sessionStorage`에 저장되어, 브라우저에서 입력한 키는 세션을 넘기지 못합니다. task 기록이나 AI 대화에는 **절대 기록되지 않으며**, 이는 `ctx.config`에서 값을 빼서가 아니라 자격 증명을 `params`에 두지 않음으로써 보장됩니다. [security](../develop/security.md) 및 SPEC §6을 참조하세요.
 
 ## Not scopes
 
@@ -141,10 +138,10 @@ const who = await ctx.service('telegram', 'resolve', {
 
 | Capability | `ctx` member | Notes |
 | --- | --- | --- |
-| `params` | `ctx.params` | 이 실행의 사용자 입력, `params` JSON Schema에 대해 검증됨 (읽기 전용) |
+| `params` | `ctx.params` | 이 실행의 사용자 입력 (읽기 전용). `params` JSON Schema에 대해 검증되지 않음: Run 대화상자는 `required` 필드가 채워졌는지만 확인하므로 유형은 직접 검증하세요 |
 | `progress` | `ctx.progress.set` | Task UI 구동 (`percent` / `message` / `phase`) |
-| `log` | `ctx.progress.log` | 실행에 로그 줄 추가 |
-| `status` | `ctx.progress.status` | `"running"` / `"waiting"` 보고 |
+| `log` | `ctx.progress.log` | 허용되지만 현재 no-op; 아무것도 기록되지 않음 |
+| `status` | `ctx.progress.status` | 허용되지만 현재 no-op; task 상태는 runner가 설정함 |
 | `signal` | `ctx.signal`, `ctx.onCancel` | 협력적 취소 — plugin이 반드시 관찰해야 함 |
 
 두 멤버도 항상 존재하며 게이트되지 않습니다: `ctx.run` (이 실행의 식별 — `runId`, `projectId`, `pluginId`, `grantedScopes`, `platform`) 및 `ctx.input` (`selection`을 포함한 트리거 컨텍스트).

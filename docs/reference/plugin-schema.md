@@ -23,7 +23,7 @@ The manifest is the single source of truth for a plugin; there is no separate se
 | `description` | string | yes | minLength 1, maxLength 1024 | — | One-paragraph summary. |
 | `author` | object | no | see [author](#author) | — | Authorship metadata. |
 | `license` | string | no | — | — | SPDX license id, e.g. `MIT`. |
-| `icon` | string | no | — | — | Icon shown in the node right-click menu. |
+| `icon` | string | no | — | — | Icon (lucide name) shown next to the plugin in the Marketplace pack detail. |
 | `thumbnail_url` | string | no | `format: uri` | — | Marketplace thumbnail image URL. |
 | `marketing_url` | string | no | `format: uri` | — | Landing / marketing page URL. |
 | `latest_url` | string | no | `format: uri` | — | Per-author fallback pointer to the always-newest manifest (update check). The registry entry is the primary latest pointer; this is the fallback. |
@@ -50,12 +50,12 @@ Per-platform execution flags. `type: object`, `additionalProperties: false`, `mi
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
-| `primary` | string | no | `web`, `desktop` | — | Preferred platform when both are declared. |
+| `primary` | string | no | `web`, `desktop` | — | Platform contract. `desktop` makes the plugin desktop-only: the web build lists it greyed out ("Desktop only — …") and will not run it. `web` or absent runs everywhere. |
 | `web` | object | no | see [platforms.web](#platformsweb) | — | Web execution block. |
 | `desktop` | object | no | see [platforms.desktop](#platformsdesktop) | — | Desktop execution block. |
 
 !!! warning "What actually ships today"
-    Both the browser runtime (`platforms.web.runtime: "sandbox-js"`) and the desktop Electron shell (`platforms.desktop.runtime: "sandbox-js"`) ship today. The `web-proxy` runtime and `native`/`subprocess` desktop runtimes are valid in the schema as forward-looking design but are **deferred** — not built yet. Treat them as reserved, not as shipped behavior.
+    Plugins execute from `platforms.web` (`runtime: "sandbox-js"`, `entry`) in both the browser and the desktop Electron shell. A plugin without one is not runnable (a pack member without its own entry inherits the pack's). The host does not read `platforms.desktop` (`runtime`, `entry`, `min_app_version`, `fallback`) or `platforms.web.fallback`, and the `web-proxy` runtime and `native`/`subprocess` desktop runtimes are valid in the schema as forward-looking design but are **deferred** — not built yet. Treat those fields as reserved, not as shipped behavior.
 
 ### platforms.web
 
@@ -207,17 +207,17 @@ Re-measure any of this with `frontend/scripts/measure-net-headers.mjs`.
 
 ### configValue (scopes.config items)
 
-`$defs.configValue`. `type: object`, `additionalProperties: false`. **Required:** `key`, `type`. Config values are collected from the analyst and read by the declaring plugin as `ctx.config`; `secret: true` values are masked in the form and stored in the keychain (desktop) or `sessionStorage` (browser), and are never recorded in a task or conversation.
+`$defs.configValue`. `type: object`, `additionalProperties: false`. **Required:** `key`, `type`. Config values are entered by the analyst in the plugin's Settings section of the Run plugins dialog and read by the declaring plugin as `ctx.config`. Every value is stored in the OS keychain (desktop) or `sessionStorage` (browser); `secret: true` masks the field. Values are never recorded in a task or conversation.
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
 | `key` | string | yes | pattern `^[a-z0-9_]+$` | — | Stable config key. |
-| `label` | string | no | — | — | Display label in the install form. |
+| `label` | string | no | — | — | Field label in the Run plugins Settings section. |
 | `type` | string | yes | `string`, `number`, `boolean`, `url`, `enum` | — | Value type. |
 | `enum` | array | no | items: string | — | Allowed choices when `type: enum`. |
-| `secret` | boolean | no | — | `false` | BYOK-style secret: masked field, keychain at rest on desktop (session-only in the browser). Never written to any record. |
-| `scope` | string | no | `plugin`, `project`, `user` | `user` | Where the value is stored/shared. |
-| `optional` | boolean | no | — | `false` | Whether the user may leave it blank. |
+| `secret` | boolean | no | — | `false` | BYOK-style secret: masked field. (Every config value, secret or not, is kept in the keychain on desktop and session-only in the browser.) Never written to any record. |
+| `scope` | string | no | `plugin`, `project`, `user` | `user` | Where the value is stored/shared. Accepted but not read today; values are stored per plugin. |
+| `optional` | boolean | no | — | `false` | Whether the user may leave it blank. Not enforced: a non-optional field is only marked "required by this plugin", and the run proceeds without it. |
 
 ## lifecycle
 
@@ -233,6 +233,8 @@ Task execution model. `type: object`, `additionalProperties: false`. All propert
 
 !!! warning "What the host actually reads"
     `controls`, `progress`, `persistence`, and `states` are accepted here but not read by the host today — the Tasks panel's only control is Stop, and a task's real terminal states are `succeeded` / `failed` / `cancelled` (plus `incomplete` for AI turns). See [Lifecycle](../develop/lifecycle.md).
+
+    The host does read `lifecycle.timeout_ms`, a wall-clock budget per run (default 10 minutes, capped at 60). Past it, the sandbox is terminated and the task fails. It is not yet modeled in `plugin.schema.json`, so a manifest that declares it currently fails schema validation. See [Lifecycle](../develop/lifecycle.md#manifestlifecycletimeout_ms).
 
 ## distribution
 
@@ -310,12 +312,12 @@ A real, shipped plugin manifest — **RDAP IP**, a member of the [IP Recon](http
 }
 ```
 
-This manifest has no top-level `distribution` block: it ships as one of three members inside the IP Recon pack, which the schema allows to omit `distribution` and ride the pack's own (see [Plugin Packs](../develop/plugin-packs.md)).
+This manifest has no top-level `distribution` block: it ships as one of four members inside the IP Recon pack, which the schema allows to omit `distribution` and ride the pack's own (see [Plugin Packs](../develop/plugin-packs.md)).
 
 1. Reverse-DNS identifier matching `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$`.
 2. The `const` discriminator — must be exactly `vineyard:plugin`.
 3. SemVer, not the legacy float.
-4. Icon shown in the node right-click menu — here a lucide name.
+4. Icon shown next to the plugin in the Marketplace pack detail — here a lucide name.
 5. `primary: web` with the `sandbox-js` runtime, the only web runtime that actually executes today.
 6. `graph` verbs plus one `network` endpoint, checked against the host's egress allowlist at runtime.
 7. `persistence`/`controls`/`progress` are declarative only — see the warning above.

@@ -8,8 +8,8 @@ GitHub repo, then publishing a one-line pointer to the registry.
 You author a pack in **your own repository**. To distribute it, you open a pull request that
 adds a **single metadata entry** — a pointer, not code — to the Marketplace registry. When a
 user installs your pack, the Vineyard app fetches it from your repo at a pinned commit. The
-server never executes plugin code, never stores plugin bytes, and — by default — never records
-the runs a plugin produces.
+server never executes plugin code, never stores plugin bytes, and never records the runs a plugin
+produces.
 
 ```mermaid
 flowchart LR
@@ -25,10 +25,11 @@ flowchart LR
 ## Key principles
 
 - **Client-side execution** — the server never executes plugin code.
-- **Ephemeral by default** — a run is not written to the database unless you opt in to save.
+- **Ephemeral** — a run is never written to the database; it lives in the browser tab, and only
+  the graph changes you approve are saved.
 - **Least authority** — untrusted plugin JS runs in a Web Worker sandbox with only the
-  scopes you approve, reached through a host bridge that holds a one-time, project-scoped,
-  write-capped token — never your account token.
+  scopes you approve, reached through a host bridge. The worker never sees a token, and its graph writes are staged
+  and applied under your own account only after you review and approve them.
 - **Distribution = GitHub + a metadata-only registry** — pointers, never code.
 
 See [Architecture &amp; principles](architecture.md) for the full design.

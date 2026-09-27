@@ -64,7 +64,7 @@ Explore, lay out, and style your graph of nodes and edges.
 
 <div class="vy-card" markdown>
 ### :material-progress-clock: Tasks & runs
-Track in-progress runs, cancel them, and decide what to save.
+Track in-progress runs, cancel them, and review what they staged before it is applied.
 → [Tasks &amp; runs](tasks.md)
 </div>
 

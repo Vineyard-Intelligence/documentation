@@ -1,35 +1,45 @@
 # Running plugins
 
-Once a plugin is installed in a project, you launch it from one of three surfaces — a node's
-right-click menu, the top menu bar's **Run** menu, or the command palette — and watch and cancel
-the run from the Tasks panel.
+Once a plugin is installed in a project, you open the **Run plugins** panel from a right-click on
+a node, a selection or empty canvas, from the ▶ button on the canvas toolbar, or from
+**Run ▸ Run plugins…** in the top menu bar. You can also type `/plugin <name>` in the case's chat
+panel (MESSAGES); this is available only to people who can edit the case, and it runs the plugin
+straight away on the selected node with no form. You watch and cancel the run from the Tasks panel.
 
 ## Where a plugin shows up
 
-Every plugin declares its inputs, and that declaration decides where it appears:
+Every installed plugin is listed in one panel, **Run plugins**. At the top, a scope switch picks
+**Selected (N)** — only the selected nodes, each plugin seeing only nodes of the type it accepts —
+or **Whole project (N)** — bulk: every node of each plugin's input type in the project. Every
+plugin declares its inputs (`consumes`), and that declaration decides which group it appears in:
 
-- **Operates on a node type** (e.g. an IP-address expander that consumes a netblock node) → it
-  appears on the **right-click menu** of any matching node, with that node pre-bound as input.
-- **Operates on the whole graph** (e.g. the Chaos pack's roulettes) → it is launched from the
-  **Run ▸ Run plugins…** menu or the palette.
-- **Uses your selection** → some plugins act on whatever node(s) you have selected, so select a
-  node first — the run reads your selection as its input.
+- **Matches selection** / **Matches project data** → plugins whose `consumes` types are in scope,
+  with an "N targets" badge.
+- **Whole-graph / input via form** → plugins that consume nothing (e.g. the Chaos pack). They still
+  receive your current selection, so for one like Black Hole select a node first.
+- **Not applicable here** → installed, but none of their input types are in scope (greyed out).
+- **Desktop only** → installed, but not runnable in a browser.
+
+You can tick several plugins and press **Run (N)**. Once there are more than 6 plugins, a filter
+box searches names, descriptions and types. Selection chips can be dropped from this run with their
+×, which leaves the canvas selection unchanged.
 
 ## Launch surfaces
 
 === "Right-click a node"
 
-    Right-click a node whose type matches what the plugin consumes — the plugin is listed in the
-    menu. Selecting it opens the pre-run form with the consumed node's value already filled in.
+    Right-click a node, a selection, or empty canvas and choose **Run plugins…**. The panel opens
+    scoped to that node/selection, or to the whole project from empty canvas.
 
 === "The Run menu"
 
-    Whole-graph plugins have no node to attach to, so they live in the top menu bar's **Run**
-    menu instead — `Run ▸ Run plugins…`.
+    The top menu bar's **Run** menu — `Run ▸ Run plugins…` — opens the same panel, scoped to your
+    current selection, or to the whole project when nothing is selected. The ▶ button on the canvas
+    toolbar does the same; its tooltip names the scope.
 
-=== "The command palette"
+=== "The chat panel (`/plugin`)"
 
-    The palette runs plugins by name, handy for keyboard-first work:
+    The chat panel runs plugins by name, handy for keyboard-first work:
 
     - Type `/` to see every plugin installed in the current project as an autocomplete suggestion
       (`/plugin <name>`), each labeled with its description.
@@ -39,16 +49,32 @@ Every plugin declares its inputs, and that declaration decides where it appears:
 
 ## The pre-run form
 
-If a plugin takes input, a small form appears before the run starts — for example a text field
-for a CIDR block, or a number field for a limit. Required fields are marked, defaults are
-pre-filled, and values are validated as you type. When launched from a node, the consumed value
-comes pre-filled. Confirm, and the run starts.
+When you tick a plugin that takes input, its fields appear under it in the Run plugins panel —
+text, number, switch, dropdown, or a file drop zone. Required fields are marked * and **Run** stays
+disabled until they are filled. The nodes a plugin runs on come from the panel's scope, not from
+these fields. File inputs accept at most 25 MB per file, 50 files and 250 MB per run.
+
+Plugins that need stored settings (for example an API key or gateway URL) show a collapsible
+**Settings (x/y set)** block. These values are saved as you type and reused on later runs. In the
+browser they are kept for this session only; in the desktop app they are stored encrypted by the
+operating system. Press **Run (N)** to start every ticked plugin.
+
+## Reviewing a run's changes
+
+A plugin never writes to the case directly. What it would add, change or delete is staged, and when
+the run ends you get a toast ("N change(s) staged — review to apply") and a **needs review** badge
+on its Tasks row. Click the row to open the Review dialog, untick anything you do not want, then
+press **Apply (N)** — or **Discard all**. Nothing is written to the case until you apply; while the
+Review dialog is open, the changes are only previewed on the canvas. A run that stages nothing ends
+with a toast showing its summary (or "No changes").
 
 ## Progress and cancellation
 
 Every run becomes a **task** shown in the Tasks panel, with a live status badge, a progress bar
-where the plugin reports one, and a **Stop** control that cancels cooperatively — partial results
-are kept, not thrown away. See [Tasks & runs](tasks.md) for states, controls, and saving a run.
+where the plugin reports one, and a **Stop** control. Stop asks the plugin to wind down; if it has
+not finished within about 3 seconds, its worker is terminated. Any changes it had already staged are
+kept for you to review, not thrown away. A run that exceeds its time budget (10 minutes by default,
+at most 60) is stopped and marked failed. See [Tasks & runs](tasks.md) for states and controls.
 
 ## The Chaos reference pack
 
@@ -70,6 +96,6 @@ reshape your graph for learning the run loop:
 
 ## Next / See also
 
-- [Tasks & runs](tasks.md) — task states, progress, stop, and saving a run
+- [Tasks & runs](tasks.md) — task states, progress, stop, and review
 - [Browse & install](installing.md) — getting a plugin into your project
 - [Type Packs](typepacks.md) — the node types plugins act on

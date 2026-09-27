@@ -9,7 +9,7 @@ VINEYARD의 plugin 및 Type Pack 형식에 대한 규범적 참조 자료: 모�
 | [Plugin manifest schema](plugin-schema.md) | `vineyard:plugin` manifest — `identifier`, `version`, `platforms`, `io`, `scopes`, `lifecycle`, `distribution`. |
 | [Type Pack schema](typepack-schema.md) | `vineyard:typepack` 문서 — 정규화된 `category.name` 형식(예: `infrastructure.ip_address`)의 type 정의. |
 | [Registry entry schemas](registry-schema.md) | `community-pluginpacks.json` / `community-typepacks.json`의 한 행 — 브라우저가 읽는 메타데이터 전용 카탈로그 행. |
-| [Scopes](scopes.md) | 전체 권한 어휘: `graph` 동사(`node:read`, `edge:delete` 등), `network`, `web_probe`, `config`. |
+| [Scopes](scopes.md) | 전체 권한 어휘: `graph` 동사(`node:read`, `edge:delete` 등), `network`, `web_probe`, `services`, `config`. |
 
 ## Where the canonical artifacts live
 
@@ -17,12 +17,12 @@ VINEYARD의 plugin 및 Type Pack 형식에 대한 규범적 참조 자료: 모�
 
 | File | Schema for |
 |---|---|
-| [`schemas/plugin.schema.json`](https://vineyard.run/schemas/plugin.json) | `vineyard:plugin` manifest. |
-| [`schemas/pluginpack.schema.json`](https://vineyard.run/schemas/pluginpack.json) | `vineyard:pluginpack` manifest — 아직 별도 산문 페이지 없음, 스키마 자체가 레퍼런스. |
-| [`schemas/typepack.schema.json`](https://vineyard.run/schemas/typepack.json) | `vineyard:typepack` 문서. |
-| [`schemas/registry-plugin-entry.schema.json`](https://vineyard.run/schemas/registry/plugin-entry/1.0.0.json) | 하나의 `community-pluginpacks.json` 행. |
-| [`schemas/registry-typepack-entry.schema.json`](https://vineyard.run/schemas/registry/typepack-entry/1.0.0.json) | 하나의 `community-typepacks.json` 행. |
-| [`schemas/registry-skillpack-entry.schema.json`](https://vineyard.run/schemas/registry/skillpack-entry/1.0.0.json) | 하나의 `community-skillpacks.json` 행 — 아직 별도 산문 페이지 없음, 스키마 자체가 레퍼런스. |
+| [`schemas/plugin.schema.json`](https://registry.vineyard.run/schemas/plugin.schema.json) | `vineyard:plugin` manifest. |
+| [`schemas/pluginpack.schema.json`](https://registry.vineyard.run/schemas/pluginpack.schema.json) | `vineyard:pluginpack` manifest — 아직 별도 산문 페이지 없음, 스키마 자체가 레퍼런스. |
+| [`schemas/typepack.schema.json`](https://registry.vineyard.run/schemas/typepack.schema.json) | `vineyard:typepack` 문서. |
+| [`schemas/registry-plugin-entry.schema.json`](https://registry.vineyard.run/schemas/registry-plugin-entry.schema.json) | 하나의 `community-pluginpacks.json` 행. |
+| [`schemas/registry-typepack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-typepack-entry.schema.json) | 하나의 `community-typepacks.json` 행. |
+| [`schemas/registry-skillpack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-skillpack-entry.schema.json) | 하나의 `community-skillpacks.json` 행 — 아직 별도 산문 페이지 없음, 스키마 자체가 레퍼런스. |
 
 참조 페이지는 이 파일들을 요약하고 설명합니다. 산문과 스키마가 불일치할 경우 registry의 `schemas/`에 있는 스키마가 우선합니다.
 
@@ -32,8 +32,8 @@ VINEYARD의 plugin 및 Type Pack 형식에 대한 규범적 참조 자료: 모�
 
 ## Naming, at a glance
 
-- **식별자(Identifier)** 는 reverse-DNS입니다: `run.vineyard.plugins.<name>`, `run.vineyard.pluginpacks.<name>`, `run.vineyard.typepacks.<name>`.
-- 모든 문서는 `content_type` 판별자를 가집니다: `vineyard:plugin`, `vineyard:pluginpack`, 또는 `vineyard:typepack`.
+- **식별자(Identifier)** 는 reverse-DNS입니다: `run.vineyard.plugins.<name>`, `run.vineyard.pluginpacks.<name>`, `run.vineyard.typepacks.<name>`, `run.vineyard.skillpacks.<name>`.
+- 모든 문서는 `content_type` 판별자를 가집니다: `vineyard:plugin`, `vineyard:pluginpack`, `vineyard:typepack`, 또는 `vineyard:skillpack`.
 - `version`은 모든 곳에서 SemVer 문자열입니다.
 - Type은 정규화된 `category.name` 형식으로 참조됩니다(예: `infrastructure.ip_address`).
 

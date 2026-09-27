@@ -4,9 +4,9 @@
 
 스키마는 다음 위치에 있습니다:
 
-- [`schemas/registry-plugin-entry.schema.json`](https://vineyard.run/schemas/registry/plugin-entry/1.0.0.json)
-- [`schemas/registry-typepack-entry.schema.json`](https://vineyard.run/schemas/registry/typepack-entry/1.0.0.json)
-- [`schemas/registry-skillpack-entry.schema.json`](https://vineyard.run/schemas/registry/skillpack-entry/1.0.0.json) — `community-skillpacks.json`의 한 행. 아래 두 항목과 같은 비정규화 포인터 형태(`identifier`, `repo`/`ref`/`path`, 의존 플러그인팩용 `requires`)이며, 이 페이지에서 따로 자세히 다루진 않습니다.
+- [`schemas/registry-plugin-entry.schema.json`](https://registry.vineyard.run/schemas/registry-plugin-entry.schema.json)
+- [`schemas/registry-typepack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-typepack-entry.schema.json)
+- [`schemas/registry-skillpack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-skillpack-entry.schema.json) — `community-skillpacks.json`의 한 행. 아래 두 항목과 같은 비정규화 포인터 형태(`identifier`, `repo`/`ref`/`path`, 의존 플러그인팩용 `requires`)이며, 이 페이지에서 따로 자세히 다루진 않습니다.
 
 ## What a registry entry is (and is not)
 
@@ -38,12 +38,12 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `scopes_summary` | object | no | **파생된** 필터 패싯 (아래 참조). |
 | `scopes_summary.network` | boolean | no | `scopes.network`가 비어 있지 않거나 `web_probe`를 선언하면 `true` — probe는 임의 호스트에 도달하므로 더 좁은 게 아니라 더 넓은 송신입니다. |
 | `scopes_summary.graph_write` | boolean | no | `node:`/`edge:` create/update/delete 동사가 있으면 `true`. |
-| `scopes_summary.secret_config` | boolean | no | `scopes.config` 항목에 `secret: true`가 있으면 `true` (데스크톱 전용 키를 의미). |
+| `scopes_summary.secret_config` | boolean | no | `scopes.config` 항목에 `secret: true`가 있으면 `true` (분석가가 직접 넣어야 하는 키. 브라우저에서는 세션 동안만, 데스크톱에서는 OS 키체인에 보관). |
 | `plugin_count` | integer | no | **파생됨**: `identifier`가 **pack**을 명명할 때 번들된 plugin 수 (하나의 파일 → 여러 plugin). 단일 plugin 항목의 경우 생략되거나 `1`. 카드는 포함된 모든 plugin을 함께 설치합니다. 최소 `1`. |
 | `typepacks` | string[] | no | **파생됨**: 팩의 플러그인이 소비/생산하는 Type Pack 식별자(`io.consumes`/`io.produces`), 고유값. skillpack의 `requires`가 pluginpack을 제공하는 것과 같은 방식으로 marketplace가 이들을 함께 설치하도록 제안합니다. 프로젝트가 설치하지 않은 팩의 type을 쓰는 plugin은 노드 생성 시점에 실패합니다. |
 | `services` | string[] | no | **파생**: 팩의 플러그인이 이름으로 호출하는 Vineyard 서비스(`rdap`, `telegram`). `scopes_summary` 플래그가 아니라 별도 필드입니다 — 목적지는 호스트가 고정하고 분석가의 신원이 함께 가므로, "Network"로는 과소·과대 진술이 동시에 됩니다. [scopes](scopes.md#services) 참조. |
 | `compat` | object | no | 런타임 호환성 (`versions.json`과 유사). |
-| `compat.min_app_version` | string | no | 이 `ref`가 지원하는 가장 오래된 Vineyard 런타임 (`^\d+\.\d+\.\d+$`). 업데이터가 제공할 버전을 제한합니다. |
+| `compat.min_app_version` | string | no | 이 `ref`가 지원하는 가장 오래된 Vineyard 런타임 (`^\d+\.\d+\.\d+$`). Marketplace 상세에 "Min app version"으로 표시되며, 오늘 클라이언트가 강제하지는 않습니다. |
 | `thumbnail_url` | string (uri) | no | 선택적 카드 아이콘. |
 | `verified` | boolean | no | `verified-authors.json` 멤버십의 미러. CI에 의해 설정되며, **자체 주장되지 않음**. 기본값 `false`. |
 | `status` | object | no | **게시가 취소된** 팩에만 존재: `{ state: "deprecated" \| "withdrawn", reason, since, replacement? }`. 행은 카탈로그에 남습니다 — 설치된 클라이언트는 절대 경로의 고정 URL을 들고 있어 다시 묻지 않으므로, 항목을 지우면 이미 설치한 프로젝트엔 아무 신호도 가지 않습니다. `deprecated`는 계속 로드되며 경고만, `withdrawn`은 설치 거부 + 로드 시 제외됩니다. [Publishing → 팩 내리기](../develop/publishing.ko.md) 참조. |
@@ -60,16 +60,17 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
   "identifier": "run.vineyard.pluginpacks.chaos",
   "content_type": "vineyard:pluginpack",
   "name": "Chaos Reference Pack",
-  "author": "vineyard-run",
+  "author": "VINEYARD",
   "description": "A bundle of 6 graph-manipulation plugins for demo/validation: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node. Installing once adds all 6 together.",
-  "repo": "Vineyard-Intelligence/chaos-pack",
-  "ref": "a62f42b507e495fda884289fce5316915475d4f5",
+  "repo": "Vineyard-Intelligence/pluginpack-chaos",
+  "ref": "b7e60de109ae40831644e0b8234aab62015c3099",
   "path": "plugins/chaos-pack.manifest.json",
   "version": "1.0.0",
   "platforms": ["web"],
   "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
   "compat": { "min_app_version": "1.0.0" },
+  "typepacks": [],
   "verified": true
 }
 ```
@@ -103,27 +104,27 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 
 ### Example Type Pack row
 
-5개의 네트워크 인프라 엔티티 유형(예: 정규화된 type `infrastructure.ip_address`, 도메인, URL, 자율 시스템, 인증서)을 정의하는 실제 Infrastructure 기본 팩입니다:
+14개의 인프라·웹 엔티티 유형과 13개의 엣지 유형을 정의하는 실제 Infrastructure 기본 팩입니다:
 
 ```json
 {
   "identifier": "run.vineyard.typepacks.infrastructure",
   "content_type": "vineyard:typepack",
   "name": "Infrastructure",
-  "author": "vineyard-run",
-  "description": "A base Type Pack defining network-infrastructure entities (IP address, domain, URL, autonomous system, certificate).",
-  "repo": "Vineyard-Intelligence/typepacks",
-  "ref": "ef35dab0513de207dc32a54a42e7e93d57d15af3",
+  "author": "VINEYARD",
+  "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
+  "repo": "Vineyard-Intelligence/typepack-basic",
+  "ref": "0ad28beb55ed354eb5fcdaa2f162d48e898d59ae",
   "path": "typepacks/infrastructure.json",
-  "version": "1.0.0",
-  "categories": ["infrastructure"],
-  "type_count": 5,
-  "edge_count": 0,
+  "version": "2.4.0",
+  "categories": ["infrastructure", "web"],
+  "type_count": 14,
+  "edge_count": 13,
   "verified": true
 }
 ```
 
-동반 Threat 팩은 `categories: ["threat"]` 및 `type_count: 4`로 동일한 형태입니다.
+동반 Threat 팩은 `categories: ["threat"]`, `type_count: 10`, `edge_count: 10`으로 동일한 형태입니다.
 
 ## How entries are validated and merged
 

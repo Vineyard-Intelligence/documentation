@@ -23,7 +23,7 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 | `description` | string | yes | minLength 1, maxLength 1024 | — | 한 문단 요약. |
 | `author` | object | no | [author](#author) 참조 | — | 저작자 메타데이터. |
 | `license` | string | no | — | — | SPDX 라이선스 ID, 예: `MIT`. |
-| `icon` | string | no | — | — | 노드 우클릭 메뉴에 표시되는 아이콘. |
+| `icon` | string | no | — | — | Marketplace 팩 상세에서 plugin 옆에 표시되는 아이콘 (lucide 이름). |
 | `thumbnail_url` | string | no | `format: uri` | — | Marketplace 썸네일 이미지 URL. |
 | `marketing_url` | string | no | `format: uri` | — | 랜딩 / 마케팅 페이지 URL. |
 | `latest_url` | string | no | `format: uri` | — | 항상 최신 manifest를 가리키는 저자별 폴백 포인터 (업데이트 확인용). registry 항목이 기본 최신 포인터이며, 이것은 폴백입니다. |
@@ -50,12 +50,12 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
-| `primary` | string | no | `web`, `desktop` | — | 둘 다 선언된 경우 선호되는 플랫폼. |
+| `primary` | string | no | `web`, `desktop` | — | 플랫폼 계약. `desktop`이면 plugin은 데스크톱 전용이 됩니다: web 빌드는 이를 회색으로("Desktop only — …") 표시하고 실행하지 않습니다. `web`이거나 없으면 어디서나 실행됩니다. |
 | `web` | object | no | [platforms.web](#platformsweb) 참조 | — | Web 실행 블록. |
 | `desktop` | object | no | [platforms.desktop](#platformsdesktop) 참조 | — | Desktop 실행 블록. |
 
 !!! warning "What actually ships today"
-    브라우저 런타임(`platforms.web.runtime: "sandbox-js"`)과 데스크톱 Electron 셸(`platforms.desktop.runtime: "sandbox-js"`)이 모두 현재 제공됩니다. `web-proxy` 런타임과 `native`/`subprocess` 데스크톱 런타임은 스키마에서 미래 지향적 설계로 유효하지만 **연기되었습니다** — 아직 빌드되지 않았습니다. 제공되는 동작이 아닌 예약된 것으로 취급하세요.
+    브라우저와 데스크톱 Electron 셸 모두 `platforms.web`(`runtime: "sandbox-js"`, `entry`)으로 plugin을 실행합니다. 이것이 없는 plugin은 실행할 수 없습니다(자체 entry가 없는 팩 멤버는 팩의 것을 물려받습니다). 호스트는 `platforms.desktop`(`runtime`, `entry`, `min_app_version`, `fallback`)과 `platforms.web.fallback`을 읽지 않으며, `web-proxy` 런타임과 `native`/`subprocess` 데스크톱 런타임은 스키마에서 미래 지향적 설계로 유효하지만 **연기되었습니다** — 아직 빌드되지 않았습니다. 이 필드들은 제공되는 동작이 아닌 예약된 것으로 취급하세요.
 
 ### platforms.web
 
@@ -207,17 +207,17 @@ await ctx.net.fetch(url, { headers: { Authorization: `Bearer ${ctx.config.api_ke
 
 ### configValue (scopes.config items)
 
-`$defs.configValue`. `type: object`, `additionalProperties: false`. **필수:** `key`, `type`. config 값은 분석가로부터 수집되어 선언한 플러그인이 `ctx.config`로 읽습니다. `secret: true` 값은 폼에서 마스킹되고 키체인(데스크톱) 또는 `sessionStorage`(브라우저)에 저장되며, 작업이나 대화에는 기록되지 않습니다.
+`$defs.configValue`. `type: object`, `additionalProperties: false`. **필수:** `key`, `type`. config 값은 분석가가 Run plugins 대화상자의 해당 플러그인 Settings 섹션에서 입력하며, 선언한 플러그인이 `ctx.config`로 읽습니다. 모든 값은 OS 키체인(데스크톱) 또는 `sessionStorage`(브라우저)에 저장되고, `secret: true`는 필드를 마스킹합니다. 값은 작업이나 대화에 기록되지 않습니다.
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
 | `key` | string | yes | pattern `^[a-z0-9_]+$` | — | 안정적인 config 키. |
-| `label` | string | no | — | — | 설치 폼의 표시 라벨. |
+| `label` | string | no | — | — | Run plugins Settings 섹션의 필드 라벨. |
 | `type` | string | yes | `string`, `number`, `boolean`, `url`, `enum` | — | 값 유형. |
 | `enum` | array | no | items: string | — | `type: enum`일 때 허용된 선택지. |
-| `secret` | boolean | no | — | `false` | BYOK 방식 비밀: 폼에서 마스킹, 데스크톱은 키체인에 암호화 저장(브라우저는 세션 한정). 어떤 레코드에도 기록되지 않음. |
-| `scope` | string | no | `plugin`, `project`, `user` | `user` | 값이 저장/공유되는 위치. |
-| `optional` | boolean | no | — | `false` | 사용자가 비워둘 수 있는지 여부. |
+| `secret` | boolean | no | — | `false` | BYOK 방식 비밀: 폼에서 마스킹. (비밀 여부와 무관하게 모든 config 값은 데스크톱에서는 키체인에, 브라우저에서는 세션 한정으로 보관됨.) 어떤 레코드에도 기록되지 않음. |
+| `scope` | string | no | `plugin`, `project`, `user` | `user` | 값이 저장/공유되는 위치. 허용되지만 오늘은 읽히지 않으며, 값은 plugin별로 저장됩니다. |
+| `optional` | boolean | no | — | `false` | 사용자가 비워둘 수 있는지 여부. 강제되지 않음: optional이 아닌 필드는 "required by this plugin"으로 표시될 뿐이며, 값 없이도 실행이 진행됩니다. |
 
 ## lifecycle
 
@@ -233,6 +233,8 @@ Task 실행 모델. `type: object`, `additionalProperties: false`. 모든 속성
 
 !!! warning "호스트가 실제로 읽는 것"
     `controls`, `progress`, `persistence`, `states`는 여기서 허용되지만 호스트가 오늘 읽지는 않습니다 — Tasks 패널의 유일한 컨트롤은 Stop이고, task의 실제 종료 상태는 `succeeded` / `failed` / `cancelled`(AI 턴의 경우 `incomplete` 추가)입니다. [Lifecycle](../develop/lifecycle.md) 참조.
+
+    다만 호스트는 `lifecycle.timeout_ms`를 읽습니다. 실행당 벽시계 시간 예산입니다(기본 10분, 상한 60분). 이를 넘기면 샌드박스가 종료되고 task는 실패합니다. 아직 `plugin.schema.json`에 모델링되지 않았으므로, 이를 선언한 manifest는 현재 스키마 검증에 실패합니다. [Lifecycle](../develop/lifecycle.md#manifestlifecycletimeout_ms) 참조.
 
 ## distribution
 
@@ -310,12 +312,12 @@ Task 실행 모델. `type: object`, `additionalProperties: false`. 모든 속성
 }
 ```
 
-이 manifest에는 최상위 `distribution` 블록이 없습니다: IP Recon 팩 안에 세 멤버 중 하나로 배포되며, 스키마는 팩 멤버가 `distribution`을 생략하고 팩 자체의 것을 타도록 허용합니다([Plugin Packs](../develop/plugin-packs.md) 참조).
+이 manifest에는 최상위 `distribution` 블록이 없습니다: IP Recon 팩 안에 네 멤버 중 하나로 배포되며, 스키마는 팩 멤버가 `distribution`을 생략하고 팩 자체의 것을 타도록 허용합니다([Plugin Packs](../develop/plugin-packs.md) 참조).
 
 1.  `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$`에 일치하는 Reverse-DNS 식별자.
 2.  `const` 판별자 — 정확히 `vineyard:plugin`이어야 합니다.
 3.  레거시 float가 아닌 SemVer.
-4.  노드 우클릭 메뉴에 표시되는 아이콘 — 여기서는 lucide 이름.
+4.  Marketplace 팩 상세에서 plugin 옆에 표시되는 아이콘 — 여기서는 lucide 이름.
 5.  `primary: web`이며 `sandbox-js` 런타임 — 오늘 실제로 실행되는 유일한 web 런타임입니다.
 6.  그래프 동사와 네트워크 엔드포인트 하나. 런타임에 호스트의 이그레스 허용 목록으로 검사됩니다.
 7.  `persistence`/`controls`/`progress`는 선언적일 뿐입니다 — 위 경고 참조.

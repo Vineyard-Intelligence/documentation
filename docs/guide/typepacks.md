@@ -23,6 +23,13 @@ Install and activate a Type Pack the same way you install anything else (see
 selectable when you create a node. Until at least one Type Pack is active, there are no entity
 types to choose from.
 
+In the Types panel, types are grouped by **category**, not by pack, so one pack can fill several
+groups (the Infrastructure pack appears under both Infrastructure and Web), each with a count.
+Hover a type to see its description, its **Category:** and the **Type pack:** it comes from.
+Click a type to create a new node of that type (a placeholder labelled `New <type>`), which is
+selected right away so you can fill in its properties. With no Type Pack installed, the panel
+says so and offers **Browse the marketplace**.
+
 When you create a node, you pick a type from an active Type Pack. Vineyard stores that choice as
 a qualified string in the form `category.name` — for example `infrastructure.ip_address` or
 `threat.malware`. Plugins reference the same form when they declare what they consume and
@@ -38,8 +45,8 @@ one pack to another (a `threat.malware` that **communicates with** an
 
 | Pack (`identifier`) | Category | Types | Models |
 |---|---|---|---|
-| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 13 | The network you map during recon, plus the web resource (URL) and web-fingerprint (header, favicon, DOM hash) entities observed on it |
-| **Threat** (`…typepacks.threat`) | `threat` | 9 | Threat-intelligence (STIX-aligned) |
+| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 14 | The network you map during recon, plus the web resource (URL), web-fingerprint (header, favicon, DOM hash) and tracking-ID entities observed on it |
+| **Threat** (`…typepacks.threat`) | `threat` | 10 | Threat-intelligence (STIX-aligned) |
 | **Identity** (`…typepacks.identity`) | `identity` | 7 | People, orgs, and online personas |
 | **Financial** (`…typepacks.financial`) | `financial` | 4 | The money trail |
 | **Endpoint** (`…typepacks.endpoint`) | `endpoint` | 6 | Host / DFIR artifacts |
@@ -56,7 +63,7 @@ reconnaissance, in the `infrastructure` category:
 |---|---|---|
 | `infrastructure.ip_address` | the IP address | `version`, `country_code`, `asn`, `reverse_dns` |
 | `infrastructure.domain` | the domain name | `registrar`, `created_date`, `name_servers` |
-| `infrastructure.host` | the hostname | `ip_address`, `operating_system`, `open_ports` |
+| `infrastructure.host` | the hostname | `operating_system`, `open_ports`, `hosting_provider` |
 | `infrastructure.autonomous_system` | the ASN | `autonomous_system_name`, `registry` |
 | `infrastructure.netblock` | the CIDR | `network_name`, `asn` |
 | `infrastructure.dns_record` | the record name | `record_type`, `record_value`, `ttl` |
@@ -64,8 +71,8 @@ reconnaissance, in the `infrastructure` category:
 | `infrastructure.certificate` | the SHA-256 fingerprint | `subject_common_name`, `issuer`, `not_after` |
 | `infrastructure.technologies` | the technology name | `kind`, `vendor`, `version`, `cpe` |
 
-The same pack also ships four types in a separate `web` category — a resource locator and three
-fingerprint types are observed web artifacts, not network substrate, so they get their own
+The same pack also ships five types in a separate `web` category — a resource locator, three
+fingerprint types and a tracking/ad-account ID are observed web artifacts, not network substrate, so they get their own
 category without needing their own install:
 
 | Type (`category.name`) | Label shown | Notable properties |
@@ -74,12 +81,15 @@ category without needing their own install:
 | `web.hhhash` | the HTTP header hash | `header_count`, `server_hint` |
 | `web.favicon_hash` | the favicon hash | `hash_algorithm`, `favicon_url` |
 | `web.dom_hash` | the DOM structure hash | `tag_count` |
+| `web.tracking_id` | the namespaced identifier (e.g. `adsense:ca-pub-…`) | `provider`, `kind` |
 
 Edge types wire the recon graph together across both categories: `resolves_to`, `has_address`,
 `announced_by`, `contains`, `has_record`, `subdomain_of`, `has_domain`, `redirects_to`,
-`has_whois`, `presents_certificate`, and `runs_technology` (which links a host, IP, domain, or
+`has_whois`, `presents_certificate`, `runs_technology` (which links a host, IP, domain, or
 URL to the software, hardware, or third-party service — such as Cloudflare — it runs or is
-served by). Each type ships its own icon and color.
+served by), `carries_tracking_id` (a page, domain, or IP embeds a third-party ad/analytics
+account ID), and `payment_recipient` (a page's payment form is addressed to an
+`identity.email_address`). Each type ships its own icon and color.
 
 The other packs follow the same shape — for example the **Threat** pack adds
 `threat.malware`, `threat.threat_actor`, `threat.indicator`, and `threat.operation` (a bounded
@@ -93,15 +103,18 @@ adds the people and personas behind the activity.
     ransom `financial.crypto_transaction`.
 
 !!! note "Identity & de-duplication"
-    When a plugin or AI task adds a node, Vineyard de-duplicates by **type + the
-    `label_property` value** — two nodes of the same type with the same label are merged and
-    their properties combined. The type is matched by its **exact qualified key**
+    When a plugin or AI task adds a node, Vineyard de-duplicates by **type + the type's
+    identity fields** — its `identity_properties` when it declares them (e.g. `identity.account`
+    → username + platform; `endpoint.file` → SHA-256, file name, path, host; `endpoint.process`
+    → process GUID, name, PID), otherwise its `label_property` value. Two nodes with the same
+    type and identity are merged and their properties combined. Fields the pack marks
+    case-insensitive (domains, hostnames, emails, handles…) match regardless of case. The type is matched by its **exact qualified key**
     (`category.name`); a node whose type no installed pack defines keeps its raw type string,
     so moving a type between categories in a new pack version never merges old nodes with the
     new type's creates. The most useful label is therefore one that is both readable
     *and* identifying. Most types key on a naturally-unique field (an IP, a CVE id, a tx
     hash, a WHOIS subject). Where a type's label is inherently non-unique — a
-    `identity.person`'s name, an `endpoint.process`'s image name — distinct entities sharing
+    `identity.person`'s name, an `identity.organization`'s name — distinct entities sharing
     that label will merge, so give them a distinguishing label (e.g. `John Smith (DOB 1990)`)
     or populate the stable id the type provides. Nodes you add **manually** are never
     auto-merged.

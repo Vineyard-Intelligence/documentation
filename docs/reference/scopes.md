@@ -25,23 +25,20 @@ Fine-grained verbs over nodes and edges (`node:*` / `edge:*` × read/create/upda
 
 | Scope string | Grants | `ctx` member(s) |
 | --- | --- | --- |
-| `node:read` | Read individual nodes, enumerate the graph, list neighbors | `ctx.graph.get`, `ctx.graph.list`, `ctx.graph.neighbors` |
-| `node:create` | Create nodes from `EntityDraft`s; bulk upsert | `ctx.graph.createNode`, `ctx.graph.emit` |
+| `node:read` | Read individual nodes, list nodes (optionally by type) | `ctx.graph.get`, `ctx.graph.list` |
+| `node:create` | Create nodes from `EntityDraft`s | `ctx.graph.createNode` |
 | `node:update` | Patch a node's `data` | `ctx.graph.updateNode` |
 | `node:delete` | Delete one node or many in a single bounded op | `ctx.graph.deleteNode`, `ctx.graph.deleteNodes` |
-| `edge:read` | Read edges (returned alongside neighbor/list queries) | `ctx.graph.neighbors`, `ctx.graph.list` |
-| `edge:create` | Create edges; bulk upsert edges | `ctx.graph.createEdge`, `ctx.graph.emit` |
-| `edge:update` | Update edge data | *(reserved; no dedicated method in the SDK types)* |
-| `edge:delete` | Delete an edge | `ctx.graph.deleteEdge` |
+| `edge:read` | Read all edges; 1-hop neighborhood of a node | `ctx.graph.edges`, `ctx.graph.neighbors` |
+| `edge:create` | Create edges; amend an existing edge (label/data) by its id | `ctx.graph.createEdge`, `ctx.graph.updateEdge` |
+| `edge:update` | Accepted by the schema | *(backs no method — `updateEdge` is granted by `edge:create`)* |
+| `edge:delete` | Delete one edge or many in a single bounded op | `ctx.graph.deleteEdge`, `ctx.graph.deleteEdges` |
 
 !!! note "A write verb is not a write"
     Granting `node:create` (or any create/update/delete verb) does not let a plugin change the case. Writes are captured into the run's change set and reach the graph only when the analyst reviews that change set and applies it, under their own account. That review — not the scope string — is what actually bounds an untrusted plugin.
 
 !!! note "Bulk ops are one operation"
     `deleteNodes(ids[])` and `deleteEdges(ids[])` are a **single** bounded call, not N separate writes: a legitimate mass-delete (Russian Roulette, Thanos Snap) is issued once and the host caps its own concurrency.
-
-!!! info "Emit needs both verbs"
-    `ctx.graph.emit(entities, edges)` upserts nodes *and* edges. To use it for both, grant `node:create` and `edge:create`. With only `node:create`, pass `emit(entities)` with no edges.
 
 ## network
 
@@ -61,10 +58,10 @@ Each entry is a `NetworkScope` object, **not** a bare string. `ctx.net.fetch` is
 | `methods` | `HttpMethod[]` | Allowed verbs: `GET` `POST` `PUT` `PATCH` `DELETE` |
 | `purpose` | `string` (optional) | Human-readable reason, shown at install time |
 
-`ctx.net.fetch` / `ctx.net.fetchWithBackoff` are limited to these endpoints. A URL is matched on its **parsed origin** plus a path-segment boundary, never as a string prefix — `https://h/v1` covers `/v1/search` but not `/v1beta`, and nothing at all on `https://h.attacker.test` (`plugins/net-allowlist.ts`, `endpointCovers`).
+`ctx.net.fetch` is limited to these endpoints. A URL is matched on its **parsed origin** plus a path-segment boundary, never as a string prefix — `https://h/v1` covers `/v1/search` but not `/v1beta`, and nothing at all on `https://h.attacker.test` (`plugins/net-allowlist.ts`, `endpointCovers`).
 
-!!! warning "Web: exactly one endpoint == proxy_endpoint"
-    For a **web** plugin the `network` array MUST contain exactly **one** entry whose `endpoint` equals `platforms.web.proxy_endpoint` — no fan-out. Desktop may declare more endpoints (the user's responsibility) and adds a CSP on top; in the web build the allowlist check is the egress boundary. The bridge forces `credentials: "omit"` and drops `Authorization` / `Cookie` headers (`SafeRequestInit`), so a plugin can never smuggle the analyst's session onto an allowed endpoint.
+!!! warning "The host bridge is the only way out"
+    The plugin worker's own response carries a second CSP, `connect-src 'none'; worker-src 'none'`, on the web and in the desktop shell. Any `fetch`, XHR, WebSocket or nested worker the plugin opens itself is refused, so the host bridge is the only network path: `ctx.net.fetch`, checked against these endpoints, plus [`ctx.net.probe`](#web_probe) and [`ctx.service`](#services). (The CSP is not served under `vite dev`, so a pack that calls `fetch` directly works there and fails in production.) A sandbox-js plugin may declare several endpoints; the one-entry `proxy_endpoint` rule belongs to the deferred `web-proxy` runtime. The bridge forces `credentials: "omit"`, so the analyst's cookies never go with a plugin request, and it passes your request headers through unchanged, including `Authorization` (see [Sending a credential](plugin-schema.md#sending-a-credential)). On desktop, the shell also drops `Origin` and supplies the CORS headers for the origins you declare, so a declared endpoint that sends no CORS headers is still reachable.
 
 ## web_probe
 
@@ -122,20 +119,20 @@ analyst who triggered the run.
 
 ## config
 
-Each entry is a `ConfigValue`. Declaring any `config` entry makes `ctx.config` present — a read-only map of the **non-secret** declared values. (Source: the `@vineyard/plugin-sdk` package types — `ConfigValue`, `HostContext.config`.)
+Each entry is a `ConfigValue`. `ctx.config` is a read-only map of the declared keys the analyst has set a value for, secret ones included, coerced to the declared `type`. It is absent while none of them has a value, so read it as `ctx.config?.key ?? DEFAULT`. (Source: the `@vineyard/plugin-sdk` package types — `ConfigValue`, `HostContext.config`.)
 
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `key` | `string` | Identifier, pattern `^[a-z0-9_]+$` |
-| `label` | `string` (optional) | Display label in the install form |
+| `label` | `string` (optional) | Field label in the plugin's Settings section of the Run plugins dialog |
 | `type` | `"string" \| "number" \| "boolean" \| "url" \| "enum"` | Value type |
 | `enum` | `string[]` (optional) | Allowed values when `type` is `enum` |
 | `secret` | `boolean` (optional) | BYOK-style credential; see below |
-| `scope` | `"plugin" \| "project" \| "user"` (optional) | Where the value is stored |
-| `optional` | `boolean` (optional) | If false/absent, the value is required at install |
+| `scope` | `"plugin" \| "project" \| "user"` (optional) | Where the value is stored. Accepted but not read today; values are stored per plugin |
+| `optional` | `boolean` (optional) | If false/absent the field is marked "required by this plugin" (not enforced; the plugin must handle a missing value) |
 
 !!! danger "secret semantics"
-    `secret: true` is about **storage and display, not about hiding the value from the plugin**. The value IS delivered to the declaring plugin as `ctx.config[key]` (SPEC §6.1) — it has to be, since the plugin is what calls the API with it — and `configFor` gives a pack only the keys its own manifest declared. What the flag changes: the form field is masked, and the value is stored in the desktop keychain (`safeStorage`, encrypted at rest, this machine only) or, in the browser, in `sessionStorage` for that tab, so a browser-entered key does not outlive the session. It is **never recorded** in a task record or an AI conversation — that is enforced by keeping credentials out of `params`, not by withholding them from `ctx.config`. See [security](../develop/security.md) and SPEC §6.
+    `secret: true` is about **storage and display, not about hiding the value from the plugin**. The value IS delivered to the declaring plugin as `ctx.config[key]` (SPEC §6.1) — it has to be, since the plugin is what calls the API with it — and `configFor` gives a pack only the keys its own manifest declared. What the flag changes: the form field is masked. Every config value, secret or not, is stored in the desktop keychain (`safeStorage`, encrypted at rest, this machine only) or, in the browser, in `sessionStorage` for that tab, so a browser-entered key does not outlive the session. It is **never recorded** in a task record or an AI conversation — that is enforced by keeping credentials out of `params`, not by withholding them from `ctx.config`. See [security](../develop/security.md) and SPEC §6.
 
 ## Not scopes
 
@@ -143,10 +140,10 @@ The following are **always available** and grant no authority over data or netwo
 
 | Capability | `ctx` member | Notes |
 | --- | --- | --- |
-| `params` | `ctx.params` | This run's user input, validated against the `params` JSON Schema (read-only) |
+| `params` | `ctx.params` | This run's user input (read-only). Not validated against the `params` JSON Schema: the Run dialog only checks that `required` fields are filled, so validate types yourself |
 | `progress` | `ctx.progress.set` | Drives the Task UI (`percent` / `message` / `phase`) |
-| `log` | `ctx.progress.log` | Append a log line to the run |
-| `status` | `ctx.progress.status` | Report `"running"` / `"waiting"` |
+| `log` | `ctx.progress.log` | Accepted but currently a no-op; nothing is recorded |
+| `status` | `ctx.progress.status` | Accepted but currently a no-op; the task state is set by the runner |
 | `signal` | `ctx.signal`, `ctx.onCancel` | Cooperative cancel — the plugin MUST observe it |
 
 Two members are also always present and not gated: `ctx.run` (this run's identity — `runId`, `projectId`, `pluginId`, `grantedScopes`, `platform`) and `ctx.input` (the trigger context, including `selection`).

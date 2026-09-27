@@ -25,20 +25,20 @@ Skill Pack은 플러그인과 정확히 같은 방식으로 [마켓플레이스]
 3. 한 번 설치하면, 팩은 해당 프로젝트의 에이전트에게 제공됩니다.
 
 !!! note "가용성은 의존성에 따라 결정됩니다"
-    Skill Pack은 `requires`의 모든 플러그인 팩이 해당 프로젝트에 설치된 경우에만 **사용 가능**합니다. 나중에 하나를 제거하면, 스킬은 조용히 제공되지 않습니다 — 에이전트는 프로젝트에 없는 플러그인을 호출하는 플레이북으로 안내되지 않습니다.
+    Skill Pack은 `requires`의 모든 플러그인 팩이 해당 프로젝트에 설치되어 있고 **이 플랫폼에서 실행될 수 있는** 경우에만 **사용 가능**합니다. 나중에 하나를 제거하거나, 필요한 팩이 데스크탑 전용인데 브라우저에서 프로젝트를 열면, 스킬은 조용히 제공되지 않습니다 — 에이전트는 프로젝트에 없는 플러그인을 호출하는 플레이북으로 안내되지 않습니다. 예를 들어 Account & identity pivoting은 데스크탑 앱에서만 실행되는 WhatsMyName 팩이 필요하므로, 이 스킬은 데스크탑 앱에서만 사용할 수 있습니다.
 
 현재 카탈로그에는 두 개의 Skill Pack이 있습니다:
 
 | Skill Pack | `applies_to` | 요구 사항 | 하는 일 |
 | --- | --- | --- | --- |
-| **Account & identity pivoting** (`run.vineyard.skillpacks.account_identity_pivot`) | `identity.handle`, `identity.account`, `identity.email_address`, `identity.person` | `run.vineyard.pluginpacks.whatsmyname` | 하나의 계정이나 핸들을 그 사람의 다른 계정들로 확장 — 그리고 공유된 사용자명이 **같은 사람이 아닌** 경우를 구분합니다. |
-| **Infrastructure pivoting** (`run.vineyard.skillpacks.infra_pivot`) | `infrastructure.ip_address`, `infrastructure.domain`, `infrastructure.certificate`, `infrastructure.autonomous_system` | — (내장 그래프 툴) | 하나의 지표(IP/도메인/인증서)를 연결된 발자국으로, 검증 가능한 홉씩 확장합니다. |
+| **Account & identity pivoting** (`run.vineyard.skillpacks.account_identity_pivot`) | `identity.handle`, `identity.account`, `identity.email_address`, `identity.person` | `run.vineyard.pluginpacks.whatsmyname` (데스크탑 앱 전용) | 하나의 계정이나 핸들을 그 사람의 다른 계정들로 확장 — 그리고 공유된 사용자명이 **같은 사람이 아닌** 경우를 구분합니다. |
+| **Infrastructure pivoting** (`run.vineyard.skillpacks.infra_pivot`) | `infrastructure.ip_address`, `infrastructure.domain`, `infrastructure.certificate`, `infrastructure.autonomous_system` | — (필수 없음; 그래프 툴과 프로젝트에 있는 DNS/RDAP/인증서/ASN 수집 플러그인을 사용하며, 그것 없이 갈 수 없는 홉은 밝힘) | 하나의 지표(IP/도메인/인증서)를 연결된 발자국으로, 검증 가능한 홉씩 확장합니다. |
 
 ## Skill Pack 사용
 
-AI 채팅에서 실행을 시작한 후:
+상단 메뉴 바에서 **Run ▸ Skill packs**를 열고 설치된 팩을 고릅니다. **Skill pack** 리더는 팩이 무엇에 관한 것인지, 어떤 플러그인이 필요한지, 그리고 전체 텍스트(overview와 모든 섹션)를 보여 줍니다. 그다음:
 
-- **starter**를 선택하거나 — 팩의 준비된 프롬프트 형태가 카테고리별로 그룹화된 원클릭 옵션으로 나타납니다(`Find accounts`, `Corroborate`, `Report`, …). 빈칸을 채우고 **Use this**를 누르면, 에이전트가 그 형태를 따라 실행을 시작합니다; 또는
+- 여기서 실행을 시작하거나 — 카테고리(`Find accounts`, `Corroborate`, `Report`, …)와 **starter**를 고르고, 빈칸을 채우고(필수 항목은 표시됨), 원하면 실행 옵션과 답변 언어를 정하고, 미리보기를 확인한 뒤 **Ask the agent to follow this**를 누릅니다. 프롬프트는 AI 채팅 입력창에 들어가며, 직접 편집하고 전송합니다; 또는
 - 자신의 말로 그냥 요청합니다 — 에이전트가 관련성을 판단하고(`applies_to` / `triggers`를 통해) 스스로 읽습니다.
 
 실행이 시작되면, 에이전트는 `load_skill` 툴을 통해 팩을 참고합니다: overview를 읽은 다음, 현재 홉에 필요한 **섹션만** 로드합니다. 전체 플레이북을 컨텍스트에 덤프하지 않습니다.
