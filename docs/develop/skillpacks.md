@@ -102,7 +102,7 @@ author repo, and the registry holds a single lean entry in `community-skillpacks
   "author": "VINEYARD",
   "description": "Turn one account or handle into the person's other accounts, and know when a shared username is NOT the same person.",
   "repo": "Vineyard-Intelligence/skillpack-account-identity-pivoting",
-  "ref": "44305008e4ec16ec0d0d24595ffa993c0b6b6cb5",
+  "ref": "86ffa0edc0d56ab99d6eae0d9e42067dda1f68e0",
   "path": "skillpacks/account-pivot.skill.json",
   "version": "1.2.0",
   "applies_to": ["identity.handle", "identity.account", "identity.email_address", "identity.person"],
