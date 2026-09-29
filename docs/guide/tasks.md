@@ -23,18 +23,18 @@ A running plugin task has a **Stop** button (stop an AI turn from the AI chat pa
 
 ## Ephemeral by default
 
-Plugin-run tasks live only in your browser tab's memory; close the tab and they are gone. AI conversations are saved in this browser (localStorage, per project) and come back as Tasks rows after a reload, so you can reopen them. Staged changes that were still waiting for review do not survive a reload. Neither task rows nor AI chat content are sent to the Vineyard server; only changes you apply are written to the case.
+Plugin-run tasks live only in your browser tab's memory; close the tab and they are gone. AI conversations are saved in this browser (localStorage, per project) and come back as Tasks rows after a reload, so you can reopen them. Staged changes that were still waiting for review do not survive a reload. Neither task rows nor AI chat content are sent to the Vineyard server; only changes you apply are written to the project.
 
 !!! tip "AI chat stays in your browser"
     Conversations and messages are kept in this browser only and are never written to the server.
 
 ## Conversation compaction (token compression)
 
-Long AI conversations are compressed **automatically** — there is no manual `/compact` command. When the conversation history would exceed the model's context window, Vineyard folds the oldest turns into a single dense summary so the agent keeps working on the whole case instead of forgetting its start.
+Long AI conversations are compressed **automatically** — there is no manual `/compact` command. When the conversation history would exceed the model's context window, Vineyard folds the oldest turns into a single dense summary so the agent keeps working on the whole project instead of forgetting its start.
 
 How it works:
 
-1. **Trigger.** Each turn, Vineyard estimates the history's token count — roughly 4 characters per token for Latin-script text, about 1 token per character for CJK/Hangul text (a flat divisor undercounted Korean case notes by roughly half), and self-calibrated by a correction factor learned from what the provider actually charged on prior steps — and compares it against a history budget — about 35% of the model's context window (64k-token fallback when the provider reports none). Compaction happens *before* the window is full, because the system prompt, tool schemas, tool results and the model's answer all share the same window.
+1. **Trigger.** Each turn, Vineyard estimates the history's token count — roughly 4 characters per token for Latin-script text, about 1 token per character for CJK/Hangul text (a flat divisor undercounted Korean project notes by roughly half), and self-calibrated by a correction factor learned from what the provider actually charged on prior steps — and compares it against a history budget — about 35% of the model's context window (64k-token fallback when the provider reports none). Compaction happens *before* the window is full, because the system prompt, tool schemas, tool results and the model's answer all share the same window.
 2. **What survives verbatim.** The **most recent 4 turns** (two analyst exchanges) are always kept as-is, so immediate context is never summarized.
 3. **What gets compressed.** Everything older is sent to the LLM (the same model you configured, so the summary is written in the same language and register as the conversation) with instructions to produce a dense factual summary of at most 200 words: indicators and entities discussed (domains, IPs, accounts, hashes), what was established about each and on what evidence, decisions made, what was rejected and why, and open questions. No speculation is added.
 4. **The replacement.** The summary replaces the old turns as a single message prefixed `[earlier conversation, summarized]`. A previous summary is summarized again along with what followed it, so a long session converges instead of stacking summaries.

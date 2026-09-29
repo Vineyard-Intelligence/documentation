@@ -35,7 +35,7 @@ plugin이 `manifest.scopes`에서 선언할 수 있는 모든 scope 문자열, �
 | `edge:delete` | 단일 바운드 작업으로 하나 또는 여러 엣지 삭제 | `ctx.graph.deleteEdge`, `ctx.graph.deleteEdges` |
 
 !!! note "A write verb is not a write"
-    `node:create`(또는 create/update/delete 동사 전부)를 부여한다고 해서 plugin이 케이스를 변경할 수 있게 되는 것은 아닙니다. 쓰기는 해당 실행의 변경 세트로 캡처되며, 분석가가 그 변경 세트를 검토하고 자신의 계정으로 적용할 때에만 그래프에 반영됩니다. 신뢰할 수 없는 plugin의 실질적 경계는 scope 문자열이 아니라 바로 이 검토입니다.
+    `node:create`(또는 create/update/delete 동사 전부)를 부여한다고 해서 plugin이 프로젝트를 변경할 수 있게 되는 것은 아닙니다. 쓰기는 해당 실행의 변경 세트로 캡처되며, 분석가가 그 변경 세트를 검토하고 자신의 계정으로 적용할 때에만 그래프에 반영됩니다. 신뢰할 수 없는 plugin의 실질적 경계는 scope 문자열이 아니라 바로 이 검토입니다.
 
 !!! note "Bulk ops are one operation"
     `deleteNodes(ids[])`와 `deleteEdges(ids[])`는 N개의 개별 쓰기가 아니라 **단일** 바운드 호출입니다: 정당한 대량 삭제(Russian Roulette, Thanos Snap)는 한 번만 발행되며 호스트가 자체적으로 동시성을 제한합니다.

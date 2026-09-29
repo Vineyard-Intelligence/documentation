@@ -62,7 +62,7 @@ playbook into context.
 
 !!! tip "Skills are guidance, not commands"
     Skill text arrives to the agent as **content**, not instructions. The agent may adapt it to the
-    case — and its safety rules always outrank the playbook. If a pack's steps cannot proceed
+    project — and its safety rules always outrank the playbook. If a pack's steps cannot proceed
     (say, the hop needs a plugin the project does not have), the agent says so and stops that branch
     rather than filling the gap from memory.
 

@@ -4,7 +4,7 @@ A first-run walkthrough: open the Vineyard app, create a project, install a **Ty
 
 ## 1. Open the app
 
-Vineyard runs in your browser, or as the Vineyard desktop app. Sign in, and you land on your dashboard (reopening the app while still signed in goes to the last case you opened instead, if you chose that under **Settings → General → Start view**). The desktop app can also run in local mode with no account, and then it opens on your project list.
+Vineyard runs in your browser, or as the Vineyard desktop app. Sign in, and you land on your dashboard (reopening the app while still signed in goes to the last project you opened instead, if you chose that under **Settings → General → Start view**). The desktop app can also run in local mode with no account, and then it opens on your project list.
 
 Plugins and Type Packs **execute on the client**: the server stores your graph and brokers collaboration, but it never runs plugin code.
 
@@ -13,7 +13,7 @@ Plugins and Type Packs **execute on the client**: the server stores your graph a
 A **project** owns a graph (nodes + edges), its collaborators, and its installed set of packs.
 
 - **Existing project:** pick it from the list.
-- **New project:** choose **Add New** on the project list (the dashboard's **New case** takes you there), give it a name and optionally an organization, click **Create**, and you're dropped straight onto its canvas.
+- **New project:** choose **Add New** on the project list or **New project** on the dashboard, give it a name and optionally an organization, click **Create**, and you're dropped straight onto its canvas.
 
 !!! note "Installs belong to the project"
     Packs are installed **onto a project**, not your account, so every collaborator on that project gets the same vocabulary and tools. Only the project owner can change the installed set.

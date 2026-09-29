@@ -13,7 +13,7 @@ There are three kinds of pack:
 - **Type Packs** — JSON definitions of the **entity types** and **edge types** your
   graph understands, giving nodes their properties, validation rules, icons, and colors.
 - **Skill Packs** — investigation playbooks the AI agent can follow when working on your
-  case. Text only — no code, no permissions.
+  project. Text only — no code, no permissions.
 
 ## The mental model
 
@@ -52,7 +52,7 @@ Add entity and edge types so your graph recognizes new kinds of data.
 
 <div class="vy-card" markdown>
 ### :material-book-open-variant: Working with Skill Packs
-Give the AI agent investigation playbooks to follow on your case.
+Give the AI agent investigation playbooks to follow on your project.
 → [Working with Skill Packs](skillpacks.md)
 </div>
 

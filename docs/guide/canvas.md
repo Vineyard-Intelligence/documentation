@@ -47,7 +47,7 @@ Below the view controls, the toolbar repeats the **Edit** menu's selection actio
 | **Activity log…** | Opens the project's activity log. |
 | **Add from Marketplace…** | Opens the [Marketplace](../marketplace.md) scoped to this project so you can add plugins and Type Packs. |
 
-If you opened the case only through its public link, **Members…**, **Project settings…** and **Activity log…** are disabled — they are for case members only.
+If you opened the project only through its public link, **Members…**, **Project settings…** and **Activity log…** are disabled — they are for project members only.
 
 ### Edit
 
@@ -102,7 +102,7 @@ Applying a layout re-computes node positions and then fits the view.
 
 ### Search
 
-The **Search entities…** field at the top-right of the canvas finds nodes by type or by any of their property values. Picking a result selects that node and centers it. While the case is still loading, an empty result means the node has not arrived yet, not that it doesn't exist.
+The **Search entities…** field at the top-right of the canvas finds nodes by type or by any of their property values. Picking a result selects that node and centers it. While the project is still loading, an empty result means the node has not arrived yet, not that it doesn't exist.
 
 ### Grid
 
@@ -118,7 +118,7 @@ A translucent, minimap-style panel at the bottom-left that lists the node **type
 
 Click a row to select every node of that type, or Shift-click to add them to the current selection. Hovering (or focusing) a row dims every other type on the canvas.
 
-Below the types, an **Evidence** key lists the edge confidence grades present in the case (assessed, asserted, recorded, circumstantial, contested, unassessed), strongest first, each drawn with the same line style (dash, width, opacity) the canvas uses for that grade and with a count. Hover a grade for what it means.
+Below the types, an **Evidence** key lists the edge confidence grades present in the project (assessed, asserted, recorded, circumstantial, contested, unassessed), strongest first, each drawn with the same line style (dash, width, opacity) the canvas uses for that grade and with a count. Hover a grade for what it means.
 
 The legend reflects whatever Type Packs the project uses — for example, an investigation built on the [Infrastructure Type Pack](typepacks.md) might show counts for `infrastructure.ip_address`, `infrastructure.domain`, and so on, each resolved to its Type Pack-defined name and color.
 
@@ -150,7 +150,7 @@ Select the node(s) you want to link from, then **⌘-click** (Mac) or **Ctrl-cli
 }
 ```
 
-While the case is still loading (for example while it re-syncs after a reconnect), export is refused with *The case is still loading — export again once it has finished.* This stops a partial graph from being saved as the whole case. When the export succeeds, a toast reports how many nodes and edges were written.
+While the project is still loading (for example while it re-syncs after a reconnect), export is refused with *The project is still loading — export again once it has finished.* This stops a partial graph from being saved as the whole project. When the export succeeds, a toast reports how many nodes and edges were written.
 
 ## Add from Marketplace
 

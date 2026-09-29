@@ -15,7 +15,7 @@ running → succeeded | failed | cancelled | incomplete
 | `running` | Executing. |
 | `succeeded` | Completed normally. |
 | `failed` | Completed with an error. |
-| `cancelled` | Stopped: the Tasks panel's Stop button, or leaving the case (a run the agent launched is also cancelled when its turn is stopped). Changes it had already staged stay available for review. |
+| `cancelled` | Stopped: the Tasks panel's Stop button, or leaving the project (a run the agent launched is also cancelled when its turn is stopped). Changes it had already staged stay available for review. |
 | `incomplete` | AI-chat only — the turn stopped before finishing, holding unanswered tool calls. |
 
 Each run gets one dedicated Web Worker (`runPluginInWorker` in `worker-host.ts`), spawned directly — there is no worker pool or queue.
