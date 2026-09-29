@@ -67,7 +67,7 @@ These members exist on every run, regardless of scopes.
 | Member | Type | What it gives you |
 |---|---|---|
 | `ctx.run` | `{ runId, projectId, pluginId, grantedScopes, platform }` | Identity of this run; `grantedScopes` is the manifest's scope set as approved at install; `platform` is `"web"` or `"desktop"`. |
-| `ctx.input` | `{ selection: string[] }` | The node ids this run targets. From the Run plugins panel: for a plugin with `consumes`, the selected nodes of a consumed type (scope *Selected*) or every node of those types in the case (scope *Whole project*); for a consumes-less plugin, the current selection. `run` is called **once** with the whole list — iterate all of it. **Black Hole** reads `ctx.input.selection[0]`. |
+| `ctx.input` | `{ selection: string[] }` | The node ids this run targets. From the Run plugins panel: for a plugin with `consumes`, the selected nodes of a consumed type (scope *Selected*) or every node of those types in the project (scope *Whole project*); for a consumes-less plugin, the current selection. `run` is called **once** with the whole list — iterate all of it. **Black Hole** reads `ctx.input.selection[0]`. |
 | `ctx.params` | `Readonly<Record<string, unknown>>` | This run's user input from the pre-run form (only `required` is enforced — `pattern`/`minimum`/`maximum`/`default` are not applied, so validate and default in `run`). File fields arrive as `File` objects. |
 | `ctx.progress` | `{ set?, log?, status? }` | Drives the continuously-managed task UI (details below). |
 | `ctx.signal` | `AbortSignal` | Cooperative cancellation — you **must** observe it. |

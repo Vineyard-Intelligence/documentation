@@ -50,7 +50,7 @@ run(ctx: HostContext): Promise<RunResult | void>;
 | 멤버 | 타입 | 제공하는 것 |
 |---|---|---|
 | `ctx.run` | `{ runId, projectId, pluginId, grantedScopes, platform }` | 이 실행의 식별 정보. `grantedScopes`는 설치 시 승인된 매니페스트의 스코프 세트. `platform`은 `"web"` 또는 `"desktop"`. |
-| `ctx.input` | `{ selection: string[] }` | 이 실행이 대상으로 하는 노드 ID. Run plugins 패널에서 실행하면: `consumes`가 있는 플러그인은 소비 타입인 선택 노드(범위 *Selected*) 또는 케이스 안의 그 타입 노드 전체(범위 *Whole project*), consumes가 없는 플러그인은 현재 선택. `run`은 전체 목록으로 **한 번** 호출되므로 전부 순회하세요. **Black Hole**은 `ctx.input.selection[0]`을 읽습니다. |
+| `ctx.input` | `{ selection: string[] }` | 이 실행이 대상으로 하는 노드 ID. Run plugins 패널에서 실행하면: `consumes`가 있는 플러그인은 소비 타입인 선택 노드(범위 *Selected*) 또는 프로젝트 안의 그 타입 노드 전체(범위 *Whole project*), consumes가 없는 플러그인은 현재 선택. `run`은 전체 목록으로 **한 번** 호출되므로 전부 순회하세요. **Black Hole**은 `ctx.input.selection[0]`을 읽습니다. |
 | `ctx.params` | `Readonly<Record<string, unknown>>` | 실행 전 폼에서 받은 이 실행의 사용자 입력(`required`만 강제됨 — `pattern`/`minimum`/`maximum`/`default`는 적용되지 않으므로 검증과 기본값은 `run`에서 처리). 파일 필드는 `File` 객체로 옵니다. |
 | `ctx.progress` | `{ set?, log?, status? }` | 지속 관리 작업 UI를 구동합니다(아래 상세). |
 | `ctx.signal` | `AbortSignal` | 협력적 취소 — 반드시 관찰해야 합니다. |

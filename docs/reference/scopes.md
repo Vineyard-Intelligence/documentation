@@ -35,7 +35,7 @@ Fine-grained verbs over nodes and edges (`node:*` / `edge:*` × read/create/upda
 | `edge:delete` | Delete one edge or many in a single bounded op | `ctx.graph.deleteEdge`, `ctx.graph.deleteEdges` |
 
 !!! note "A write verb is not a write"
-    Granting `node:create` (or any create/update/delete verb) does not let a plugin change the case. Writes are captured into the run's change set and reach the graph only when the analyst reviews that change set and applies it, under their own account. That review — not the scope string — is what actually bounds an untrusted plugin.
+    Granting `node:create` (or any create/update/delete verb) does not let a plugin change the project. Writes are captured into the run's change set and reach the graph only when the analyst reviews that change set and applies it, under their own account. That review — not the scope string — is what actually bounds an untrusted plugin.
 
 !!! note "Bulk ops are one operation"
     `deleteNodes(ids[])` and `deleteEdges(ids[])` are a **single** bounded call, not N separate writes: a legitimate mass-delete (Russian Roulette, Thanos Snap) is issued once and the host caps its own concurrency.

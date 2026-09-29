@@ -161,7 +161,7 @@ GitHub and the registry are a **distribution** layer; during development the app
 }
 ```
 
-Open **Settings → Plugins → Development → Load a pack from a URL**, choose **Plugin Pack**, and enter the absolute URL of your plugin's manifest document (a JSON file with `content_type: "vineyard:plugin"`, or a `vineyard:pluginpack` document, whose `platforms.web.entry` points at your bundle, e.g. `dist/main.js`, relative to the manifest's folder). Serve both from your dev server (`esbuild --watch --servedir` or `vite`). The URL is kept in this browser only and loads into every case you open on this device — reopen the case after adding it. The `identifier` in the JSON manifest must match the one in `definePlugin`, or the run fails with `plugin not loadable: <identifier>`.
+Open **Settings → Plugins → Development → Load a pack from a URL**, choose **Plugin Pack**, and enter the absolute URL of your plugin's manifest document (a JSON file with `content_type: "vineyard:plugin"`, or a `vineyard:pluginpack` document, whose `platforms.web.entry` points at your bundle, e.g. `dist/main.js`, relative to the manifest's folder). Serve both from your dev server (`esbuild --watch --servedir` or `vite`). The URL is kept in this browser only and loads into every project you open on this device — reopen the project after adding it. The `identifier` in the JSON manifest must match the one in `definePlugin`, or the run fails with `plugin not loadable: <identifier>`.
 
 !!! example "Try Korean Roulette on a throwaway project"
     Because it deletes nearly everything, run it against a scratch project first. Watch the [task](../guide/tasks.md) panel show the run, review and apply the staged deletions, then see the survivor node standing alone in the canvas.

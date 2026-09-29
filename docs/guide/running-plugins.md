@@ -2,8 +2,8 @@
 
 Once a plugin is installed in a project, you open the **Run plugins** panel from a right-click on
 a node, a selection or empty canvas, from the ▶ button on the canvas toolbar, or from
-**Run ▸ Run plugins…** in the top menu bar. You can also type `/plugin <name>` in the case's chat
-panel (MESSAGES); this is available only to people who can edit the case, and it runs the plugin
+**Run ▸ Run plugins…** in the top menu bar. You can also type `/plugin <name>` in the project's chat
+panel (MESSAGES); this is available only to people who can edit the project, and it runs the plugin
 straight away on the selected node with no form. You watch and cancel the run from the Tasks panel.
 
 ## Where a plugin shows up
@@ -61,10 +61,10 @@ operating system. Press **Run (N)** to start every ticked plugin.
 
 ## Reviewing a run's changes
 
-A plugin never writes to the case directly. What it would add, change or delete is staged, and when
+A plugin never writes to the project directly. What it would add, change or delete is staged, and when
 the run ends you get a toast ("N change(s) staged — review to apply") and a **needs review** badge
 on its Tasks row. Click the row to open the Review dialog, untick anything you do not want, then
-press **Apply (N)** — or **Discard all**. Nothing is written to the case until you apply; while the
+press **Apply (N)** — or **Discard all**. Nothing is written to the project until you apply; while the
 Review dialog is open, the changes are only previewed on the canvas. A run that stages nothing ends
 with a toast showing its summary (or "No changes").
 

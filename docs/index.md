@@ -11,12 +11,12 @@ hide:
 
 # VINEYARD
 
-Build the graph, pull in the intelligence, work the case together.
+Build the graph, pull in the intelligence, work on the project together.
 
 <p class="vy-home__lede" markdown>
 VINEYARD is a graph analysis tool for CTI and OSINT investigations. You map entities and the
 relationships between them, enrich them with **packs** you install from the Marketplace, and
-share the case with the people working it — with plugins running in your own session, never
+share the project with the people working on it — with plugins running in your own session, never
 on a server.
 </p>
 
@@ -26,7 +26,7 @@ on a server.
 
 <div class="vy-card" markdown>
 ### :material-account: For users
-Set up a case, build the graph, install packs and run them. Share a case and follow
+Set up a project, build the graph, install packs and run them. Share a project and follow
 collaborators live.
 
 [User Guide →](guide/index.md)
@@ -48,7 +48,7 @@ Field-by-field schemas for pack manifests and registry entries, plus the scopes 
 
 </div>
 
-## Working a case
+## Working on a project
 
 <div class="vy-linkrow" markdown>
 
