@@ -15,7 +15,7 @@ running → succeeded | failed | cancelled | incomplete
 | `running` | 실행 중. |
 | `succeeded` | 정상 완료. |
 | `failed` | 오류로 완료. |
-| `cancelled` | 중지됨: Tasks 패널의 Stop 버튼, 또는 사건에서 나가기(에이전트가 시작한 실행은 그 턴이 중지될 때도 취소됨). 이미 스테이징한 변경은 계속 검토할 수 있습니다. |
+| `cancelled` | 중지됨: Tasks 패널의 Stop 버튼, 또는 프로젝트에서 나가기(에이전트가 시작한 실행은 그 턴이 중지될 때도 취소됨). 이미 스테이징한 변경은 계속 검토할 수 있습니다. |
 | `incomplete` | AI 채팅 전용 — 턴이 응답 없이, 미해결 tool call을 남긴 채 중단됨. |
 
 실행마다 전용 Web Worker(`worker-host.ts`의 `runPluginInWorker`) 하나가 직접 생성됩니다 — 워커 풀이나 큐는 없습니다.
