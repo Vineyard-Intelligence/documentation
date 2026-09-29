@@ -28,6 +28,21 @@ Plugin-run tasks live only in your browser tab's memory; close the tab and they 
 !!! tip "AI chat stays in your browser"
     Conversations and messages are kept in this browser only and are never written to the server.
 
+## Closing and deleting a conversation
+
+The AI chat panel's header holds, left to right: **Delete conversation** (the trash icon, set apart from the rest), **Export** (the whole conversation as one HTML file), **Open the agent's working folder** (desktop app only), **Project memory**, **Settings**, and **Close**.
+
+**Closing** the panel — the close button, or **Esc** — never stops the agent: a running turn keeps working and its row stays in Tasks, so you can reopen it from there. Esc closes the panel when it is meant for it: pressed while you are typing or working inside the panel, or right after you last clicked in it (for example while a turn is running and the message box is locked). An Esc that closes a dropdown or a dialog inside the panel closes only that, and an Esc pressed on the canvas or in another panel leaves the AI panel alone.
+
+**Deleting** a conversation asks for confirmation first; **Cancel** has the focus, so pressing Enter by reflex does not delete. Once you confirm:
+
+- the conversation and its Tasks row are removed from this browser — this cannot be undone;
+- if the agent is still working, its turn is stopped first;
+- change sets proposed in the conversation and not yet applied are discarded (the dialog says how many); changes already applied to the graph stay;
+- the panel closes.
+
+The trash icon is disabled, with a tooltip saying why, while there is nothing to delete.
+
 ## Conversation compaction (token compression)
 
 Long AI conversations are compressed **automatically** — there is no manual `/compact` command. When the conversation history would exceed the model's context window, Vineyard folds the oldest turns into a single dense summary so the agent keeps working on the whole project instead of forgetting its start.
