@@ -18,7 +18,7 @@
 전체 필드별 참조는 [registry schema](../reference/registry-schema.md)에 있습니다. 이 블록을 임베드하는 플러그인/Type Pack 스키마는 [plugin manifest](plugin-manifest.md)와 [Type Pack schema](../reference/typepack-schema.md)에 있습니다.
 
 !!! warning "`ref`는 불변이어야 합니다 — 브랜치와 태그는 거부됨"
-    레지스트리 항목의 `ref`(`packs/<identifier>.json`에 있는 값)는 40-16진수 또는 64-16진수 커밋 SHA여야 합니다. 브랜치와 태그는 검토 후 옮겨질 수 있으므로 항목 스키마와 `verify_pinned.py`가 **거부**합니다. 매니페스트 안의 `distribution.ref`는 CI가 검사하지도, 클라이언트가 읽지도 않습니다. 항목을 커밋에 고정하는 것이 설치된 `identifier@version`을 재현 가능하게 만드는 요소입니다. *새로운* `ref`가 제공된 업그레이드로 표시되는 방식은 [updates](updates.md)를 참조하세요.
+    레지스트리 항목의 `ref`(`packs/<identifier>.json`에 있는 값)는 40-16진수 또는 64-16진수 커밋 SHA여야 합니다. 브랜치와 태그는 검토 후 옮겨질 수 있으므로 항목 스키마와 `verify_pinned.py`가 **거부**합니다. 매니페스트 안의 `distribution.ref`는 CI가 검사하지도, 클라이언트가 읽지도 않습니다. *새로운* `ref`가 제공된 업그레이드로 표시되는 방식은 [updates](updates.md)를 참조하세요.
 
 ## `kind` 값
 
@@ -54,7 +54,7 @@
 
 === "inline"
 
-    `inline`은 스키마상 아직 허용되는 `kind`이지만, 배포된 팩 중 이를 쓰는 것은 없고 앱은 이를 실행할 수 없습니다. 팩은 더 이상 앱에 번들되지 않으며, `platforms.web.entry`가 `inline`이거나 없고 상속받을 팩 수준 entry도 없는 플러그인은 실행 가능 목록에 나타나지 않습니다. Chaos 팩의 6개 [참조 플러그인](../guide/running-plugins.md)(Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node)도 다른 모든 팩과 마찬가지로 팩의 고정 커밋에 있는 `dist/pack.mjs`에서 로드됩니다.
+    `inline`은 스키마상 허용되는 `kind`이지만, 앱은 이를 실행할 수 없습니다. `platforms.web.entry`가 `inline`이거나 없고 상속받을 팩 수준 entry도 없는 플러그인은 실행 가능 목록에 나타나지 않습니다.
 
     ```jsonc
     "distribution": {
@@ -65,23 +65,16 @@
 
 ## 저장: 메타데이터 전용
 
-Vineyard 배포의 가장 중요한 속성은 레지스트리가 **저장하지 않는** 것입니다:
-
 - 레지스트리는 **경로/메타데이터만** 보유합니다(승인된 ref 목록에 기록되는 각 승인 문서의 SHA-256 포함). 번들 콘텐츠의 **서버 측 복사본이 없습니다**.
-- **클라이언트**가 번들을 가져와(jsDelivr 경유, 엔트리의 불변 커밋 SHA에 고정) 바로 실행합니다 — 프로젝트를 열 때 가져오며, 승인 목록 및 기록된 SHA-256과 대조되는 것은 팩 문서이고 코드 모듈은 아닙니다. 영속적인 로컬 캐시가 아닙니다(IndexedDB도, 데스크톱 디스크 캐시도 없음).
+- **클라이언트**가 프로젝트를 열 때마다 번들을 jsDelivr 경유로, 항목의 커밋 SHA에 고정해 가져옵니다. 영속 로컬 캐시는 없습니다.
 
 ### `integrity`
 
-`distribution.integrity`는 스키마상 허용되지만 아무것도 읽지 않습니다. 검증은 대신 레지스트리에서 옵니다. CI가 `registry/approved-{plugin,type,skill}packs.json`을 게시하며, 여기에는 레지스트리가 지금까지 승인한 모든 `repo@ref/path`와 그 문서 바이트의 SHA-256이 담깁니다. 클라이언트는 팩을 로드하기 전에 포인터가 이 목록에 있는지, 가져온 문서가 기록된 다이제스트로 해시되는지 확인합니다. 레지스트리에 닿을 수 없으면 이 기기가 전에 검증한 포인터는 계속 로드되고, 나머지는 보류됩니다. 플러그인 코드 모듈(`platforms.web.entry`)은 클라이언트가 해시하지 않습니다. 그 모듈이 매니페스트와 같은 버전과 라이선스를 선언하는지는 CI가 확인합니다([publishing](publishing.md) 참조).
+`distribution.integrity`는 스키마상 허용되지만 아무것도 읽지 않습니다. 검증은 대신 레지스트리에서 옵니다: 클라이언트는 팩의 `repo@ref/path`가 `registry/approved-{plugin,type,skill}packs.json`에 있고, 가져온 문서가 거기 기록된 SHA-256과 일치할 때만 로드합니다. 레지스트리에 닿을 수 없으면 이 기기가 전에 검증한 포인터는 계속 로드되고, 나머지는 보류됩니다. 플러그인 코드 모듈(`platforms.web.entry`)이 매니페스트와 같은 버전과 라이선스를 선언하는지는 CI가 확인합니다([publishing](publishing.md) 참조).
 
 ## 설치 흐름에서의 위치
 
-Plugin Pack 하나를 설치하면 설치 대화상자의 권한 보기를 위해 항목의 `repo@ref/path`에 있는 문서를 (jsDelivr 경유로)
-가져옵니다(Skill Pack은 개요를 위해 가져옵니다). 설치는 프로젝트에 `{identifier, url, version}` 포인터를 저장합니다. 프로젝트를 열 때 각 포인터는
-레지스트리의 승인된 ref 목록에 있어야 하며, 문서를 가져와 그 SHA-256을 레지스트리가 기록한 다이제스트와
-대조합니다. 플러그인의 `platforms.web.entry`는 같은 고정 커밋을 기준으로 해석되어 샌드박스 워커에서
-`import()`로 로드됩니다. **영속 로컬 캐시는 없으며**, 코드 모듈 자체는 다이제스트 검증을 받지 않습니다.
-전체 파이프라인과 제출/검토 게이트는 [publishing](publishing.md)을 참조하세요.
+Plugin Pack을 설치하면 설치 대화상자의 권한 보기를 위해 항목의 `repo@ref/path`에 있는 문서를 (jsDelivr 경유로) 가져오고(Skill Pack은 개요를 위해 가져옵니다), 프로젝트에 `{identifier, url, version}` 포인터를 저장합니다. 프로젝트를 열 때 각 포인터는 위와 같이 레지스트리 기준으로 검증되고, 플러그인의 `platforms.web.entry`는 같은 고정 커밋을 기준으로 해석되어 샌드박스 워커에서 로드됩니다. 제출/검토 게이트는 [publishing](publishing.md)을 참조하세요.
 
 ## 다음 / 참고
 

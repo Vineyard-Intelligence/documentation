@@ -2,17 +2,13 @@
 
 ## Browsing the marketplace
 
-The marketplace is a fully static catalog: three index files (Plugin Packs, Type Packs, Skill
-Packs) list every pack, each pack's full document is fetched from its repository only when you
-open it, and all search, filtering, and sorting happen in your browser. There is no account, no server query,
-and no telemetry.
+The marketplace is a static catalog: all search, filtering, and sorting happen in your browser.
+There is no account, no server query, and no telemetry.
 
-You can browse from two places. Both read the same registry data, but they are separate,
-independently-built browsers, so their filters aren't identical:
+You can browse from two places. Both show the same catalog, but their filters aren't identical:
 
 - **The [Marketplace page](../marketplace.md) on this site** — the public, read-only browser.
-- **The in-app mirror** inside the Vineyard app — its own card grid and detail view, wired so
-  **Install** hands off to the install pipeline immediately.
+- **The in-app mirror** inside the Vineyard app — where **Install** works directly.
 
 ### Searching and filtering
 
@@ -58,9 +54,8 @@ Type Packs a Plugin Pack needs are shown on its card as a *Needs N typepacks* ba
 
 ## Installing
 
-Click **Install** on a card and Vineyard takes care of the rest — it fetches the pack from the
-author's repository at a pinned commit and runs it directly; there is no server-side copy of the
-pack content at any point, and no offline cache — each run fetches fresh.
+Click **Install** on a card and Vineyard takes care of the rest. There is no offline copy of a
+pack — each run fetches it fresh from the author's repository.
 
 For a **plugin**, an **approval dialog** then lists the permissions it requests in plain
 language. Approve, and the plugin becomes available to run in the project.
@@ -73,18 +68,13 @@ packs it pulls in) and installs when you press **Install**.
     A plugin whose inputs/outputs reference a Type Pack's types needs that Type Pack installed
     first — the marketplace resolves this for you: installing a Plugin Pack also installs every
     Type Pack its plugins `consume`/`produce`, and installing a Skill Pack pulls in the Plugin
-    Packs it requires **and their Type Packs** (skill → plugin → typepack, resolved against the
-    catalog in one pass). Already-installed packs are skipped; a dependency that cannot be
-    resolved (not in the catalog) blocks the install rather than leaving a pack that fails at
-    run time. An installed plugin whose Type Packs were never installed is repaired the next
-    time its Skill Pack is installed.
+    Packs it requires **and their Type Packs**. Already-installed packs are skipped; a dependency
+    that is not in the catalog blocks the install.
 
 ## Installing into a project
 
 Installs belong to a **project**, not your account — every collaborator on the project gets the
-same vocabulary and tools. Only the project owner can change the installed set. Uninstalling a
-pack drops it from the project's installed set; because runs are never persisted, there is no
-run history to clean up.
+same vocabulary and tools. Only the project owner can change the installed set.
 
 To add several packs at once, tick their cards (or **Select all**) and choose **Install N
 selected**; one dialog shows everything that will be added. Installs are pinned to the version you

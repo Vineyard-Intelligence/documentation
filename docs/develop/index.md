@@ -27,9 +27,8 @@ flowchart LR
 - **Client-side execution** — the server never executes plugin code.
 - **Ephemeral** — a run is never written to the database; it lives in the browser tab, and only
   the graph changes you approve are saved.
-- **Least authority** — untrusted plugin JS runs in a Web Worker sandbox with only the
-  scopes you approve, reached through a host bridge. The worker never sees a token, and its graph writes are staged
-  and applied under your own account only after you review and approve them.
+- **Least authority** — plugin JS runs in a Web Worker sandbox with only the scopes you
+  approve. Its graph writes are staged and applied only after you review and approve them.
 - **Distribution = GitHub + a metadata-only registry** — pointers, never code.
 
 See [Architecture &amp; principles](architecture.md) for the full design.
@@ -46,8 +45,7 @@ Every Vineyard pack carries a `content_type` discriminator, and identifiers are 
 
 `<namespace>` is **your own** reverse-DNS prefix, two labels or more: `com.acme`,
 `io.github.yourname`, `dev.yourdomain`. `run.vineyard.*` is Vineyard's own and is not yours to
-publish under. Nothing in the schema can tell whether you control a domain — a submission under
-a namespace you do not own is refused at review, not by CI.
+publish under. A submission under a namespace you do not own is refused at review.
 
 The three systems are designed to work together — a plugin's `io` references Type Pack types by
 their qualified `category.name` form, and a Skill Pack's steps call plugin packs declared in its
@@ -64,10 +62,8 @@ their qualified `category.name` form, and a Skill Pack's steps call plugin packs
 
 !!! note "Initial scope is browser + desktop"
     Both the **browser** runtime (`platforms.web.runtime: "sandbox-js"`) and the **desktop**
-    Electron shell (`platforms.desktop.runtime: "sandbox-js"`) ship today, including
-    keychain-backed secret `config` on desktop. The `web-proxy` CORS workaround and
-    `native`/`subprocess` desktop runtimes exist in the schemas as forward-looking design but are
-    **deferred** — not built yet.
+    app (`platforms.desktop.runtime: "sandbox-js"`) ship today. The `web-proxy` and
+    `native`/`subprocess` runtimes are accepted by the schemas but **not built yet**.
 
 ## Where to go next
 

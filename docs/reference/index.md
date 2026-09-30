@@ -18,11 +18,11 @@ The authoritative JSON-Schemas are not duplicated here — they live in the regi
 | File | Schema for |
 |---|---|
 | [`schemas/plugin.schema.json`](https://registry.vineyard.run/schemas/plugin.schema.json) | A `vineyard:plugin` manifest. |
-| [`schemas/pluginpack.schema.json`](https://registry.vineyard.run/schemas/pluginpack.schema.json) | A `vineyard:pluginpack` manifest — no dedicated prose page yet; the schema itself is the reference. |
+| [`schemas/pluginpack.schema.json`](https://registry.vineyard.run/schemas/pluginpack.schema.json) | A `vineyard:pluginpack` manifest — the schema itself is the reference. |
 | [`schemas/typepack.schema.json`](https://registry.vineyard.run/schemas/typepack.schema.json) | A `vineyard:typepack` document. |
 | [`schemas/registry-plugin-entry.schema.json`](https://registry.vineyard.run/schemas/registry-plugin-entry.schema.json) | One `community-pluginpacks.json` row. |
 | [`schemas/registry-typepack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-typepack-entry.schema.json) | One `community-typepacks.json` row. |
-| [`schemas/registry-skillpack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-skillpack-entry.schema.json) | One `community-skillpacks.json` row — no dedicated prose page yet; the schema itself is the reference. |
+| [`schemas/registry-skillpack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-skillpack-entry.schema.json) | One `community-skillpacks.json` row — the schema itself is the reference. |
 
 The reference pages summarize and explain these files; when the prose and the schema disagree, the schema in the registry's `schemas/` wins.
 

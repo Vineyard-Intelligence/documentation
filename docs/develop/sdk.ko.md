@@ -38,7 +38,7 @@ run(ctx: HostContext): Promise<RunResult | void>;
 
 ## HostContext (`ctx`)
 
-`ctx`는 메인 스레드 *HostBridge*의 Comlink 프록시입니다. 코드를 실행하는 워커는 토큰도, 주변 `fetch`도, DOM도 없으며 — 부여된 스코프의 멤버만 가집니다. 그래프 쓰기는 실행 중에 API에 도달하지 않습니다: 브리지가 이를 캡처하고, 분석가가 변경 세트를 검토한 뒤 자신의 계정으로 적용합니다. 네트워크 이그레스는 SDK의 어떤 것도 아닌 브리지가 매니페스트에 선언된 엔드포인트와 대조하여 검사합니다. [보안 모델](security.md)을 참조하세요.
+`ctx`는 호스트에 대한 Comlink 프록시입니다. 코드를 실행하는 워커에는 DOM도 자체 네트워크도 없으며 — 부여된 스코프의 멤버만 가집니다. 그래프 쓰기는 스테이징되며, 분석가가 변경 세트를 검토하고 승인한 뒤에만 적용됩니다. 네트워크 요청은 호스트가 매니페스트에 선언된 엔드포인트와 대조하여 검사합니다. [보안 모델](security.md)을 참조하세요.
 
 !!! warning "멤버는 해당 스코프가 부여되지 않으면 존재하지 않습니다"
     `ctx.graph`, `ctx.net`, `ctx.config`는 **선택적**이며, 해당 [scope](../reference/scopes.md)가 선언되고 *부여되었을* 때만 존재합니다. **Dumb AI Optimizer**와 같은 no-scope 플러그인은 올바르게 `ctx.graph === undefined`를 보게 됩니다. 사용 전에 옵셔널 체이닝이나 기능 테스트로 보호하세요. `ctx.graph` 내에서도 각 *메서드*는 특정 동사(`node:delete`, `edge:create`, …)가 부여된 경우에만 존재합니다.
@@ -107,7 +107,7 @@ ctx.graph?.deleteEdges?(ids: string[]): Promise<{ deleted: number }>
 
 #### `net` (network 스코프)
 
-[`network` 스코프](../reference/scopes.md)가 선언된 경우에만 존재합니다(또는 데스크톱 앱에서 `web_probe`만 있으면 `probe`만 존재). `fetch`는 `manifest.scopes.network` 엔드포인트와 그 선언된 `methods`로 제한됩니다. 브리지는 `credentials: "omit"`을 강제해 분석가의 쿠키가 따라가지 않게 하고, 리다이렉트를 따라가며, `Authorization`을 포함한 요청 헤더를 그대로 전달합니다 — 따라서 API 키는 커스텀 헤더가 아닌 거기에 넣으세요. 6개의 참조 플러그인은 네트워크를 **전혀** 사용하지 않습니다.
+[`network` 스코프](../reference/scopes.md)가 선언된 경우에만 존재합니다(또는 데스크톱 앱에서 `web_probe`만 있으면 `probe`만 존재). `fetch`는 `manifest.scopes.network` 엔드포인트와 그 선언된 `methods`로 제한됩니다. 요청은 쿠키 없이 전송되고, 리다이렉트를 따라가며, `Authorization`을 포함한 요청 헤더를 그대로 전달합니다 — 따라서 API 키는 커스텀 헤더가 아닌 거기에 넣으세요. 6개의 참조 플러그인은 네트워크를 **전혀** 사용하지 않습니다.
 
 ```ts
 ctx.net?.fetch?(input: string, init?: SafeRequestInit): Promise<SafeResponse>
@@ -117,7 +117,7 @@ ctx.net?.fetch?(input: string, init?: SafeRequestInit): Promise<SafeResponse>
 
 #### `net.probe` (`web_probe` 스코프, 데스크톱 전용)
 
-`scopes.web_probe`가 선언**되고** 플러그인이 데스크톱 셸에서 실행 중일 때만 존재합니다 — 스코프가 부여되어도 웹 빌드에서는 계속 없습니다. Electron 메인 프로세스에서 임의의 공개 호스트로 단일 익명 요청을 수행합니다: 쿠키 없음, `Origin` 없음, 리다이렉트를 따라가지 않음(호출자는 요청한 URL의 실제 상태를 봅니다), 사설/루프백 호스트는 거부됩니다. 사전에 수백 개 사이트 중 어느 것을 조사할지 알 수 없는 계정 탐지형 플러그인이 사용하는 능력입니다. 기본 포트(80/443)와 GET/HEAD/POST 메서드만 허용되며, `cookie`, `authorization`, `host`와 포워딩 헤더는 제거됩니다. `maxBytes`는 기본 512 KiB(최대 2 MiB), `timeoutMs`는 기본 8초(최대 20초)이며, 셸은 한 번에 최대 48개의 프로브를 실행합니다. 거부되거나 실패한 프로브는 예외를 던지지 않고 `status: 0`과 `error`가 설정된 채로 리졸브됩니다.
+`scopes.web_probe`가 선언**되고** 플러그인이 데스크톱 셸에서 실행 중일 때만 존재합니다 — 스코프가 부여되어도 웹 빌드에서는 계속 없습니다. 대상 호스트를 미리 알 수 없는 플러그인을 위해 임의의 공개 호스트로 단일 익명 요청을 수행합니다: 쿠키 없음, `Origin` 없음, 리다이렉트를 따라가지 않음(호출자는 요청한 URL의 실제 상태를 봅니다), 사설/루프백 호스트는 거부됩니다. 기본 포트(80/443)와 GET/HEAD/POST 메서드만 허용되며, `cookie`, `authorization`, `host`와 포워딩 헤더는 제거됩니다. `maxBytes`는 기본 512 KiB(최대 2 MiB), `timeoutMs`는 기본 8초(최대 20초)이며, 셸은 한 번에 최대 48개의 프로브를 실행합니다. 거부되거나 실패한 프로브는 예외를 던지지 않고 `status: 0`과 `error`가 설정된 채로 리졸브됩니다.
 
 ```ts
 ctx.net?.probe?(input: string, init?: SafeProbeInit): Promise<SafeProbeResponse>
@@ -125,7 +125,7 @@ ctx.net?.probe?(input: string, init?: SafeProbeInit): Promise<SafeProbeResponse>
 
 #### `service` (`scopes.services`)
 
-`scopes.services`가 최소 하나의 Vineyard 운영 서비스(현재 모든 팩에 열린 `rdap`, 그리고 `run.vineyard.pluginpacks.telegram` 전용인 `telegram` — 다른 팩이 호출하면 오류)를 지정한 경우에만 존재합니다. Vineyard 계정 없이 실행되는 빌드(로컬 모드)에서는 호출이 예외를 던집니다. 목적지는 URL이 아니라 이름입니다 — 호스트가 이를 해석하고 분석가의 자격 증명을 첨부하므로, 플러그인은 호출을 다른 곳으로 리다이렉트할 수 없으며 플러그인이 전달하는 요청 헤더는 `Authorization`을 재정의할 수 없습니다.
+`scopes.services`가 최소 하나의 Vineyard 운영 서비스(현재 모든 팩에 열린 `rdap`, 그리고 `run.vineyard.pluginpacks.telegram` 전용인 `telegram` — 다른 팩이 호출하면 오류)를 지정한 경우에만 존재합니다. Vineyard 계정 없이 실행되는 빌드(로컬 모드)에서는 호출이 예외를 던집니다. 목적지는 URL이 아니라 이름입니다 — 호스트가 이를 해석하고 분석가의 자격 증명을 첨부하며, 플러그인이 전달하는 `Authorization` 헤더는 이를 재정의할 수 없습니다.
 
 ```ts
 ctx.service?(name: string, path: string, init?: SafeRequestInit): Promise<SafeResponse>
@@ -140,14 +140,14 @@ ctx.config?: Readonly<Record<string, string | number | boolean>>
 ```
 
 !!! warning "시크릿은 이를 선언한 플러그인에게만 전달됩니다"
-    `secret: true`는 값을 입력하는 방식(마스킹된 필드)만 바꿉니다 — 값은 여전히 이를 선언한 플러그인에게 `ctx.config.<key>`로 전달되며, 자신의 매니페스트가 선언한 키만 전달됩니다. 값은 로그인한 계정별로, 데스크톱에서는 OS 키체인으로 암호화되어, 브라우저에서는 탭의 `sessionStorage`에 보관되며 어떤 레코드에도 기록되지 않습니다. [시크릿 처리](security.md#secret-handling)를 참조하세요.
+    `secret: true`는 값을 입력하는 방식(마스킹된 필드)만 바꿉니다 — 값은 여전히 이를 선언한 플러그인에게 `ctx.config.<key>`로 전달되며, 자신의 매니페스트가 선언한 키만 전달됩니다. 값은 로그인한 계정별로 보관됩니다 — 데스크톱에서는 OS 키체인에, 브라우저에서는 탭 세션 동안. [시크릿 처리](security.md#secret-handling)를 참조하세요.
 
 !!! note "`publish` 스코프는 존재하지 않습니다"
-    플러그인은 프로젝트 채팅/피드에 게시할 수 없습니다 — `ctx.message`는 존재하지 않으며, `publish`는 스코프 스키마에 포함되어 있지 않습니다. `scopes`는 `additionalProperties: false`를 설정하므로, 아직 이를 선언하는 초안 매니페스트는 **검증에 실패합니다**. 찾아낸 결과는 대신 그래프에 기록하세요.
+    플러그인은 프로젝트 채팅/피드에 게시할 수 없습니다 — `ctx.message`는 존재하지 않으며, `publish`는 스코프 스키마에 포함되어 있지 않습니다. `scopes`는 `additionalProperties: false`를 설정하므로, 이를 선언하는 매니페스트는 **검증에 실패합니다**. 찾아낸 결과는 대신 그래프에 기록하세요.
 
 ### 벌크 작업
 
-`deleteNodes(ids[])`와 `deleteEdges(ids[])`는 각각 수백 번의 왕복 대신 ID마다 삭제 하나를 한 배치로 스테이징하는 **단일 브리지 호출**입니다. ID 중 하나라도 알 수 없으면 호출 전체가 거부되므로(`no node <id> in this project` / `no edge <id> in this project`), 그래프에서 읽은 ID만 전달하세요. 전체 그래프 변이에는 벌크 형태를 선호하세요: 합법적인 대량 삭제(Korean Roulette이 전체 그래프를 지우는 경우)가 수천 번의 개별 `deleteNode` 호출이 되어서는 안 됩니다. 영향을 받은 각 노드와 엣지는 여전히 분석가가 검토하는 변경 세트에 각자의 항목으로 나타나므로, 벌크라고 해서 검토를 건너뛰는 것은 아닙니다.
+`deleteNodes(ids[])`와 `deleteEdges(ids[])`는 각각 수백 번의 왕복 대신 ID마다 삭제 하나를 한 배치로 스테이징하는 **단일 브리지 호출**입니다. ID 중 하나라도 알 수 없으면 호출 전체가 거부되므로(`no node <id> in this project` / `no edge <id> in this project`), 그래프에서 읽은 ID만 전달하세요. 전체 그래프 변이(예: Korean Roulette이 전체 그래프를 지우는 경우)에는 벌크 형태를 선호하세요. 영향을 받은 각 노드와 엣지는 여전히 분석가가 검토하는 변경 세트에 각자의 항목으로 나타납니다.
 
 ## 완전한 `run(ctx)` 예제
 

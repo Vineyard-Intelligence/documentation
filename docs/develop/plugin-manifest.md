@@ -1,6 +1,6 @@
 # Plugin manifest
 
-The plugin manifest is a `vineyard:plugin` document that fully describes one plugin: who made it, where it runs, what graph types it reads and writes, the form it shows before running, the authority it needs, and how it is distributed. It is the single source of truth — there is no separate server-side Plugin record.
+The plugin manifest is a `vineyard:plugin` document that fully describes one plugin: who made it, where it runs, what graph types it reads and writes, the form it shows before running, the authority it needs, and how it is distributed. It is the single source of truth.
 
 This page walks through the manifest blocks using two real, shipped plugins as examples: **RDAP IP** (from the [IP Recon](https://github.com/Vineyard-Intelligence/pluginpack-ip-recon) pack) and **Wayback Snapshot History** (from the Wayback Machine pack). For the exhaustive, field-by-field schema — every type, pattern, and default — see the [plugin schema reference](../reference/plugin-schema.md).
 
@@ -23,7 +23,7 @@ The identity block names and attributes the plugin: `identifier` (a reverse-DNS 
     }
     ```
 
-    `sandbox-js` runs the author's bundled JavaScript inside a dedicated module Web Worker whose own CSP forbids direct network access; it reaches out only through the host: `ctx.net.fetch` (limited to the declared `scopes.network` endpoints), `ctx.service` (`scopes.services`), or, in the desktop app, `ctx.net.probe` (`scopes.web_probe`). This is what RDAP IP uses (`ctx.net.fetch`).
+    `sandbox-js` runs the author's bundled JavaScript inside a dedicated module Web Worker that has no network of its own; it reaches out only through the host: `ctx.net.fetch` (limited to the declared `scopes.network` endpoints), `ctx.service` (`scopes.services`), or, in the desktop app, `ctx.net.probe` (`scopes.web_probe`). This is what RDAP IP uses (`ctx.net.fetch`).
 
 === "web (web-proxy)"
 
@@ -65,7 +65,7 @@ This is RDAP IP's `io`: it takes an `infrastructure.ip_address` node and adds th
 `consumes` shapes the UX:
 
 - `consumes` decides where a plugin is offered in the **Run plugins…** panel (opened from a node's or the canvas's right-click menu, the toolbar, or the menu bar): a plugin is listed under *Matches selection* / *Matches project data* when any consumed type is present in the chosen scope (Selected or Whole project). RDAP IP is offered whenever an `infrastructure.ip_address` node is in scope.
-- A type reference also accepts an optional `as` binding alias, meant to pre-bind the consumed node's value into `params` under that key. The field is accepted by the schema, but no shipped plugin declares it and the run form does not read it yet.
+- A type reference also accepts an optional `as` binding alias (to pre-bind the consumed node's value into `params` under that key); the schema accepts it, but the run form does not read it yet.
 - A plugin with an **empty `consumes` array** is a whole-graph plugin: it is listed in the panel's *Whole-graph / input via form* section instead.
 
 `produces` is informational — it tells the marketplace and the canvas which node types this plugin can create. See [Type Packs (develop)](typepacks.md) for how these types are defined.
@@ -87,11 +87,11 @@ This is RDAP IP's `io`: it takes an `infrastructure.ip_address` node and adds th
 ```
 
 !!! danger "No secrets in params"
-    `params` MUST NOT carry secrets (API keys, tokens, passwords, and similar) — a submitted value lands in `Task.input`. Declare credentials as a `scopes.config` entry with `"secret": true` instead — those are collected in the plugin's own settings form and never written to any record. See [Secret handling](security.md).
+    `params` MUST NOT carry secrets (API keys, tokens, passwords, and similar) — submitted values are recorded with the run. Declare credentials as a `scopes.config` entry with `"secret": true` instead — those are collected in the plugin's own settings form and never written to any record. See [Secret handling](security.md).
 
 ## scopes — the authority surface
 
-`scopes` is the **only** authority a plugin receives. A capability that is not declared here is simply absent at runtime — there is nothing to bypass. RDAP IP reads the source node, writes its result, and fetches from one endpoint:
+`scopes` is the **only** authority a plugin receives. A capability that is not declared here is simply absent at runtime. RDAP IP reads the source node, writes its result, and fetches from one endpoint:
 
 ```json
 "scopes": {
@@ -102,7 +102,7 @@ This is RDAP IP's `io`: it takes an `infrastructure.ip_address` node and adds th
 }
 ```
 
-Two rules worth repeating here: for a **web-proxy** plugin, `network` must be exactly one entry equal to `platforms.web.proxy_endpoint`; a `sandbox-js` plugin's `network` entries are checked instead against the host's egress allowlist (see [security](security.md)). `config` entries with `"secret": true` are masked in the form and stored per signed-in account in the desktop keychain (or, in the browser, in `sessionStorage` for the session); the value itself is handed to the plugin that declared it, which is the point of declaring it. Things like reading this run's `params`, reporting `progress`, writing to `log`, and the cooperative cancel `signal` are **not scopes** — they are always available.
+Two rules worth repeating here: for a **web-proxy** plugin, `network` must be exactly one entry equal to `platforms.web.proxy_endpoint`; a `sandbox-js` plugin's `network` entries are checked instead against the host's egress allowlist (see [security](security.md)). `config` entries with `"secret": true` are masked in the form, kept per signed-in account (in the OS keychain on desktop, for the tab session in the browser), and handed to the plugin that declared them. Things like reading this run's `params`, reporting `progress`, writing to `log`, and the cooperative cancel `signal` are **not scopes** — they are always available.
 
 For the full scope vocabulary, the scope families, and the enforcement model, see the [scopes reference](../reference/scopes.md).
 
@@ -122,7 +122,7 @@ The one field the host actually enforces is `timeout_ms` — a wall-clock budget
 
 ## distribution
 
-`distribution` is the shared descriptive block (used by plugins and Type Packs alike); the host does not read it. There is no server-side copy of the code: what the client runs is decided by the registry entry — it fetches the manifest from `repo@ref/path` via jsDelivr, verifies it against the digest the registry recorded, and loads `platforms.web.entry` from the same commit.
+`distribution` is the shared descriptive block (used by plugins and Type Packs alike); the host does not read it. What the client runs is decided by the registry entry — it fetches the manifest from `repo@ref/path` via jsDelivr, verifies it against the digest the registry recorded, and loads `platforms.web.entry` from the same commit.
 
 ```json
 "distribution": {
@@ -131,7 +131,7 @@ The one field the host actually enforces is `timeout_ms` — a wall-clock budget
 }
 ```
 
-`kind` is `git`, `zip`, or `inline`. The registry entry's `ref` must be a full commit SHA (40- or 64-hex) — registry CI rejects tags and branches — and that pin, not the optional `integrity` hash, is what stops a force-push from changing what runs (see [Distribution](distribution.md#integrity)). The full distribution block, including `repository`, `path`, and `archive`, is covered on the [Distribution](distribution.md) page and in the [schema reference](../reference/plugin-schema.md).
+`kind` is `git`, `zip`, or `inline`. The registry entry's `ref` must be a full commit SHA (40- or 64-hex) — registry CI rejects tags and branches (see [Distribution](distribution.md#integrity)). The full distribution block, including `repository`, `path`, and `archive`, is covered on the [Distribution](distribution.md) page and in the [schema reference](../reference/plugin-schema.md).
 
 ## Bundling many plugins
 

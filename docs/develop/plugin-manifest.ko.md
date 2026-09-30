@@ -1,6 +1,6 @@
 # Plugin manifest
 
-플러그인 매니페스트는 하나의 플러그인을 완전히 설명하는 `vineyard:plugin` 문서입니다: 누가 만들었는지, 어디서 실행되는지, 어떤 그래프 타입을 읽고 쓰는지, 실행 전에 표시되는 폼, 필요한 권한, 그리고 배포 방법. 이것이 단일 진실 공급원이며 — 별도의 서버 측 Plugin 레코드는 없습니다.
+플러그인 매니페스트는 하나의 플러그인을 완전히 설명하는 `vineyard:plugin` 문서입니다: 누가 만들었는지, 어디서 실행되는지, 어떤 그래프 타입을 읽고 쓰는지, 실행 전에 표시되는 폼, 필요한 권한, 그리고 배포 방법. 이것이 단일 진실 공급원입니다.
 
 이 페이지는 실제로 배포된 두 플러그인을 예제로 사용해 매니페스트 블록을 설명합니다: [IP Recon](https://github.com/Vineyard-Intelligence/pluginpack-ip-recon) 팩의 **RDAP IP**, 그리고 Wayback Machine 팩의 **Wayback Snapshot History**. 모든 타입, 패턴, 기본값을 포함한 필드별 전체 스키마는 [plugin schema reference](../reference/plugin-schema.md)를 참조하세요.
 
@@ -23,7 +23,7 @@
     }
     ```
 
-    `sandbox-js`는 작성자의 번들 JavaScript를 자체 CSP가 직접 네트워크 접근을 금지하는 전용 모듈 Web Worker 내에서 실행하며, 오직 호스트를 통해서만 나갑니다: `ctx.net.fetch`(선언된 `scopes.network` 엔드포인트로 제한), `ctx.service`(`scopes.services`), 또는 데스크톱 앱에서는 `ctx.net.probe`(`scopes.web_probe`). RDAP IP가 이 방식(`ctx.net.fetch`)을 씁니다.
+    `sandbox-js`는 작성자의 번들 JavaScript를 자체 네트워크가 없는 전용 모듈 Web Worker 내에서 실행하며, 오직 호스트를 통해서만 나갑니다: `ctx.net.fetch`(선언된 `scopes.network` 엔드포인트로 제한), `ctx.service`(`scopes.services`), 또는 데스크톱 앱에서는 `ctx.net.probe`(`scopes.web_probe`). RDAP IP가 이 방식(`ctx.net.fetch`)을 씁니다.
 
 === "web (web-proxy)"
 
@@ -65,7 +65,7 @@ RDAP IP의 실제 `io`입니다: `infrastructure.ip_address` 노드를 받아 �
 `consumes`는 UX를 형성합니다:
 
 - `consumes`는 **Run plugins…** 패널(노드나 캔버스의 우클릭 메뉴, 툴바, 메뉴 바에서 열림)에서 플러그인이 제공되는 위치를 결정합니다: 선택한 범위(Selected 또는 Whole project)에 소비 타입 중 하나라도 있으면 플러그인이 *Matches selection* / *Matches project data* 아래에 나열됩니다. RDAP IP는 범위 안에 `infrastructure.ip_address` 노드가 있으면 언제나 제공됩니다.
-- 타입 참조는 선택적 `as` 바인딩 별칭도 허용합니다. 소비된 노드의 값을 그 키 아래 `params`에 미리 바인딩하도록 설계되었습니다. 스키마는 이 필드를 허용하지만, 이를 선언하는 배포된 플러그인은 없고 실행 폼도 아직 이를 읽지 않습니다.
+- 타입 참조는 선택적 `as` 바인딩 별칭(소비된 노드의 값을 그 키 아래 `params`에 미리 바인딩)도 허용합니다. 스키마는 이를 허용하지만 실행 폼은 아직 읽지 않습니다.
 - **빈 `consumes` 배열**을 가진 플러그인은 전체 그래프 플러그인입니다. 대신 패널의 *Whole-graph / input via form* 섹션에 나열됩니다.
 
 `produces`는 정보 제공용입니다 — 이 플러그인이 생성할 수 있는 노드 타입을 마켓플레이스와 캔버스에 알려줍니다. 이러한 타입이 정의되는 방식은 [Type Packs (develop)](typepacks.md)를 참조하세요.
@@ -87,11 +87,11 @@ RDAP IP의 실제 `io`입니다: `infrastructure.ip_address` 노드를 받아 �
 ```
 
 !!! danger "params에 시크릿 금지"
-    `params`는 시크릿(API 키, 토큰, 비밀번호 등)을 포함해서는 **안 됩니다** — 제출된 값은 `Task.input`에 기록됩니다. 자격 증명은 대신 `"secret": true`와 함께 `scopes.config` 항목으로 선언하세요 — 이 값들은 플러그인 자체 설정 폼에서 수집되며 어떤 레코드에도 기록되지 않습니다. [Secret handling](security.md)을 참조하세요.
+    `params`는 시크릿(API 키, 토큰, 비밀번호 등)을 포함해서는 **안 됩니다** — 제출된 값은 실행과 함께 기록됩니다. 자격 증명은 대신 `"secret": true`와 함께 `scopes.config` 항목으로 선언하세요 — 이 값들은 플러그인 자체 설정 폼에서 수집되며 어떤 레코드에도 기록되지 않습니다. [Secret handling](security.md)을 참조하세요.
 
 ## scopes — 권한 표면
 
-`scopes`는 플러그인이 받는 **유일한** 권한입니다. 여기에 선언되지 않은 기능은 런타임에 단순히 존재하지 않습니다 — 우회할 수 있는 것이 없습니다. RDAP IP는 소스 노드를 읽고, 결과를 쓰고, 엔드포인트 하나에서 가져옵니다:
+`scopes`는 플러그인이 받는 **유일한** 권한입니다. 여기에 선언되지 않은 기능은 런타임에 단순히 존재하지 않습니다. RDAP IP는 소스 노드를 읽고, 결과를 쓰고, 엔드포인트 하나에서 가져옵니다:
 
 ```json
 "scopes": {
@@ -102,7 +102,7 @@ RDAP IP의 실제 `io`입니다: `infrastructure.ip_address` 노드를 받아 �
 }
 ```
 
-여기서 반복할 가치가 있는 두 가지 규칙: **web-proxy** 플러그인의 경우 `network`는 반드시 `platforms.web.proxy_endpoint`와 동일한 정확히 하나의 항목이어야 하고, `sandbox-js` 플러그인의 `network` 항목은 대신 호스트의 이그레스 허용 목록으로 검사됩니다([security](security.md) 참조). `"secret": true`인 `config` 항목은 폼에서 마스킹되고 데스크톱 키체인(브라우저에서는 세션 동안 `sessionStorage`)에 로그인한 계정별로 저장됩니다. 값 자체는 그것을 선언한 플러그인에게 전달되며, 그것이 선언하는 이유입니다. 이 실행의 `params` 읽기, `progress` 보고, `log` 쓰기, 협력적 취소 `signal`과 같은 것들은 **스코프가 아닙니다** — 항상 사용 가능합니다.
+여기서 반복할 가치가 있는 두 가지 규칙: **web-proxy** 플러그인의 경우 `network`는 반드시 `platforms.web.proxy_endpoint`와 동일한 정확히 하나의 항목이어야 하고, `sandbox-js` 플러그인의 `network` 항목은 대신 호스트의 이그레스 허용 목록으로 검사됩니다([security](security.md) 참조). `"secret": true`인 `config` 항목은 폼에서 마스킹되고, 로그인한 계정별로(데스크톱은 OS 키체인, 브라우저는 탭 세션 동안) 보관되며, 그것을 선언한 플러그인에게 전달됩니다. 이 실행의 `params` 읽기, `progress` 보고, `log` 쓰기, 협력적 취소 `signal`과 같은 것들은 **스코프가 아닙니다** — 항상 사용 가능합니다.
 
 전체 스코프 어휘, 스코프 패밀리, 강제 모델은 [scopes reference](../reference/scopes.md)를 참조하세요.
 
@@ -122,7 +122,7 @@ RDAP IP의 실제 `io`입니다: `infrastructure.ip_address` 노드를 받아 �
 
 ## distribution
 
-`distribution`은 공유 설명용 블록(플러그인과 Type Pack 모두에서 사용)이며, 호스트는 이를 읽지 않습니다. 코드의 서버 측 복사본은 없습니다: 클라이언트가 무엇을 실행할지는 레지스트리 항목이 결정합니다 — jsDelivr를 통해 `repo@ref/path`에서 매니페스트를 가져와 레지스트리가 기록한 다이제스트와 대조한 뒤, 같은 커밋에서 `platforms.web.entry`를 로드합니다.
+`distribution`은 공유 설명용 블록(플러그인과 Type Pack 모두에서 사용)이며, 호스트는 이를 읽지 않습니다. 클라이언트가 무엇을 실행할지는 레지스트리 항목이 결정합니다 — jsDelivr를 통해 `repo@ref/path`에서 매니페스트를 가져와 레지스트리가 기록한 다이제스트와 대조한 뒤, 같은 커밋에서 `platforms.web.entry`를 로드합니다.
 
 ```json
 "distribution": {
@@ -131,7 +131,7 @@ RDAP IP의 실제 `io`입니다: `infrastructure.ip_address` 노드를 받아 �
 }
 ```
 
-`kind`는 `git`, `zip`, 또는 `inline`입니다. 레지스트리 항목의 `ref`는 전체 커밋 SHA(40자 또는 64자 16진수)여야 하며 — 레지스트리 CI는 태그와 브랜치를 거부합니다 — 강제 푸시가 실행 코드를 바꾸는 걸 막는 것은 선택적 `integrity` 해시가 아니라 이 고정입니다([Distribution](distribution.md#integrity) 참조). `repository`, `path`, `archive`를 포함한 전체 distribution 블록은 [Distribution](distribution.md) 페이지와 [schema reference](../reference/plugin-schema.md)에서 다룹니다.
+`kind`는 `git`, `zip`, 또는 `inline`입니다. 레지스트리 항목의 `ref`는 전체 커밋 SHA(40자 또는 64자 16진수)여야 하며 — 레지스트리 CI는 태그와 브랜치를 거부합니다([Distribution](distribution.md#integrity) 참조). `repository`, `path`, `archive`를 포함한 전체 distribution 블록은 [Distribution](distribution.md) 페이지와 [schema reference](../reference/plugin-schema.md)에서 다룹니다.
 
 ## 여러 플러그인 번들링
 
