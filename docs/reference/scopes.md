@@ -128,11 +128,11 @@ Each entry is a `ConfigValue`. `ctx.config` is a read-only map of the declared k
 | `type` | `"string" \| "number" \| "boolean" \| "url" \| "enum"` | Value type |
 | `enum` | `string[]` (optional) | Allowed values when `type` is `enum` |
 | `secret` | `boolean` (optional) | BYOK-style credential; see below |
-| `scope` | `"plugin" \| "project" \| "user"` (optional) | Where the value is stored. Accepted but not read today; values are stored per plugin |
+| `scope` | `"plugin" \| "project" \| "user"` (optional) | Where the value is stored. Accepted but not read today; values are stored per plugin and per signed-in account |
 | `optional` | `boolean` (optional) | If false/absent the field is marked "required by this plugin" (not enforced; the plugin must handle a missing value) |
 
 !!! danger "secret semantics"
-    `secret: true` is about **storage and display, not about hiding the value from the plugin**. The value IS delivered to the declaring plugin as `ctx.config[key]` (SPEC §6.1) — it has to be, since the plugin is what calls the API with it — and `configFor` gives a pack only the keys its own manifest declared. What the flag changes: the form field is masked. Every config value, secret or not, is stored in the desktop keychain (`safeStorage`, encrypted at rest, this machine only) or, in the browser, in `sessionStorage` for that tab, so a browser-entered key does not outlive the session. It is **never recorded** in a task record or an AI conversation — that is enforced by keeping credentials out of `params`, not by withholding them from `ctx.config`. See [security](../develop/security.md) and SPEC §6.
+    `secret: true` is about **storage and display, not about hiding the value from the plugin**. The value IS delivered to the declaring plugin as `ctx.config[key]` (SPEC §6.1) — it has to be, since the plugin is what calls the API with it — and `configFor` gives a pack only the keys its own manifest declared. What the flag changes: the form field is masked. Every config value, secret or not, is stored in the desktop keychain (`safeStorage`, encrypted at rest, this machine only) or, in the browser, in `sessionStorage` for that tab, so a browser-entered key does not outlive the session. Either way it is filed under the signed-in account, so another account on the same machine never receives it. It is **never recorded** in a task record or an AI conversation — that is enforced by keeping credentials out of `params`, not by withholding them from `ctx.config`. See [security](../develop/security.md) and SPEC §6.
 
 ## Not scopes
 

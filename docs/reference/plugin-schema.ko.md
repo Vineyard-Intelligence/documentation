@@ -207,7 +207,7 @@ await ctx.net.fetch(url, { headers: { Authorization: `Bearer ${ctx.config.api_ke
 
 ### configValue (scopes.config items)
 
-`$defs.configValue`. `type: object`, `additionalProperties: false`. **필수:** `key`, `type`. config 값은 분석가가 Run plugins 대화상자의 해당 플러그인 Settings 섹션에서 입력하며, 선언한 플러그인이 `ctx.config`로 읽습니다. 모든 값은 OS 키체인(데스크톱) 또는 `sessionStorage`(브라우저)에 저장되고, `secret: true`는 필드를 마스킹합니다. 값은 작업이나 대화에 기록되지 않습니다.
+`$defs.configValue`. `type: object`, `additionalProperties: false`. **필수:** `key`, `type`. config 값은 분석가가 Run plugins 대화상자의 해당 플러그인 Settings 섹션에서 입력하며, 선언한 플러그인이 `ctx.config`로 읽습니다. 모든 값은 로그인한 계정별로 OS 키체인(데스크톱) 또는 `sessionStorage`(브라우저)에 저장되고, `secret: true`는 필드를 마스킹합니다. 값은 작업이나 대화에 기록되지 않습니다.
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
@@ -215,8 +215,8 @@ await ctx.net.fetch(url, { headers: { Authorization: `Bearer ${ctx.config.api_ke
 | `label` | string | no | — | — | Run plugins Settings 섹션의 필드 라벨. |
 | `type` | string | yes | `string`, `number`, `boolean`, `url`, `enum` | — | 값 유형. |
 | `enum` | array | no | items: string | — | `type: enum`일 때 허용된 선택지. |
-| `secret` | boolean | no | — | `false` | BYOK 방식 비밀: 폼에서 마스킹. (비밀 여부와 무관하게 모든 config 값은 데스크톱에서는 키체인에, 브라우저에서는 세션 한정으로 보관됨.) 어떤 레코드에도 기록되지 않음. |
-| `scope` | string | no | `plugin`, `project`, `user` | `user` | 값이 저장/공유되는 위치. 허용되지만 오늘은 읽히지 않으며, 값은 plugin별로 저장됩니다. |
+| `secret` | boolean | no | — | `false` | BYOK 방식 비밀: 폼에서 마스킹. (비밀 여부와 무관하게 모든 config 값은 계정별로, 데스크톱에서는 키체인에, 브라우저에서는 세션 한정으로 보관됨.) 어떤 레코드에도 기록되지 않음. |
+| `scope` | string | no | `plugin`, `project`, `user` | `user` | 값이 저장/공유되는 위치. 허용되지만 오늘은 읽히지 않으며, 값은 plugin별·계정별로 저장됩니다. |
 | `optional` | boolean | no | — | `false` | 사용자가 비워둘 수 있는지 여부. 강제되지 않음: optional이 아닌 필드는 "required by this plugin"으로 표시될 뿐이며, 값 없이도 실행이 진행됩니다. |
 
 ## lifecycle

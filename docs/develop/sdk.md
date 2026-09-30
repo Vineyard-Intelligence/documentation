@@ -202,8 +202,9 @@ ctx.config?: Readonly<Record<string, string | number | boolean>>
 !!! warning "Secrets reach only the plugin that declared them"
     `secret: true` only changes how the value is entered (a masked field) — the value is still
     handed to the plugin that declared it, as `ctx.config.<key>`; only keys your own manifest
-    declares ever reach you. Values are encrypted with the OS keychain on desktop, kept in
-    `sessionStorage` for the tab in the browser, and are never written to a record. See
+    declares ever reach you. Values are kept per signed-in account — encrypted with the OS
+    keychain on desktop, in `sessionStorage` for the tab in the browser — and are never written
+    to a record. See
     [secrets handling](security.md#secret-handling).
 
 !!! note "There is no `publish` scope"

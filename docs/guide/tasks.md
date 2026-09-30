@@ -23,10 +23,10 @@ A running plugin task has a **Stop** button (stop an AI turn from the AI chat pa
 
 ## Ephemeral by default
 
-Plugin-run tasks live only in your browser tab's memory; close the tab and they are gone. AI conversations are saved in this browser (localStorage, per project) and come back as Tasks rows after a reload, so you can reopen them. Staged changes that were still waiting for review do not survive a reload. Neither task rows nor AI chat content are sent to the Vineyard server; only changes you apply are written to the project.
+Plugin-run tasks live only in your browser tab's memory; close the tab and they are gone. AI conversations are saved on this device (per project, under the account you are signed in with) and come back as Tasks rows after a reload, so you can reopen them. Staged changes that were still waiting for review do not survive a reload. Neither task rows nor AI chat content are sent to the Vineyard server; only changes you apply are written to the project.
 
-!!! tip "AI chat stays in your browser"
-    Conversations and messages are kept in this browser only and are never written to the server.
+!!! tip "AI chat stays on this device, under your account"
+    Conversations, messages and project memory are kept on this device only and are never written to the server. Like your AI provider and web-search keys, they are filed separately for each account: Vineyard does not use or show them to another account signing in on the same machine (it keeps accounts apart inside the app, not from someone with direct access to this computer), local mode has its own separate set, and signing out keeps them for your next sign-in. Anything saved before per-account storage was introduced was discarded, so enter your keys again once.
 
 ## Closing and deleting a conversation
 
@@ -36,7 +36,7 @@ The AI chat panel's header holds, left to right: **Delete conversation** (the tr
 
 **Deleting** a conversation asks for confirmation first; **Cancel** has the focus, so pressing Enter by reflex does not delete. Once you confirm:
 
-- the conversation and its Tasks row are removed from this browser — this cannot be undone;
+- the conversation and its Tasks row are removed from this device — this cannot be undone;
 - if the agent is still working, its turn is stopped first;
 - change sets proposed in the conversation and not yet applied are discarded (the dialog says how many); changes already applied to the graph stay;
 - the panel closes.
