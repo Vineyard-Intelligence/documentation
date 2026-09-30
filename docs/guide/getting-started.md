@@ -8,6 +8,9 @@ Vineyard runs in your browser, or as the Vineyard desktop app. Sign in, and you 
 
 Plugins and Type Packs **execute on the client**: the server stores your graph and brokers collaboration, but it never runs plugin code.
 
+!!! tip "Announcements"
+    Signed in to a server, the right side of the top bar rotates the service's pinned announcements, one title at a time (hover to hold one). Click a title to read it; **All announcements** there lists every announcement. Local mode has no server and shows none.
+
 ## 2. Open or create a project
 
 A **project** owns a graph (nodes + edges), its collaborators, and its installed set of packs.
