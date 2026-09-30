@@ -126,11 +126,11 @@ const who = await ctx.service('telegram', 'resolve', {
 | `type` | `"string" \| "number" \| "boolean" \| "url" \| "enum"` | 값 유형 |
 | `enum` | `string[]` (선택 사항) | `type`이 `enum`일 때 허용된 값 |
 | `secret` | `boolean` (선택 사항) | BYOK 방식 자격 증명; 아래 참조 |
-| `scope` | `"plugin" \| "project" \| "user"` (선택 사항) | 값이 저장되는 위치. 허용되지만 오늘은 읽히지 않으며, 값은 plugin별로 저장됨 |
+| `scope` | `"plugin" \| "project" \| "user"` (선택 사항) | 값이 저장되는 위치. 허용되지만 오늘은 읽히지 않으며, 값은 plugin별·로그인한 계정별로 저장됨 |
 | `optional` | `boolean` (선택 사항) | false/없으면 필드에 "required by this plugin"이 표시됨 (강제되지 않음; plugin이 값이 없는 경우를 처리해야 함) |
 
 !!! danger "secret semantics"
-    `secret: true`는 **값을 plugin으로부터 숨기는 것이 아니라 저장과 표시**에 관한 것입니다. 값은 선언한 plugin에게 `ctx.config[key]`로 실제 전달됩니다(SPEC §6.1) — API를 호출하는 주체가 plugin이므로 그래야 하며, `configFor`는 팩 자신의 매니페스트가 선언한 키만 넘겨줍니다. 플래그가 바꾸는 것: 폼 필드가 마스킹됩니다. 비밀 여부와 무관하게 모든 config 값은 데스크톱 키체인(`safeStorage`, 저장 시 암호화, 해당 머신 한정) 또는 브라우저의 해당 탭 `sessionStorage`에 저장되어, 브라우저에서 입력한 키는 세션을 넘기지 못합니다. task 기록이나 AI 대화에는 **절대 기록되지 않으며**, 이는 `ctx.config`에서 값을 빼서가 아니라 자격 증명을 `params`에 두지 않음으로써 보장됩니다. [security](../develop/security.md) 및 SPEC §6을 참조하세요.
+    `secret: true`는 **값을 plugin으로부터 숨기는 것이 아니라 저장과 표시**에 관한 것입니다. 값은 선언한 plugin에게 `ctx.config[key]`로 실제 전달됩니다(SPEC §6.1) — API를 호출하는 주체가 plugin이므로 그래야 하며, `configFor`는 팩 자신의 매니페스트가 선언한 키만 넘겨줍니다. 플래그가 바꾸는 것: 폼 필드가 마스킹됩니다. 비밀 여부와 무관하게 모든 config 값은 데스크톱 키체인(`safeStorage`, 저장 시 암호화, 해당 머신 한정) 또는 브라우저의 해당 탭 `sessionStorage`에 저장되어, 브라우저에서 입력한 키는 세션을 넘기지 못합니다. 어느 쪽이든 로그인한 계정 아래에 보관되므로 같은 머신의 다른 계정은 이 값을 받지 않습니다. task 기록이나 AI 대화에는 **절대 기록되지 않으며**, 이는 `ctx.config`에서 값을 빼서가 아니라 자격 증명을 `params`에 두지 않음으로써 보장됩니다. [security](../develop/security.md) 및 SPEC §6을 참조하세요.
 
 ## Not scopes
 

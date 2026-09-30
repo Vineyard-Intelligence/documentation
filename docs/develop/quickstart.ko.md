@@ -102,7 +102,7 @@ export default definePlugin({
 | `distribution` | 스키마상 필수인 설명용 블록(`kind`: `git`, `zip` 또는 `inline`)이며, 호스트는 이를 읽지 않습니다. 설치된 코드는 레지스트리 항목의 고정 커밋에서, 개발 코드는 개발 로더에 넣은 URL에서 가져옵니다([distribution](distribution.md) 참조). |
 
 !!! warning "`params`에 시크릿을 절대 넣지 마세요"
-    시크릿처럼 보이는 키를 `params`에 절대 넣지 마세요 — 그 값은 기록됩니다. 시크릿은 `secret: true`와 함께 `scopes.config`로 선언하세요: 플러그인 설정 폼에서 (마스킹되어) 입력되고, 데스크톱에서는 OS 키체인으로 암호화되어, 브라우저에서는 탭의 `sessionStorage`에 보관되며, 어떤 레코드에도 기록되지 않고, 이를 선언한 플러그인에게만 `ctx.config`로 전달됩니다 — [Security](security.md)를 참조하세요. Korean Roulette은 시크릿과 네트워크가 필요 없기 때문에 깔끔한 첫 플러그인으로 적합합니다.
+    시크릿처럼 보이는 키를 `params`에 절대 넣지 마세요 — 그 값은 기록됩니다. 시크릿은 `secret: true`와 함께 `scopes.config`로 선언하세요: 플러그인 설정 폼에서 (마스킹되어) 입력되고, 로그인한 계정별로 (데스크톱에서는 OS 키체인으로 암호화되어, 브라우저에서는 탭의 `sessionStorage`에) 보관되며, 어떤 레코드에도 기록되지 않고, 이를 선언한 플러그인에게만 `ctx.config`로 전달됩니다 — [Security](security.md)를 참조하세요. Korean Roulette은 시크릿과 네트워크가 필요 없기 때문에 깔끔한 첫 플러그인으로 적합합니다.
 
 ## 4. `createMockContext`로 단위 테스트
 
@@ -161,7 +161,7 @@ GitHub와 레지스트리는 **배포** 계층이며, 개발 중에는 여러분
 }
 ```
 
-**Settings → Plugins → Development → Load a pack from a URL**을 열고 **Plugin Pack**을 선택한 뒤, 플러그인 매니페스트 문서의 절대 URL을 입력하세요(`content_type: "vineyard:plugin"`인 JSON 파일 또는 `vineyard:pluginpack` 문서이며, 그 `platforms.web.entry`는 매니페스트 폴더 기준 상대 경로로 번들을 가리킵니다. 예: `dist/main.js`). 둘 다 개발 서버(`esbuild --watch --servedir` 또는 `vite`)에서 서빙하세요. URL은 이 브라우저에만 보관되며 이 기기에서 여는 모든 프로젝트에 로드됩니다 — 추가한 뒤 프로젝트를 다시 여세요. JSON 매니페스트의 `identifier`는 `definePlugin`의 것과 일치해야 하며, 그렇지 않으면 실행이 `plugin not loadable: <identifier>`로 실패합니다.
+**Settings → Plugins → Development → Load a pack from a URL**을 열고 **Plugin Pack**을 선택한 뒤, 플러그인 매니페스트 문서의 절대 URL을 입력하세요(`content_type: "vineyard:plugin"`인 JSON 파일 또는 `vineyard:pluginpack` 문서이며, 그 `platforms.web.entry`는 매니페스트 폴더 기준 상대 경로로 번들을 가리킵니다. 예: `dist/main.js`). 둘 다 개발 서버(`esbuild --watch --servedir` 또는 `vite`)에서 서빙하세요. URL은 이 기기에 로그인한 계정별로 보관되며(로컬 모드는 별도 목록) 그 계정으로 여는 모든 프로젝트에 로드됩니다 — 추가한 뒤 프로젝트를 다시 여세요. JSON 매니페스트의 `identifier`는 `definePlugin`의 것과 일치해야 하며, 그렇지 않으면 실행이 `plugin not loadable: <identifier>`로 실패합니다.
 
 !!! example "임시 프로젝트에서 Korean Roulette 시도하기"
     거의 모든 것을 삭제하므로, 먼저 스크래치 프로젝트에서 실행하세요. [task](../guide/tasks.md) 패널이 실행을 보여주면, 스테이징된 삭제를 검토·적용한 뒤 생존자 노드가 캔버스에 혼자 남는 것을 확인하세요.

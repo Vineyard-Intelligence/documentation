@@ -140,7 +140,7 @@ ctx.config?: Readonly<Record<string, string | number | boolean>>
 ```
 
 !!! warning "시크릿은 이를 선언한 플러그인에게만 전달됩니다"
-    `secret: true`는 값을 입력하는 방식(마스킹된 필드)만 바꿉니다 — 값은 여전히 이를 선언한 플러그인에게 `ctx.config.<key>`로 전달되며, 자신의 매니페스트가 선언한 키만 전달됩니다. 값은 데스크톱에서는 OS 키체인으로 암호화되어, 브라우저에서는 탭의 `sessionStorage`에 보관되며 어떤 레코드에도 기록되지 않습니다. [시크릿 처리](security.md#secret-handling)를 참조하세요.
+    `secret: true`는 값을 입력하는 방식(마스킹된 필드)만 바꿉니다 — 값은 여전히 이를 선언한 플러그인에게 `ctx.config.<key>`로 전달되며, 자신의 매니페스트가 선언한 키만 전달됩니다. 값은 로그인한 계정별로, 데스크톱에서는 OS 키체인으로 암호화되어, 브라우저에서는 탭의 `sessionStorage`에 보관되며 어떤 레코드에도 기록되지 않습니다. [시크릿 처리](security.md#secret-handling)를 참조하세요.
 
 !!! note "`publish` 스코프는 존재하지 않습니다"
     플러그인은 프로젝트 채팅/피드에 게시할 수 없습니다 — `ctx.message`는 존재하지 않으며, `publish`는 스코프 스키마에 포함되어 있지 않습니다. `scopes`는 `additionalProperties: false`를 설정하므로, 아직 이를 선언하는 초안 매니페스트는 **검증에 실패합니다**. 찾아낸 결과는 대신 그래프에 기록하세요.

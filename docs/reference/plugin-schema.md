@@ -207,7 +207,7 @@ Re-measure any of this with `frontend/scripts/measure-net-headers.mjs`.
 
 ### configValue (scopes.config items)
 
-`$defs.configValue`. `type: object`, `additionalProperties: false`. **Required:** `key`, `type`. Config values are entered by the analyst in the plugin's Settings section of the Run plugins dialog and read by the declaring plugin as `ctx.config`. Every value is stored in the OS keychain (desktop) or `sessionStorage` (browser); `secret: true` masks the field. Values are never recorded in a task or conversation.
+`$defs.configValue`. `type: object`, `additionalProperties: false`. **Required:** `key`, `type`. Config values are entered by the analyst in the plugin's Settings section of the Run plugins dialog and read by the declaring plugin as `ctx.config`. Every value is stored per signed-in account, in the OS keychain (desktop) or `sessionStorage` (browser); `secret: true` masks the field. Values are never recorded in a task or conversation.
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
@@ -215,8 +215,8 @@ Re-measure any of this with `frontend/scripts/measure-net-headers.mjs`.
 | `label` | string | no | — | — | Field label in the Run plugins Settings section. |
 | `type` | string | yes | `string`, `number`, `boolean`, `url`, `enum` | — | Value type. |
 | `enum` | array | no | items: string | — | Allowed choices when `type: enum`. |
-| `secret` | boolean | no | — | `false` | BYOK-style secret: masked field. (Every config value, secret or not, is kept in the keychain on desktop and session-only in the browser.) Never written to any record. |
-| `scope` | string | no | `plugin`, `project`, `user` | `user` | Where the value is stored/shared. Accepted but not read today; values are stored per plugin. |
+| `secret` | boolean | no | — | `false` | BYOK-style secret: masked field. (Every config value, secret or not, is kept per account — in the keychain on desktop and session-only in the browser.) Never written to any record. |
+| `scope` | string | no | `plugin`, `project`, `user` | `user` | Where the value is stored/shared. Accepted but not read today; values are stored per plugin and per account. |
 | `optional` | boolean | no | — | `false` | Whether the user may leave it blank. Not enforced: a non-optional field is only marked "required by this plugin", and the run proceeds without it. |
 
 ## lifecycle

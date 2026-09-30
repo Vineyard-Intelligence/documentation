@@ -102,7 +102,7 @@ Every field below is required unless noted. The full schema is documented in [pl
 | `distribution` | Schema-required descriptive block (`kind`: `git`, `zip` or `inline`); the host does not read it. Installed code is fetched from the registry entry's pinned commit, dev code from the URL you load in the dev loader (see [distribution](distribution.md)). |
 
 !!! warning "Never put secrets in `params`"
-    Never put a secret-looking key in `params` — those values are recorded. Declare secrets as `scopes.config` with `secret: true`: they are entered in the plugin's settings form (masked), encrypted with the OS keychain on desktop or kept in `sessionStorage` for the tab in the browser, never written to a record, and handed only to the plugin that declared them via `ctx.config` — see [Security](security.md). Korean Roulette needs no secrets and no network, which is exactly why it's a clean first plugin.
+    Never put a secret-looking key in `params` — those values are recorded. Declare secrets as `scopes.config` with `secret: true`: they are entered in the plugin's settings form (masked), kept per signed-in account (encrypted with the OS keychain on desktop, in `sessionStorage` for the tab in the browser), never written to a record, and handed only to the plugin that declared them via `ctx.config` — see [Security](security.md). Korean Roulette needs no secrets and no network, which is exactly why it's a clean first plugin.
 
 ## 4. Unit test with `createMockContext`
 
@@ -161,7 +161,7 @@ GitHub and the registry are a **distribution** layer; during development the app
 }
 ```
 
-Open **Settings → Plugins → Development → Load a pack from a URL**, choose **Plugin Pack**, and enter the absolute URL of your plugin's manifest document (a JSON file with `content_type: "vineyard:plugin"`, or a `vineyard:pluginpack` document, whose `platforms.web.entry` points at your bundle, e.g. `dist/main.js`, relative to the manifest's folder). Serve both from your dev server (`esbuild --watch --servedir` or `vite`). The URL is kept in this browser only and loads into every project you open on this device — reopen the project after adding it. The `identifier` in the JSON manifest must match the one in `definePlugin`, or the run fails with `plugin not loadable: <identifier>`.
+Open **Settings → Plugins → Development → Load a pack from a URL**, choose **Plugin Pack**, and enter the absolute URL of your plugin's manifest document (a JSON file with `content_type: "vineyard:plugin"`, or a `vineyard:pluginpack` document, whose `platforms.web.entry` points at your bundle, e.g. `dist/main.js`, relative to the manifest's folder). Serve both from your dev server (`esbuild --watch --servedir` or `vite`). The URL is kept on this device for the account you are signed in with (local mode keeps its own list) and loads into every project you open under that account — reopen the project after adding it. The `identifier` in the JSON manifest must match the one in `definePlugin`, or the run fails with `plugin not loadable: <identifier>`.
 
 !!! example "Try Korean Roulette on a throwaway project"
     Because it deletes nearly everything, run it against a scratch project first. Watch the [task](../guide/tasks.md) panel show the run, review and apply the staged deletions, then see the survivor node standing alone in the canvas.

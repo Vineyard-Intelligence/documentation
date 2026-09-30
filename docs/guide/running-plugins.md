@@ -57,7 +57,11 @@ these fields. File inputs accept at most 25 MB per file, 50 files and 250 MB per
 Plugins that need stored settings (for example an API key or gateway URL) show a collapsible
 **Settings (x/y set)** block. These values are saved as you type and reused on later runs. In the
 browser they are kept for this session only; in the desktop app they are stored encrypted by the
-operating system. Press **Run (N)** to start every ticked plugin.
+operating system. Either way they belong to the account you are signed in with: Vineyard does not use or show
+them to another account signing in on the same machine (it keeps accounts apart inside the app, not
+from someone with direct access to this computer), and signing out keeps them for that account. Values saved
+before per-account storage was introduced were discarded — enter them once more. Press **Run (N)**
+to start every ticked plugin.
 
 ## Reviewing a run's changes
 
