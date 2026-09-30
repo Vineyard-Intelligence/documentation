@@ -71,9 +71,7 @@ reconnaissance, in the `infrastructure` category:
 | `infrastructure.certificate` | the SHA-256 fingerprint | `subject_common_name`, `issuer`, `not_after` |
 | `infrastructure.technologies` | the technology name | `kind`, `vendor`, `version`, `cpe` |
 
-The same pack also ships five types in a separate `web` category — a resource locator, three
-fingerprint types and a tracking/ad-account ID are observed web artifacts, not network substrate, so they get their own
-category without needing their own install:
+The same pack also ships five types in a separate `web` category:
 
 | Type (`category.name`) | Label shown | Notable properties |
 |---|---|---|
@@ -108,11 +106,8 @@ adds the people and personas behind the activity.
     → username + platform; `endpoint.file` → SHA-256, file name, path, host; `endpoint.process`
     → process GUID, name, PID), otherwise its `label_property` value. Two nodes with the same
     type and identity are merged and their properties combined. Fields the pack marks
-    case-insensitive (domains, hostnames, emails, handles…) match regardless of case. The type is matched by its **exact qualified key**
-    (`category.name`); a node whose type no installed pack defines keeps its raw type string,
-    so moving a type between categories in a new pack version never merges old nodes with the
-    new type's creates. The most useful label is therefore one that is both readable
-    *and* identifying. Most types key on a naturally-unique field (an IP, a CVE id, a tx
+    case-insensitive (domains, hostnames, emails, handles…) match regardless of case. The most
+    useful label is therefore one that is both readable *and* identifying. Most types key on a naturally-unique field (an IP, a CVE id, a tx
     hash, a WHOIS subject). Where a type's label is inherently non-unique — a
     `identity.person`'s name, an `identity.organization`'s name — distinct entities sharing
     that label will merge, so give them a distinguishing label (e.g. `John Smith (DOB 1990)`)

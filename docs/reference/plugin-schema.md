@@ -74,7 +74,7 @@ Per-platform execution flags. `type: object`, `additionalProperties: false`, `mi
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
-| `runtime` | string | yes | `sandbox-js`, `native`, `subprocess` | — | Desktop execution mode. `native`/`subprocess` run code the JS sandbox cannot contain (carried open issue). |
+| `runtime` | string | yes | `sandbox-js`, `native`, `subprocess` | — | Desktop execution mode. |
 | `entry` | string | yes | — | — | Entry path within the bundle. |
 | `min_app_version` | string | no | pattern `^\d+\.\d+\.\d+$` | — | Minimum desktop app version required. |
 | `fallback` | string | no | `web`, `none` | `none` | Where to fall back if desktop cannot run the plugin. |
@@ -100,7 +100,7 @@ Entity types the plugin references from Type Packs. `type: object`, `additionalP
 | `as` | string | no | — | Designed as a binding alias to pre-bind the consumed node's value into `params` under this key. Accepted by the schema; no shipped plugin declares it and the run form does not read it yet. |
 
 !!! note "Open issue"
-    `typeRef` does **not** yet carry a Type Pack version — type compatibility is resolved by identifier + qualified name only. Versioned type references are a carried open issue.
+    `typeRef` does **not** yet carry a Type Pack version — type compatibility is resolved by identifier + qualified name only.
 
 ## params
 
@@ -140,24 +140,21 @@ The value your `run(ctx)` receives is the **`File` object itself** (or an array 
 ```
 
 !!! note "One run, one batch"
-    A multi-file field hands the whole selection to a **single** run — the host does not fan out one run per file. Loop over them yourself and report progress with `ctx.progress.set({ percent })`; check `ctx.signal.aborted` each iteration so Stop works. This is deliberate: N runs would mean N task rows and N separate review dialogs for what the analyst thinks of as one action.
+    A multi-file field hands the whole selection to a **single** run — the host does not fan out one run per file. Loop over them yourself and report progress with `ctx.progress.set({ percent })`; check `ctx.signal.aborted` each iteration so Stop works.
 
     The host caps a pick at 25 MB per file, 250 MB per run, and 50 files. Files cross into the sandbox as blob handles, so the memory cost is whatever your plugin materialises — read one file at a time rather than `Promise.all`-ing the batch.
 
 ## scopes
 
-The plugin's authority surface. `type: object`, `additionalProperties: false`. `ctx` members are absent unless granted; enforcement is by the sandbox, and graph writes are additionally held for the analyst's review before they are applied. See the [scopes reference](scopes.md) for verb semantics.
+The plugin's authority surface. `type: object`, `additionalProperties: false`. `ctx` members are absent unless granted, and graph writes are held for the analyst's review before they are applied. See the [scopes reference](scopes.md) for verb semantics.
 
 | Property | Type | Req. | Items / constraints | Meaning |
 |---|---|---|---|---|
 | `graph` | array | no | `uniqueItems`; enum items (below) | Fine-grained node/edge verbs. Backed by the project `graph_edit` tier. |
-| `web_probe` | object | no | `{ purpose?: string }` — an object, not an array | **Desktop only.** One anonymous request to an *arbitrary* public host, made by the shell's main process. Backs `ctx.net.probe`; in the web build the capability has no backing and `ctx.net.probe` stays absent. |
+| `web_probe` | object | no | `{ purpose?: string }` — an object, not an array | **Desktop only.** One anonymous request to an *arbitrary* public host. Backs `ctx.net.probe`, which is absent in the web build. |
 | `network` | array | no | items: [`networkScope`](#networkscope-scopesnetwork-items) | External XHR targets. |
 | `services` | array | no | `uniqueItems`; enum: `rdap`, `telegram` | Vineyard-operated services called by **name** through `ctx.service` — never by URL. See the [scopes reference](scopes.md#services). |
 | `config` | array | no | items: [`configValue`](#configvalue-scopesconfig-items) | Install-time values injected at runtime only. |
-
-!!! warning "There is no `publish` scope"
-    Those are the only keys the schema models. If a draft manifest still carries `"publish": ["message:post"]`, delete the key — `scopes` is `additionalProperties: false`, so the manifest fails validation.
 
 `scopes.graph` enum values (each may appear at most once):
 
@@ -195,19 +192,14 @@ await ctx.net.fetch(url, { headers: { Authorization: `Bearer ${ctx.config.api_ke
 ```
 
 Prefer `Authorization` over a custom header (`X-Api-Key`, `api-key`, …) whenever the service
-accepts both. Not style — the browser strips `Authorization` when a response redirects to another
-origin, and does **not** strip custom headers. If a declared endpoint ever 302s somewhere else,
-`Authorization` stops at the boundary and `X-Api-Key` does not. A key in the query string is worse
-again: it lands in access logs and `Referer`.
+accepts both: `Authorization` is dropped on a cross-origin redirect, custom headers are not. Avoid a
+key in the query string — it ends up in logs.
 
-`Cookie` cannot be set at all — it is a forbidden header name, and the host also sends every
-plugin request with `credentials: 'omit'`, so the analyst's own session never rides along.
-
-Re-measure any of this with `frontend/scripts/measure-net-headers.mjs`.
+`Cookie` cannot be set, and no cookies are sent with plugin requests.
 
 ### configValue (scopes.config items)
 
-`$defs.configValue`. `type: object`, `additionalProperties: false`. **Required:** `key`, `type`. Config values are entered by the analyst in the plugin's Settings section of the Run plugins dialog and read by the declaring plugin as `ctx.config`. Every value is stored per signed-in account, in the OS keychain (desktop) or `sessionStorage` (browser); `secret: true` masks the field. Values are never recorded in a task or conversation.
+`$defs.configValue`. `type: object`, `additionalProperties: false`. **Required:** `key`, `type`. Config values are entered by the analyst in the plugin's Settings section of the Run plugins dialog and read by the declaring plugin as `ctx.config`. Values are kept per signed-in account — in the OS keychain on desktop, for the tab session in the browser. `secret: true` masks the field. Values are never recorded in a task or conversation.
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
@@ -215,8 +207,8 @@ Re-measure any of this with `frontend/scripts/measure-net-headers.mjs`.
 | `label` | string | no | — | — | Field label in the Run plugins Settings section. |
 | `type` | string | yes | `string`, `number`, `boolean`, `url`, `enum` | — | Value type. |
 | `enum` | array | no | items: string | — | Allowed choices when `type: enum`. |
-| `secret` | boolean | no | — | `false` | BYOK-style secret: masked field. (Every config value, secret or not, is kept per account — in the keychain on desktop and session-only in the browser.) Never written to any record. |
-| `scope` | string | no | `plugin`, `project`, `user` | `user` | Where the value is stored/shared. Accepted but not read today; values are stored per plugin and per account. |
+| `secret` | boolean | no | — | `false` | BYOK-style secret: masked field. Never written to any record. |
+| `scope` | string | no | `plugin`, `project`, `user` | `user` | Where the value is stored/shared. Accepted but not read today; values are stored per plugin. |
 | `optional` | boolean | no | — | `false` | Whether the user may leave it blank. Not enforced: a non-optional field is only marked "required by this plugin", and the run proceeds without it. |
 
 ## lifecycle

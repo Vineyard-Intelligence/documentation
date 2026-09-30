@@ -4,7 +4,7 @@ How Vineyard detects and applies a new version of an installed Plugin Pack, Type
 
 ## The registry entry is the latest pointer
 
-Vineyard does not poll author repos for updates. The **registry entry is the canonical latest pointer**: each row in `community-pluginpacks.json` (or `community-typepacks.json`) carries the current `version`, the immutable `ref`, and the `repo`/`path` that resolve to the manifest at that ref. When the marketplace fetches the registry, the app already knows the newest published version of everything you have installed — no per-repo network fan-out required.
+Vineyard does not poll author repos for updates. The **registry entry is the canonical latest pointer**: each row in `community-pluginpacks.json` (or `community-typepacks.json`) carries the current `version`, the immutable `ref`, and the `repo`/`path` that resolve to the manifest at that ref. When the marketplace fetches the registry, the app already knows the newest published version of everything you have installed.
 
 A manifest's `latest_url` field is accepted but not used; the app has no update check outside the catalog. A pack loaded from a URL during [local development](quickstart.md) is not installed. It is re-fetched from that URL on every load, so it is always the current build.
 
@@ -13,21 +13,18 @@ A manifest's `latest_url` field is accepted but not used; the app has no update 
 
 ## How the app detects an update
 
-The app holds an install record per project of the form `{ identifier, url, version }` (the `Pointer`
-type in `project-install.ts`) — **no `ref` field is stored**. To find updates it compares the installed
-`version` string against the registry entry's `version` for the same identifier:
+The app holds an install record per project of the form `{ identifier, url, version }` — **no `ref` field is stored**. To find updates it compares the installed `version` string against the registry entry's `version` for the same identifier:
 
 - If they match, you are current.
 - If the entry's `version` is different, the marketplace shows an **Update** button on the card and **Update available** on the detail page. A legacy pointer that stored no version is also offered the update, so it can be pinned to the current revision.
 
-The check is a plain string compare on `version`, not a diff on the immutable `ref` — so it relies
-on the author bumping `version` correctly rather than on a byte-exact comparison.
+The check is a plain string compare on `version`, not on `ref`, so it relies on the author bumping `version`.
 
 ## Applying an update
 
-Choosing **Update** PATCHes your project's pointer directly to the new entry's `{ identifier, url, version }`. This does not re-run the install pipeline, re-check any hash, or show the scope-approval dialog that a fresh install shows — a version bump can add scopes or endpoints without re-prompting you today.
+Choosing **Update** re-points your project's pointer directly to the new entry's `{ identifier, url, version }`. It does not show the scope-approval dialog that a fresh install shows, so a version bump can add scopes or endpoints without re-prompting you.
 
-A manifest carried over from an older draft may still declare the removed `publish` scope (`message:post`). It no longer exists, and plugins cannot post chat messages. The [plugin schema](../reference/plugin-schema.md) would reject it (`scopes` is `additionalProperties: false`), but neither registry CI nor the app validates manifests against that schema, so the key is ignored rather than refused. Remove it.
+If your manifest still declares the removed `publish` scope (`message:post`), remove it. The key is ignored, and plugins cannot post chat messages.
 
 ## Gating: which version is even offered
 
@@ -37,7 +34,7 @@ Each registry entry may carry `compat.min_app_version` — the oldest Vineyard r
 
 ### `status` (deprecated / withdrawn)
 
-There is no separate deprecation file. Delisting a version is the registry entry's own `status` block — `{ state, reason, since, replacement }` — set by editing the pack's row in `packs/`, not a standalone list (see [Taking a pack down](publishing.md#taking-a-pack-down)). A **`withdrawn`** ref is never offered as an update, cannot be freshly installed, and a project that already has it refuses to load it on the next run — the analyst sees the reason instead. A **`deprecated`** ref keeps installing and updating normally; the analyst is just shown the notice once per project open.
+There is no separate deprecation file. Delisting a version is the registry entry's own `status` block — `{ state, reason, since, replacement }` — set by editing the pack's row in `packs/` (see [Taking a pack down](publishing.md#taking-a-pack-down)). A **`withdrawn`** ref is never offered as an update, cannot be freshly installed, and a project that already has it refuses to load it on the next run — the analyst sees the reason instead. A **`deprecated`** ref keeps installing and updating normally; the analyst is just shown the notice once per project open.
 
 ## Type Packs update the same way
 

@@ -96,7 +96,7 @@ A Type Pack may **not** declare a `secret` or `credential` property type — the
 
 ### The structured validator
 
-`validator` is a **structured object**, not a raw regex string. (The precedent packs used a bare string; that form is replaced.) Its keys (`regex`, `min`/`max`, `min_length`/`max_length`, `format`) are tabulated in the [schema reference](../reference/typepack-schema.md).
+`validator` is a **structured object**, not a raw regex string. Its keys (`regex`, `min`/`max`, `min_length`/`max_length`, `format`) are tabulated in the [schema reference](../reference/typepack-schema.md).
 
 ```jsonc
 "cvss_score": { "type": "number", "validator": { "min": 0, "max": 10 }, "optional": true }
@@ -104,7 +104,7 @@ A Type Pack may **not** declare a `secret` or `credential` property type — the
 
 ## Visuals: icon and color
 
-Both are per-entity-type and optional; the canvas and the Types/Properties panels use one shared resolver.
+Both are per-entity-type and optional.
 
 - **`icon`** is polymorphic, resolved in order:
     1. a `data:` / `http(s):` image URI → drawn as the node icon;
@@ -112,9 +112,8 @@ Both are per-entity-type and optional; the canvas and the Types/Properties panel
     3. otherwise a literal **glyph/emoji**.
 
     When `icon` is absent, the node renders with `color` only. lucide is the default icon set:
-    the host bundles the complete set, so **any** kebab-case lucide name resolves (a third-party
-    pack never needs a frontend change to use an icon); a name that is not a lucide icon falls
-    back to `color`.
+    the host bundles the complete set, so **any** kebab-case lucide name resolves; a name that
+    is not a lucide icon falls back to `color`.
 - **`color`** is `#rrggbb`. When absent, a stable color is hashed from `category.name`.
 
 The Threat pack, for example, uses lucide names like `bug` (malware), `shield-alert` (vulnerability), and `venetian-mask` (threat actor).

@@ -74,7 +74,7 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
-| `runtime` | string | yes | `sandbox-js`, `native`, `subprocess` | — | 데스크톱 실행 모드. `native`/`subprocess`는 JS 샌드박스가 포함할 수 없는 코드를 실행합니다 (진행 중인 이슈). |
+| `runtime` | string | yes | `sandbox-js`, `native`, `subprocess` | — | 데스크톱 실행 모드. |
 | `entry` | string | yes | — | — | 번들 내 진입 경로. |
 | `min_app_version` | string | no | pattern `^\d+\.\d+\.\d+$` | — | 필요한 최소 데스크톱 앱 버전. |
 | `fallback` | string | no | `web`, `none` | `none` | 데스크톱이 plugin을 실행할 수 없을 때 폴백할 곳. |
@@ -100,7 +100,7 @@ plugin이 Type Pack에서 참조하는 엔티티 유형. `type: object`, `additi
 | `as` | string | no | — | 소비된 노드의 값을 이 키 아래 `params`에 미리 바인딩하도록 설계된 별칭. 스키마는 허용하지만, 이를 선언하는 배포된 plugin은 없고 실행 폼도 아직 읽지 않습니다. |
 
 !!! note "Open issue"
-    `typeRef`는 아직 Type Pack 버전을 포함하지 **않습니다** — type 호환성은 식별자 + 정규화된 이름만으로 해결됩니다. 버전이 지정된 type 참조는 진행 중인 이슈입니다.
+    `typeRef`는 아직 Type Pack 버전을 포함하지 **않습니다** — type 호환성은 식별자 + 정규화된 이름만으로 해결됩니다.
 
 ## params
 
@@ -140,24 +140,21 @@ plugin이 Type Pack에서 참조하는 엔티티 유형. `type: object`, `additi
 ```
 
 !!! note "한 번의 run, 한 번의 배치"
-    다중 파일 필드는 선택된 전체를 **단일** run에 넘깁니다 — 호스트가 파일당 run 하나로 팬아웃하지 않습니다. 직접 순회하면서 `ctx.progress.set({ percent })`로 진행률을 보고하고, 매 반복마다 `ctx.signal.aborted`를 확인해 Stop이 동작하게 하세요. 의도된 설계입니다: run이 N개면 분석가가 한 번의 작업으로 여기는 일에 대해 task 행이 N개, 별개의 리뷰 다이얼로그가 N개 생깁니다.
+    다중 파일 필드는 선택된 전체를 **단일** run에 넘깁니다 — 호스트가 파일당 run 하나로 팬아웃하지 않습니다. 직접 순회하면서 `ctx.progress.set({ percent })`로 진행률을 보고하고, 매 반복마다 `ctx.signal.aborted`를 확인해 Stop이 동작하게 하세요.
 
     호스트는 파일당 25 MB, run당 250 MB, 최대 50개로 선택을 제한합니다. 파일은 blob 핸들로 샌드박스에 전달되므로 실제 메모리 비용은 플러그인이 실체화하는 만큼입니다 — 배치를 `Promise.all`로 묶지 말고 한 번에 하나씩 읽으세요.
 
 ## scopes
 
-plugin의 권한 범위. `type: object`, `additionalProperties: false`. `ctx` 멤버는 부여되지 않으면 존재하지 않습니다. 샌드박스에 의해 시행되며, 그래프 쓰기는 추가로 분석가의 검토를 거친 뒤에야 적용됩니다. 동사 의미는 [scopes reference](scopes.md)를 참조하세요.
+plugin의 권한 범위. `type: object`, `additionalProperties: false`. `ctx` 멤버는 부여되지 않으면 존재하지 않으며, 그래프 쓰기는 분석가의 검토를 거친 뒤에야 적용됩니다. 동사 의미는 [scopes reference](scopes.md)를 참조하세요.
 
 | Property | Type | Req. | Items / constraints | Meaning |
 |---|---|---|---|---|
 | `graph` | array | no | `uniqueItems`; enum 항목 (아래) | 세분화된 노드/엣지 동사. 프로젝트 `graph_edit` 티어에 의해 지원됩니다. |
-| `web_probe` | object | no | `{ purpose?: string }` — 배열이 아니라 객체 | **데스크탑 전용.** 셸의 메인 프로세스가 수행하는, *임의의* 공개 호스트에 대한 익명 요청 1회. `ctx.net.probe`를 지원하며, 웹 빌드에서는 뒷받침이 없어 `ctx.net.probe`가 존재하지 않습니다. |
+| `web_probe` | object | no | `{ purpose?: string }` — 배열이 아니라 객체 | **데스크탑 전용.** *임의의* 공개 호스트에 대한 익명 요청 1회. `ctx.net.probe`를 지원하며, 웹 빌드에서는 `ctx.net.probe`가 존재하지 않습니다. |
 | `network` | array | no | 항목: [`networkScope`](#networkscope-scopesnetwork-items) | 외부 XHR 대상. |
 | `services` | array | no | `uniqueItems`; enum: `rdap`, `telegram` | `ctx.service`를 통해 **이름으로** 호출하는 Vineyard 운영 서비스 — URL이 아닙니다. [scopes reference](scopes.md#services) 참조. |
 | `config` | array | no | 항목: [`configValue`](#configvalue-scopesconfig-items) | 런타임에만 주입되는 설치 시 값. |
-
-!!! warning "There is no `publish` scope"
-    스키마가 모델링하는 키는 위의 것들뿐입니다. 작성 중인 manifest에 `"publish": ["message:post"]`가 남아 있다면 해당 키를 삭제하세요 — `scopes`는 `additionalProperties: false`이므로 manifest가 검증에 실패합니다.
 
 `scopes.graph` enum 값 (각각 최대 한 번만 나타날 수 있음):
 
@@ -185,7 +182,7 @@ plugin의 권한 범위. `type: object`, `additionalProperties: false`. `ctx` �
 | `methods` | array | yes | `uniqueItems`; 항목 enum: `GET`, `POST`, `PUT`, `PATCH`, `DELETE` | 허용된 HTTP 메서드. |
 | `purpose` | string | no | — | 사람이 읽을 수 있는 이유, 설치 시 표시됨. |
 
-#### 자격증명 보내기
+#### 자격증명 보내기 {#sending-a-credential}
 
 `ctx.net.fetch`는 요청 헤더를 **`Authorization`을 포함해** 그대로 통과시킵니다. 엔드포인트에 키가
 필요하면 거기에 넣으십시오:
@@ -195,19 +192,14 @@ await ctx.net.fetch(url, { headers: { Authorization: `Bearer ${ctx.config.api_ke
 ```
 
 서비스가 둘 다 받는다면 커스텀 헤더(`X-Api-Key`, `api-key` 등)보다 **`Authorization`을 쓰십시오.**
-취향 문제가 아닙니다 — 브라우저는 응답이 다른 오리진으로 리다이렉트될 때 `Authorization`을
-제거하지만 커스텀 헤더는 제거하지 않습니다. 선언한 엔드포인트가 어딘가로 302를 보내면
-`Authorization`은 경계에서 멈추고 `X-Api-Key`는 따라갑니다. 쿼리스트링에 키를 넣는 건 더 나쁩니다
-— 접근 로그와 `Referer`에 남습니다.
+`Authorization`은 다른 오리진으로 리다이렉트될 때 제거되지만 커스텀 헤더는 제거되지 않습니다.
+쿼리스트링에 키를 넣지 마십시오 — 로그에 남습니다.
 
-`Cookie`는 아예 설정할 수 없습니다(forbidden header name). 호스트도 모든 플러그인 요청을
-`credentials: 'omit'`으로 보내므로 분석가 본인의 세션이 함께 나가는 일은 없습니다.
-
-재측정은 `frontend/scripts/measure-net-headers.mjs`로 합니다.
+`Cookie`는 설정할 수 없으며, 플러그인 요청에는 쿠키가 실리지 않습니다.
 
 ### configValue (scopes.config items)
 
-`$defs.configValue`. `type: object`, `additionalProperties: false`. **필수:** `key`, `type`. config 값은 분석가가 Run plugins 대화상자의 해당 플러그인 Settings 섹션에서 입력하며, 선언한 플러그인이 `ctx.config`로 읽습니다. 모든 값은 로그인한 계정별로 OS 키체인(데스크톱) 또는 `sessionStorage`(브라우저)에 저장되고, `secret: true`는 필드를 마스킹합니다. 값은 작업이나 대화에 기록되지 않습니다.
+`$defs.configValue`. `type: object`, `additionalProperties: false`. **필수:** `key`, `type`. config 값은 분석가가 Run plugins 대화상자의 해당 플러그인 Settings 섹션에서 입력하며, 선언한 플러그인이 `ctx.config`로 읽습니다. 값은 로그인한 계정별로 보관됩니다 — 데스크톱에서는 OS 키체인에, 브라우저에서는 해당 탭 세션 동안. `secret: true`는 필드를 마스킹합니다. 값은 작업이나 대화에 기록되지 않습니다.
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
@@ -215,8 +207,8 @@ await ctx.net.fetch(url, { headers: { Authorization: `Bearer ${ctx.config.api_ke
 | `label` | string | no | — | — | Run plugins Settings 섹션의 필드 라벨. |
 | `type` | string | yes | `string`, `number`, `boolean`, `url`, `enum` | — | 값 유형. |
 | `enum` | array | no | items: string | — | `type: enum`일 때 허용된 선택지. |
-| `secret` | boolean | no | — | `false` | BYOK 방식 비밀: 폼에서 마스킹. (비밀 여부와 무관하게 모든 config 값은 계정별로, 데스크톱에서는 키체인에, 브라우저에서는 세션 한정으로 보관됨.) 어떤 레코드에도 기록되지 않음. |
-| `scope` | string | no | `plugin`, `project`, `user` | `user` | 값이 저장/공유되는 위치. 허용되지만 오늘은 읽히지 않으며, 값은 plugin별·계정별로 저장됩니다. |
+| `secret` | boolean | no | — | `false` | BYOK 방식 비밀: 폼에서 마스킹. 어떤 레코드에도 기록되지 않음. |
+| `scope` | string | no | `plugin`, `project`, `user` | `user` | 값이 저장/공유되는 위치. 허용되지만 오늘은 읽히지 않으며, 값은 plugin별로 저장됩니다. |
 | `optional` | boolean | no | — | `false` | 사용자가 비워둘 수 있는지 여부. 강제되지 않음: optional이 아닌 필드는 "required by this plugin"으로 표시될 뿐이며, 값 없이도 실행이 진행됩니다. |
 
 ## lifecycle

@@ -1,12 +1,12 @@
 # Registry entry schemas
 
-Reference for the **registry entry** schemas — one row in `community-pluginpacks.json`, one row in `community-typepacks.json`, and one row in `community-skillpacks.json`. Each entry is a lean, denormalized pointer that lets the static browser render a card without fetching every upstream manifest. This page walks through the Plugin and Type Pack entry shapes in full below; the Skill Pack entry schema is newer and does not have prose coverage here yet — read it directly at its schema link.
+Reference for the **registry entry** schemas — one row in `community-pluginpacks.json`, one row in `community-typepacks.json`, and one row in `community-skillpacks.json`. Each entry is a lean, denormalized pointer that lets the static browser render a card without fetching every upstream manifest. This page covers the Plugin and Type Pack entries; for the Skill Pack entry, read its schema directly.
 
 The schemas live at:
 
 - [`schemas/registry-plugin-entry.schema.json`](https://registry.vineyard.run/schemas/registry-plugin-entry.schema.json)
 - [`schemas/registry-typepack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-typepack-entry.schema.json)
-- [`schemas/registry-skillpack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-skillpack-entry.schema.json) — one `community-skillpacks.json` row; same denormalized-pointer shape as the two below (`identifier`, `repo`/`ref`/`path`, `requires` for dependency pluginpacks), not detailed separately on this page yet.
+- [`schemas/registry-skillpack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-skillpack-entry.schema.json) — one `community-skillpacks.json` row; same denormalized-pointer shape as the two below (`identifier`, `repo`/`ref`/`path`, `requires` for dependency pluginpacks).
 
 ## What a registry entry is (and is not)
 
@@ -15,7 +15,7 @@ The registry repo (`Vineyard-Intelligence/registry`) stores **path and metadata 
 A registry entry is therefore a **catalog projection**: enough fields to search, filter, and badge an item in the browser, plus the `repo@ref/path` pointer that the detail page uses to hydrate the real thing.
 
 !!! info "Denormalized — the manifest is the source of truth"
-    `platforms`, `scopes_summary`, `services`, `plugin_count`, `typepacks`, `categories`, `type_count`, and `edge_count` are **derived** fields, computed from the upstream manifest at merge time. They can drift from the live manifest between updates. The marketplace **detail page must re-derive these from the live manifest** at `repo@ref/path`; the catalog values exist only so the browse grid renders from a single JSON fetch. When in doubt, the manifest wins.
+    `platforms`, `scopes_summary`, `services`, `plugin_count`, `typepacks`, `categories`, `type_count`, and `edge_count` are **derived** fields, computed from the upstream manifest at merge time. They can drift from the live manifest between updates. When in doubt, the manifest wins.
 
 ## Plugin entry
 
@@ -31,25 +31,22 @@ A row in `community-pluginpacks.json`. The schema sets `additionalProperties: fa
 | `author` | string | yes | Author handle, matched against `verified-authors.json`. |
 | `description` | string | yes | ≤250 chars, sentence case, ends with a period, no emoji. |
 | `repo` | string | yes | `owner/name` GitHub path (`^[^/]+/[^/]+$`). The **only** pointer to code. |
-| `ref` | string | yes | **Immutable commit SHA** (40-hex SHA-1 or 64-hex SHA-256), captured at PR time. **Tags and branches are rejected** (both re-pointable) — pin the exact reviewed commit so the catalog can never serve different code. `version` carries the human-readable release. |
+| `ref` | string | yes | **Immutable commit SHA** (40-hex SHA-1 or 64-hex SHA-256), captured at PR time. **Tags and branches are rejected** (both re-pointable). `version` carries the human-readable release. |
 | `path` | string | yes | Path to `manifest.json` within `repo@ref`. |
 | `version` | string | no | SemVer mirror of `manifest.version` at this `ref` (`^\d+\.\d+\.\d+(?:[-+].+)?$`). |
 | `platforms` | string[] | no | **Derived** badge set from `platforms.{web,desktop}` + `web.runtime`. Items: `web`, `web-proxy`, `desktop` (unique). |
 | `scopes_summary` | object | no | **Derived** filter facets (see below). |
-| `scopes_summary.network` | boolean | no | `true` if `scopes.network` is non-empty **or** the plugin declares `web_probe` — the probe reaches an arbitrary host, so it is the broader egress, not a lesser one. |
+| `scopes_summary.network` | boolean | no | `true` if `scopes.network` is non-empty **or** the plugin declares `web_probe`. |
 | `scopes_summary.graph_write` | boolean | no | `true` if any `node:`/`edge:` create/update/delete verb is present. |
-| `scopes_summary.secret_config` | boolean | no | `true` if any `scopes.config` entry has `secret: true` (a key the analyst must supply; kept per account — for the session only in the browser, in the OS keychain on desktop). |
+| `scopes_summary.secret_config` | boolean | no | `true` if any `scopes.config` entry has `secret: true` (a key the analyst must supply). |
 | `plugin_count` | integer | no | **Derived**: number of plugins bundled when the `identifier` names a **pack** (one file → many plugins). Omitted or `1` for a single-plugin entry. The card installs all contained plugins together. Minimum `1`. |
 | `typepacks` | string[] | no | **Derived**: Type Pack identifiers the pack's plugins consume/produce (`io.consumes`/`io.produces`), unique. The marketplace offers these for co-install the same way a skillpack's `requires` offers pluginpacks; a plugin that writes a type from a pack the project never installed fails at node-create time. |
-| `services` | string[] | no | **Derived**: Vineyard services the pack's plugins call by name (`rdap`, `telegram`). Its own field, not a `scopes_summary` flag: the destination is fixed by the host and the analyst's identity travels with the call, so "Network" would both understate and overstate it. See [scopes](scopes.md#services). |
+| `services` | string[] | no | **Derived**: Vineyard services the pack's plugins call by name (`rdap`, `telegram`). Its own field, not a `scopes_summary` flag. See [scopes](scopes.md#services). |
 | `compat` | object | no | Runtime compatibility (the `versions.json` analog). |
 | `compat.min_app_version` | string | no | Oldest Vineyard runtime this `ref` supports (`^\d+\.\d+\.\d+$`). Shown as "Min app version" on the Marketplace detail; not enforced by the client today. |
 | `thumbnail_url` | string (uri) | no | Optional card icon. |
 | `verified` | boolean | no | Mirror of `verified-authors.json` membership. Set by CI, **not self-asserted**. Default `false`. |
-| `status` | object | no | Present only on a **delisted** pack: `{ state: "deprecated" \| "withdrawn", reason, since, replacement? }`. The row stays in the catalog — an installed client holds an absolute pinned url and never asks again, so deleting the entry signals nothing to the projects that have it. `deprecated` still loads and warns; `withdrawn` is refused at install and dropped at load. See [Publishing → Taking a pack down](../develop/publishing.md#taking-a-pack-down). |
-
-!!! warning "There is no `publish` facet"
-    `scopes_summary` is `additionalProperties: false`, so a draft row still carrying `"publish": false` fails schema validation and is rejected by CI — delete the key. There is no `publish` scope in the [plugin manifest](scopes.md) either.
+| `status` | object | no | Present only on a **delisted** pack: `{ state: "deprecated" \| "withdrawn", reason, since, replacement? }`. The row stays in the catalog; deleting it would signal nothing to projects that already installed the pack. `deprecated` still loads and warns; `withdrawn` is refused at install and dropped at load. See [Publishing → Taking a pack down](../develop/publishing.md#taking-a-pack-down). |
 
 ### Example plugin row
 
@@ -100,7 +97,7 @@ A row in `community-typepacks.json`, symmetric with the plugin entry. Type Packs
 | `edge_count` | integer | no | **Derived**: `edge_types[].length`. Minimum `0`. |
 | `thumbnail_url` | string (uri) | no | Optional card icon. |
 | `verified` | boolean | no | Same as the plugin entry — CI-set mirror of `verified-authors.json`. Default `false`. |
-| `status` | object | no | Present only on a **delisted** pack: `{ state: "deprecated" \| "withdrawn", reason, since, replacement? }`. The row stays in the catalog — an installed client holds an absolute pinned url and never asks again, so deleting the entry signals nothing to the projects that have it. `deprecated` still loads and warns; `withdrawn` is refused at install and dropped at load. See [Publishing → Taking a pack down](../develop/publishing.md#taking-a-pack-down). |
+| `status` | object | no | Present only on a **delisted** pack: `{ state: "deprecated" \| "withdrawn", reason, since, replacement? }`. The row stays in the catalog; deleting it would signal nothing to projects that already installed the pack. `deprecated` still loads and warns; `withdrawn` is refused at install and dropped at load. See [Publishing → Taking a pack down](../develop/publishing.md#taking-a-pack-down). |
 
 ### Example Type Pack row
 

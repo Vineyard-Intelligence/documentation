@@ -5,10 +5,10 @@ Vineyard는 플러그인과 Type Pack을 **서버가 아닌 사용자의 앱에�
 ## 설계 사실
 
 - **클라이언트 측 실행.** 플러그인(JS)과 Type Pack(JSON)은 사용자 앱, 즉 브라우저 또는 데스크톱 앱에서 실행됩니다. 서버는 플러그인 코드를 절대 실행하지 않으며, 포인터를 저장하고 일반 그래프 API를 제공합니다.
-- **플러그인별 플랫폼 플래그.** 플러그인은 `platforms.web` 및/또는 `platforms.desktop`을 통해 지원되는 플랫폼을 선언합니다. 브라우저가 제공할 수 없는 기능은 **데스크톱** 런타임을 대상으로 합니다. (단일 **web-proxy** 엔드포인트는 설계되었지만 빌드되지 않았습니다. 아래를 참조하세요.)
+- **플러그인별 플랫폼 플래그.** 플러그인은 `platforms.web` 및/또는 `platforms.desktop`을 통해 지원되는 플랫폼을 선언합니다. 브라우저가 제공할 수 없는 기능은 **데스크톱** 런타임을 대상으로 합니다.
 - **메타데이터 전용 레지스트리.** 배포는 코드가 아닌 포인터의 레지스트리 + GitHub입니다. 클라이언트는 번들을 가져와(jsDelivr 경유, 불변 커밋 SHA에 고정) 바로 실행합니다. [distribution](distribution.md)을 참조하세요.
 - **기본적으로 임시.** 작업은 현재 브라우저 탭의 메모리에만 존재하며, Postgres에는 아무것도 기록되지 않습니다. [lifecycle](lifecycle.md)을 참조하세요.
-- **최소 권한.** 신뢰할 수 없는 플러그인 JS는 선언된 스코프(`graph` 동사, `network`, `web_probe`(데스크톱), `services`, `config`)만으로 Web Worker 샌드박스에서 실행되며, 호스트 브리지를 통해 접근합니다. 워커 자체에는 DOM도, 주변 `fetch`도, 계정 토큰도 없습니다. 그래프 쓰기는 **실시간이 아니라 스테이징**됩니다. 브리지가 쓰기를 캡처하고, 분석가가 변경 세트를 검토하고 승인한 뒤에야 분석가 본인의 토큰으로 API에 도달합니다. [scopes](../reference/scopes.md) 및 [security](security.md)를 참조하세요.
+- **최소 권한.** 플러그인 JS는 선언된 스코프(`graph` 동사, `network`, `web_probe`(데스크톱), `services`, `config`)만으로 Web Worker 샌드박스에서 실행되며, 워커에는 DOM도 자체 네트워크도 없습니다. 그래프 쓰기는 **실시간이 아니라 스테이징**되며, 분석가가 변경 세트를 검토하고 승인한 뒤에야 적용됩니다. [scopes](../reference/scopes.md) 및 [security](security.md)를 참조하세요.
 
 ## 엔드 투 엔드 흐름
 
@@ -16,8 +16,8 @@ Vineyard는 플러그인과 Type Pack을 **서버가 아닌 사용자의 앱에�
 flowchart LR
     A["Author<br/>repo + GitHub release<br/>(tag = version)"]
     R["Registry<br/>metadata-only<br/>pointer: repo @ ref"]
-    H["App / Host bridge<br/>main thread<br/>holds analyst token"]
-    W["Web Worker sandbox<br/>untrusted main.js<br/>no DOM, no ambient fetch"]
+    H["App / Host bridge<br/>main thread"]
+    W["Web Worker sandbox<br/>plugin main.js<br/>no DOM, no own network"]
     S["Staging store<br/>captured writes<br/>awaiting review"]
     G["Graph<br/>REST + WS"]
 
@@ -27,19 +27,19 @@ flowchart LR
     H -- "Comlink proxy<br/>= granted scopes only" --> W
     W -- "ctx.graph" --> H
     H -- "capture write" --> S
-    S -- "analyst reviews + approves<br/>apply under analyst token" --> G
-    H -- "reads (analyst token)" --> G
+    S -- "analyst reviews + approves" --> G
+    H -- "reads" --> G
 ```
 
 1. **작성자 → 레지스트리.** 작성자는 매니페스트 `version`과 동일한 태그의 GitHub 릴리스에 플러그인을 게시한 다음, 설치 레코드 `{ identifier, version, ref }`를 추가하는 단일 항목 풀 리퀘스트를 엽니다. 레지스트리는 코드가 아닌 포인터(`repository @ ref`)를 저장합니다.
 
 2. **레지스트리 → 앱.** 사용자가 설치하면 앱이 포인터를 확인하고 번들을 직접 가져옵니다(jsDelivr 경유, 불변 커밋 SHA에 고정). 서버 측 콘텐츠 복사본은 존재하지 않습니다.
 
-3. **앱 → 샌드박스.** 호스트는 가져온 `main.js`를 전용 모듈 **Web Worker**에 로드합니다. 메인 스레드(*HostBridge*)는 분석가의 토큰을 보유하고 형태가 **정확히 부여된 스코프**인 [Comlink](https://github.com/GoogleChromeLabs/comlink) 프록시를 노출합니다 — `ctx` 멤버는 해당 스코프가 부여되지 않으면 존재하지 않으므로 우회할 수 있는 것이 없습니다.
+3. **앱 → 샌드박스.** 호스트는 가져온 `main.js`를 전용 모듈 **Web Worker**에 로드하고, 형태가 **정확히 부여된 스코프**인 [Comlink](https://github.com/GoogleChromeLabs/comlink) 프록시로 `ctx`를 노출합니다 — `ctx` 멤버는 해당 스코프가 부여되지 않으면 존재하지 않습니다.
 
-4. **실행 → 스테이징 → 그래프.** 플러그인은 `ctx.graph`를 호출합니다. 읽기는 WebSocket이 이미 채워 둔 인메모리 스토어에서 제공되고, 쓰기는 **전송되는 대신 스테이징 스토어에 캡처**됩니다. 분석가가 변경 세트를 열어 항목별로 검토하고 승인해야 비로소 REST API에 도달하며, 이때 적용은 **분석가 본인의 토큰**으로 실행되므로 그 쓰기는 분석가의 것입니다. `ctx.net.fetch` 아웃바운드 요청은 문자열 접두사가 아니라 파싱된 오리진과 경로 세그먼트 경계를 기준으로 플러그인이 선언한 엔드포인트와 대조됩니다. 워커는 브리지를 우회할 수 없습니다: 웹 빌드와 데스크톱 셸 모두에서 워커 자신의 응답이 `connect-src 'none'; worker-src 'none'`을 싣고 옵니다. 워커는 토큰도 백엔드 URL도 절대 볼 수 없습니다.
+4. **실행 → 스테이징 → 그래프.** 플러그인은 `ctx.graph`를 호출합니다. 읽기는 프로젝트의 인메모리 그래프에서 제공되고, 쓰기는 **전송되는 대신 스테이징 스토어에 캡처**됩니다. 분석가가 변경 세트를 열어 항목별로 검토하고 승인해야 비로소 적용됩니다. `ctx.net.fetch` 아웃바운드 요청은 문자열 접두사가 아니라 오리진과 온전한 경로 세그먼트 단위로 플러그인이 선언한 엔드포인트와 대조됩니다. 워커에는 자체 네트워크가 없으므로 직접 호출한 `fetch`는 실패합니다. `ctx`를 거치세요.
 
-`ctx` 인터페이스에 대해서는 [SDK](sdk.md)를, 실행이 작업 상태를 통해 어떻게 이동하는지는 [lifecycle](lifecycle.md)을 참조하세요. 샌드박스 경계가 어떻게 강제되는지(이그레스 허용목록, 워커에 계정 토큰 없음, 서버 측 권한 검사)는 [security](security.md)를 참조하세요.
+`ctx` 인터페이스는 [SDK](sdk.md)를, 실행이 작업 상태를 통해 어떻게 이동하는지는 [lifecycle](lifecycle.md)을, 샌드박스 경계는 [security](security.md)를 참조하세요.
 
 ## 현재 범위 vs. 연기됨
 
@@ -49,16 +49,16 @@ flowchart LR
 ### 현재 배포됨
 
 - **브라우저 런타임** — `platforms.web.runtime: "sandbox-js"`: 작성자 JS가 Web Worker에서 실행됩니다.
-- **데스크톱 런타임** — `platforms.desktop.runtime: "sandbox-js"`: 사용자 정의 `app://` 스킴, 강화된 렌더러(샌드박스, contextIsolation), CORS 헤더 재작성, 익명 SSRF 방지 HTTP 프로브(`web_probe` 기능)를 갖춘 Electron 셸.
+- **데스크톱 런타임** — `platforms.desktop.runtime: "sandbox-js"`: 익명 HTTP 프로브(`web_probe` 기능)가 추가되는 Electron 데스크톱 앱.
 - GitHub 호스팅 번들을 jsDelivr로(불변 커밋 SHA 고정) 가져오는 **메타데이터 전용 레지스트리**.
-- **스테이징된 그래프 쓰기 + 분석가 검토** — 캡처된 노드/엣지 변경을 승인 후에만 적용 — 그리고 이그레스 허용목록과 서버 측 권한 강제.
+- **스테이징된 그래프 쓰기 + 분석가 검토** — 캡처된 노드/엣지 변경을 승인 후에만 적용 — 그리고 이그레스 허용목록.
 - **클라이언트 측 작업 실행, 실행마다 전용 Web Worker 1개.**
-- **키체인 기반 시크릿 설정** — 데스크톱 키체인에 계정별로 저장되어 선언한 플러그인이 읽는 `config.secret:true` 값 (BYOK, 브라우저는 세션 동안만 보관).
+- **시크릿 설정** — 로그인한 계정별로(데스크톱은 OS 키체인, 브라우저는 탭 세션 동안) 보관되어 선언한 플러그인이 읽는 `config.secret:true` 값 (BYOK).
 - **6개의 Chaos 참조 플러그인**, [Infrastructure](../guide/typepacks.md) / [Threat](../guide/typepacks.md) Type Pack.
 
 ### 연기됨 (설계됨, 빌드되지 않음)
 
-- **`native`/`subprocess` 데스크톱 런타임** — `platforms.desktop.runtime: "native"` 및 `"subprocess"`는 스키마에서 허용되지만 아직 구현되지 않았습니다. `sandbox-js` 데스크톱 런타임은 현재 배포되어 있습니다.
+- **`native`/`subprocess` 데스크톱 런타임** — `platforms.desktop.runtime: "native"` 및 `"subprocess"`는 스키마에서 허용되지만 아직 구현되지 않았습니다.
 - **`web-proxy` 런타임** — 타사 API가 필요한 웹 플러그인을 위한 단일 엔드포인트 CORS 탈출구.
 - **Type Pack 버전 고정** — [Type Packs](typepacks.md) 참조.
 

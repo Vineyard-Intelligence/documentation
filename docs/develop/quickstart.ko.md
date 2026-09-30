@@ -4,7 +4,7 @@
 
 ## 플러그인이란 무엇인가
 
-플러그인은 기본 내보내기가 `definePlugin({ manifest, run })`의 결과인 **번들된 `main.js`**입니다. 런타임(웹)에서는 **DOM 없음, `window` 없음, `localStorage` 없음, 계정 토큰 없음** 상태로 전용 모듈 Web Worker 내에서 실행됩니다. 할 수 있는 모든 작업은 `run`에 전달된 `ctx` 객체를 통해 이루어지며 — `ctx` 멤버는 **해당 스코프가 부여되지 않으면 존재하지 않습니다**. 전체 모델은 [Architecture](architecture.md) 및 [Security](security.md)를 참조하세요.
+플러그인은 기본 내보내기가 `definePlugin({ manifest, run })`의 결과인 **번들된 `main.js`**입니다. 런타임(웹)에서는 **DOM 없음, `window` 없음, `localStorage` 없음, 자체 네트워크 없음** 상태로 전용 모듈 Web Worker 내에서 실행됩니다. 할 수 있는 모든 작업은 `run`에 전달된 `ctx` 객체를 통해 이루어지며 — `ctx` 멤버는 **해당 스코프가 부여되지 않으면 존재하지 않습니다**. 전체 모델은 [Architecture](architecture.md) 및 [Security](security.md)를 참조하세요.
 
 ## 1. 저장소 및 번들러 설정
 
@@ -102,7 +102,7 @@ export default definePlugin({
 | `distribution` | 스키마상 필수인 설명용 블록(`kind`: `git`, `zip` 또는 `inline`)이며, 호스트는 이를 읽지 않습니다. 설치된 코드는 레지스트리 항목의 고정 커밋에서, 개발 코드는 개발 로더에 넣은 URL에서 가져옵니다([distribution](distribution.md) 참조). |
 
 !!! warning "`params`에 시크릿을 절대 넣지 마세요"
-    시크릿처럼 보이는 키를 `params`에 절대 넣지 마세요 — 그 값은 기록됩니다. 시크릿은 `secret: true`와 함께 `scopes.config`로 선언하세요: 플러그인 설정 폼에서 (마스킹되어) 입력되고, 로그인한 계정별로 (데스크톱에서는 OS 키체인으로 암호화되어, 브라우저에서는 탭의 `sessionStorage`에) 보관되며, 어떤 레코드에도 기록되지 않고, 이를 선언한 플러그인에게만 `ctx.config`로 전달됩니다 — [Security](security.md)를 참조하세요. Korean Roulette은 시크릿과 네트워크가 필요 없기 때문에 깔끔한 첫 플러그인으로 적합합니다.
+    시크릿처럼 보이는 키를 `params`에 절대 넣지 마세요 — 그 값은 기록됩니다. 시크릿은 `secret: true`와 함께 `scopes.config`로 선언하세요: 플러그인 설정 폼에서 (마스킹되어) 입력되고, 로그인한 계정별로 (데스크톱에서는 OS 키체인에, 브라우저에서는 탭 세션 동안) 보관되며, 이를 선언한 플러그인에게만 `ctx.config`로 전달됩니다 — [Security](security.md)를 참조하세요. Korean Roulette은 시크릿과 네트워크가 필요 없기 때문에 깔끔한 첫 플러그인으로 적합합니다.
 
 ## 4. `createMockContext`로 단위 테스트
 
@@ -161,17 +161,17 @@ GitHub와 레지스트리는 **배포** 계층이며, 개발 중에는 여러분
 }
 ```
 
-**Settings → Plugins → Development → Load a pack from a URL**을 열고 **Plugin Pack**을 선택한 뒤, 플러그인 매니페스트 문서의 절대 URL을 입력하세요(`content_type: "vineyard:plugin"`인 JSON 파일 또는 `vineyard:pluginpack` 문서이며, 그 `platforms.web.entry`는 매니페스트 폴더 기준 상대 경로로 번들을 가리킵니다. 예: `dist/main.js`). 둘 다 개발 서버(`esbuild --watch --servedir` 또는 `vite`)에서 서빙하세요. URL은 이 기기에 로그인한 계정별로 보관되며(로컬 모드는 별도 목록) 그 계정으로 여는 모든 프로젝트에 로드됩니다 — 추가한 뒤 프로젝트를 다시 여세요. JSON 매니페스트의 `identifier`는 `definePlugin`의 것과 일치해야 하며, 그렇지 않으면 실행이 `plugin not loadable: <identifier>`로 실패합니다.
+**Settings → Plugins → Development → Load a pack from a URL**을 열고 **Plugin Pack**을 선택한 뒤, 플러그인 매니페스트 문서의 절대 URL을 입력하세요(`content_type: "vineyard:plugin"`인 JSON 파일 또는 `vineyard:pluginpack` 문서이며, 그 `platforms.web.entry`는 매니페스트 폴더 기준 상대 경로로 번들을 가리킵니다. 예: `dist/main.js`). 둘 다 개발 서버(`esbuild --watch --servedir` 또는 `vite`)에서 서빙하세요. URL은 이 기기에 로그인한 계정별로 보관되며 여는 모든 프로젝트에 로드됩니다 — 추가한 뒤 프로젝트를 다시 여세요. JSON 매니페스트의 `identifier`는 `definePlugin`의 것과 일치해야 하며, 그렇지 않으면 실행이 `plugin not loadable: <identifier>`로 실패합니다.
 
 !!! example "임시 프로젝트에서 Korean Roulette 시도하기"
     거의 모든 것을 삭제하므로, 먼저 스크래치 프로젝트에서 실행하세요. [task](../guide/tasks.md) 패널이 실행을 보여주면, 스테이징된 삭제를 검토·적용한 뒤 생존자 노드가 캔버스에 혼자 남는 것을 확인하세요.
 
 ## 6. 앱에서 통합 테스트
 
-단위 테스트가 통과하면 실제 그래프를 대상으로 플러그인을 엔드 투 엔드로 실행하세요. 플러그인 팩의 모듈은 앱의 스크립트 정책을 충족해야 합니다. [vineyard.run](https://vineyard.run/)(및 패키징된 데스크톱 앱)에서는 레지스트리의 CDN 경로만 플러그인 코드를 서빙할 수 있으므로, 개발 로드한 플러그인 팩은 매니페스트는 로드되지만 실행할 때 코드가 거부됩니다. 앱의 로컬 개발 빌드(예: CSP를 서빙하지 않는 `npm run dev`)를 대상으로 반복하세요: 개발 로더로 매니페스트를 로드하고(반복 중에는 개발 서버 URL이 이상적), 폐기용 프로젝트에서 실행을 트리거한 뒤, Tasks 패널에서 실행을 지켜보고, 스테이징된 변경 세트를 열어 적용하면 노드와 엣지가 바뀌는 것을 볼 수 있습니다. 이것은 게시 전 프로덕션 동작에 가장 가까운 방식입니다: 같은 샌드박스, 같은 스테이징된 변경 세트, 같은 Review 대화상자 — 단지 레지스트리 대신 로컬 번들에서 소싱될 뿐입니다. 개발 빌드에는 워커의 `connect-src 'none'`도 없다는 점을 기억하세요: 플러그인에서 직접 호출한 `fetch`/XHR은 거기서는 작동하지만 프로덕션에서는 실패합니다 — `ctx.net`/`ctx.service`만 사용하세요.
+단위 테스트가 통과하면 실제 그래프를 대상으로 플러그인을 엔드 투 엔드로 실행하세요. [vineyard.run](https://vineyard.run/)(및 패키징된 데스크톱 앱)에서는 플러그인 코드를 레지스트리의 CDN에서만 로드하므로, 개발 로드한 플러그인 팩은 매니페스트는 로드되지만 실행할 때 코드가 거부됩니다. 앱의 로컬 개발 빌드(예: `npm run dev`)를 대상으로 반복하세요: 개발 로더로 매니페스트를 로드하고(반복 중에는 개발 서버 URL이 이상적), 폐기용 프로젝트에서 실행을 트리거한 뒤, Tasks 패널에서 실행을 지켜보고, 스테이징된 변경 세트를 열어 적용하면 노드와 엣지가 바뀌는 것을 볼 수 있습니다. 개발 빌드는 플러그인 자체의 네트워크 접근을 막지 않습니다: 플러그인에서 직접 호출한 `fetch`/XHR은 거기서는 작동하지만 프로덕션에서는 실패합니다 — `ctx.net`/`ctx.service`만 사용하세요.
 
 !!! warning "개발 로더는 두 가지 보호를 완화합니다"
-    빠른 루프를 유지하기 위해, 개발 로더는 **스코프를 자동 승인하고 무결성 검사를 건너뛸 수 있습니다**. 즉, 개발 로드된 플러그인은 명시적으로 부여하지 않은 스코프로 실행될 수 있으며, 게시되어 레지스트리 설치된 플러그인과 달리 매니페스트가 레지스트리 다이제스트로 검증되지 않고 코드도 커밋에 고정되지 않습니다([Distribution](distribution.md) 및 [Updates](updates.md) 참조). 개발 로더는 자신이 작성했거나 신뢰하는 코드에만 사용하고, 의존하기 전에 *게시된* 아티팩트를 일반 설치 경로를 통해 다시 테스트하세요.
+    빠른 루프를 유지하기 위해, 개발 로더는 **스코프를 자동 승인하고 무결성 검사를 건너뛸 수 있습니다**(레지스트리 다이제스트 검증 없음, 커밋 고정 없음 — [Distribution](distribution.md) 및 [Updates](updates.md) 참조). 개발 로더는 자신이 작성했거나 신뢰하는 코드에만 사용하고, 의존하기 전에 *게시된* 아티팩트를 일반 설치 경로를 통해 다시 테스트하세요.
 
 ## 7. 실전 배포
 
@@ -179,7 +179,7 @@ GitHub와 레지스트리는 **배포** 계층이며, 개발 중에는 여러분
 
 ## 다음 / 참고
 
-- [Architecture](architecture.md) — 워커 샌드박스, HostBridge, 스테이징된 쓰기
+- [Architecture](architecture.md) — 워커 샌드박스, 스테이징된 쓰기
 - [Plugin manifest](plugin-manifest.md) 및 [plugin schema](../reference/plugin-schema.md)
 - [Scopes](../reference/scopes.md) 및 [scopes reference](../reference/scopes.md)
 - [SDK](sdk.md) — 전체 `ctx` 표면과 `definePlugin`

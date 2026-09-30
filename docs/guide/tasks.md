@@ -4,7 +4,7 @@ Every plugin run you start, and every AI-chat conversation, is a **task** shown 
 
 ## How tasks work
 
-Each plugin run executes in its own dedicated sandbox worker. A running task shows a **running** badge and, when the plugin reports it, a progress bar.
+A running task shows a **running** badge and, when the plugin reports it, a progress bar.
 
 ## Task states
 
@@ -19,14 +19,14 @@ Each plugin run executes in its own dedicated sandbox worker. A running task sho
 A running plugin task has a **Stop** button (stop an AI turn from the AI chat panel). Click a row to open it: an AI task reopens its conversation, a plugin task opens its review. After a run with changes, the badge shows the review state instead — **needs review** (or **N to review**), **applied**, or **discarded** — and an AI task with pending changes also has a **Review staged changes** button.
 
 !!! note "Stop is cooperative"
-    **Stop** asks the plugin to wind down cleanly. If it has not returned within about 3 seconds, the worker is terminated. Either way, the changes it had already staged are kept and offered for review. A run that exceeds its time budget (10 minutes by default, at most 60) is terminated and marked failed.
+    **Stop** asks the plugin to wind down cleanly. If it has not returned within about 3 seconds, it is force-stopped. Either way, the changes it had already staged are kept and offered for review. A run that exceeds its time budget (10 minutes by default, at most 60) is stopped and marked failed.
 
 ## Ephemeral by default
 
-Plugin-run tasks live only in your browser tab's memory; close the tab and they are gone. AI conversations are saved on this device (per project, under the account you are signed in with) and come back as Tasks rows after a reload, so you can reopen them. Staged changes that were still waiting for review do not survive a reload. Neither task rows nor AI chat content are sent to the Vineyard server; only changes you apply are written to the project.
+Plugin-run tasks live only in your browser tab's memory; close the tab and they are gone. AI conversations are saved on this device (per project) and come back as Tasks rows after a reload, so you can reopen them. Staged changes that were still waiting for review do not survive a reload. Neither task rows nor AI chat content are sent to the Vineyard server; only changes you apply are written to the project.
 
 !!! tip "AI chat stays on this device, under your account"
-    Conversations, messages and project memory are kept on this device only and are never written to the server. Like your AI provider and web-search keys, they are filed separately for each account: Vineyard does not use or show them to another account signing in on the same machine (it keeps accounts apart inside the app, not from someone with direct access to this computer), local mode has its own separate set, and signing out keeps them for your next sign-in. Anything saved before per-account storage was introduced was discarded, so enter your keys again once.
+    Conversations, messages and project memory are kept on this device only and are never written to the server. Like your AI provider and web-search keys, they are kept separately for each account — this separates accounts inside Vineyard, not from someone with direct access to this computer. Anything saved by earlier versions was discarded, so enter your keys again once.
 
 ## Closing and deleting a conversation
 
@@ -49,10 +49,10 @@ Long AI conversations are compressed **automatically** — there is no manual `/
 
 How it works:
 
-1. **Trigger.** Each turn, Vineyard estimates the history's token count — roughly 4 characters per token for Latin-script text, about 1 token per character for CJK/Hangul text (a flat divisor undercounted Korean project notes by roughly half), and self-calibrated by a correction factor learned from what the provider actually charged on prior steps — and compares it against a history budget — about 35% of the model's context window (64k-token fallback when the provider reports none). Compaction happens *before* the window is full, because the system prompt, tool schemas, tool results and the model's answer all share the same window.
+1. **Trigger.** Each turn, Vineyard estimates the history's size and compacts it once it passes about 35% of the model's context window — *before* the window is full, because the system prompt, tools, tool results and the model's answer all share the same window.
 2. **What survives verbatim.** The **most recent 4 turns** (two analyst exchanges) are always kept as-is, so immediate context is never summarized.
 3. **What gets compressed.** Everything older is sent to the LLM (the same model you configured, so the summary is written in the same language and register as the conversation) with instructions to produce a dense factual summary of at most 200 words: indicators and entities discussed (domains, IPs, accounts, hashes), what was established about each and on what evidence, decisions made, what was rejected and why, and open questions. No speculation is added.
-4. **The replacement.** The summary replaces the old turns as a single message prefixed `[earlier conversation, summarized]`. A previous summary is summarized again along with what followed it, so a long session converges instead of stacking summaries.
+4. **The replacement.** The summary replaces the old turns as a single message prefixed `[earlier conversation, summarized]`. A previous summary is summarized again along with what followed it.
 5. **Failure is silent-safe.** If the summarization call fails, the history is left **unchanged** — compaction never silently drops the earlier half of an investigation. You would see the provider error instead.
 
 ## Collaborator presence
@@ -62,5 +62,5 @@ When you share a project, participants see collaborator badges next to the proje
 ## Next / See also
 
 - [Running plugins](running-plugins.md) — how a run becomes a task.
-- [Task lifecycle (internals)](../develop/lifecycle.md) — the developer-facing mechanics behind these states, `AbortController`/`ctx.signal`.
+- [Task lifecycle (internals)](../develop/lifecycle.md) — the developer-facing mechanics behind these states.
 - [Getting started](getting-started.md) — orientation for the rest of the guide.

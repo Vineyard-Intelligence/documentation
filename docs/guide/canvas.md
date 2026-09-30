@@ -4,7 +4,7 @@ The canvas is where a Vineyard project lives: nodes and edges laid out on a grap
 
 ## Two ways to reach the same actions
 
-The view controls are exposed twice, and both drive the **same** live graph state, so they always stay in sync:
+The view controls are exposed twice, and both stay in sync:
 
 - **On-canvas toolbar** — a compact vertical bar pinned to the top-left edge of the canvas, for the controls you reach for most while working.
 - **Top menu bar** — the `Project`, `Edit`, and `View` menus, which add data and navigation actions alongside the view toggles (a fourth menu, `Run`, launches plugins and the AI agent — see [Running plugins](running-plugins.md)).
@@ -130,12 +130,11 @@ When enabled, dragging a node near another node's edges or center shows alignmen
 
 When two or more edges connect the same pair of nodes — in either direction — the canvas bends
 them apart into arcs instead of drawing one on top of the other, so each edge stays visible and
-individually clickable. This matters because an edge's label is its own finding with its own
-provenance: two overlapping edges are two distinct pieces of evidence, not one.
+individually clickable.
 
 ## Drawing edges
 
-Select the node(s) you want to link from, then **⌘-click** (Mac) or **Ctrl-click** (Windows/Linux) the node to link them to. A small box opens at the click; type the relation (free text, e.g. `resolves to`) and press **Enter**. One edge is created from every selected node to the clicked node, all in a single request. Hold **Shift** while clicking, or press **Reverse** in the box, to link the other way (clicked node → selection). You can also right-click a node or a selection and choose **Connect to…**, then plain-click the target. **Esc** cancels at either step, and nothing is written until you press Enter. An edge is unique per ordered pair of nodes, so pairs that are already connected are skipped and counted as "already connected"; the reverse direction is a separate edge. If nothing is selected, the click only shows a hint to select the nodes first.
+Select the node(s) you want to link from, then **⌘-click** (Mac) or **Ctrl-click** (Windows/Linux) the node to link them to. A small box opens at the click; type the relation (free text, e.g. `resolves to`) and press **Enter**. One edge is created from every selected node to the clicked node. Hold **Shift** while clicking, or press **Reverse** in the box, to link the other way (clicked node → selection). You can also right-click a node or a selection and choose **Connect to…**, then plain-click the target. **Esc** cancels at either step, and nothing is written until you press Enter. An edge is unique per ordered pair of nodes, so pairs that are already connected are skipped and counted as "already connected"; the reverse direction is a separate edge. If nothing is selected, the click only shows a hint to select the nodes first.
 
 ## Export graph (JSON) {#export-graph-json}
 
@@ -150,7 +149,7 @@ Select the node(s) you want to link from, then **⌘-click** (Mac) or **Ctrl-cli
 }
 ```
 
-While the project is still loading (for example while it re-syncs after a reconnect), export is refused with *The project is still loading — export again once it has finished.* This stops a partial graph from being saved as the whole project. When the export succeeds, a toast reports how many nodes and edges were written.
+While the project is still loading (for example while it re-syncs after a reconnect), export is refused with *The project is still loading — export again once it has finished.* When the export succeeds, a toast reports how many nodes and edges were written.
 
 ## Add from Marketplace
 

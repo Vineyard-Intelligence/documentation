@@ -1,6 +1,6 @@
 # Scopes reference
 
-A complete catalog of every scope string a plugin can declare in `manifest.scopes`, what each grants, and which `ctx` member it unlocks. Scopes are the **only** authority a plugin gets — a `ctx` member is absent unless its scope was granted, so there is nothing to bypass. Declare least privilege: pick the narrowest verbs your plugin actually needs.
+A complete catalog of every scope string a plugin can declare in `manifest.scopes`, what each grants, and which `ctx` member it unlocks. A `ctx` member is absent unless its scope was granted. Declare least privilege: pick the narrowest verbs your plugin actually needs.
 
 For how grants are enforced at runtime (the Web Worker sandbox, the egress allowlist, secret scrubbing), see [security](../develop/security.md).
 
@@ -15,9 +15,6 @@ The `scopes` block has exactly five keys, all optional:
   "config":    [ { "key": "max_concurrency", "type": "number" } ]
 }
 ```
-
-!!! warning "There is no `publish` scope"
-    A plugin cannot post into the project chat or feed — `ctx.message` does not exist. If you have a draft manifest carrying `"publish": ["message:post"]`, delete the key: `scopes` is `additionalProperties: false`, so the manifest now fails schema validation.
 
 ## graph
 
@@ -35,7 +32,7 @@ Fine-grained verbs over nodes and edges (`node:*` / `edge:*` × read/create/upda
 | `edge:delete` | Delete one edge or many in a single bounded op | `ctx.graph.deleteEdge`, `ctx.graph.deleteEdges` |
 
 !!! note "A write verb is not a write"
-    Granting `node:create` (or any create/update/delete verb) does not let a plugin change the project. Writes are captured into the run's change set and reach the graph only when the analyst reviews that change set and applies it, under their own account. That review — not the scope string — is what actually bounds an untrusted plugin.
+    Granting `node:create` (or any create/update/delete verb) does not let a plugin change the project. Writes are captured into the run's change set and reach the graph only when the analyst reviews that change set and applies it, under their own account.
 
 !!! note "Bulk ops are one operation"
     `deleteNodes(ids[])` and `deleteEdges(ids[])` are a **single** bounded call, not N separate writes: a legitimate mass-delete (Russian Roulette, Thanos Snap) is issued once and the host caps its own concurrency.
@@ -58,14 +55,14 @@ Each entry is a `NetworkScope` object, **not** a bare string. `ctx.net.fetch` is
 | `methods` | `HttpMethod[]` | Allowed verbs: `GET` `POST` `PUT` `PATCH` `DELETE` |
 | `purpose` | `string` (optional) | Human-readable reason, shown at install time |
 
-`ctx.net.fetch` is limited to these endpoints. A URL is matched on its **parsed origin** plus a path-segment boundary, never as a string prefix — `https://h/v1` covers `/v1/search` but not `/v1beta`, and nothing at all on `https://h.attacker.test` (`plugins/net-allowlist.ts`, `endpointCovers`).
+`ctx.net.fetch` is limited to these endpoints. A URL is matched on its **parsed origin** (protocol, host and port) plus a path-segment boundary, never as a string prefix — `https://h/v1` covers `/v1/search` but not `/v1beta` — and on the declared `methods`.
 
 !!! warning "The host bridge is the only way out"
-    The plugin worker's own response carries a second CSP, `connect-src 'none'; worker-src 'none'`, on the web and in the desktop shell. Any `fetch`, XHR, WebSocket or nested worker the plugin opens itself is refused, so the host bridge is the only network path: `ctx.net.fetch`, checked against these endpoints, plus [`ctx.net.probe`](#web_probe) and [`ctx.service`](#services). (The CSP is not served under `vite dev`, so a pack that calls `fetch` directly works there and fails in production.) A sandbox-js plugin may declare several endpoints; the one-entry `proxy_endpoint` rule belongs to the deferred `web-proxy` runtime. The bridge forces `credentials: "omit"`, so the analyst's cookies never go with a plugin request, and it passes your request headers through unchanged, including `Authorization` (see [Sending a credential](plugin-schema.md#sending-a-credential)). On desktop, the shell also drops `Origin` and supplies the CORS headers for the origins you declare, so a declared endpoint that sends no CORS headers is still reachable.
+    Plugin code has no network of its own: any `fetch`, XHR, WebSocket or nested worker the plugin opens itself is refused, on the web and in the desktop app. Use `ctx.net.fetch` (checked against these endpoints), [`ctx.net.probe`](#web_probe) or [`ctx.service`](#services). A dev server does not enforce this, so a pack that calls `fetch` directly works in development and fails in production. A sandbox-js plugin may declare several endpoints. Cookies are not sent; your request headers pass through as written, including `Authorization` (see [Sending a credential](plugin-schema.md#sending-a-credential)). On desktop, declared endpoints are reachable even without CORS headers.
 
 ## web_probe
 
-A single object, **not** an array. It grants `ctx.net.probe` — one anonymous request against an *arbitrary* public host. Where `network` is an allowlist (the plugin names the endpoints it will call), `web_probe` is the opposite shape: a plugin such as account discovery cannot know in advance which of hundreds of sites it will hit, so it declares the *manner* of access instead and the host constrains it. (Source: the `@vineyard/plugin-sdk` package types — `WebProbeScope`, `HostContext.net.probe`.)
+A single object, **not** an array. It grants `ctx.net.probe` — one anonymous request against an *arbitrary* public host, for plugins such as account discovery that cannot list their endpoints in advance. (Source: the `@vineyard/plugin-sdk` package types — `WebProbeScope`, `HostContext.net.probe`.)
 
 ```jsonc
 "web_probe": { "purpose": "check whether a username has a profile page" }
@@ -78,11 +75,11 @@ A single object, **not** an array. It grants `ctx.net.probe` — one anonymous r
 The host, not the plugin, sets the terms: no cookies and no credentials (`Cookie` / `Authorization` / `Host` are dropped), private and loopback targets refused, and `maxBytes` / `timeoutMs` clamped to a ceiling. Redirects are **not** followed — the caller sees the true status of the URL it asked for, which is what presence detection depends on (a 302 to a login page means "no account"), with the `Location` returned as `redirectUrl`.
 
 !!! warning "Desktop only"
-    `ctx.net.probe` is performed by the Electron main process — the only place a cross-origin response can be read from a host that declines CORS. In the web build the capability has no backing, so `ctx.net.probe` is **absent** even when granted. Check for it before calling and fall back (the WhatsMyName pack does exactly this).
+    In the web build `ctx.net.probe` is **absent** even when granted. Check for it before calling and fall back (the WhatsMyName pack does exactly this).
 
 ## services
 
-Vineyard-operated services this plugin calls **by name**. Backs `ctx.service`.
+Vineyard-operated services this plugin calls **by name**. Backs `ctx.service`, which takes a service name and a path; the base URL is fixed by the app.
 
 ```jsonc
 "services": ["rdap"]
@@ -93,16 +90,8 @@ Vineyard-operated services this plugin calls **by name**. Backs `ctx.service`.
 | `rdap` | Cached IP RDAP lookups, normalized across every RIR |
 | `telegram` | Read-only Telegram reconnaissance, on an account Vineyard operates |
 
-A closed enum, so a typo fails at review rather than at an analyst's first run, and a scope the
-install gate displays is always one that can actually work.
-
-**Why a name and not a URL.** `network` takes its destination from the plugin, so a host that
-attached the analyst's credential to that path would hand it to whatever endpoint a manifest
-declared. `ctx.service` takes a service name and a path; the base URL lives in a table in the app
-and the plugin cannot express a destination at all. That is what makes it safe for the call to
-carry the analyst's identity — and it is why a service scope is **not** covered by
-`scopes_summary.network` on the catalog card. It appears as its own `services` field, named, because
-which service it is matters: `rdap` reads public registry data, `telegram` drives an account.
+A closed enum, so a typo fails at review. A service scope is **not** covered by
+`scopes_summary.network` on the catalog card; it appears as its own `services` field.
 
 ```js
 const res = await ctx.service('rdap', '8.8.8.8');
@@ -112,14 +101,12 @@ const who = await ctx.service('telegram', 'resolve', {
 });
 ```
 
-`Authorization` on a service call is ignored rather than merged — the host sets it, and it is the
-one header that decides who the service thinks is calling. Some services are further restricted to
-named packs; `telegram` is, because the account it drives belongs to the operator rather than to the
-analyst who triggered the run.
+`Authorization` on a service call is ignored — the host sets it. Some services are restricted to
+named packs; `telegram` is one.
 
 ## config
 
-Each entry is a `ConfigValue`. `ctx.config` is a read-only map of the declared keys the analyst has set a value for, secret ones included, coerced to the declared `type`. It is absent while none of them has a value, so read it as `ctx.config?.key ?? DEFAULT`. (Source: the `@vineyard/plugin-sdk` package types — `ConfigValue`, `HostContext.config`.)
+Each entry is a `ConfigValue`. `ctx.config` is a read-only map of the declared keys the analyst has set a value for, secret ones included, coerced to the declared `type`. It is absent while none of them has a value, so read it as `ctx.config?.key ?? DEFAULT`. Values are kept per signed-in account — in the OS keychain on desktop, for the tab session in the browser. (Source: the `@vineyard/plugin-sdk` package types — `ConfigValue`, `HostContext.config`.)
 
 | Field | Type | Meaning |
 | --- | --- | --- |
@@ -128,15 +115,15 @@ Each entry is a `ConfigValue`. `ctx.config` is a read-only map of the declared k
 | `type` | `"string" \| "number" \| "boolean" \| "url" \| "enum"` | Value type |
 | `enum` | `string[]` (optional) | Allowed values when `type` is `enum` |
 | `secret` | `boolean` (optional) | BYOK-style credential; see below |
-| `scope` | `"plugin" \| "project" \| "user"` (optional) | Where the value is stored. Accepted but not read today; values are stored per plugin and per signed-in account |
+| `scope` | `"plugin" \| "project" \| "user"` (optional) | Where the value is stored. Accepted but not read today; values are stored per plugin |
 | `optional` | `boolean` (optional) | If false/absent the field is marked "required by this plugin" (not enforced; the plugin must handle a missing value) |
 
 !!! danger "secret semantics"
-    `secret: true` is about **storage and display, not about hiding the value from the plugin**. The value IS delivered to the declaring plugin as `ctx.config[key]` (SPEC §6.1) — it has to be, since the plugin is what calls the API with it — and `configFor` gives a pack only the keys its own manifest declared. What the flag changes: the form field is masked. Every config value, secret or not, is stored in the desktop keychain (`safeStorage`, encrypted at rest, this machine only) or, in the browser, in `sessionStorage` for that tab, so a browser-entered key does not outlive the session. Either way it is filed under the signed-in account, so another account on the same machine never receives it. It is **never recorded** in a task record or an AI conversation — that is enforced by keeping credentials out of `params`, not by withholding them from `ctx.config`. See [security](../develop/security.md) and SPEC §6.
+    `secret: true` **does not hide the value from the plugin**. The value IS delivered to the declaring plugin as `ctx.config[key]`, since the plugin is what calls the API with it. The flag masks the form field. The value is **never recorded** in a task record or an AI conversation, because credentials are kept out of `params`. See [security](../develop/security.md).
 
 ## Not scopes
 
-The following are **always available** and grant no authority over data or network. They require no declaration. (Source: SPEC §4; the `@vineyard/plugin-sdk` package types — `HostContext`.)
+The following are **always available** and grant no authority over data or network. They require no declaration. (Source: the `@vineyard/plugin-sdk` package types — `HostContext`.)
 
 | Capability | `ctx` member | Notes |
 | --- | --- | --- |

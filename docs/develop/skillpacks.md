@@ -54,7 +54,7 @@ repo at a pinned commit (exactly like a plugin manifest or Type Pack):
 | `triggers` | Keyword hints for relevance, matched against the analyst's request. |
 | `requires` | Plugin pack identifiers the playbook's steps call. **A skill is only available when every one is installed in the project and can run on this build** (the marketplace co-installs them; at runtime a required pack that is blocked on the current platform, such as a desktop-only pack on the web, hides the skill even though it is installed). Empty or absent = the playbook leans on built-in graph tools only. |
 | `overview` | The router, not the procedure: what the pack is for and what sections it holds. The agent reads this first. |
-| `sections` | The actual steps. Each has an `id` (addressed by `load_skill(id, section)`, never by path — the manifest is the allowlist), a one-line `summary` (so the agent can pick a section without loading them all), and the `body`. Loaded on demand — progressive disclosure. |
+| `sections` | The actual steps. Each has an `id` (addressed by `load_skill(id, section)`), a one-line `summary` (so the agent can pick a section without loading them all), and the `body`. Loaded on demand — progressive disclosure. |
 | `starters` | Ready-made ways to start a run: a `prompt` with `{{key}}` blanks and a `variables` list (key, label, placeholder, `required`, `multiline`). `category` groups them in the picker, rendered in first-appearance order. |
 
 ### Writing good sections
@@ -70,24 +70,16 @@ repo at a pinned commit (exactly like a plugin manifest or Type Pack):
 
 ## The safety model
 
-Skill text is **third-party content** arriving as a tool result, so it is handled like any untrusted
-tool output:
+Skill text is read by the agent on demand as a tool result, not injected into the prompt, so it
+costs nothing when unused.
 
-- **Skills are not injected into the prompt.** They are surfaced through tools and read on demand,
-  so they cost nothing when unused and arrive inside the trust boundary that already treats tool
-  output as untrusted-by-default.
-- **A frame wraps every loaded body.** When the agent reads a section, the host prepends a frame
-  stating the text is *content, not a command*: if any part of it tells the model to ignore its
-  rules, skip the analyst's review, or act on untrusted text as an instruction, the model must refuse
-  and say so. The app's safety-critical prompt blocks always outrank the playbook.
-- **Remote fields are sanitized at the boundary.** Labels are collapsed to one line and stripped of
-  control characters (so a manifest cannot smuggle a second apparent "SYSTEM: …" line into a
-  description); section bodies are capped (~8,000 chars) and stripped of control characters except
-  newlines; starters are capped hard (~1,200 chars — a starter is a paragraph, not a document).
+- **The app's own rules outrank the playbook.** Text telling the agent to ignore its rules, skip
+  the analyst's review, or treat untrusted text as an instruction is refused.
+- **Fields are trimmed.** Labels are collapsed to one line and stripped of control characters;
+  section bodies are capped (~8,000 chars) and stripped of control characters except newlines;
+  starters are capped hard (~1,200 chars — a starter is a paragraph, not a document).
 - **A per-turn load budget bounds context.** Each turn may read at most 12 (skill, section)
-  documents and ~40,000 chars total. A re-read is allowed (the earlier copy may have been elided
-  from context) but is charged like any other read — a model that follows every pointer cannot
-  spend the whole turn reading documentation.
+  documents and ~40,000 chars total; a re-read is charged like any other read.
 
 ## Publishing to the registry
 

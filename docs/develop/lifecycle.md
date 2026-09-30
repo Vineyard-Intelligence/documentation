@@ -1,6 +1,6 @@
 # Task lifecycle
 
-Every plugin run and every AI-chat turn in Vineyard is a **task**, tracked client-side in `useTaskStore`.
+Every plugin run and every AI-chat turn in Vineyard is a **task**, tracked client-side.
 
 ## States
 
@@ -18,7 +18,7 @@ running → succeeded | failed | cancelled | incomplete
 | `cancelled` | Stopped: the Tasks panel's Stop button, or leaving the project (a run the agent launched is also cancelled when its turn is stopped). Changes it had already staged stay available for review. |
 | `incomplete` | AI-chat only — the turn stopped before finishing, holding unanswered tool calls. |
 
-Each run gets one dedicated Web Worker (`runPluginInWorker` in `worker-host.ts`), spawned directly — there is no worker pool or queue.
+Each run gets one dedicated Web Worker, spawned directly — there is no worker pool or queue.
 
 ## Cancel is cooperative
 
@@ -29,8 +29,8 @@ Stopping a task is **cooperative**, built on the Web `AbortController` / `AbortS
 
 See the [SDK](sdk.md) for a `ctx.signal` checkpoint example.
 
-!!! warning "Never `worker.terminate()` on the user's Stop"
-    Hard-killing the worker on a user Stop throws away partial results. Stop does not kill the worker at once. The host aborts `ctx.signal` and gives the plugin a **3-second grace period** (`ABORT_GRACE_MS`) to unwind and return; only a worker still running after that is terminated. A plugin that returns in time finishes like any other run, with what it staged held for review; one that throws `AbortError` or is terminated ends `cancelled`, and the changes it had already staged still stay available for review. Design `run()` to be interruptible — see [SDK](sdk.md) and [lifecycle controls in the manifest](plugin-manifest.md).
+!!! warning "Stop gives the plugin 3 seconds"
+    Stop does not kill the worker at once. The host aborts `ctx.signal` and gives the plugin a **3-second grace period** to unwind and return; only a worker still running after that is terminated. A plugin that returns in time finishes like any other run, with what it staged held for review; one that throws `AbortError` or is terminated ends `cancelled`, and the changes it had already staged still stay available for review. Design `run()` to be interruptible — see [SDK](sdk.md) and [lifecycle controls in the manifest](plugin-manifest.md).
 
 ## `manifest.lifecycle.timeout_ms`
 
@@ -51,5 +51,5 @@ The manifest schema accepts `long_running`, `controls`, `progress`, `persistence
 - [SDK](sdk.md) — `ctx.signal`, `ctx.progress`
 - [Plugin manifest](plugin-manifest.md) — declaring `lifecycle.timeout_ms`
 - [Security model](security.md) — sandbox and task staging
-- [Architecture](architecture.md) — where the worker and HostBridge sit
+- [Architecture](architecture.md) — where the worker sits
 - [Tasks (user guide)](../guide/tasks.md) — the Tasks panel from a user's point of view

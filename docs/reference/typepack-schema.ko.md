@@ -87,13 +87,13 @@ plugin과 Type Pack 양쪽에서 사용되는 공유 블록 (`#/$defs/distributi
 | `icon` | string | no | 다형적 (아래 참조) | 노드 아이콘. 없으면 노드는 `color`만으로 렌더링됩니다. |
 | `color` | string | no | pattern `^#[0-9a-fA-F]{6}$` | 노드 색상 `#rrggbb`. 없으면 `category.name`에서 안정적인 색상이 파생됩니다. |
 | `properties` | object | yes | `minProperties: 1`; 키는 identifierSegment; 값은 [property](#property-object) | 속성 키 → 속성 스키마. 비어 있지 않아야 합니다. |
-| `identity_properties` | array&lt;string&gt; | no | `minItems: 1`, `uniqueItems`; 각 항목은 `properties`의 키를 지정해야 함 | 중복 제거를 위해 하나의 엔티티를 함께 식별하는 키들. 기본값은 `[label_property]`. `label_property`와 분리된 이유는 표시와 식별이 다른 질문이기 때문입니다: `user_account`는 사용자명으로 표시되지만 `(username, platform)`으로 식별됩니다. 같은 사용자명이 두 플랫폼에 있으면 서로 다른 두 계정이기 때문입니다. |
+| `identity_properties` | array&lt;string&gt; | no | `minItems: 1`, `uniqueItems`; 각 항목은 `properties`의 키를 지정해야 함 | 중복 제거를 위해 하나의 엔티티를 함께 식별하는 키들. 기본값은 `[label_property]`. 예: `user_account`는 사용자명으로 표시되지만 `(username, platform)`으로 식별됩니다. |
 | `label_template` | string | no | 참조된 키는 `properties`에 존재해야 함 | 여러 속성으로 구성된 표시 라벨, 예: `"{username} · {platform}"`. 참조된 필드가 비어 있으면 `label_property`로 폴백하므로, 일부만 채워진 노드가 구분자만 덩그러니 남는 일이 없습니다. 표시 전용 — 중복 제거는 `identity_properties`를 사용합니다. |
 
 완전한 정규화 type 참조는 `category.name`입니다 (예: `infrastructure.ip_address`). 이 정규화된 형식은 엣지 엔드포인트와 `reference` 대상이 가리키는 것입니다.
 
 !!! info "Icon resolution order"
-    `icon`은 다형적이며 다음 순서로 해석됩니다: `data:` / `http(s):` 이미지 URI; 그 외 kebab-case [lucide](https://lucide.dev) 아이콘 이름 (예: `shield-alert`); 그 외 리터럴 글리프/이모지. 호스트가 **전체** lucide 세트를 번들하므로 어떤 kebab-case lucide 이름이든 해석됩니다 — 팩이 새 아이콘을 쓰기 위해 프론트엔드 변경이 필요 없습니다.
+    `icon`은 다형적이며 다음 순서로 해석됩니다: `data:` / `http(s):` 이미지 URI; 그 외 kebab-case [lucide](https://lucide.dev) 아이콘 이름 (예: `shield-alert`); 그 외 리터럴 글리프/이모지. 어떤 kebab-case lucide 이름이든 해석됩니다.
 
 ## Property object
 
@@ -139,7 +139,7 @@ plugin과 Type Pack 양쪽에서 사용되는 공유 블록 (`#/$defs/distributi
 
 ### validator object
 
-`additionalProperties: false`. 이전의 원시 regex 문자열 관행을 대체하는 구조화된 검증. 모든 필드는 선택 사항이며 필요에 따라 조합합니다.
+`additionalProperties: false`. 구조화된 검증. 모든 필드는 선택 사항이며 필요에 따라 조합합니다.
 
 | Field | Type | Constraints | Meaning |
 |-------|------|-------------|---------|

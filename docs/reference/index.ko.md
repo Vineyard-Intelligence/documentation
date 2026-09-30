@@ -18,11 +18,11 @@ VINEYARD의 plugin 및 Type Pack 형식에 대한 규범적 참조 자료: 모�
 | File | Schema for |
 |---|---|
 | [`schemas/plugin.schema.json`](https://registry.vineyard.run/schemas/plugin.schema.json) | `vineyard:plugin` manifest. |
-| [`schemas/pluginpack.schema.json`](https://registry.vineyard.run/schemas/pluginpack.schema.json) | `vineyard:pluginpack` manifest — 아직 별도 산문 페이지 없음, 스키마 자체가 레퍼런스. |
+| [`schemas/pluginpack.schema.json`](https://registry.vineyard.run/schemas/pluginpack.schema.json) | `vineyard:pluginpack` manifest — 스키마 자체가 레퍼런스. |
 | [`schemas/typepack.schema.json`](https://registry.vineyard.run/schemas/typepack.schema.json) | `vineyard:typepack` 문서. |
 | [`schemas/registry-plugin-entry.schema.json`](https://registry.vineyard.run/schemas/registry-plugin-entry.schema.json) | 하나의 `community-pluginpacks.json` 행. |
 | [`schemas/registry-typepack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-typepack-entry.schema.json) | 하나의 `community-typepacks.json` 행. |
-| [`schemas/registry-skillpack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-skillpack-entry.schema.json) | 하나의 `community-skillpacks.json` 행 — 아직 별도 산문 페이지 없음, 스키마 자체가 레퍼런스. |
+| [`schemas/registry-skillpack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-skillpack-entry.schema.json) | 하나의 `community-skillpacks.json` 행 — 스키마 자체가 레퍼런스. |
 
 참조 페이지는 이 파일들을 요약하고 설명합니다. 산문과 스키마가 불일치할 경우 registry의 `schemas/`에 있는 스키마가 우선합니다.
 

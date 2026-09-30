@@ -5,10 +5,10 @@ Vineyard executes plugins and Type Packs **in the user's app**, never on a serve
 ## Design facts
 
 - **Client-side execution.** Plugins (JS) and Type Packs (JSON) run in the user's app, in the browser or in the desktop app. The server never executes plugin code; it stores pointers and serves the ordinary graph API.
-- **Per-plugin platform flags.** A plugin declares supported platforms via `platforms.web` and/or `platforms.desktop`. A capability the browser cannot provide targets the **desktop** runtime. (A single **web-proxy** endpoint is designed but not built; see below.)
+- **Per-plugin platform flags.** A plugin declares supported platforms via `platforms.web` and/or `platforms.desktop`. A capability the browser cannot provide targets the **desktop** runtime.
 - **Metadata-only registry.** Distribution is GitHub + a registry of pointers, not code. The client fetches the bundle (via jsDelivr, pinned to the immutable commit SHA) and runs it directly. See [distribution](distribution.md).
 - **Ephemeral by default.** A task lives in the current browser tab's memory; nothing is written to Postgres. See [lifecycle](lifecycle.md).
-- **Least authority.** Untrusted plugin JS runs in a Web Worker sandbox with only its declared scopes — `graph` verbs, `network`, `web_probe` (desktop), `services`, `config` — reached through a host bridge; the worker itself gets no DOM, no ambient `fetch` and no account token. Graph writes are **staged, not live**: the bridge captures them, and they reach the API only after the analyst reviews the change set and approves it, under the analyst's own token. See [scopes](../reference/scopes.md) and [security](security.md).
+- **Least authority.** Plugin JS runs in a Web Worker sandbox with only its declared scopes — `graph` verbs, `network`, `web_probe` (desktop), `services`, `config`; the worker has no DOM and no network of its own. Graph writes are **staged, not live**: they are applied only after the analyst reviews and approves the change set. See [scopes](../reference/scopes.md) and [security](security.md).
 
 ## End-to-end flow
 
@@ -16,8 +16,8 @@ Vineyard executes plugins and Type Packs **in the user's app**, never on a serve
 flowchart LR
     A["Author<br/>repo + GitHub release<br/>(tag = version)"]
     R["Registry<br/>metadata-only<br/>pointer: repo @ ref"]
-    H["App / Host bridge<br/>main thread<br/>holds analyst token"]
-    W["Web Worker sandbox<br/>untrusted main.js<br/>no DOM, no ambient fetch"]
+    H["App / Host bridge<br/>main thread"]
+    W["Web Worker sandbox<br/>plugin main.js<br/>no DOM, no own network"]
     S["Staging store<br/>captured writes<br/>awaiting review"]
     G["Graph<br/>REST + WS"]
 
@@ -27,19 +27,19 @@ flowchart LR
     H -- "Comlink proxy<br/>= granted scopes only" --> W
     W -- "ctx.graph" --> H
     H -- "capture write" --> S
-    S -- "analyst reviews + approves<br/>apply under analyst token" --> G
-    H -- "reads (analyst token)" --> G
+    S -- "analyst reviews + approves" --> G
+    H -- "reads" --> G
 ```
 
 1. **Author → registry.** The author publishes the plugin to a GitHub release whose tag equals the manifest `version`, then opens a one-entry pull request adding an install record `{ identifier, version, ref }`. The registry stores the pointer (`repository @ ref`), never the code.
 
 2. **Registry → app.** When a user installs, the app resolves the pointer and fetches the bundle directly (via jsDelivr, pinned to the immutable commit SHA). No server-side content copy exists.
 
-3. **App → sandbox.** The host loads the fetched `main.js` into a dedicated module **Web Worker**. The main thread (the *HostBridge*) holds the analyst's token and exposes a [Comlink](https://github.com/GoogleChromeLabs/comlink) proxy whose shape is **exactly the granted scopes** — a `ctx` member is absent unless its scope was granted, so there is nothing to bypass.
+3. **App → sandbox.** The host loads the fetched `main.js` into a dedicated module **Web Worker** and exposes `ctx` as a [Comlink](https://github.com/GoogleChromeLabs/comlink) proxy whose shape is **exactly the granted scopes** — a `ctx` member is absent unless its scope was granted.
 
-4. **Execution → staging → graph.** The plugin calls `ctx.graph`. Reads are served from the in-memory stores the WebSocket already populates; writes are **captured into the staging store rather than sent**. They reach the REST API only once the analyst opens the change set, goes through it item by item and approves — the apply then runs under the **analyst's own token**, so the write is theirs. Outbound `ctx.net.fetch` requests are matched against the plugin's declared endpoints on the parsed origin plus a path-segment boundary, never as a string prefix. The worker cannot go around the bridge: its own response carries `connect-src 'none'; worker-src 'none'` on both the web build and the desktop shell. The worker never sees a token or a backend URL.
+4. **Execution → staging → graph.** The plugin calls `ctx.graph`. Reads are served from the project's in-memory graph; writes are **captured into the staging store rather than sent**. They are applied only once the analyst opens the change set, goes through it item by item and approves. Outbound `ctx.net.fetch` requests are matched against the plugin's declared endpoints by origin and whole path segments, never as a string prefix. The worker has no network of its own, so a direct `fetch` fails; go through `ctx`.
 
-See [SDK](sdk.md) for the `ctx` interface and [lifecycle](lifecycle.md) for how a run moves through the task states. For how the sandbox boundary is enforced (egress allowlist, no account token in the worker, server-side permission checks), see [security](security.md).
+See [SDK](sdk.md) for the `ctx` interface, [lifecycle](lifecycle.md) for how a run moves through the task states, and [security](security.md) for the sandbox boundary.
 
 ## In scope now vs. deferred
 
@@ -49,16 +49,16 @@ See [SDK](sdk.md) for the `ctx` interface and [lifecycle](lifecycle.md) for how 
 ### Ships today
 
 - **Browser runtime** — `platforms.web.runtime: "sandbox-js"`: author JS runs in a Web Worker.
-- **Desktop runtime** — `platforms.desktop.runtime: "sandbox-js"`: Electron shell with custom `app://` scheme, hardened renderer (sandbox, contextIsolation), CORS header rewriting, and anonymous SSRF-guarded HTTP probe (`web_probe` capability).
+- **Desktop runtime** — `platforms.desktop.runtime: "sandbox-js"`: the Electron desktop app, which adds the anonymous HTTP probe (`web_probe` capability).
 - **Metadata-only registry** with GitHub-hosted bundles fetched via jsDelivr, pinned to an immutable commit SHA.
-- **Staged graph writes + analyst review** — captured node/edge changes, applied only on approval — plus the egress allowlist and server-side permission enforcement.
+- **Staged graph writes + analyst review** — captured node/edge changes, applied only on approval — plus the egress allowlist.
 - **Client-side task execution, one dedicated Web Worker per run.**
-- **Keychain-backed secret config** — `config.secret:true` values stored in the desktop keychain, per account, and read by the declaring plugin (BYOK; the browser keeps them for the session only).
+- **Secret config** — `config.secret:true` values kept per signed-in account (in the OS keychain on desktop, for the tab session in the browser) and read by the declaring plugin (BYOK).
 - **The six Chaos reference plugins** and the [Infrastructure](../guide/typepacks.md) / [Threat](../guide/typepacks.md) Type Packs.
 
 ### Deferred (designed, not built)
 
-- **`native`/`subprocess` desktop runtimes** — `platforms.desktop.runtime: "native"` and `"subprocess"` are allowed by the schema but not yet implemented. The `sandbox-js` desktop runtime ships today.
+- **`native`/`subprocess` desktop runtimes** — `platforms.desktop.runtime: "native"` and `"subprocess"` are allowed by the schema but not yet implemented.
 - **`web-proxy` runtime** — the single-endpoint CORS escape hatch for web plugins that need a third-party API.
 - **Type Pack version pinning** — see [Type Packs](typepacks.md).
 

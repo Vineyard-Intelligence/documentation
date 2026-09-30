@@ -46,12 +46,10 @@ human-readable summary surfaced in the [task UI](../guide/tasks.md).
 
 ## HostContext (`ctx`)
 
-`ctx` is a Comlink proxy of the main-thread *HostBridge*. The worker that runs your code holds
-no token, no ambient `fetch`, and no DOM — only the members its scopes granted. Your graph
-writes do not reach the API from the run: the bridge captures them, and the analyst applies
-them under their own account after reviewing the change set. Network egress is checked by the
-bridge against the endpoints your manifest declared, not by anything in the SDK. See the
-[security model](security.md).
+`ctx` is a Comlink proxy to the host. The worker that runs your code has no DOM and no network
+of its own — only the members its scopes granted. Your graph writes are staged: they are applied
+only after the analyst reviews and approves the change set. Network requests are checked by the
+host against the endpoints your manifest declared. See the [security model](security.md).
 
 !!! warning "A member is absent unless its scope was granted"
     `ctx.graph`, `ctx.net`, and `ctx.config` are **optional** and only exist when the
@@ -149,9 +147,9 @@ one.
 
 Present iff a [`network` scope](../reference/scopes.md) is declared (or, in the desktop app,
 `web_probe` — then only `probe` exists). `fetch` is limited to the `manifest.scopes.network`
-endpoints and their declared `methods`; the bridge forces `credentials: "omit"` so the analyst's
-cookies never ride along, follows redirects, and passes your request headers — including
-`Authorization` — through unchanged, so put an API key there rather than in a custom header.
+endpoints and their declared `methods`. Requests are sent without cookies, follow redirects, and
+pass your request headers — including `Authorization` — through unchanged, so put an API key
+there rather than in a custom header.
 The six reference plugins use **no** network.
 
 ```ts
@@ -165,10 +163,9 @@ report the pause with `ctx.progress?.set?.({ message: "waiting for rate limit…
 
 Present iff `scopes.web_probe` is declared **and** the plugin is running in the desktop
 shell — it stays absent in the web build even when the scope is granted. Performs ONE
-anonymous request to an arbitrary public host from the Electron main process: no cookies,
-no `Origin`, redirects are not followed (the caller sees the true status), and
-private/loopback hosts are refused. This is the capability behind account-discovery
-plugins that cannot know in advance which of hundreds of sites they will probe. Only the default
+anonymous request to an arbitrary public host, for plugins that cannot know their target hosts
+in advance: no cookies, no `Origin`, redirects are not followed (the caller sees the true
+status), and private/loopback hosts are refused. Only the default
 ports (80/443) and methods GET/HEAD/POST are allowed; `cookie`, `authorization`, `host` and
 forwarding headers are dropped. `maxBytes` defaults to 512 KiB (max 2 MiB) and `timeoutMs` to
 8 s (max 20 s); the shell runs at most 48 probes at once. A refused or failed probe resolves with
@@ -184,8 +181,7 @@ Present iff `scopes.services` names at least one Vineyard-operated service (curr
 `rdap`, open to any pack, and `telegram`, reserved for `run.vineyard.pluginpacks.telegram` —
 other packs calling it get an error). Calls throw in a build running without a Vineyard account
 (local mode). The destination is a NAME, not a URL — the host resolves it and
-attaches the analyst's credential, so the plugin cannot redirect the call elsewhere and
-the request headers a plugin passes cannot override `Authorization`.
+attaches the analyst's credential; an `Authorization` header you pass cannot override it.
 
 ```ts
 ctx.service?(name: string, path: string, init?: SafeRequestInit): Promise<SafeResponse>
@@ -202,15 +198,14 @@ ctx.config?: Readonly<Record<string, string | number | boolean>>
 !!! warning "Secrets reach only the plugin that declared them"
     `secret: true` only changes how the value is entered (a masked field) — the value is still
     handed to the plugin that declared it, as `ctx.config.<key>`; only keys your own manifest
-    declares ever reach you. Values are kept per signed-in account — encrypted with the OS
-    keychain on desktop, in `sessionStorage` for the tab in the browser — and are never written
-    to a record. See
+    declares ever reach you. Values are kept per signed-in account — in the OS keychain on
+    desktop, for the tab session in the browser. See
     [secrets handling](security.md#secret-handling).
 
 !!! note "There is no `publish` scope"
     A plugin cannot post into the project chat/feed — there is no `ctx.message`, and `publish`
-    is not part of the scopes schema. `scopes` sets `additionalProperties: false`, so a draft
-    manifest still declaring it **fails validation**. Report what you found by writing it into
+    is not part of the scopes schema. `scopes` sets `additionalProperties: false`, so a
+    manifest declaring it **fails validation**. Report what you found by writing it into
     the graph instead.
 
 ### Bulk ops
@@ -218,10 +213,9 @@ ctx.config?: Readonly<Record<string, string | number | boolean>>
 `deleteNodes(ids[])` and `deleteEdges(ids[])` are each a **single bridge call** that stages one
 delete per id in one batch, rather than hundreds of round trips. The whole call is refused
 (`no node <id> in this project` / `no edge <id> in this project`) if any id is unknown, so pass
-only ids you read from the graph. Prefer the bulk forms for whole-graph mutations: a legitimate
-mass-delete (Korean Roulette wiping the whole graph) should not be thousands of individual
-`deleteNode` calls. Each affected node and edge still appears as its own line in the change set
-the analyst reviews, so bulk does not mean unreviewable.
+only ids you read from the graph. Prefer the bulk forms for whole-graph mutations (e.g. Korean
+Roulette wiping the whole graph). Each affected node and edge still appears as its own line in the
+change set the analyst reviews.
 
 ## A complete `run(ctx)` example
 

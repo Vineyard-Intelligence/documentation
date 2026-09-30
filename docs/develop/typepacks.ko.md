@@ -96,7 +96,7 @@ Type Pack은 `secret` 또는 `credential` 프로퍼티 타입을 선언할 수 *
 
 ### 구조화된 유효성 검사기
 
-`validator`는 원시 정규식 문자열이 아닌 **구조화된 객체**입니다. (이전 팩은 일반 문자열을 사용했으나, 그 형태는 대체되었습니다.) 해당 키(`regex`, `min`/`max`, `min_length`/`max_length`, `format`)는 [schema reference](../reference/typepack-schema.md)에 표로 정리되어 있습니다.
+`validator`는 원시 정규식 문자열이 아닌 **구조화된 객체**입니다. 해당 키(`regex`, `min`/`max`, `min_length`/`max_length`, `format`)는 [schema reference](../reference/typepack-schema.md)에 표로 정리되어 있습니다.
 
 ```jsonc
 "cvss_score": { "type": "number", "validator": { "min": 0, "max": 10 }, "optional": true }
@@ -104,7 +104,7 @@ Type Pack은 `secret` 또는 `credential` 프로퍼티 타입을 선언할 수 *
 
 ## 시각 요소: icon 및 color
 
-둘 다 엔티티 타입별로 선택 사항이며, 캔버스와 Types/Properties 패널은 하나의 공유 리졸버를 사용합니다.
+둘 다 엔티티 타입별로 선택 사항입니다.
 
 - **`icon`**은 다형적이며 순서대로 해석됩니다:
     1. `data:` / `http(s):` 이미지 URI → 노드 아이콘으로 그려짐;
@@ -112,9 +112,8 @@ Type Pack은 `secret` 또는 `credential` 프로퍼티 타입을 선언할 수 *
     3. 그 외에는 리터럴 **글리프/이모지**.
 
     `icon`이 없으면 노드는 `color`만으로 렌더링됩니다. lucide가 기본 아이콘 세트이며, 호스트가
-    **전체 세트를 번들**하므로 케밥 케이스의 모든 lucide 이름이 해석됩니다(서드파티 팩이 새
-    아이콘을 쓰기 위해 프론트엔드 변경이 필요 없습니다). lucide 아이콘이 아닌 이름은
-    `color` 폴백으로 렌더링됩니다.
+    **전체 세트를 번들**하므로 케밥 케이스의 모든 lucide 이름이 해석됩니다. lucide 아이콘이
+    아닌 이름은 `color` 폴백으로 렌더링됩니다.
 - **`color`**는 `#rrggbb`입니다. 없으면 `category.name`에서 안정적인 색상이 해시됩니다.
 
 예를 들어 Threat 팩은 `bug`(malware), `shield-alert`(vulnerability), `venetian-mask`(threat actor)와 같은 lucide 이름을 사용합니다.

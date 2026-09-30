@@ -1,6 +1,6 @@
 # Task lifecycle
 
-Vineyard의 모든 플러그인 실행과 모든 AI 채팅 턴은 **작업(task)**이며, 클라이언트 측 `useTaskStore`에서 추적됩니다.
+Vineyard의 모든 플러그인 실행과 모든 AI 채팅 턴은 **작업(task)**이며, 클라이언트 측에서 추적됩니다.
 
 ## 상태
 
@@ -18,7 +18,7 @@ running → succeeded | failed | cancelled | incomplete
 | `cancelled` | 중지됨: Tasks 패널의 Stop 버튼, 또는 프로젝트에서 나가기(에이전트가 시작한 실행은 그 턴이 중지될 때도 취소됨). 이미 스테이징한 변경은 계속 검토할 수 있습니다. |
 | `incomplete` | AI 채팅 전용 — 턴이 응답 없이, 미해결 tool call을 남긴 채 중단됨. |
 
-실행마다 전용 Web Worker(`worker-host.ts`의 `runPluginInWorker`) 하나가 직접 생성됩니다 — 워커 풀이나 큐는 없습니다.
+실행마다 전용 Web Worker 하나가 직접 생성됩니다 — 워커 풀이나 큐는 없습니다.
 
 ## 취소는 협력적입니다
 
@@ -29,8 +29,8 @@ running → succeeded | failed | cancelled | incomplete
 
 `ctx.signal` 체크포인트 예제는 [SDK](sdk.md)를 참조하세요.
 
-!!! warning "사용자 Stop에 `worker.terminate()`를 사용하지 마세요"
-    사용자 Stop 시 워커를 강제 종료하면 부분 결과가 버려집니다. Stop은 워커를 즉시 종료하지 않습니다. 호스트는 `ctx.signal`을 중단하고 플러그인이 정리하고 반환할 수 있도록 **3초의 유예 기간**(`ABORT_GRACE_MS`)을 주며, 그 뒤에도 실행 중인 워커만 종료합니다. 시간 안에 반환한 플러그인은 다른 실행과 똑같이 끝나고 스테이징한 것은 검토를 위해 보관됩니다. `AbortError`를 던지거나 종료된 플러그인은 `cancelled`로 끝나며, 이미 스테이징한 변경은 이 경우에도 계속 검토할 수 있습니다. `run()`을 중단 가능하게 설계하세요 — [SDK](sdk.md) 및 [매니페스트의 lifecycle controls](plugin-manifest.md)를 참조하세요.
+!!! warning "Stop은 플러그인에 3초를 줍니다"
+    Stop은 워커를 즉시 종료하지 않습니다. 호스트는 `ctx.signal`을 중단하고 플러그인이 정리하고 반환할 수 있도록 **3초의 유예 기간**을 주며, 그 뒤에도 실행 중인 워커만 종료합니다. 시간 안에 반환한 플러그인은 다른 실행과 똑같이 끝나고 스테이징한 것은 검토를 위해 보관됩니다. `AbortError`를 던지거나 종료된 플러그인은 `cancelled`로 끝나며, 이미 스테이징한 변경은 이 경우에도 계속 검토할 수 있습니다. `run()`을 중단 가능하게 설계하세요 — [SDK](sdk.md) 및 [매니페스트의 lifecycle controls](plugin-manifest.md)를 참조하세요.
 
 ## `manifest.lifecycle.timeout_ms`
 
@@ -51,5 +51,5 @@ running → succeeded | failed | cancelled | incomplete
 - [SDK](sdk.md) — `ctx.signal`, `ctx.progress`
 - [Plugin manifest](plugin-manifest.md) — `lifecycle.timeout_ms` 선언
 - [Security model](security.md) — 샌드박스와 작업 스테이징
-- [Architecture](architecture.md) — 워커와 HostBridge의 위치
+- [Architecture](architecture.md) — 워커의 위치
 - [Tasks (user guide)](../guide/tasks.md) — 사용자 관점의 Tasks 패널

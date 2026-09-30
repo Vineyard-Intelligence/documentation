@@ -4,7 +4,7 @@ Build, test, and locally load a working Vineyard plugin end to end. By the end y
 
 ## What a plugin is
 
-A plugin is a **bundled `main.js`** whose default export is the result of `definePlugin({ manifest, run })`. At runtime (web) it executes inside a dedicated module Web Worker with **no DOM, no `window`, no `localStorage`, and no account token**. Everything it can do flows through the `ctx` object passed to `run` — and a `ctx` member is **absent unless its scope was granted**. See [Architecture](architecture.md) and [Security](security.md) for the full model.
+A plugin is a **bundled `main.js`** whose default export is the result of `definePlugin({ manifest, run })`. At runtime (web) it executes inside a dedicated module Web Worker with **no DOM, no `window`, no `localStorage`, and no network of its own**. Everything it can do flows through the `ctx` object passed to `run` — and a `ctx` member is **absent unless its scope was granted**. See [Architecture](architecture.md) and [Security](security.md) for the full model.
 
 ## 1. Set up a repo and bundler
 
@@ -102,7 +102,7 @@ Every field below is required unless noted. The full schema is documented in [pl
 | `distribution` | Schema-required descriptive block (`kind`: `git`, `zip` or `inline`); the host does not read it. Installed code is fetched from the registry entry's pinned commit, dev code from the URL you load in the dev loader (see [distribution](distribution.md)). |
 
 !!! warning "Never put secrets in `params`"
-    Never put a secret-looking key in `params` — those values are recorded. Declare secrets as `scopes.config` with `secret: true`: they are entered in the plugin's settings form (masked), kept per signed-in account (encrypted with the OS keychain on desktop, in `sessionStorage` for the tab in the browser), never written to a record, and handed only to the plugin that declared them via `ctx.config` — see [Security](security.md). Korean Roulette needs no secrets and no network, which is exactly why it's a clean first plugin.
+    Never put a secret-looking key in `params` — those values are recorded. Declare secrets as `scopes.config` with `secret: true`: they are entered in the plugin's settings form (masked), kept per signed-in account (in the OS keychain on desktop, for the tab session in the browser), and handed only to the plugin that declared them via `ctx.config` — see [Security](security.md). Korean Roulette needs no secrets and no network, which is exactly why it's a clean first plugin.
 
 ## 4. Unit test with `createMockContext`
 
@@ -161,28 +161,25 @@ GitHub and the registry are a **distribution** layer; during development the app
 }
 ```
 
-Open **Settings → Plugins → Development → Load a pack from a URL**, choose **Plugin Pack**, and enter the absolute URL of your plugin's manifest document (a JSON file with `content_type: "vineyard:plugin"`, or a `vineyard:pluginpack` document, whose `platforms.web.entry` points at your bundle, e.g. `dist/main.js`, relative to the manifest's folder). Serve both from your dev server (`esbuild --watch --servedir` or `vite`). The URL is kept on this device for the account you are signed in with (local mode keeps its own list) and loads into every project you open under that account — reopen the project after adding it. The `identifier` in the JSON manifest must match the one in `definePlugin`, or the run fails with `plugin not loadable: <identifier>`.
+Open **Settings → Plugins → Development → Load a pack from a URL**, choose **Plugin Pack**, and enter the absolute URL of your plugin's manifest document (a JSON file with `content_type: "vineyard:plugin"`, or a `vineyard:pluginpack` document, whose `platforms.web.entry` points at your bundle, e.g. `dist/main.js`, relative to the manifest's folder). Serve both from your dev server (`esbuild --watch --servedir` or `vite`). The URL is kept on this device per signed-in account and loads into every project you open — reopen the project after adding it. The `identifier` in the JSON manifest must match the one in `definePlugin`, or the run fails with `plugin not loadable: <identifier>`.
 
 !!! example "Try Korean Roulette on a throwaway project"
     Because it deletes nearly everything, run it against a scratch project first. Watch the [task](../guide/tasks.md) panel show the run, review and apply the staged deletions, then see the survivor node standing alone in the canvas.
 
 ## 6. Integration testing in the app
 
-When unit tests pass, exercise the plugin end-to-end against a real graph. A plugin pack's
-module must satisfy the app's script policy. On [vineyard.run](https://vineyard.run/) (and the
-packaged desktop app) only the registry's CDN path may serve plugin code, so a dev-loaded plugin
-pack's manifest loads but its code is refused when you run it. Iterate against a local dev build
-of the app (e.g. `npm run dev`, which serves no CSP): load your manifest through the dev loader
-(a dev-server URL is ideal while you iterate), trigger a run on a throwaway project, watch the
-run in the Tasks panel, then open its staged change set and apply it to see the nodes and edges
-change. This is the closest thing to production behavior before you publish: the same sandbox,
-the same staged change set, and the same Review dialog — just sourced from your local bundle
-instead of the registry. Remember that a dev build also lacks the worker's `connect-src 'none'`:
-any direct `fetch`/XHR from your plugin will work there and fail in production — go through
+When unit tests pass, exercise the plugin end-to-end against a real graph. On
+[vineyard.run](https://vineyard.run/) (and the packaged desktop app) plugin code is loaded only
+from the registry's CDN, so a dev-loaded plugin pack's manifest loads but its code is refused when
+you run it. Iterate against a local dev build of the app (e.g. `npm run dev`): load your manifest
+through the dev loader (a dev-server URL is ideal while you iterate), trigger a run on a throwaway
+project, watch the run in the Tasks panel, then open its staged change set and apply it to see the
+nodes and edges change. A dev build does not block the plugin's own network access: any direct
+`fetch`/XHR from your plugin will work there and fail in production — go through
 `ctx.net`/`ctx.service` only.
 
 !!! warning "The dev loader relaxes two protections"
-    To keep the loop fast, the dev loader **may auto-approve scopes and skip the integrity check**. That means a dev-loaded plugin can run with scopes you never explicitly granted, and its manifest is not checked against a registry digest nor its code pinned to a commit, as a published, registry-installed plugin's are (see [Distribution](distribution.md) and [Updates](updates.md)). Use the dev loader only for code you wrote or trust, and re-test the *published* artifact through the normal install path before relying on it.
+    To keep the loop fast, the dev loader **may auto-approve scopes and skip the integrity check** (no registry digest, no commit pin — see [Distribution](distribution.md) and [Updates](updates.md)). Use the dev loader only for code you wrote or trust, and re-test the *published* artifact through the normal install path before relying on it.
 
 ## 7. Going live
 
@@ -190,7 +187,7 @@ When the plugin works locally, publish it: author repo → GitHub release (tag =
 
 ## Next / See also
 
-- [Architecture](architecture.md) — worker sandbox, HostBridge, and staged writes
+- [Architecture](architecture.md) — worker sandbox and staged writes
 - [Plugin manifest](plugin-manifest.md) and the [plugin schema](../reference/plugin-schema.md)
 - [Scopes](../reference/scopes.md) and the [scopes reference](../reference/scopes.md)
 - [SDK](sdk.md) — the full `ctx` surface and `definePlugin`

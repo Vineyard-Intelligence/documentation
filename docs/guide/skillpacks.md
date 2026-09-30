@@ -3,8 +3,7 @@
 A Skill Pack is **text**: a reusable investigation *playbook* the AI agent can consult.
 
 Where a plugin changes your graph, a Skill Pack changes **how the agent works**: it is guidance the
-agent follows, surfaced to it through the `list_skills` / `load_skill` tools. It requests no
-permissions of its own and executes nothing.
+agent follows. It requests no permissions of its own and executes nothing.
 
 ## What a Skill Pack contains
 
@@ -13,7 +12,7 @@ A Skill Pack is a single document with three parts:
 | Part | Role |
 | --- | --- |
 | `overview` | What the playbook is for, and how to route through it — the agent reads this first. |
-| `sections` | The actual steps, loaded **on demand** one at a time (progressive disclosure), so the agent does not pull the whole playbook into every turn. |
+| `sections` | The actual steps, which the agent loads **on demand**, one at a time. |
 | `starters` | Ready-made ways to start a run — a prompt template with blanks (`{{handle}}`, `{{email}}`…) you fill in before sending. |
 
 A pack also declares `applies_to` (the node types it is about) and `triggers` (keyword hints), so the
@@ -31,8 +30,7 @@ Skill Packs install from the [Marketplace](../marketplace.md) exactly like plugi
 !!! note "Availability is gated on dependencies"
     A Skill Pack is only **available** in a project when every plugin pack in its `requires` is
     installed there **and can run on this platform**. If you uninstall one later, or open the project
-    in a browser when a required pack is desktop-only, the skill quietly stops being offered — the
-    agent is never pointed at a playbook whose steps call a plugin the project does not have. For
+    in a browser when a required pack is desktop-only, the skill quietly stops being offered. For
     example, Account & identity pivoting requires the WhatsMyName pack, which runs only in the
     desktop app, so this skill is available only there.
 
@@ -56,13 +54,8 @@ Then either:
 - just ask in your own words — the agent decides a pack is relevant (via `applies_to` / `triggers`)
   and reads it on its own.
 
-Once the run starts, the agent consults the pack through the `load_skill` tool: it reads the
-overview, then loads **only the sections it needs** for the current hop. It never dumps the whole
-playbook into context.
-
 !!! tip "Skills are guidance, not commands"
-    Skill text arrives to the agent as **content**, not instructions. The agent may adapt it to the
-    project — and its safety rules always outrank the playbook. If a pack's steps cannot proceed
+    The agent may adapt a playbook to the project. If a pack's steps cannot proceed
     (say, the hop needs a plugin the project does not have), the agent says so and stops that branch
     rather than filling the gap from memory.
 

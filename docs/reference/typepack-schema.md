@@ -87,13 +87,13 @@ Each item in `types` defines one **node** entity type (`#/$defs/entityType`, `ad
 | `icon` | string | no | polymorphic (see below) | Node icon. When absent, the node renders with `color` only. |
 | `color` | string | no | pattern `^#[0-9a-fA-F]{6}$` | Node color `#rrggbb`. When absent, a stable color is derived from `category.name`. |
 | `properties` | object | yes | `minProperties: 1`; keys are identifierSegment; values are [property](#property-object) | property key → property schema. Must be non-empty. |
-| `identity_properties` | array&lt;string&gt; | no | `minItems: 1`, `uniqueItems`; each item MUST name a key in `properties` | Keys that together identify one entity, for de-duplication. Defaults to `[label_property]`. Separate from `label_property` because display and identity are different questions: a `user_account` is shown as its username but identified by `(username, platform)`, since the same username on two platforms is two accounts. |
+| `identity_properties` | array&lt;string&gt; | no | `minItems: 1`, `uniqueItems`; each item MUST name a key in `properties` | Keys that together identify one entity, for de-duplication. Defaults to `[label_property]`. E.g. a `user_account` is shown as its username but identified by `(username, platform)`. |
 | `label_template` | string | no | referenced keys MUST exist in `properties` | Display label built from several properties, e.g. `"{username} · {platform}"`. Falls back to `label_property` when any referenced field is empty, so a partially-filled node never shows a dangling separator. Display only — de-duplication uses `identity_properties`. |
 
 The fully qualified type reference is `category.name` (e.g. `infrastructure.ip_address`). That qualified form is what edge endpoints and `reference` targets point at.
 
 !!! info "Icon resolution order"
-    `icon` is polymorphic and resolved in order: a `data:` / `http(s):` image URI; else a kebab-case [lucide](https://lucide.dev) icon name (e.g. `shield-alert`); else a literal glyph/emoji. The host bundles the **complete** lucide set, so any kebab-case lucide name resolves — a pack never needs a frontend change to use a new icon.
+    `icon` is polymorphic and resolved in order: a `data:` / `http(s):` image URI; else a kebab-case [lucide](https://lucide.dev) icon name (e.g. `shield-alert`); else a literal glyph/emoji. Any kebab-case lucide name resolves.
 
 ## Property object
 
@@ -139,7 +139,7 @@ The schema for each value in a `properties` map (`#/$defs/property`, `additional
 
 ### validator object
 
-`additionalProperties: false`. Structured validation that replaces the older raw-regex-string precedent. All fields are optional; combine as needed.
+`additionalProperties: false`. Structured validation. All fields are optional; combine as needed.
 
 | Field | Type | Constraints | Meaning |
 |-------|------|-------------|---------|
