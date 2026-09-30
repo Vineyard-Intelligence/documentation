@@ -29,7 +29,3 @@ window.VINEYARD_REGISTRY_BASE = "http://localhost:8000/registry/";
 
 Pushing to `main` runs `.github/workflows/deploy.yml`, which builds the site and publishes it to
 the `gh-pages` branch. The custom domain is set via `docs/CNAME`.
-
-## License
-
-MIT
