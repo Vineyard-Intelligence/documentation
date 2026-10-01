@@ -44,7 +44,7 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 
 | 팩 (`identifier`) | 카테고리 | 유형 | 모델링 대상 |
 |---|---|---|---|
-| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 14 | 정찰 중 매핑하는 네트워크, 그리고 그 위에서 관측되는 웹 리소스(URL), 웹 지문(헤더, 파비콘, DOM 해시), 트래킹 ID 엔티티 |
+| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 15 | 정찰 중 매핑하는 네트워크, 그리고 그 위에서 관측되는 웹 리소스(URL), 웹 지문(헤더, 파비콘, DOM 해시), 트래킹 ID 엔티티 |
 | **Threat** (`…typepacks.threat`) | `threat` | 10 | 위협 인텔리전스 (STIX 정렬) |
 | **Identity** (`…typepacks.identity`) | `identity` | 7 | 사람, 조직, 온라인 페르소나 |
 | **Financial** (`…typepacks.financial`) | `financial` | 4 | 자금 흐름 |
@@ -68,6 +68,7 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 | `infrastructure.dns_record` | 레코드 이름 | `record_type`, `record_value`, `ttl` |
 | `infrastructure.whois_record` | 주체 (도메인/IP) | `registrant`, `registrar`, `created_at` |
 | `infrastructure.certificate` | SHA-256 지문 | `subject_common_name`, `issuer`, `not_after` |
+| `infrastructure.ssh_host_key` | 키의 SHA-256 (16진수) | `key_type` |
 | `infrastructure.technologies` | 기술 이름 | `kind`, `vendor`, `version`, `cpe` |
 
 같은 팩이 별도의 `web` 카테고리로 유형 다섯 개를 더 제공합니다:
@@ -82,7 +83,7 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 
 엣지 유형이 두 카테고리를 가로질러 정찰 그래프를 연결합니다: `resolves_to`,
 `has_address`, `announced_by`, `contains`, `has_record`, `subdomain_of`, `has_domain`,
-`redirects_to`, `has_whois`, `presents_certificate`, `runs_technology`(호스트, IP,
+`redirects_to`, `has_whois`, `presents_certificate`, `presents_host_key`, `runs_technology`(호스트, IP,
 도메인, URL을 그것이 실행하거나 제공받는 소프트웨어, 하드웨어, 또는 서드파티 서비스 —
 예: Cloudflare — 에 연결), `carries_tracking_id`(페이지, 도메인, IP가 서드파티 광고/분석
 계정 ID를 포함), 그리고 `payment_recipient`(페이지의 결제 양식이 `identity.email_address`

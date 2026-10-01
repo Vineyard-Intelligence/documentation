@@ -45,7 +45,7 @@ one pack to another (a `threat.malware` that **communicates with** an
 
 | Pack (`identifier`) | Category | Types | Models |
 |---|---|---|---|
-| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 14 | The network you map during recon, plus the web resource (URL), web-fingerprint (header, favicon, DOM hash) and tracking-ID entities observed on it |
+| **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 15 | The network you map during recon, plus the web resource (URL), web-fingerprint (header, favicon, DOM hash) and tracking-ID entities observed on it |
 | **Threat** (`…typepacks.threat`) | `threat` | 10 | Threat-intelligence (STIX-aligned) |
 | **Identity** (`…typepacks.identity`) | `identity` | 7 | People, orgs, and online personas |
 | **Financial** (`…typepacks.financial`) | `financial` | 4 | The money trail |
@@ -69,6 +69,7 @@ reconnaissance, in the `infrastructure` category:
 | `infrastructure.dns_record` | the record name | `record_type`, `record_value`, `ttl` |
 | `infrastructure.whois_record` | the subject (domain/IP) | `registrant`, `registrar`, `created_at` |
 | `infrastructure.certificate` | the SHA-256 fingerprint | `subject_common_name`, `issuer`, `not_after` |
+| `infrastructure.ssh_host_key` | the SHA-256 of the key (hex) | `key_type` |
 | `infrastructure.technologies` | the technology name | `kind`, `vendor`, `version`, `cpe` |
 
 The same pack also ships five types in a separate `web` category:
@@ -83,7 +84,7 @@ The same pack also ships five types in a separate `web` category:
 
 Edge types wire the recon graph together across both categories: `resolves_to`, `has_address`,
 `announced_by`, `contains`, `has_record`, `subdomain_of`, `has_domain`, `redirects_to`,
-`has_whois`, `presents_certificate`, `runs_technology` (which links a host, IP, domain, or
+`has_whois`, `presents_certificate`, `presents_host_key`, `runs_technology` (which links a host, IP, domain, or
 URL to the software, hardware, or third-party service — such as Cloudflare — it runs or is
 served by), `carries_tracking_id` (a page, domain, or IP embeds a third-party ad/analytics
 account ID), and `payment_recipient` (a page's payment form is addressed to an
