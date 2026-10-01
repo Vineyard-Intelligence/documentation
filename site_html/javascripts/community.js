@@ -404,7 +404,10 @@
       rows.push(kv("Identifier", '<code>' + escapeHtml(e.identifier) + "</code>" +
         '<button class="vy-copybtn" data-copy="' + escapeAttr(e.identifier) + '">copy</button>'));
     if (e.version) rows.push(kv("Version", "<code>" + escapeHtml(e.version) + "</code>"));
-    if (e.type === "pluginpack" && (e.platforms || []).length) rows.push(kv("Platforms", (e.platforms || []).map(cap).join(", ")));
+    // `platforms` lists every runtime a member declares, so a desktop-only pack still lists web.
+    if (e.type === "pluginpack" && (e.platforms || []).length) rows.push(kv("Platforms",
+      e.desktop_only === "all" ? "Desktop only"
+        : (e.platforms || []).map(cap).join(", ") + (e.desktop_only === "some" ? " (some plugins desktop only)" : "")));
     if (e.repo) rows.push(kv("Repository", sourceUrl(e)
       ? '<a href="' + escapeAttr(sourceUrl(e)) + '" target="_blank" rel="noopener noreferrer"><code>' + escapeHtml(e.repo) + "</code> ↗</a>"
       : '<code>' + escapeHtml(e.repo) + "</code>"));
