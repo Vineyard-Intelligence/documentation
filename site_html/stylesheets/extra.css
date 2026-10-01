@@ -202,7 +202,7 @@ body:has(#vy-skyline) .md-footer { position: relative; z-index: 1; }
   background: rgba(12, 8, 26, .62);
   backdrop-filter: blur(6px);
   border: 1px solid rgba(177, 151, 252, .2);
-  border-radius: .8rem;
+  border-radius: .2rem;
   padding: .4rem 1.4rem;
 }
 /* Two columns, not three: four items across three tracks leaves a 3 + 1 orphan, which reads as a
@@ -234,7 +234,7 @@ body:has(#vy-skyline) .md-footer { position: relative; z-index: 1; }
 /* The two closing buttons need room between them and the row above. */
 .vy-home .md-button { margin: 2.2rem .3rem 0; }
 .vy-home .md-button {
-  border-radius: .55rem;
+  border-radius: .2rem;
   border-color: rgba(255, 255, 255, .35);
   color: #fff;
 }
@@ -277,7 +277,7 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
 }
 .vy-card {
   border: 1px solid var(--vy-border);
-  border-radius: .8rem;
+  border-radius: .2rem;
   padding: 1.1rem 1.2rem;
   background: var(--vy-surface);
   transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
@@ -309,7 +309,7 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
   padding: .7rem;
   margin-bottom: 1rem;
   border: 1px solid var(--vy-border);
-  border-radius: .8rem;
+  border-radius: .2rem;
   background: var(--vy-surface);
   backdrop-filter: blur(10px);
 }
@@ -321,7 +321,7 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
 .vy-search input {
   width: 100%;
   padding: .55rem .7rem .55rem 2rem;
-  border-radius: .55rem;
+  border-radius: .2rem;
   border: 1px solid var(--vy-border-strong);
   background: var(--md-default-bg-color);
   color: var(--md-default-fg-color);
@@ -335,7 +335,7 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
 }
 .vy-select {
   padding: .5rem .6rem;
-  border-radius: .55rem;
+  border-radius: .2rem;
   border: 1px solid var(--vy-border-strong);
   background: var(--md-default-bg-color);
   color: var(--md-default-fg-color);
@@ -344,7 +344,7 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
 }
 
 /* Segmented type filter (All / Plugin Packs / Type Packs) */
-.vy-seg { display: inline-flex; border: 1px solid var(--vy-border-strong); border-radius: .55rem; overflow: hidden; }
+.vy-seg { display: inline-flex; border: 1px solid var(--vy-border-strong); border-radius: .2rem; overflow: hidden; }
 .vy-seg button {
   border: 0; background: transparent; cursor: pointer;
   padding: .5rem .8rem; font-size: .78rem; font-weight: 600;
@@ -371,7 +371,7 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
   flex-direction: column;
   min-width: 0;
   border: 1px solid var(--vy-border);
-  border-radius: .8rem;
+  border-radius: .2rem;
   padding: 1rem;
   background: var(--vy-surface);
   cursor: pointer;
@@ -387,7 +387,7 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
   flex: 0 0 auto;
   width: 2.3rem; height: 2.3rem;
   display: grid; place-items: center;
-  border-radius: .6rem;
+  border-radius: .2rem;
   color: #fff;
 }
 /* Tile colour by kind (card + drawer), the same three hues the app uses. */
@@ -403,7 +403,7 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
   overflow-wrap: anywhere;
 }
 /* The title is the card's only control; this stretches its hit area over the whole card. */
-.vy-pcard__name::after { content: ""; position: absolute; inset: 0; border-radius: .8rem; }
+.vy-pcard__name::after { content: ""; position: absolute; inset: 0; border-radius: .2rem; }
 .vy-pcard__name:focus-visible { outline: none; }
 .vy-pcard__name:focus-visible::after { outline: 2px solid var(--md-accent-fg-color); outline-offset: 2px; }
 .vy-pcard__author { font-size: .72rem; color: var(--vy-text-muted); margin-top: .1rem; }
@@ -414,21 +414,12 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
 }
 .vy-pcard__foot { margin-top: auto; display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; }
 /* Above the title's overlay, so it opens GitHub instead of the drawer. */
-.vy-pcard__src {
-  position: relative; z-index: 1;
-  margin-left: auto;
-  display: grid; place-items: center;
-  width: 1.7rem; height: 1.7rem; border-radius: .45rem;
-  color: var(--vy-text-muted);
-}
-.vy-pcard__src:hover, .vy-pcard__src:focus-visible { color: var(--md-default-fg-color); background: var(--vy-chip-bg); }
-.vy-pcard__src svg { width: 1rem; height: 1rem; }
 
 /* Badges / chips */
 .vy-badge {
   display: inline-flex; align-items: center; gap: .25rem;
-  font-size: .66rem; font-weight: 600;
-  padding: .18rem .45rem; border-radius: 999px;
+  font-size: .74rem; font-weight: 600;
+  padding: .22rem .5rem; border-radius: .2rem;
   background: var(--vy-chip-bg); color: var(--vy-chip-fg);
   border: 1px solid var(--vy-border);
   white-space: nowrap;
@@ -446,18 +437,18 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
   max-height: 15rem; overflow: auto;
   margin: .25rem 0 0; padding: .6rem .7rem;
   background: var(--vy-chip-bg); color: var(--vy-text);
-  border: 1px solid var(--vy-border); border-radius: .5rem;
+  border: 1px solid var(--vy-border); border-radius: .2rem;
 }
 .vy-verified svg { width: .85rem; height: .85rem; }
 
 /* Empty / loading states */
 .vy-state {
   text-align: center; padding: 3rem 1rem; color: var(--vy-text-muted);
-  border: 1px dashed var(--vy-border-strong); border-radius: .8rem;
+  border: 1px dashed var(--vy-border-strong); border-radius: .2rem;
 }
 .vy-state svg { width: 2.4rem; height: 2.4rem; opacity: .5; margin-bottom: .6rem; }
 .vy-skel {
-  height: 9.5rem; border-radius: .8rem;
+  height: 9.5rem; border-radius: .2rem;
   background: linear-gradient(100deg, var(--vy-surface) 30%, var(--vy-surface-2) 50%, var(--vy-surface) 70%);
   background-size: 200% 100%;
   animation: vy-shimmer 1.3s ease-in-out infinite;
@@ -488,12 +479,12 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
 .vy-drawer__close {
   position: absolute; top: .9rem; right: .9rem;
   border: 1px solid var(--vy-border); background: var(--vy-surface);
-  border-radius: .5rem; width: 2rem; height: 2rem; cursor: pointer;
+  border-radius: .2rem; width: 2rem; height: 2rem; cursor: pointer;
   display: grid; place-items: center; color: var(--md-default-fg-color);
 }
 .vy-drawer__head { display: flex; gap: .8rem; align-items: center; margin: .2rem 0 1rem; padding-right: 2.4rem; }
 .vy-drawer__icon {
-  width: 3rem; height: 3rem; border-radius: .7rem; flex: 0 0 auto;
+  width: 3rem; height: 3rem; border-radius: .2rem; flex: 0 0 auto;
   display: grid; place-items: center; color: #fff;
 }
 .vy-drawer__icon svg { width: 1.6rem; height: 1.6rem; }
@@ -515,13 +506,13 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
 .vy-chiprow { display: flex; flex-wrap: wrap; gap: .35rem; }
 .vy-typechip {
   display: inline-flex; align-items: center; gap: .35rem;
-  font-size: .72rem; padding: .25rem .5rem; border-radius: .4rem;
+  font-size: .72rem; padding: .25rem .5rem; border-radius: .2rem;
   border: 1px solid var(--vy-border); background: var(--vy-surface);
 }
 .vy-typechip .vy-dot { width: .6rem; height: .6rem; border-radius: 50%; flex: 0 0 auto; }
 .vy-copybtn {
   border: 1px solid var(--vy-border-strong); background: var(--vy-surface);
-  border-radius: .4rem; padding: .15rem .4rem; cursor: pointer; font-size: .68rem;
+  border-radius: .2rem; padding: .15rem .4rem; cursor: pointer; font-size: .68rem;
   color: var(--md-default-fg-color); margin-left: .4rem;
 }
 /* .vy-drawer__install / .vy-drawer__note were here and are gone with the button they styled —
