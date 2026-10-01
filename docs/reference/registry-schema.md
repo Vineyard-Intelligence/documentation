@@ -15,7 +15,7 @@ The registry repo (`Vineyard-Intelligence/registry`) stores **path and metadata 
 A registry entry is therefore a **catalog projection**: enough fields to search, filter, and badge an item in the browser, plus the `repo@ref/path` pointer that the detail page uses to hydrate the real thing.
 
 !!! info "Denormalized — the manifest is the source of truth"
-    `platforms`, `scopes_summary`, `services`, `plugin_count`, `typepacks`, `categories`, `type_count`, and `edge_count` are **derived** fields, computed from the upstream manifest at merge time. They can drift from the live manifest between updates. When in doubt, the manifest wins.
+    `platforms`, `scopes_summary`, `services`, `plugin_count`, `desktop_only`, `icon`, `typepacks`, `categories`, `type_count`, and `edge_count` are **derived** fields, computed from the upstream manifest at merge time. They can drift from the live manifest between updates. When in doubt, the manifest wins.
 
 ## Plugin entry
 
@@ -40,6 +40,8 @@ A row in `community-pluginpacks.json`. The schema sets `additionalProperties: fa
 | `scopes_summary.graph_write` | boolean | no | `true` if any `node:`/`edge:` create/update/delete verb is present. |
 | `scopes_summary.secret_config` | boolean | no | `true` if any `scopes.config` entry has `secret: true` (a key the analyst must supply). |
 | `plugin_count` | integer | no | **Derived**: number of plugins bundled when the `identifier` names a **pack** (one file → many plugins). Omitted or `1` for a single-plugin entry. The card installs all contained plugins together. Minimum `1`. |
+| `desktop_only` | string | no | **Derived**: `all` when every plugin in the pack runs only on the desktop app, `some` when at least one but not all do. Omitted when none do. |
+| `icon` | string | no | **Derived**: the manifest's `icon` when it is a kebab-case [lucide](https://lucide.dev/icons/) icon name. Omitted otherwise. |
 | `typepacks` | string[] | no | **Derived**: Type Pack identifiers the pack's plugins consume/produce (`io.consumes`/`io.produces`), unique. The marketplace offers these for co-install the same way a skillpack's `requires` offers pluginpacks; a plugin that writes a type from a pack the project never installed fails at node-create time. |
 | `services` | string[] | no | **Derived**: Vineyard services the pack's plugins call by name (`rdap`, `telegram`). Its own field, not a `scopes_summary` flag. See [scopes](scopes.md#services). |
 | `compat` | object | no | Runtime compatibility (the `versions.json` analog). |
@@ -66,6 +68,7 @@ This is the real Chaos reference pack — a single `identifier` that bundles six
   "platforms": ["web"],
   "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
+  "icon": "boxes",
   "compat": { "min_app_version": "1.0.0" },
   "typepacks": [],
   "verified": true
@@ -95,6 +98,7 @@ A row in `community-typepacks.json`, symmetric with the plugin entry. Type Packs
 | `categories` | string[] | no | **Derived**: distinct `types[].category` values (each `^[a-z][a-z0-9_]*$`, unique). Drives the category facet. |
 | `type_count` | integer | no | **Derived**: `types[].length`. Minimum `1`. |
 | `edge_count` | integer | no | **Derived**: `edge_types[].length`. Minimum `0`. |
+| `icon` | string | no | **Derived**: the first type's `icon` when it is a kebab-case [lucide](https://lucide.dev/icons/) icon name. Omitted otherwise. |
 | `thumbnail_url` | string (uri) | no | Optional card icon. |
 | `verified` | boolean | no | Same as the plugin entry — CI-set mirror of `verified-authors.json`. Default `false`. |
 | `status` | object | no | Present only on a **delisted** pack: `{ state: "deprecated" \| "withdrawn", reason, since, replacement? }`. The row stays in the catalog; deleting it would signal nothing to projects that already installed the pack. `deprecated` still loads and warns; `withdrawn` is refused at install and dropped at load. See [Publishing → Taking a pack down](../develop/publishing.md#taking-a-pack-down). |
@@ -117,6 +121,7 @@ The real Infrastructure base pack, defining fifteen infrastructure and web entit
   "categories": ["infrastructure", "web"],
   "type_count": 15,
   "edge_count": 14,
+  "icon": "network",
   "verified": true
 }
 ```

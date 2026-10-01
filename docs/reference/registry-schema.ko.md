@@ -15,7 +15,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 따라서 registry 항목은 **카탈로그 프로젝션**입니다: 브라우저에서 항목을 검색, 필터링, 배지 표시하기에 충분한 필드와, 상세 페이지가 실제 항목을 하이드레이트하는 데 사용하는 `repo@ref/path` 포인터입니다.
 
 !!! info "Denormalized — the manifest is the source of truth"
-    `platforms`, `scopes_summary`, `services`, `plugin_count`, `typepacks`, `categories`, `type_count`, `edge_count`는 **파생된** 필드로, 병합 시점에 업스트림 manifest에서 계산됩니다. 업데이트 사이에 실제 manifest와 차이가 발생할 수 있습니다. 의심스러운 경우 manifest가 우선합니다.
+    `platforms`, `scopes_summary`, `services`, `plugin_count`, `desktop_only`, `icon`, `typepacks`, `categories`, `type_count`, `edge_count`는 **파생된** 필드로, 병합 시점에 업스트림 manifest에서 계산됩니다. 업데이트 사이에 실제 manifest와 차이가 발생할 수 있습니다. 의심스러운 경우 manifest가 우선합니다.
 
 ## Plugin entry
 
@@ -40,6 +40,8 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `scopes_summary.graph_write` | boolean | no | `node:`/`edge:` create/update/delete 동사가 있으면 `true`. |
 | `scopes_summary.secret_config` | boolean | no | `scopes.config` 항목에 `secret: true`가 있으면 `true` (분석가가 직접 넣어야 하는 키). |
 | `plugin_count` | integer | no | **파생됨**: `identifier`가 **pack**을 명명할 때 번들된 plugin 수 (하나의 파일 → 여러 plugin). 단일 plugin 항목의 경우 생략되거나 `1`. 카드는 포함된 모든 plugin을 함께 설치합니다. 최소 `1`. |
+| `desktop_only` | string | no | **파생됨**: 팩의 모든 plugin이 데스크탑 앱에서만 실행되면 `all`, 일부만 그렇다면 `some`. 하나도 없으면 생략됩니다. |
+| `icon` | string | no | **파생됨**: manifest의 `icon`이 kebab-case [lucide](https://lucide.dev/icons/) 아이콘 이름일 때 그 값. 아니면 생략됩니다. |
 | `typepacks` | string[] | no | **파생됨**: 팩의 플러그인이 소비/생산하는 Type Pack 식별자(`io.consumes`/`io.produces`), 고유값. skillpack의 `requires`가 pluginpack을 제공하는 것과 같은 방식으로 marketplace가 이들을 함께 설치하도록 제안합니다. 프로젝트가 설치하지 않은 팩의 type을 쓰는 plugin은 노드 생성 시점에 실패합니다. |
 | `services` | string[] | no | **파생**: 팩의 플러그인이 이름으로 호출하는 Vineyard 서비스(`rdap`, `telegram`). `scopes_summary` 플래그가 아니라 별도 필드입니다. [scopes](scopes.md#services) 참조. |
 | `compat` | object | no | 런타임 호환성 (`versions.json`과 유사). |
@@ -66,6 +68,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
   "platforms": ["web"],
   "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
+  "icon": "boxes",
   "compat": { "min_app_version": "1.0.0" },
   "typepacks": [],
   "verified": true
@@ -95,6 +98,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `categories` | string[] | no | **파생됨**: 고유한 `types[].category` 값 (각각 `^[a-z][a-z0-9_]*$`, 고유). 카테고리 패싯을 구동합니다. |
 | `type_count` | integer | no | **파생됨**: `types[].length`. 최소 `1`. |
 | `edge_count` | integer | no | **파생됨**: `edge_types[].length`. 최소 `0`. |
+| `icon` | string | no | **파생됨**: 첫 번째 type의 `icon`이 kebab-case [lucide](https://lucide.dev/icons/) 아이콘 이름일 때 그 값. 아니면 생략됩니다. |
 | `thumbnail_url` | string (uri) | no | 선택적 카드 아이콘. |
 | `verified` | boolean | no | plugin 항목과 동일 — CI 설정 `verified-authors.json`의 미러. 기본값 `false`. |
 | `status` | object | no | **게시가 취소된** 팩에만 존재: `{ state: "deprecated" \| "withdrawn", reason, since, replacement? }`. 행은 카탈로그에 남습니다. 항목을 지우면 이미 설치한 프로젝트엔 아무 신호도 가지 않기 때문입니다. `deprecated`는 계속 로드되며 경고만, `withdrawn`은 설치 거부 + 로드 시 제외됩니다. [Publishing → 팩 내리기](../develop/publishing.ko.md) 참조. |
@@ -117,6 +121,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
   "categories": ["infrastructure", "web"],
   "type_count": 15,
   "edge_count": 14,
+  "icon": "network",
   "verified": true
 }
 ```
