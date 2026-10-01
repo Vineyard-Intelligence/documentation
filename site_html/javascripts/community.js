@@ -111,8 +111,10 @@
     layers: P + '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>' + E,
     "book-open": P + '<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>' + E,
   };
+  // Own keys only: "constructor" is a valid kebab name, and ICON["constructor"] is Object.
+  var hasOwn = Object.prototype.hasOwnProperty;
   function icon(name, fallback) {
-    return ICON[name] || ICON[fallback] || ICON.package;
+    return (hasOwn.call(ICON, name) ? ICON[name] : ICON[fallback]) || ICON.package;
   }
 
   // One label, default icon and tile colour (CSS .vy-tile--<kind>) per kind.

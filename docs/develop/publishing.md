@@ -33,7 +33,7 @@ A few things worth knowing going in:
 
 - The `identifier` in the entry must equal `manifest.identifier` (or `typepack.identifier`) and uses the reverse-DNS form `<your-namespace>.pluginpacks.*` / `.typepacks.*` / `.skillpacks.*` — see [the three content types](index.md#the-three-content-types).
 - `ref` is the only thing pinning your code. To ship a new version, edit your pack's file in place with the new `ref` and `version` — see [Updates](updates.md).
-- Derived fields (`platforms`, `scopes_summary`, `categories`, `type_count`, …) are projections of the full manifest/Type Pack so the browse page renders without fetching every manifest. CI recomputes `scopes_summary`, `platforms`, `services`, `plugin_count`, `section_count`, `type_count` and `edge_count` from the pinned document and rejects the entry if any it carries disagree. `categories` and a Skill Pack's `applies_to`/`requires` are not recomputed, so keep them accurate yourself.
+- Derived fields (`platforms`, `scopes_summary`, `categories`, `type_count`, …) are projections of the full manifest/Type Pack so the browse page renders without fetching every manifest. CI recomputes `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count`, `type_count` and `edge_count` from the pinned document and rejects the entry if any it carries disagree. `categories` and a Skill Pack's `applies_to`/`requires` are not recomputed, so keep them accurate yourself.
 
 ## What CI enforces
 
@@ -50,7 +50,7 @@ Every check below is **blocking** — a pull request cannot merge until they all
 
 - **Immutable `ref`.** Must be a **commit SHA** (40-hex or 64-hex). Tags and branches can be moved and are **rejected**. (`verify_pinned.py`)
 - **The pinned document matches the entry.** The document at `repo@ref/path` is fetched and its `identifier`, `content_type`, and `version` must equal what your entry advertises. An entry whose metadata was bumped without re-pinning the `ref` fails here.
-- **Every summary field is recomputed, not trusted.** `scopes_summary`, `platforms`, `services`, `plugin_count`, `section_count`, `type_count` and `edge_count` are derived from the pinned document and compared to what you wrote. `scopes_summary.network` is true when a member declares `network` **or** `web_probe`.
+- **Every summary field is recomputed, not trusted.** `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count`, `type_count` and `edge_count` are derived from the pinned document and compared to what you wrote. `scopes_summary.network` is true when a member declares `network` **or** `web_probe`.
 - **The bundle matches the manifest.** For Plugin Packs, the module named by `platforms.web.entry` is fetched at the pinned commit. The `version` and `license` it declares for the pack and for each member must equal the manifest's. A manifest edited without rebuilding `dist/` fails here, and so does an entry that 404s. (`verify_pinned.py`)
 
 ### The type graph

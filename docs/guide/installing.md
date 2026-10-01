@@ -29,13 +29,16 @@ category facet, and it sorts by name, author, or kind instead.
 ### Reading a card
 
 Each card is a compact summary: an **icon** and **name**, the **author** (with a verified tick ✓
-when verified), a one-line **description**, and badges in the footer:
+when verified), the kind and version, a one-line **description**, and badges in the footer:
 
-- For a **Plugin Pack**: a platform badge (e.g. `web`) plus a permission summary — `network` if it
-  calls a declared endpoint and `graph write` if it can modify the graph.
-- For a **Type Pack**: a `schema only` badge (no code, no permissions) and type counts.
-- For a **Skill Pack**: its section count, and either how many plugins it needs or a *no permissions*
-  badge. The node types it applies to are listed in the detail view.
+- For a **Plugin Pack**: how many plugins it bundles (when more than one), `Desktop only` or
+  `Some desktop only` when all or some of its plugins run only in the desktop app, `API key` when
+  it asks for one, and `Vineyard service` when it calls a Vineyard-operated service.
+- For a **Type Pack**: how many types it defines.
+- For a **Skill Pack**: its section count and how many plugins it needs. The node types it applies
+  to are listed in the detail view.
+
+The full permission list is in the detail view, not on the card.
 
 ### The detail view
 
@@ -45,7 +48,7 @@ the whole pack requests in plain language — in the app, for example *"Delete n
 *"Network: calls a declared external endpoint."* — read this before installing. Below it is the
 list of plugins the pack includes. The drawer also shows the pack's **identifier** (e.g.
 `run.vineyard.pluginpacks.ip_recon`), **version**, **license**, and repository. In the app, the
-Type Packs a Plugin Pack needs are shown on its card as a *Needs N typepacks* badge and are installed with it.
+Type Packs a Plugin Pack needs are installed with it.
 
 !!! note "What "verified" means"
     The verified ✓ attests to the *author's identity* — it is set by the registry, not by the
@@ -54,8 +57,10 @@ Type Packs a Plugin Pack needs are shown on its card as a *Needs N typepacks* ba
 
 ## Installing
 
-Click **Install** on a card and Vineyard takes care of the rest. There is no offline copy of a
-pack — each run fetches it fresh from the author's repository.
+Open the marketplace from a project (**Project → Add from Marketplace…**), click **Install** on a
+card, and Vineyard takes care of the rest. Opened outside a project, the marketplace is browse-only
+and shows no **Install**. There is no offline copy of a pack — each run fetches it fresh from the
+author's repository.
 
 For a **plugin**, an **approval dialog** then lists the permissions it requests in plain
 language. Approve, and the plugin becomes available to run in the project.
