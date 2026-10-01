@@ -101,7 +101,7 @@ A row in `community-typepacks.json`, symmetric with the plugin entry. Type Packs
 
 ### Example Type Pack row
 
-The real Infrastructure base pack, defining fourteen infrastructure and web entity types and thirteen edge types:
+The real Infrastructure base pack, defining fifteen infrastructure and web entity types and fourteen edge types:
 
 ```json
 {
@@ -109,14 +109,14 @@ The real Infrastructure base pack, defining fourteen infrastructure and web enti
   "content_type": "vineyard:typepack",
   "name": "Infrastructure",
   "author": "VINEYARD",
-  "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
+  "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
-  "ref": "72386e79468510dbe11aa30ff6b33a7d3caa7bbd",
+  "ref": "56220fb5d02491a665d3ecbf82690f8ddbef1d8d",
   "path": "typepacks/infrastructure.json",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "categories": ["infrastructure", "web"],
-  "type_count": 14,
-  "edge_count": 13,
+  "type_count": 15,
+  "edge_count": 14,
   "verified": true
 }
 ```

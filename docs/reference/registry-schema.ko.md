@@ -101,7 +101,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 
 ### Example Type Pack row
 
-14개의 인프라·웹 엔티티 유형과 13개의 엣지 유형을 정의하는 실제 Infrastructure 기본 팩입니다:
+15개의 인프라·웹 엔티티 유형과 14개의 엣지 유형을 정의하는 실제 Infrastructure 기본 팩입니다:
 
 ```json
 {
@@ -109,14 +109,14 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
   "content_type": "vineyard:typepack",
   "name": "Infrastructure",
   "author": "VINEYARD",
-  "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
+  "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
-  "ref": "72386e79468510dbe11aa30ff6b33a7d3caa7bbd",
+  "ref": "56220fb5d02491a665d3ecbf82690f8ddbef1d8d",
   "path": "typepacks/infrastructure.json",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "categories": ["infrastructure", "web"],
-  "type_count": 14,
-  "edge_count": 13,
+  "type_count": 15,
+  "edge_count": 14,
   "verified": true
 }
 ```
