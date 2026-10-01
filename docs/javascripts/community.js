@@ -308,34 +308,32 @@
     }
     return out.join("");
   }
+  // Verified attests to the author, so the tick goes in front of the author's name.
+  function author(e) {
+    return (e.verified ? '<span class="vy-verified" title="Verified author">' + ICON["badge-check"] + "</span> " : "") +
+      escapeHtml(e.author);
+  }
   function chip(text, mod) {
     return '<span class="vy-badge' + (mod ? " vy-badge--" + mod : "") + '">' + escapeHtml(text) + "</span>";
   }
 
   // A plain container with the title as the one real control: the button's ::after covers the
-  // card, so the whole card opens the drawer and is a single tab stop, while the GitHub link sits
-  // above that overlay and opens the source instead. (A link cannot live inside a <button>.)
+  // card, so the whole card opens the drawer and is a single tab stop. The source link lives in
+  // the drawer.
   Browser.prototype.card = function (e, i) {
-    var src = sourceUrl(e);
     return (
       '<div class="vy-pcard">' +
         '<div class="vy-pcard__head">' +
           '<div class="vy-pcard__icon vy-tile--' + e.type + '">' + kindIcon(e) + "</div>" +
           '<div class="vy-pcard__title">' +
             '<button class="vy-pcard__name" data-idx="' + i + '" type="button">' + escapeHtml(e.name) + "</button>" +
-            '<div class="vy-pcard__author">by ' + escapeHtml(e.author) +
-              (e.verified ? ' <span class="vy-verified" title="Verified author">' + ICON["badge-check"] + "</span>" : "") +
+            '<div class="vy-pcard__author">' + author(e) +
               " &middot; " + KIND[e.type].label +
               (e.version ? " &middot; v" + escapeHtml(e.version) : "") + "</div>" +
           "</div>" +
         "</div>" +
         '<p class="vy-pcard__desc">' + escapeHtml(e.description || "") + "</p>" +
-        '<div class="vy-pcard__foot">' + chips(e) +
-          (src
-            ? '<a class="vy-pcard__src" href="' + escapeAttr(src) + '" target="_blank" rel="noopener noreferrer"' +
-              ' title="Source on GitHub" aria-label="' + escapeAttr(e.name) + ' source on GitHub">' + ICON.github + "</a>"
-            : "") +
-        "</div>" +
+        '<div class="vy-pcard__foot">' + chips(e) + "</div>" +
       "</div>"
     );
   };
@@ -510,8 +508,7 @@
         '<div class="vy-drawer__icon vy-tile--' + e.type + '">' + kindIcon(e) + "</div>" +
         "<div>" +
           "<h2>" + escapeHtml(e.name) + "</h2>" +
-          '<div class="vy-drawer__author">by ' + escapeHtml(e.author) +
-            (e.verified ? ' <span class="vy-verified" title="Verified author">' + ICON["badge-check"] + "</span>" : "") +
+          '<div class="vy-drawer__author">' + author(e) +
             " &middot; " + KIND[e.type].label + "</div>" +
         "</div>" +
       "</div>" +
