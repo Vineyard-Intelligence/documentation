@@ -87,16 +87,17 @@ Applying a layout re-computes node positions and then fits the view.
 
 | Layout | Description |
 | --- | --- |
-| **Concentric** | Arranges nodes in concentric rings; overlap is prevented. |
-| **ForceAtlas2** | Force-directed layout (Gephi's ForceAtlas2) that pushes nodes apart and pulls connected ones together; built for link-analysis graphs. |
+| **ForceAtlas2** | Force-directed layout (Gephi's ForceAtlas2) that pushes nodes apart and pulls connected ones together; built for link-analysis graphs. The default. |
+| **Stress (distance-preserving)** | Places nodes so that on-screen distance follows the number of hops between them; clusters are less pronounced than in ForceAtlas2. |
 | **D3 Force** | A D3-based force-directed variant. |
+| **Concentric** | Arranges nodes in concentric rings; overlap is prevented. |
 | **Circular** | Places nodes evenly around a single circle. |
 | **Grid** | Lays nodes out on a regular grid; overlap is prevented. |
 | **Hierarchical (Dagre)** | Top-down layered layout, good for directed / tree-like graphs. |
 | **Hierarchical (AntV Dagre)** | AntV's own Dagre variant — also top-down and layered, typically faster on wide graphs. |
 
 !!! tip
-    ForceAtlas2 and D3 Force are the best starting point for an unfamiliar graph; switch to Hierarchical (Dagre) when the relationships are directional and you want clear layers.
+    ForceAtlas2 is the best starting point for an unfamiliar graph. Switch to Stress when how far apart two entities are matters more than which cluster they sit in, and to Hierarchical (Dagre) when the relationships are directional and you want clear layers.
 
 ## Overlays
 
