@@ -359,7 +359,9 @@
         '<button class="vy-copybtn" data-copy="' + escapeAttr(e.identifier) + '">copy</button>'));
     if (e.version) rows.push(kv("Version", "<code>" + escapeHtml(e.version) + "</code>"));
     if (e.type === "pluginpack" && (e.platforms || []).length) rows.push(kv("Platforms", (e.platforms || []).map(cap).join(", ")));
-    if (e.repo) rows.push(kv("Repository", '<code>' + escapeHtml(e.repo) + "</code>"));
+    if (e.repo) rows.push(kv("Repository", /^[A-Za-z0-9-]+\/[A-Za-z0-9._-]+$/.test(e.repo)
+      ? '<a href="https://github.com/' + escapeAttr(e.repo) + '" target="_blank" rel="noopener noreferrer"><code>' + escapeHtml(e.repo) + "</code> ↗</a>"
+      : '<code>' + escapeHtml(e.repo) + "</code>"));
     if (e.ref) rows.push(kv("Ref", "<code>" + escapeHtml(short(e.ref)) + "</code>"));
     if (e.license) rows.push(kv("License", escapeHtml(e.license)));
     if (e.type === "typepack") {
