@@ -457,17 +457,8 @@
 
     var body = "";
 
-    // Permissions (plugins) — neutral, no destructive warnings (per SPEC §8)
+    // Plugin packs read as the app's drawer does: what is in the pack, then what it may do.
     if (e.type === "pluginpack") {
-      var perms = permissionLines(e);
-      body +=
-        "<h4>Permissions</h4>" +
-        (perms.length
-          ? perms.map(function (p) {
-              return '<div class="vy-perm"><span class="vy-perm__ico">' + icon(p.icon) + "</span><span>" + escapeHtml(p.text) + "</span></div>";
-            }).join("")
-          : '<p style="font-size:.8rem;color:var(--vy-text-muted)">No special permissions — pure compute, no data or network access.</p>');
-
       // A single-plugin document (no members) carries its own io.
       if (ioLine(e.io)) body += "<h4>Input / Output</h4>" + ioLine(e.io);
 
@@ -479,6 +470,16 @@
             escapeHtml(p.name) + "</strong>" + (p.description ? " — " + escapeHtml(p.description) : "") + ioLine(p.io) + "</span></div>";
         }).join("");
       }
+
+      // Permissions — neutral, no destructive warnings (per SPEC §8)
+      var perms = permissionLines(e);
+      body +=
+        "<h4>Permissions</h4>" +
+        (perms.length
+          ? perms.map(function (p) {
+              return '<div class="vy-perm"><span class="vy-perm__ico">' + icon(p.icon) + "</span><span>" + escapeHtml(p.text) + "</span></div>";
+            }).join("")
+          : '<p style="font-size:.8rem;color:var(--vy-text-muted)">No special permissions — pure compute, no data or network access.</p>');
     }
 
     // Type palette (typepacks)
@@ -576,12 +577,11 @@
     return out;
   }
 
-  // What a plugin takes and makes, by type name (category in the tooltip).
+  // What a plugin takes and makes, by type id (category.name) — as the app and "Applies to" show types.
   function ioLine(io) {
     function names(list) {
-      return (list || []).map(function (t) {
-        return '<code title="' + escapeAttr(t.category ? t.category + "." + t.name : t.name) + '">' + escapeHtml(t.name || "?") + "</code>";
-      }).join(" ");
+      return uniq((list || []).map(function (t) { return t.category ? t.category + "." + t.name : t.name || "?"; }))
+        .map(function (id) { return "<code>" + escapeHtml(id) + "</code>"; }).join(" ");
     }
     var c = names(io && io.consumes), p = names(io && io.produces);
     if (!c && !p) return "";
