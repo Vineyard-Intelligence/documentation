@@ -471,7 +471,8 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
 .vy-drawer-backdrop.is-open { opacity: 1; pointer-events: auto; }
 .vy-drawer {
   position: fixed; top: 0; right: 0; bottom: 0; z-index: 21;
-  width: min(34rem, 94vw);
+  /* 45rem: room for the plugin, input/output and permission rows; prose is capped below. */
+  width: min(45rem, 94vw);
   background: var(--md-default-bg-color);
   border-left: 1px solid var(--vy-border-strong);
   box-shadow: -20px 0 60px -30px rgba(0,0,0,.6);
@@ -497,7 +498,7 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
 .vy-drawer__icon svg { width: 1.6rem; height: 1.6rem; }
 .vy-drawer h2 { margin: 0; font-size: 1.15rem; line-height: 1.2; }
 .vy-drawer__author { font-size: .8rem; color: var(--vy-text-muted); margin-top: .15rem; }
-.vy-drawer__desc { font-size: .85rem; line-height: 1.55; margin: 0 0 1.1rem; }
+.vy-drawer__desc { font-size: .85rem; line-height: 1.55; margin: 0 0 1.1rem; max-width: 70ch; }
 .vy-drawer h4 {
   font-size: .68rem; text-transform: uppercase; letter-spacing: .1em;
   color: var(--vy-text-muted); margin: 1.2rem 0 .5rem; font-weight: 700;
