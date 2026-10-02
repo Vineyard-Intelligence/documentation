@@ -33,6 +33,9 @@
   --vy-text-muted:     #5b5470;
   --vy-chip-bg:        var(--vy-100);
   --vy-chip-fg:        var(--vy-800);
+  /* Card chips: Mantine's light gray, the colour the app's chips use */
+  --vy-badge-bg:       #f1f3f5;
+  --vy-badge-fg:       #212529;
 }
 
 /* ---- Material primary/accent override (dark / slate) --------------------- */
@@ -54,6 +57,8 @@
   --vy-text-muted:     #b3a9cc;
   --vy-chip-bg:        rgba(139, 92, 246, 0.16);
   --vy-chip-fg:        var(--vy-200);
+  --vy-badge-bg:       #111315;
+  --vy-badge-fg:       #f8f9fa;
 }
 
 /* Header tint: subtle gradient instead of flat fill */
@@ -343,15 +348,17 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
   cursor: pointer;
 }
 
-/* Segmented type filter (All / Plugin Packs / Type Packs) */
+/* Segmented kind filter: native radios, visually hidden, the label span is the segment */
 .vy-seg { display: inline-flex; border: 1px solid var(--vy-border-strong); border-radius: .2rem; overflow: hidden; }
-.vy-seg button {
-  border: 0; background: transparent; cursor: pointer;
-  padding: .5rem .8rem; font-size: .78rem; font-weight: 600;
+.vy-seg label { position: relative; display: flex; cursor: pointer; }
+.vy-seg label + label { border-left: 1px solid var(--vy-border); }
+.vy-seg input { position: absolute; opacity: 0; pointer-events: none; }
+.vy-seg span {
+  display: flex; align-items: center; padding: .5rem .8rem; font-size: .78rem; font-weight: 600;
   color: var(--vy-text-muted);
 }
-.vy-seg button + button { border-left: 1px solid var(--vy-border); }
-.vy-seg button.is-active { background: var(--md-primary-fg-color); color: #fff; }
+.vy-seg input:checked + span { background: var(--md-primary-fg-color); color: #fff; }
+.vy-seg input:focus-visible + span { outline: 2px solid var(--md-accent-fg-color); outline-offset: -2px; }
 
 .vy-check { display: inline-flex; align-items: center; gap: .35rem; font-size: .78rem; color: var(--vy-text-muted); cursor: pointer; user-select: none; }
 .vy-check input { accent-color: var(--md-primary-fg-color); }
@@ -388,12 +395,16 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
   width: 2.3rem; height: 2.3rem;
   display: grid; place-items: center;
   border-radius: .2rem;
-  color: #fff;
 }
-/* Tile colour by kind (card + drawer), the same three hues the app uses. */
-.vy-tile--pluginpack { background: linear-gradient(135deg, #be4bdb, #862e9c); }
-.vy-tile--typepack   { background: linear-gradient(135deg, #22b8cf, #0b7285); }
-.vy-tile--skillpack  { background: linear-gradient(135deg, var(--vy-500), var(--vy-700)); }
+/* Tile colour by kind (card + drawer): Mantine's light variant of the app's hues — grape, cyan,
+   indigo — so a plugin pack and a skill pack are never two shades of purple. The slate values are
+   what the app's dark theme renders. */
+.vy-tile--pluginpack { background: #f3d9fa; color: #862e9c; }
+.vy-tile--typepack   { background: #c5f6fa; color: #0b7285; }
+.vy-tile--skillpack  { background: #dbe4ff; color: #364fc7; }
+[data-md-color-scheme="slate"] .vy-tile--pluginpack { background: #43174e; color: #f8f0fc; }
+[data-md-color-scheme="slate"] .vy-tile--typepack   { background: #063943; color: #e3fafc; }
+[data-md-color-scheme="slate"] .vy-tile--skillpack  { background: #1b2864; color: #edf2ff; }
 .vy-pcard__icon svg { width: 1.25rem; height: 1.25rem; }
 .vy-pcard__title { min-width: 0; }
 .vy-pcard__name {
@@ -413,21 +424,15 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
 .vy-pcard__foot { margin-top: auto; display: flex; flex-wrap: wrap; gap: .35rem; align-items: center; }
-/* Above the title's overlay, so it opens GitHub instead of the drawer. */
 
 /* Badges / chips */
 .vy-badge {
   display: inline-flex; align-items: center; gap: .25rem;
   font-size: .74rem; font-weight: 600;
   padding: .22rem .5rem; border-radius: .2rem;
-  background: var(--vy-chip-bg); color: var(--vy-chip-fg);
-  border: 1px solid var(--vy-border);
+  background: var(--vy-badge-bg); color: var(--vy-badge-fg);
   white-space: nowrap;
 }
-.vy-badge--desktop { background: #334155; color: #fff; border-color: transparent; }
-.vy-badge--key,
-.vy-badge--needs { background: #b45309; color: #fff; border-color: transparent; }
-.vy-badge--service { background: #1d4ed8; color: #fff; border-color: transparent; }
 .vy-verified { color: var(--vy-500); display: inline-flex; }
 
 /* Skill Pack playbook overview (drawer) */
@@ -471,11 +476,13 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
   border-left: 1px solid var(--vy-border-strong);
   box-shadow: -20px 0 60px -30px rgba(0,0,0,.6);
   transform: translateX(100%);
-  transition: transform .22s cubic-bezier(.4,0,.2,1);
+  /* Hidden once it has slid out, so a closed drawer's controls leave the tab order */
+  visibility: hidden;
+  transition: transform .22s cubic-bezier(.4,0,.2,1), visibility 0s linear .22s;
   overflow-y: auto;
   padding: 1.4rem 1.4rem 3rem;
 }
-.vy-drawer.is-open { transform: translateX(0); }
+.vy-drawer.is-open { transform: translateX(0); visibility: visible; transition: transform .22s cubic-bezier(.4,0,.2,1); }
 .vy-drawer__close {
   position: absolute; top: .9rem; right: .9rem;
   border: 1px solid var(--vy-border); background: var(--vy-surface);
@@ -485,7 +492,7 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
 .vy-drawer__head { display: flex; gap: .8rem; align-items: center; margin: .2rem 0 1rem; padding-right: 2.4rem; }
 .vy-drawer__icon {
   width: 3rem; height: 3rem; border-radius: .2rem; flex: 0 0 auto;
-  display: grid; place-items: center; color: #fff;
+  display: grid; place-items: center;
 }
 .vy-drawer__icon svg { width: 1.6rem; height: 1.6rem; }
 .vy-drawer h2 { margin: 0; font-size: 1.15rem; line-height: 1.2; }
@@ -503,6 +510,9 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
 .vy-perm:last-child { border-bottom: 0; }
 .vy-perm__ico { flex: 0 0 auto; margin-top: .1rem; color: var(--md-primary-fg-color); }
 .vy-perm__ico svg { width: 1rem; height: 1rem; }
+/* A plugin's input → output types, under its description */
+.vy-io { display: block; margin-top: .25rem; font-size: .72rem; color: var(--vy-text-muted); }
+.vy-io code { font-size: .68rem; }
 .vy-chiprow { display: flex; flex-wrap: wrap; gap: .35rem; }
 .vy-typechip {
   display: inline-flex; align-items: center; gap: .35rem;

@@ -78,7 +78,7 @@
     package: P + '<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="m7.5 4.27 9 5.15"/>' + E,
     "git-branch": P + '<line x1="6" x2="6" y1="3" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>' + E,
     inbox: P + '<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>' + E,
-    // Every icon the catalog can name (pack and type icons) plus the per-kind defaults —
+    // Every icon the catalog can name for a pack or a pack's plugins, plus the per-kind defaults —
     // exact path data from lucide-react 0.542.0 (ISC).
     megaphone: P + '<path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"/><path d="M8 6v8"/>' + E,
     "shield-check": P + '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>' + E,
@@ -110,6 +110,29 @@
     puzzle: P + '<path d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z"/>' + E,
     layers: P + '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>' + E,
     "book-open": P + '<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>' + E,
+    "arrow-left": P + '<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>' + E,
+    "arrow-right": P + '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>' + E,
+    braces: P + '<path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5c0 1.1.9 2 2 2h1"/><path d="M16 21h1a2 2 0 0 0 2-2v-5c0-1.1.9-2 2-2a2 2 0 0 1-2-2V5a2 2 0 0 0-2-2h-1"/>' + E,
+    "chart-bar": P + '<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 16h8"/><path d="M7 11h12"/><path d="M7 6h3"/>' + E,
+    "circle-check": P + '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>' + E,
+    clock: P + '<path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/>' + E,
+    "file-badge": P + '<path d="M12 22h6a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v3.072"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="m6.69 16.479 1.29 4.88a.5.5 0 0 1-.698.591l-1.843-.849a1 1 0 0 0-.88.001l-1.846.85a.5.5 0 0 1-.693-.593l1.29-4.88"/><circle cx="5" cy="14" r="3"/>' + E,
+    "file-code": P + '<path d="M10 12.5 8 15l2 2.5"/><path d="m14 12.5 2 2.5-2 2.5"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/>' + E,
+    "file-digit": P + '<path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><rect width="4" height="6" x="2" y="12" rx="2"/><path d="M10 12h2v6"/><path d="M10 18h4"/>' + E,
+    flag: P + '<path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"/>' + E,
+    "folder-git-2": P + '<path d="M9 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v5"/><circle cx="13" cy="12" r="2"/><path d="M18 19c-2.8 0-5-2.2-5-5v8"/><circle cx="20" cy="19" r="2"/>' + E,
+    gauge: P + '<path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/>' + E,
+    "git-commit-horizontal": P + '<circle cx="12" cy="12" r="3"/><line x1="3" x2="9" y1="12" y2="12"/><line x1="15" x2="21" y1="12" y2="12"/>' + E,
+    link: P + '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>' + E,
+    list: P + '<path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/>' + E,
+    phone: P + '<path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/>' + E,
+    route: P + '<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>' + E,
+    "scroll-text": P + '<path d="M15 12h-5"/><path d="M15 8h-5"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/>' + E,
+    "search-code": P + '<path d="m13 13.5 2-2.5-2-2.5"/><path d="m21 21-4.3-4.3"/><path d="M9 8.5 7 11l2 2.5"/><circle cx="11" cy="11" r="8"/>' + E,
+    server: P + '<rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/>' + E,
+    shield: P + '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>' + E,
+    "user-search": P + '<circle cx="10" cy="7" r="4"/><path d="M10.3 15H7a4 4 0 0 0-4 4v2"/><circle cx="17" cy="17" r="3"/><path d="m21 21-1.9-1.9"/>' + E,
+    users: P + '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/>' + E,
   };
   // Own keys only: "constructor" is a valid kebab name, and ICON["constructor"] is Object.
   var hasOwn = Object.prototype.hasOwnProperty;
@@ -204,13 +227,14 @@
       '<div class="vy-community">' +
         '<div class="vy-community__toolbar">' +
           '<div class="vy-search">' + ICON.search.replace("<svg", '<svg class="vy-search__ico"') +
-            '<input type="search" id="vy-q" placeholder="Search Plugin Packs, Type Packs & Skill Packs…" autocomplete="off" aria-label="Search">' +
+            '<input type="search" id="vy-q" placeholder="Search plugin, type and skill packs…" autocomplete="off" aria-label="Search">' +
           "</div>" +
-          '<div class="vy-seg" role="tablist" aria-label="Type filter">' +
-            '<button data-type="all" class="is-active">All</button>' +
-            '<button data-type="pluginpack">Plugin Packs</button>' +
-            '<button data-type="typepack">Type Packs</button>' +
-            '<button data-type="skillpack">Skill Packs</button>' +
+          // Native radios: the browser supplies the radio role, checked state and arrow keys.
+          '<div class="vy-seg" role="radiogroup" aria-label="Kind">' +
+            '<label><input type="radio" name="vy-kind" value="all" checked><span>All</span></label>' +
+            '<label><input type="radio" name="vy-kind" value="pluginpack"><span>Plugin packs</span></label>' +
+            '<label><input type="radio" name="vy-kind" value="typepack"><span>Type packs</span></label>' +
+            '<label><input type="radio" name="vy-kind" value="skillpack"><span>Skill packs</span></label>' +
           "</div>" +
           (cats.length
             ? '<select class="vy-select" id="vy-cat" aria-label="Category"><option value="all">All categories</option>' +
@@ -229,19 +253,14 @@
         '<div class="vy-grid" id="vy-grid"></div>' +
       "</div>" +
       '<div class="vy-drawer-backdrop" id="vy-backdrop"></div>' +
-      '<aside class="vy-drawer" id="vy-drawer" role="dialog" aria-modal="true" aria-label="Details"></aside>';
+      // aria-modal is set only while it is open; closed, CSS visibility takes it out of tab order.
+      '<aside class="vy-drawer" id="vy-drawer" role="dialog" aria-label="Details"></aside>';
 
     // Wire events
     var q = document.getElementById("vy-q");
     q.addEventListener("input", function () { self.state.q = q.value; self.paint(); });
-    Array.prototype.forEach.call(this.mount.querySelectorAll(".vy-seg button"), function (btn) {
-      btn.addEventListener("click", function () {
-        self.state.type = btn.getAttribute("data-type");
-        Array.prototype.forEach.call(self.mount.querySelectorAll(".vy-seg button"), function (b) {
-          b.classList.toggle("is-active", b === btn);
-        });
-        self.paint();
-      });
+    Array.prototype.forEach.call(this.mount.querySelectorAll(".vy-seg input"), function (r) {
+      r.addEventListener("change", function () { self.state.type = r.value; self.paint(); });
     });
     var cat = document.getElementById("vy-cat");
     if (cat) cat.addEventListener("change", function () { self.state.category = cat.value; self.paint(); });
@@ -267,9 +286,9 @@
     var m = this._meta;
     count.innerHTML =
       "Showing <strong>" + list.length + "</strong> of " + this.all.length +
-      " &middot; <strong>" + m.nPluginpacks + "</strong> Plugin Packs (" + m.nPluginsTotal + " plugins) &middot; <strong>" +
-      m.nTypepacks + "</strong> Type Packs &middot; <strong>" +
-      m.nSkillpacks + "</strong> Skill Packs";
+      " &middot; <strong>" + m.nPluginpacks + "</strong> plugin packs (" + m.nPluginsTotal + " plugins) &middot; <strong>" +
+      m.nTypepacks + "</strong> type packs &middot; <strong>" +
+      m.nSkillpacks + "</strong> skill packs";
 
     if (!list.length) {
       grid.style.display = "block";
@@ -284,27 +303,27 @@
     Array.prototype.forEach.call(grid.querySelectorAll(".vy-pcard__name"), function (el) {
       el.addEventListener("click", function () {
         var idx = parseInt(el.getAttribute("data-idx"), 10);
-        self.openDrawer(list[idx]);
+        self.openDrawer(list[idx], el);
       });
     });
   };
 
   // Chips name only what changes whether a pack works for you; full permissions live in the drawer.
-  // Same wording as the app's marketplace cards.
+  // Same wording, and the same plain gray, as the app's marketplace cards.
   function chips(e) {
     var out = [];
     if (e.type === "pluginpack") {
       if (e.plugin_count > 1) out.push(chip(e.plugin_count + " plugins"));
-      if (e.desktop_only === "all") out.push(chip("Desktop only", "desktop"));
-      else if (e.desktop_only === "some") out.push(chip("Some desktop only", "desktop"));
-      if ((e.scopes_summary || {}).secret_config) out.push(chip("API key", "key"));
-      if ((e.services || []).length) out.push(chip("Vineyard service", "service"));
+      if (e.desktop_only === "all") out.push(chip("Desktop only"));
+      else if (e.desktop_only === "some") out.push(chip("Some desktop only"));
+      if ((e.scopes_summary || {}).secret_config) out.push(chip("API key"));
+      if ((e.services || []).length) out.push(chip("Vineyard service"));
     } else if (e.type === "typepack") {
       if (typeof e.type_count === "number") out.push(chip(plural(e.type_count, "type")));
     } else {
       if (typeof e.section_count === "number") out.push(chip(plural(e.section_count, "section")));
       var nReq = (e.requires || []).length;
-      if (nReq) out.push(chip("Needs " + plural(nReq, "plugin"), "needs"));
+      if (nReq) out.push(chip("Needs " + plural(nReq, "plugin")));
     }
     return out.join("");
   }
@@ -313,8 +332,8 @@
     return (e.verified ? '<span class="vy-verified" title="Verified author">' + ICON["badge-check"] + "</span> " : "") +
       escapeHtml(e.author);
   }
-  function chip(text, mod) {
-    return '<span class="vy-badge' + (mod ? " vy-badge--" + mod : "") + '">' + escapeHtml(text) + "</span>";
+  function chip(text) {
+    return '<span class="vy-badge">' + escapeHtml(text) + "</span>";
   }
 
   // A plain container with the title as the one real control: the button's ::after covers the
@@ -339,14 +358,18 @@
   };
 
   // --- Detail drawer -------------------------------------------------------
-  Browser.prototype.openDrawer = function (e) {
+  // `opener` is the card's title button; closing hands focus back to it.
+  Browser.prototype.openDrawer = function (e, opener) {
     var self = this;
     var drawer = document.getElementById("vy-drawer");
     var backdrop = document.getElementById("vy-backdrop");
     this._openId = e.identifier || e.name;
+    this._opener = opener;
 
     var loading = !e._detail && !!detailUrl(e);
     drawer.innerHTML = this.drawerHtml(e, loading);
+    drawer.setAttribute("aria-label", e.name);
+    drawer.setAttribute("aria-modal", "true");
     drawer.classList.add("is-open");
     backdrop.classList.add("is-open");
     document.body.style.overflow = "hidden";
@@ -391,12 +414,22 @@
   Browser.prototype.closeDrawer = function () {
     var drawer = document.getElementById("vy-drawer");
     var backdrop = document.getElementById("vy-backdrop");
-    if (drawer) drawer.classList.remove("is-open");
-    if (backdrop) backdrop.classList.remove("is-open");
+    // Escape reaches here on every keypress; only an open drawer may move focus.
+    if (!drawer || !drawer.classList.contains("is-open")) return;
+    drawer.classList.remove("is-open");
+    drawer.removeAttribute("aria-modal");
+    backdrop.classList.remove("is-open");
     document.body.style.overflow = "";
+    if (this._opener && this._opener.isConnected) this._opener.focus();
   };
 
   Browser.prototype.drawerHtml = function (e, loading) {
+    var all = this.all;
+    // A required pack by its catalog name when this catalog has it, else its raw identifier.
+    var requires = (e.requires || []).map(function (id) {
+      var hit = all.filter(function (x) { return x.identifier === id; })[0];
+      return hit ? '<strong title="' + escapeAttr(id) + '">' + escapeHtml(hit.name) + "</strong>" : "<code>" + escapeHtml(id) + "</code>";
+    });
     var rows = [];
     if (e.identifier)
       rows.push(kv("Identifier", '<code>' + escapeHtml(e.identifier) + "</code>" +
@@ -419,14 +452,26 @@
     if (e.type === "skillpack") {
       if (typeof e.section_count === "number") rows.push(kv("Sections", String(e.section_count)));
       if ((e.applies_to || []).length) rows.push(kv("Applies to", (e.applies_to || []).map(escapeHtml).join(", ")));
-      if ((e.requires || []).length)
-        rows.push(kv("Requires", (e.requires || []).map(function (r) { return "<code>" + escapeHtml(r) + "</code>"; }).join(" ")));
+      if (requires.length) rows.push(kv("Requires", requires.join(", ")));
     }
 
     var body = "";
 
-    // Permissions (plugins) — neutral, no destructive warnings (per SPEC §8)
+    // Plugin packs read as the app's drawer does: what is in the pack, then what it may do.
     if (e.type === "pluginpack") {
+      // A single-plugin document (no members) carries its own io.
+      if (ioLine(e.io)) body += "<h4>Input / Output</h4>" + ioLine(e.io);
+
+      // contained plugins (packs), each with what it takes and makes
+      if ((e.plugins || []).length) {
+        body += "<h4>Included plugins (" + e.plugins.length + ")</h4>";
+        body += e.plugins.map(function (p) {
+          return '<div class="vy-perm"><span class="vy-perm__ico">' + icon(p.icon, "puzzle") + "</span><span><strong>" +
+            escapeHtml(p.name) + "</strong>" + (p.description ? " — " + escapeHtml(p.description) : "") + ioLine(p.io) + "</span></div>";
+        }).join("");
+      }
+
+      // Permissions — neutral, no destructive warnings (per SPEC §8)
       var perms = permissionLines(e);
       body +=
         "<h4>Permissions</h4>" +
@@ -435,27 +480,6 @@
               return '<div class="vy-perm"><span class="vy-perm__ico">' + icon(p.icon) + "</span><span>" + escapeHtml(p.text) + "</span></div>";
             }).join("")
           : '<p style="font-size:.8rem;color:var(--vy-text-muted)">No special permissions — pure compute, no data or network access.</p>');
-
-      // io chips
-      if (e.io && ((e.io.consumes || []).length || (e.io.produces || []).length)) {
-        body += "<h4>Data flow</h4><div class=\"vy-chiprow\">";
-        (e.io.consumes || []).forEach(function (c) {
-          body += '<span class="vy-typechip">consumes · ' + escapeHtml(c.category ? c.category + "." + c.name : (c.name || "?")) + "</span>";
-        });
-        (e.io.produces || []).forEach(function (c) {
-          body += '<span class="vy-typechip">produces · ' + escapeHtml(c.category ? c.category + "." + c.name : (c.name || "?")) + "</span>";
-        });
-        body += "</div>";
-      }
-
-      // contained plugins (packs)
-      if ((e.plugins || []).length) {
-        body += "<h4>Bundled plugins (" + e.plugins.length + ")</h4>";
-        body += e.plugins.map(function (p) {
-          return '<div class="vy-perm"><span class="vy-perm__ico">' + icon(p.icon, "puzzle") + "</span><span><strong>" +
-            escapeHtml(p.name) + "</strong>" + (p.description ? " — " + escapeHtml(p.description) : "") + "</span></div>";
-        }).join("");
-      }
     }
 
     // Type palette (typepacks)
@@ -476,10 +500,10 @@
       }
     }
 
-    // Skill Packs are text — the whole playbook can be shown before install.
+    // Skill packs are text — the whole playbook can be shown before install.
     if (e.type === "skillpack") {
       if (e.overview) {
-        body += "<h4>Playbook</h4><pre class=\"vy-skill-overview\">" + escapeHtml(e.overview) + "</pre>";
+        body += "<h4>Contents</h4><pre class=\"vy-skill-overview\">" + escapeHtml(e.overview) + "</pre>";
       }
       if ((e.sections || []).length) {
         body += "<h4>Sections</h4>";
@@ -488,10 +512,10 @@
             escapeHtml(s.id || "") + "</strong>" + (s.summary ? " — " + escapeHtml(s.summary) : "") + "</span></div>";
         }).join("");
       }
-      if ((e.requires || []).length) {
+      if (requires.length) {
         body += '<div class="vy-perm"><span class="vy-perm__ico">' + icon("puzzle") + "</span><span>" +
-          "Uses " + e.requires.length + " Plugin Pack" + (e.requires.length > 1 ? "s" : "") +
-          " — installing offers to add " + (e.requires.length > 1 ? "them" : "it") + " too.</span></div>";
+          "Uses the " + requires.join(", ") + " plugin pack" + (requires.length > 1 ? "s" : "") +
+          " — installing offers to add " + (requires.length > 1 ? "them" : "it") + " too.</span></div>";
       }
     }
 
@@ -518,27 +542,61 @@
     );
   };
 
+  // From the plugin scopes once the full document is in (a pack's are the union of its plugins'),
+  // until then from the index's coarse summary, which cannot tell a named endpoint from any site.
   function permissionLines(e) {
     var out = [];
-    var ss = e.scopes_summary || {};
-    var g = (e.scopes && e.scopes.graph) || [];
-    if (g.length) {
-      var verbs = g.map(function (s) { return s.split(":")[1] || s; });
-      var uniq = verbs.filter(function (v, i) { return verbs.indexOf(v) === i; });
-      out.push({ icon: "layers", text: "Graph: " + uniq.join(", ") + " nodes/edges in this project." });
-    } else if (ss.graph_write) {
-      out.push({ icon: "layers", text: "Reads and writes graph nodes/edges in this project." });
+    var s = e.scopes;
+    if (!s) {
+      var ss = e.scopes_summary || {};
+      if (ss.graph_write) out.push({ icon: "layers", text: "Reads and writes graph nodes/edges in this project." });
+      if (ss.network) out.push({ icon: "globe", text: "Network: makes outbound requests." });
+      if (ss.secret_config) out.push({ icon: "key", text: "Config: asks for a secret such as an API key when you run it." });
+      return out;
     }
-    if (ss.network || (e.scopes && (e.scopes.network || []).length)) {
-      out.push({ icon: "globe", text: "Network: calls a declared external endpoint." });
-    }
-    if (ss.publish || (e.scopes && (e.scopes.publish || []).length)) {
-      out.push({ icon: "pen-square", text: "Publish: can post messages to the project." });
-    }
-    if (ss.secret_config || (e.scopes && (e.scopes.config || []).length)) {
-      out.push({ icon: "key", text: "Config: asks for values such as an API key when you run it, and keeps them as secrets." });
-    }
+    var verbs = uniq((s.graph || []).map(function (g) { return g.split(":")[1] || g; }));
+    if (verbs.length) out.push({ icon: "layers", text: "Graph: " + verbs.join(", ") + " nodes/edges in this project." });
+    var hosts = uniq((s.network || []).map(function (n) {
+      var m = /^[a-z][a-z0-9+.-]*:\/\/([^\/?#]+)/i.exec(n.endpoint || "");
+      return m ? m[1] : n.endpoint || "an undeclared host";
+    }));
+    if (hosts.length) out.push({ icon: "globe", text: "Network: calls " + hosts.join(", ") + "." });
+    // web_probe picks its destination while it runs, so there is no endpoint to name.
+    if (s.web_probe) out.push({ icon: "globe", text: "Network: anonymous requests to any public site, chosen while it runs — " +
+      "no cookies or credentials sent, no redirects followed, no private or loopback addresses. Desktop app only." });
+    uniq(s.services || []).forEach(function (name) {
+      out.push({ icon: "server", text: "Service: calls the Vineyard " + name + " service on your behalf (your identity is attached)." });
+    });
+    var cfg = s.config || [];
+    var label = function (c) { return c.label || c.key; };
+    var secrets = uniq(cfg.filter(function (c) { return c.secret; }).map(label));
+    var settings = uniq(cfg.filter(function (c) { return !c.secret; }).map(label));
+    if (secrets.length) out.push({ icon: "key", text: "Config: asks for " + secrets.join(", ") +
+      " when you run it, and keeps " + (secrets.length > 1 ? "them as secrets." : "it as a secret.") });
+    if (settings.length) out.push({ icon: "key", text: "Config: asks for " + settings.join(", ") + " when you run it." });
     return out;
+  }
+
+  // What a plugin takes and makes, by type id (category.name) — as the app and "Applies to" show types.
+  function ioLine(io) {
+    function names(list) {
+      return uniq((list || []).map(function (t) { return t.category ? t.category + "." + t.name : t.name || "?"; }))
+        .map(function (id) { return "<code>" + escapeHtml(id) + "</code>"; }).join(" ");
+    }
+    var c = names(io && io.consumes), p = names(io && io.produces);
+    if (!c && !p) return "";
+    return '<span class="vy-io">' + (c ? "Input " + c : "") + (c && p ? " → " : "") + (p ? "Output " + p : "") + "</span>";
+  }
+
+  // A pack's permissions are the union of its plugins' scopes, as the app's install gate shows them.
+  function unionScopes(plugins) {
+    var u = { graph: [], network: [], services: [], config: [], web_probe: null };
+    plugins.forEach(function (p) {
+      var s = p.scopes || {};
+      ["graph", "network", "services", "config"].forEach(function (k) { u[k] = u[k].concat(s[k] || []); });
+      u.web_probe = u.web_probe || s.web_probe;
+    });
+    return u;
   }
 
   // Merge a pack's full document (jsDelivr) into the card-level entry so the
@@ -553,6 +611,7 @@
       e.sections = Array.isArray(doc.sections) ? doc.sections : [];
     } else if (Array.isArray(doc.plugins)) {
       e.plugins = doc.plugins;
+      e.scopes = unionScopes(doc.plugins);
     } else {
       e.io = doc.io;
       e.scopes = doc.scopes;
@@ -564,6 +623,7 @@
   function kv(k, v) { return "<dt>" + escapeHtml(k) + "</dt><dd>" + v + "</dd>"; }
   function cap(s) { s = String(s); return s.charAt(0).toUpperCase() + s.slice(1); }
   function plural(n, word) { return n + " " + word + (n === 1 ? "" : "s"); }
+  function uniq(a) { return a.filter(function (v, i) { return a.indexOf(v) === i; }); }
   function short(r) { r = String(r); return /^[0-9a-f]{40}$/i.test(r) ? r.slice(0, 10) + "…" : r; }
   function escapeHtml(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
