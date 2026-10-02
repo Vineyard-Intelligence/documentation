@@ -310,22 +310,24 @@
 
   // Chips name only what changes whether a pack works for you; full permissions live in the drawer.
   // Same wording, and the same plain gray, as the app's marketplace cards.
+  // Chips carry only what a pack asks of you; counts sit on the meta line (kindCount), same as the app.
   function chips(e) {
     var out = [];
     if (e.type === "pluginpack") {
-      if (e.plugin_count > 1) out.push(chip(e.plugin_count + " plugins"));
       if (e.desktop_only === "all") out.push(chip("Desktop only"));
       else if (e.desktop_only === "some") out.push(chip("Some desktop only"));
       if ((e.scopes_summary || {}).secret_config) out.push(chip("API key"));
       if ((e.services || []).length) out.push(chip("Vineyard service"));
-    } else if (e.type === "typepack") {
-      if (typeof e.type_count === "number") out.push(chip(plural(e.type_count, "type")));
-    } else {
-      if (typeof e.section_count === "number") out.push(chip(plural(e.section_count, "section")));
+    } else if (e.type === "skillpack") {
       var nReq = (e.requires || []).length;
       if (nReq) out.push(chip("Needs " + plural(nReq, "plugin")));
     }
     return out.join("");
+  }
+  function kindCount(e) {
+    if (e.type === "typepack") return typeof e.type_count === "number" ? plural(e.type_count, "type") : "";
+    if (e.type === "skillpack") return typeof e.section_count === "number" ? plural(e.section_count, "section") : "";
+    return e.plugin_count > 1 ? plural(e.plugin_count, "plugin") : "";
   }
   // Verified attests to the author, so the tick goes in front of the author's name.
   function author(e) {
@@ -347,7 +349,7 @@
           '<div class="vy-pcard__title">' +
             '<button class="vy-pcard__name" data-idx="' + i + '" type="button">' + escapeHtml(e.name) + "</button>" +
             '<div class="vy-pcard__author">' + author(e) +
-              " &middot; " + KIND[e.type].label +
+              " &middot; " + KIND[e.type].label + (kindCount(e) ? " &middot; " + kindCount(e) : "") +
               (e.version ? " &middot; v" + escapeHtml(e.version) : "") + "</div>" +
           "</div>" +
         "</div>" +
