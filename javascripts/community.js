@@ -301,9 +301,11 @@
     grid.innerHTML = list.map(function (e, i) { return self.card(e, i); }).join("");
     // The title button is stretched over the whole card (CSS ::after), so this is the card click.
     Array.prototype.forEach.call(grid.querySelectorAll(".vy-pcard__name"), function (el) {
-      el.addEventListener("click", function () {
+      el.addEventListener("click", function (ev) {
         var idx = parseInt(el.getAttribute("data-idx"), 10);
-        self.openDrawer(list[idx], el);
+        // Focus returns to the card on close only after a keyboard open (detail 0): after a mouse
+        // open the closing Escape counts as keyboard use and would ring the clicked card.
+        self.openDrawer(list[idx], ev.detail === 0 ? el : null);
       });
     });
   };
@@ -360,7 +362,8 @@
   };
 
   // --- Detail drawer -------------------------------------------------------
-  // `opener` is the card's title button; closing hands focus back to it.
+  // `opener` is the card's title button when the card was opened from the keyboard; closing hands
+  // focus back to it. Null after a mouse open.
   Browser.prototype.openDrawer = function (e, opener) {
     var self = this;
     var drawer = document.getElementById("vy-drawer");
