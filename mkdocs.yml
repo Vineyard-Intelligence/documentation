@@ -59,6 +59,9 @@ theme:
     - content.tabs.link
     - content.tooltips
 
+hooks:
+  - hooks/asset_version.py
+
 extra_css:
   - stylesheets/extra.css
 
