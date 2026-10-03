@@ -79,7 +79,7 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 | `web.hhhash` | HTTP 헤더 해시 | `header_count`, `server_hint` |
 | `web.favicon_hash` | 파비콘 해시 | `hash_algorithm`, `favicon_url` |
 | `web.dom_hash` | DOM 구조 해시 | `tag_count` |
-| `web.tracking_id` | 네임스페이스가 붙은 식별자 (예: `adsense:ca-pub-…`) | `provider`, `kind` |
+| `web.tracking_id` | 페이지에 적힌 그대로의 식별자 (예: `G-SXM8TFRYSW`), 동일성은 `provider` + `value` | `provider`, `kind` |
 
 엣지 유형이 두 카테고리를 가로질러 정찰 그래프를 연결합니다: `resolves_to`,
 `has_address`, `announced_by`, `contains`, `has_record`, `subdomain_of`, `has_domain`,

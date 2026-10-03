@@ -80,7 +80,7 @@ The same pack also ships five types in a separate `web` category:
 | `web.hhhash` | the HTTP header hash | `header_count`, `server_hint` |
 | `web.favicon_hash` | the favicon hash | `hash_algorithm`, `favicon_url` |
 | `web.dom_hash` | the DOM structure hash | `tag_count` |
-| `web.tracking_id` | the namespaced identifier (e.g. `adsense:ca-pub-…`) | `provider`, `kind` |
+| `web.tracking_id` | the identifier as the page carries it (e.g. `G-SXM8TFRYSW`); identity is `provider` + `value` | `provider`, `kind` |
 
 Edge types wire the recon graph together across both categories: `resolves_to`, `has_address`,
 `announced_by`, `contains`, `has_record`, `subdomain_of`, `has_domain`, `redirects_to`,
