@@ -43,10 +43,11 @@ The current catalog ships two Skill Packs:
 
 ## Using a Skill Pack
 
-Open **Run ▸ Skill packs** in the top menu bar and pick an installed pack. The **Skill pack** reader
-lists the pack on the left — **About this pack** (what it is about and which plugins it needs),
-**Overview**, every **section**, and the **starters** grouped by category (`Find accounts`,
-`Corroborate`, `Report`, …) — and shows the one you pick on the right. It opens on the first starter.
+Open **Run ▸ Skill packs** in the top menu bar and pick an installed pack. The **Skill pack** panel
+lists the pack on the left — **Overview** (what it is about, which plugins it needs, and the text the
+agent reads first), every **section**, and the **starters** grouped by category (`Find accounts`,
+`Corroborate`, `Report`, …) — and shows the one you pick on the right. It opens on the first starter,
+and like the other panels it can be moved and resized while you keep working on the graph.
 Then either:
 
 - start a run from it: pick a **starter** on the left, fill the blanks (required ones are marked),
