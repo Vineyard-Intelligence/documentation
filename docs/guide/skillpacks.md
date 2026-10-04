@@ -44,13 +44,14 @@ The current catalog ships two Skill Packs:
 ## Using a Skill Pack
 
 Open **Run ▸ Skill packs** in the top menu bar and pick an installed pack. The **Skill pack** reader
-shows what it is about, which plugins it needs, and its full text (the overview and every section).
+lists the pack on the left — **About this pack** (what it is about and which plugins it needs),
+**Overview**, every **section**, and the **starters** grouped by category (`Find accounts`,
+`Corroborate`, `Report`, …) — and shows the one you pick on the right. It opens on the first starter.
 Then either:
 
-- start a run from it: pick a category (`Find accounts`, `Corroborate`, `Report`, …) and a
-  **starter**, fill the blanks (required ones are marked), set the run options and answer language
-  if you want, check the preview, and press **Ask the agent to follow this**. The prompt is placed in
-  the AI chat composer for you to edit and send; or
+- start a run from it: pick a **starter** on the left, fill the blanks (required ones are marked),
+  set the run options and answer language if you want, check the preview, and press **Ask the agent
+  to follow this**. The prompt is placed in the AI chat composer for you to edit and send; or
 - just ask in your own words — the agent decides a pack is relevant (via `applies_to` / `triggers`)
   and reads it on its own.
 
