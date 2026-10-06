@@ -38,16 +38,13 @@ Below the view controls, the toolbar repeats the **Edit** menu's selection actio
 
 | Item | Action |
 | --- | --- |
-| **Share…** | Opens the Share & permissions dialog with the project link. Only the project owner or an owner/admin of its workspace can change who can view and edit it; others see the settings read-only, and a public-link viewer sees only the link. |
-| **Members…** | Opens the project's members page. The project owner or a workspace owner/admin can invite members (View only / Can edit). An invitee gets access only after accepting the invitation, which appears on their dashboard; until then the member shows as "Invitation pending" and the invite can be cancelled. |
-| **Project settings…** | Opens the project's settings page. |
-| **Leave project…** | Shown to collaborators only. Opens the project settings page, where the **Leave** card removes you from the project. |
+| **Project settings…** | Opens the project settings dialog. **General** holds the project's name, **Leave** (collaborators only) and deleting the project (owner only). **Access** holds the project link, the organization the project belongs to, and who can view it, see it in their project lists and edit it; only the project owner or an owner/admin of its organization can change these, and others see them read-only. **People** lists the owner and the collaborators; the project owner or an organization owner/admin can invite collaborators by username (View only / Can edit), change their permission and remove them. An invitee gets access only after accepting the invitation, which appears on their dashboard; until then they show as "Invitation pending" and the invite can be cancelled. In local mode the dialog has **General** only. |
 | **Export graph (JSON)** | Downloads the current graph as a JSON file (see [Export graph](#export-graph-json)). |
 | **Import graph (JSON)…** | Opens a dialog to load a previously exported JSON file back into the project. |
 | **Activity log…** | Opens the project's activity log. |
 | **Add from Marketplace…** | Opens the [Marketplace](../marketplace.md) scoped to this project so you can add plugins and Type Packs. |
 
-If you opened the project only through its public link, **Members…**, **Project settings…** and **Activity log…** are disabled — they are for project members only.
+If you opened the project only through its public link, **Activity log…** is disabled — it is for project members only — and **Project settings…** shows only the project link.
 
 ### Edit
 
