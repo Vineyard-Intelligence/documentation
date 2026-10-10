@@ -23,7 +23,7 @@
 </span><span id=__span-1-9><a id=__codelineno-1-9 name=__codelineno-1-9 href=#__codelineno-1-9></a>  "properties": {                      // 최소 하나의 프로퍼티
 </span><span id=__span-1-10><a id=__codelineno-1-10 name=__codelineno-1-10 href=#__codelineno-1-10></a>    "ip_address":   { "type": "ip", "optional": false },
 </span><span id=__span-1-11><a id=__codelineno-1-11 name=__codelineno-1-11 href=#__codelineno-1-11></a>    "country_code": { "type": "string", "validator": { "regex": "^[A-Z]{2}$" }, "optional": false },
-</span><span id=__span-1-12><a id=__codelineno-1-12 name=__codelineno-1-12 href=#__codelineno-1-12></a>    "asn":          { "type": "string", "optional": true },
+</span><span id=__span-1-12><a id=__codelineno-1-12 name=__codelineno-1-12 href=#__codelineno-1-12></a>    "asn":          { "type": "integer", "validator": { "min": 1, "max": 4294967295 }, "optional": true },
 </span><span id=__span-1-13><a id=__codelineno-1-13 name=__codelineno-1-13 href=#__codelineno-1-13></a>    "organization": { "type": "string", "optional": true }
 </span><span id=__span-1-14><a id=__codelineno-1-14 name=__codelineno-1-14 href=#__codelineno-1-14></a>  }
 </span><span id=__span-1-15><a id=__codelineno-1-15 name=__codelineno-1-15 href=#__codelineno-1-15></a>}
