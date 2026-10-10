@@ -44,7 +44,7 @@ Type Pack은 그래프와 플러그인이 사용할 **노드 엔티티 타입**�
   "properties": {                      // 최소 하나의 프로퍼티
     "ip_address":   { "type": "ip", "optional": false },
     "country_code": { "type": "string", "validator": { "regex": "^[A-Z]{2}$" }, "optional": false },
-    "asn":          { "type": "string", "optional": true },
+    "asn":          { "type": "integer", "validator": { "min": 1, "max": 4294967295 }, "optional": true },
     "organization": { "type": "string", "optional": true }
   }
 }
