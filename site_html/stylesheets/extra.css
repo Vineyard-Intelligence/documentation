@@ -557,9 +557,3 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
   background: #1a1b1e;
 }
 .md-typeset .vy-shot figcaption { max-width: 40rem; margin: .6em auto 0; font-size: .68rem; }
-/* The canvas toolbar, set beside the table of its controls. */
-.md-typeset img.vy-toolbar {
-  margin: 0 0 1em 1.5em;
-  border: 1px solid var(--md-default-fg-color--lightest); border-radius: 6px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, .18);
-}
