@@ -7,21 +7,21 @@ Vineyard는 플러그인과 Type Pack을 **서버가 아닌 사용자의 앱에�
 - **클라이언트 측 실행.** 플러그인(JS)과 Type Pack(JSON)은 사용자 앱, 즉 브라우저 또는 데스크톱 앱에서 실행됩니다. 서버는 플러그인 코드를 절대 실행하지 않으며, 포인터를 저장하고 일반 그래프 API를 제공합니다.
 - **플러그인별 플랫폼 플래그.** 플러그인은 `platforms.web` 및/또는 `platforms.desktop`을 통해 지원되는 플랫폼을 선언합니다. 브라우저가 제공할 수 없는 기능은 **데스크톱** 런타임을 대상으로 합니다.
 - **메타데이터 전용 레지스트리.** 배포는 코드가 아닌 포인터의 레지스트리 + GitHub입니다. 클라이언트는 번들을 가져와(jsDelivr 경유, 불변 커밋 SHA에 고정) 바로 실행합니다. [distribution](distribution.md)을 참조하세요.
-- **기본적으로 임시.** 작업은 현재 브라우저 탭의 메모리에만 존재하며, Postgres에는 아무것도 기록되지 않습니다. [lifecycle](lifecycle.md)을 참조하세요.
+- **기본적으로 임시.** 플러그인 실행 작업은 현재 탭의 메모리에만 존재하고, AI 대화(와 그 작업 행)는 이 기기에 저장됩니다. 어느 쪽도 서버로 전송되지 않으며, 적용된 변경 사항만 프로젝트 그래프에 기록됩니다. [lifecycle](lifecycle.md) 및 [Tasks](../guide/tasks.md)를 참조하세요.
 - **최소 권한.** 플러그인 JS는 선언된 스코프(`graph` 동사, `network`, `web_probe`(데스크톱), `services`, `config`)만으로 Web Worker 샌드박스에서 실행되며, 워커에는 DOM도 자체 네트워크도 없습니다. 그래프 쓰기는 **실시간이 아니라 스테이징**되며, 분석가가 변경 세트를 검토하고 승인한 뒤에야 적용됩니다. [scopes](../reference/scopes.md) 및 [security](security.md)를 참조하세요.
 
 ## 엔드 투 엔드 흐름
 
 ```mermaid
 flowchart LR
-    A["Author<br/>repo + GitHub release<br/>(tag = version)"]
+    A["Author<br/>repo + pushed version<br/>(commit SHA)"]
     R["Registry<br/>metadata-only<br/>pointer: repo @ ref"]
     H["App / Host bridge<br/>main thread"]
     W["Web Worker sandbox<br/>plugin main.js<br/>no DOM, no own network"]
     S["Staging store<br/>captured writes<br/>awaiting review"]
     G["Graph<br/>REST + WS"]
 
-    A -- "one-entry PR<br/>(identifier, version, ref)" --> R
+    A -- "one-entry PR<br/>(identifier, repo, ref, path, version)" --> R
     R -- "resolve pointer" --> H
     A -. "fetch bundle per run<br/>(jsDelivr, CORS-open)" .-> H
     H -- "Comlink proxy<br/>= granted scopes only" --> W
@@ -31,7 +31,7 @@ flowchart LR
     H -- "reads" --> G
 ```
 
-1. **작성자 → 레지스트리.** 작성자는 매니페스트 `version`과 동일한 태그의 GitHub 릴리스에 플러그인을 게시한 다음, 설치 레코드 `{ identifier, version, ref }`를 추가하는 단일 항목 풀 리퀘스트를 엽니다. 레지스트리는 코드가 아닌 포인터(`repository @ ref`)를 저장합니다.
+1. **작성자 → 레지스트리.** 작성자는 버전을 자신의 저장소에 푸시한 다음, `packs/<identifier>.json` — `{ identifier, repo, ref, path, version, … }`, 여기서 `ref`는 그 버전의 커밋 SHA — 를 추가하는 단일 항목 풀 리퀘스트를 엽니다. 레지스트리는 코드가 아닌 포인터(`repo @ ref`)를 저장합니다.
 
 2. **레지스트리 → 앱.** 사용자가 설치하면 앱이 포인터를 확인하고 번들을 직접 가져옵니다(jsDelivr 경유, 불변 커밋 SHA에 고정). 서버 측 콘텐츠 복사본은 존재하지 않습니다.
 

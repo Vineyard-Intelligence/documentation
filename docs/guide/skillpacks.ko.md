@@ -36,9 +36,16 @@ Skill Pack은 플러그인과 정확히 같은 방식으로 [마켓플레이스]
 
 ## Skill Pack 사용
 
-상단 메뉴 바에서 **Run ▸ Skill packs**를 열고 설치된 팩을 고릅니다. **Skill pack** 패널은 왼쪽에 팩의 구성 — **Overview**(무엇에 관한 팩인지, 어떤 플러그인이 필요한지, 에이전트가 먼저 읽는 본문), 모든 **섹션**, 카테고리(`Find accounts`, `Corroborate`, `Report`, …)별 **starter** — 을 나열하고, 고른 항목을 오른쪽에 보여 줍니다. 처음 열면 첫 번째 starter가 선택되어 있고, 다른 패널처럼 그래프 작업을 하면서 옮기거나 크기를 바꿀 수 있습니다. 그다음:
+상단 메뉴 바에서 **Run ▸ Skill packs**를 열고 설치된 팩을 고릅니다. **Skill pack** 패널은 왼쪽에 팩의 구성 — **Overview**(무엇에 관한 팩인지, 어떤 플러그인이 필요한지, 에이전트가 먼저 읽는 본문), 모든 **섹션**, 카테고리(`Find accounts`, `Corroborate`, `Report`, …)별 **starter** — 을 나열하고, 고른 항목을 오른쪽에 보여 줍니다. 처음 열면 첫 번째 starter가 선택되어 있고, 다른 패널처럼 그래프 작업을 하면서 옮기거나 크기를 바꿀 수 있습니다.
 
-- 여기서 실행을 시작하거나 — 왼쪽에서 **starter**를 고르고, 빈칸을 채우고(필수 항목은 표시됨), 원하면 실행 옵션과 답변 언어를 정하고, 미리보기를 확인한 뒤 **Ask the agent to follow this**를 누릅니다. 프롬프트는 AI 채팅 입력창에 들어가며, 직접 편집하고 전송합니다; 또는
+<figure class="vy-shot" markdown="span">
+  ![Skill pack 패널](../assets/guide/skillpack-panel.webp){ width="800" loading=lazy }
+  <figcaption>Skill pack 패널: 왼쪽에 개요·섹션·스타터, 오른쪽에 고른 스타터의 입력칸과 프롬프트 미리보기.</figcaption>
+</figure>
+
+그다음:
+
+- 여기서 실행을 시작하거나 — 왼쪽에서 **starter**를 고르고, 빈칸을 채우고(필수 항목은 표시됨), 원하면 실행 옵션과 답변 언어를 정하고, 미리보기를 확인한 뒤 **Ask the agent to follow this**를 누릅니다. 프롬프트는 새 AI 에이전트 대화의 입력창에 들어가며(이미 열려 있던 대화는 Tasks에 그대로 남습니다), 직접 편집해 전송하기 전에는 아무것도 전송되지 않습니다; 또는
 - 자신의 말로 그냥 요청합니다 — 에이전트가 관련성을 판단하고(`applies_to` / `triggers`를 통해) 스스로 읽습니다.
 
 !!! tip "스킬은 지침이지 명령이 아닙니다"

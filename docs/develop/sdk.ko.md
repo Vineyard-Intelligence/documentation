@@ -50,8 +50,8 @@ run(ctx: HostContext): Promise<RunResult | void>;
 | 멤버 | 타입 | 제공하는 것 |
 |---|---|---|
 | `ctx.run` | `{ runId, projectId, pluginId, grantedScopes, platform }` | 이 실행의 식별 정보. `grantedScopes`는 설치 시 승인된 매니페스트의 스코프 세트. `platform`은 `"web"` 또는 `"desktop"`. |
-| `ctx.input` | `{ selection: string[] }` | 이 실행이 대상으로 하는 노드 ID. Run plugins 패널에서 실행하면: `consumes`가 있는 플러그인은 소비 타입인 선택 노드(범위 *Selected*) 또는 프로젝트 안의 그 타입 노드 전체(범위 *Whole project*), consumes가 없는 플러그인은 현재 선택. `run`은 전체 목록으로 **한 번** 호출되므로 전부 순회하세요. **Black Hole**은 `ctx.input.selection[0]`을 읽습니다. |
-| `ctx.params` | `Readonly<Record<string, unknown>>` | 실행 전 폼에서 받은 이 실행의 사용자 입력(`required`만 강제됨 — `pattern`/`minimum`/`maximum`/`default`는 적용되지 않으므로 검증과 기본값은 `run`에서 처리). 파일 필드는 `File` 객체로 옵니다. |
+| `ctx.input` | `{ selection: string[] }` | 이 실행이 대상으로 하는 노드 ID. Run plugins 패널에서 실행하면: `consumes`가 있는 플러그인은 소비 타입인 선택 노드(범위 *Selected*) 또는 프로젝트 안의 그 타입 노드 전체(범위 *Whole project*), consumes가 없는 플러그인은 현재 선택. `run`은 전체 목록으로 **한 번** 호출되므로 전부 순회하세요. **Black Hole**은 `ctx.input.selection[0]`을 읽습니다. AI 에이전트가 플러그인을 실행하면 `selection`에는 에이전트가 전달한 라이브 노드 ID가 담깁니다. 소비 타입으로 걸러지지 않으며, `consumes`가 빈 플러그인에는 노드를 넘기지 않도록 요청할 뿐 강제하지는 않습니다. 각 노드의 타입을 확인하고, 전체 그래프 플러그인은 `selection`을 무시하세요. |
+| `ctx.params` | `Readonly<Record<string, unknown>>` | 실행 전 폼에서 받은 이 실행의 사용자 입력(`required`만 강제됨 — `pattern`/`minimum`/`maximum`/`default`는 적용되지 않으므로 검증과 기본값은 `run`에서 처리). 파일 필드는 `File` 객체로 옵니다. AI 에이전트가 `params`를 채울 때는 `required`조차 강제되지 않으므로, 모든 값을 `run`에서 검증하고 기본값을 정하세요. |
 | `ctx.progress` | `{ set?, log?, status? }` | 지속 관리 작업 UI를 구동합니다(아래 상세). |
 | `ctx.signal` | `AbortSignal` | 협력적 취소 — 반드시 관찰해야 합니다. |
 | `ctx.onCancel` | `(handler) => void` | 취소 시 호출될 정리 핸들러 등록. |
@@ -101,7 +101,7 @@ ctx.graph?.deleteNodes?(ids: string[]): Promise<{ deleted: number }>
 ctx.graph?.deleteEdges?(ids: string[]): Promise<{ deleted: number }>
 ```
 
-`list({ type })`는 노드 타입으로 필터링된 전체 그래프 열거를 한 번의 호출로 반환합니다 — 커서 페이지네이션이 아닙니다(**Thanos Snap**과 같은 전체 그래프 플러그인이 사용). `neighbors`는 1-홉 근방을 반환합니다(**Black Hole**이 사용). `updateNode`와 `createEdge`는 델타/초안을 받아 검토용으로 스테이징할 뿐 결과 레코드를 반환하지 않으므로 둘 다 `void`로 리졸브됩니다 — 적용된 상태가 필요하면 `get`/`list`로 다시 읽으세요. `createNode`는 동일성으로 중복을 제거합니다 — 정규 타입과 그 타입의 `identity_properties`(없으면 레이블 속성, 그다음 `value`): 라이브 노드(또는 이 실행이 이미 만든 노드)가 같은 동일성을 가지면 그 노드를 재사용해 필드를 병합하고 그 노드를 반환합니다. `type`이 설치된 [Type Pack](typepacks.md)에 정의되어 있지 않거나 데이터가 타입의 속성 검사를 통과하지 못하면 예외를 던집니다. `EdgeDraft.from`/`to`는 노드 ID입니다 — 라이브 ID 또는 `createNode`가 반환한 ID. `label`은 관계를 설명하는 자유 텍스트입니다(Type Pack `edge_types`는 참조되지 않음).
+`list({ type })`는 노드 타입으로 필터링된 전체 그래프 열거를 한 번의 호출로 반환합니다 — 커서 페이지네이션이 아닙니다(**Thanos Snap**과 같은 전체 그래프 플러그인이 사용). `neighbors`는 1-홉 근방을 반환합니다(**Black Hole**이 사용). `updateNode`와 `createEdge`는 델타/초안을 받아 검토용으로 스테이징할 뿐 결과 레코드를 반환하지 않으므로 둘 다 `void`로 리졸브됩니다 — 적용된 상태가 필요하면 `get`/`list`로 다시 읽으세요. `updateNode`는 병합합니다: 전달한 값은 해당 필드를 대체하고 나머지 필드는 모두 유지되며, 이 실행이 방금 만든 노드에서도 마찬가지입니다. 빈 문자열과 `null`은 무시되므로 필드를 지울 수는 없습니다. `createNode`는 동일성으로 중복을 제거합니다 — 정규 타입과 그 타입의 `identity_properties`(없으면 레이블 속성, 그다음 `value`): 라이브 노드(또는 이 실행이 이미 만든 노드)가 같은 동일성을 가지면 그 노드를 재사용해 필드를 병합하고 그 노드를 반환합니다. `type`이 설치된 [Type Pack](typepacks.md)에 정의되어 있지 않거나 데이터가 타입의 속성 검사를 통과하지 못하면 예외를 던집니다. `EdgeDraft.from`/`to`는 노드 ID입니다 — 라이브 ID 또는 `createNode`가 반환한 ID. `label`은 관계를 설명하는 자유 텍스트입니다(Type Pack `edge_types`는 참조되지 않음).
 
 `updateEdge`는 `edge:create`로 게이트됩니다(`edge:update` 스코프는 현재 아무것도 부여하지 않음). `label`을 생략하면 문구와 그 등급이 그대로 유지됩니다. `EdgeDraft`/`updateEdge`는 엣지에 병합되는 선택적 `data` 객체를 받으며, `confidence`, `confidence_source`, `label_source`, `corroborated_by`는 호스트 소유이므로 거부됩니다. 순서가 있는 노드 쌍마다 엣지는 하나이므로, 이미 연결된 쌍에 대한 `createEdge`는 엣지를 추가하는 대신 그 엣지의 레이블 변경을 제안합니다.
 
@@ -117,7 +117,12 @@ ctx.net?.fetch?(input: string, init?: SafeRequestInit): Promise<SafeResponse>
 
 #### `net.probe` (`web_probe` 스코프, 데스크톱 전용)
 
-`scopes.web_probe`가 선언**되고** 플러그인이 데스크톱 셸에서 실행 중일 때만 존재합니다 — 스코프가 부여되어도 웹 빌드에서는 계속 없습니다. 대상 호스트를 미리 알 수 없는 플러그인을 위해 임의의 공개 호스트로 단일 익명 요청을 수행합니다: 쿠키 없음, `Origin` 없음, 리다이렉트를 따라가지 않음(호출자는 요청한 URL의 실제 상태를 봅니다), 사설/루프백 호스트는 거부됩니다. 기본 포트(80/443)와 GET/HEAD/POST 메서드만 허용되며, `cookie`, `authorization`, `host`와 포워딩 헤더는 제거됩니다. `maxBytes`는 기본 512 KiB(최대 2 MiB), `timeoutMs`는 기본 8초(최대 20초)이며, 셸은 한 번에 최대 48개의 프로브를 실행합니다. 거부되거나 실패한 프로브는 예외를 던지지 않고 `status: 0`과 `error`가 설정된 채로 리졸브됩니다.
+`scopes.web_probe`가 선언**되고** 플러그인이 데스크톱 셸에서 실행 중일 때만 존재합니다 — 스코프가 부여되어도 웹 빌드에서는 계속 없습니다. 대상 호스트를 미리 알 수 없는 플러그인을 위해 임의의 공개 호스트로 단일 익명 요청을 수행합니다: 쿠키 없음, `Origin` 없음, 리다이렉트를 따라가지 않음(호출자는 요청한 URL의 실제 상태를 봅니다), 사설/루프백 호스트는 거부됩니다. 기본 포트(80/443)와 GET/HEAD/POST 메서드만 허용되며, `cookie`, `authorization`, `host`와 포워딩 헤더는 제거되며, `User-Agent`를 지정하지 않으면 데스크톱 브라우저의 것이 전송됩니다. `maxBytes`는 기본 512 KiB(최대 2 MiB)입니다. `timeoutMs`는 요청 전체에 걸리는 제한으로, 기본 8초이며 최소 1초, 최대 20초입니다. 셸은 한 번에 최대 48개의 프로브를 실행합니다. 거부되거나 실패한 프로브는 예외를 던지지 않고 `status: 0`과 `error`가 설정된 채로 리졸브됩니다.
+
+두 옵션은 반환되는 내용을 바꿉니다:
+
+- `bodyEncoding: "base64"`는 본문을 base64로 인코딩해 반환합니다. 파비콘 같은 바이너리 콘텐츠용입니다. 디코딩하기 전에 `response.bodyEncoding === "base64"`인지 확인하세요.
+- `headerNames: true`(GET 또는 HEAD 전용)는 HTTP/1.1로 요청하고, 서버가 보낸 그대로의 응답 헤더 이름 — 순서, 대소문자, 반복까지 — 을 `headerNames`로 반환합니다. 본문은 읽지 않습니다.
 
 ```ts
 ctx.net?.probe?(input: string, init?: SafeProbeInit): Promise<SafeProbeResponse>
@@ -143,7 +148,7 @@ ctx.config?: Readonly<Record<string, string | number | boolean>>
     `secret: true`는 값을 입력하는 방식(마스킹된 필드)만 바꿉니다 — 값은 여전히 이를 선언한 플러그인에게 `ctx.config.<key>`로 전달되며, 자신의 매니페스트가 선언한 키만 전달됩니다. 값은 로그인한 계정별로 보관됩니다 — 데스크톱에서는 OS 키체인에, 브라우저에서는 탭 세션 동안. [시크릿 처리](security.md#secret-handling)를 참조하세요.
 
 !!! note "`publish` 스코프는 존재하지 않습니다"
-    플러그인은 프로젝트 채팅/피드에 게시할 수 없습니다 — `ctx.message`는 존재하지 않으며, `publish`는 스코프 스키마에 포함되어 있지 않습니다. `scopes`는 `additionalProperties: false`를 설정하므로, 이를 선언하는 매니페스트는 **검증에 실패합니다**. 찾아낸 결과는 대신 그래프에 기록하세요.
+    플러그인은 프로젝트 채팅/피드에 게시할 수 없습니다 — `ctx.message`는 존재하지 않습니다. `publish`는 스코프 스키마에 없으며, 앱은 이를 무시하고 아무 권한도 주지 않으므로 제거하세요. 찾아낸 결과는 대신 그래프에 기록하세요.
 
 ### 벌크 작업
 

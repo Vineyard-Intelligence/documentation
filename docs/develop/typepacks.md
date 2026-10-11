@@ -43,7 +43,7 @@ Plugins do not invent their own data shapes. They `consume` and `produce` node t
   "label_property": "ip_address",      // a key in properties; MUST exist and be non-optional
   "properties": {                      // at least one property
     "ip_address":   { "type": "ip", "optional": false },
-    "country_code": { "type": "string", "validator": { "regex": "^[A-Z]{2}$" }, "optional": false },
+    "country_code": { "type": "string", "validator": { "regex": "^[A-Z]{2}$" }, "optional": true },
     "asn":          { "type": "integer", "validator": { "min": 1, "max": 4294967295 }, "optional": true },
     "organization": { "type": "string", "optional": true }
   }

@@ -1,7 +1,7 @@
 site_name: VINEYARD Documentation
 site_description: >-
   User guide, developer documentation, and the marketplace browser for the
-  VINEYARD Plugin Pack and Type Pack ecosystem.
+  VINEYARD Plugin Pack, Type Pack and Skill Pack ecosystem.
 site_author: vineyard-run
 site_url: https://docs.vineyard.run/
 copyright: Copyright &copy; VINEYARD
@@ -19,9 +19,7 @@ theme:
   logo: assets/logo.svg
   icon:
     repo: fontawesome/brands/github
-    # No `logo:` here. `theme.logo` above takes precedence over `theme.icon.logo`, so the
-    # `material/grape` that used to sit here never rendered — it just looked like the header
-    # mark was configured in two places that disagreed.
+    # The header mark comes from `theme.logo` above, which takes precedence over `icon.logo`.
   font:
     text: Inter
     code: JetBrains Mono
@@ -70,6 +68,8 @@ extra_javascript:
   # Home-page background. Global because extra_javascript has no per-page form; the script itself
   # returns immediately when #vy-skyline is absent, which it is on every page but one.
   - javascripts/skyline.js
+  # User-guide clips: play while on screen, never for readers who ask for reduced motion.
+  - javascripts/clips.js
 
 extra:
   generator: false

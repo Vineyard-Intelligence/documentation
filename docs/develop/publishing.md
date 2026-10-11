@@ -32,7 +32,7 @@ Submissions go to **`Vineyard-Intelligence/registry`**. The repo carries *pointe
 A few things worth knowing going in:
 
 - The `identifier` in the entry must equal `manifest.identifier` (or `typepack.identifier`) and uses the reverse-DNS form `<your-namespace>.pluginpacks.*` / `.typepacks.*` / `.skillpacks.*` — see [the three content types](index.md#the-three-content-types).
-- `ref` is the only thing pinning your code. To ship a new version, edit your pack's file in place with the new `ref` and `version` — see [Updates](updates.md).
+- `ref` is the only thing pinning your code. To ship a new version, edit your pack's file in place with the new `ref` and a higher `version` — see [Updates](updates.md).
 - Derived fields (`platforms`, `scopes_summary`, `categories`, `type_count`, …) are projections of the full manifest/Type Pack so the browse page renders without fetching every manifest. CI recomputes `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count`, `type_count` and `edge_count` from the pinned document and rejects the entry if any it carries disagree. `categories` and a Skill Pack's `applies_to`/`requires` are not recomputed, so keep them accurate yourself.
 
 ## What CI enforces
@@ -89,15 +89,17 @@ A **Plugin Pack**, filed as `packs/run.vineyard.pluginpacks.chaos.json`. Note `p
   "content_type": "vineyard:pluginpack",
   "name": "Chaos Reference Pack",
   "author": "VINEYARD",
-  "description": "A bundle of 6 graph-manipulation plugins for demo/validation: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node. Installing once adds all 6 together.",
+  "description": "Six graph-manipulation plugins for demos and validation.",
   "repo": "Vineyard-Intelligence/pluginpack-chaos",
-  "ref": "a3fd041b2e9f05e1c0b25cfe716dd8cdee342464",
+  "ref": "4501ffcf55e8e0b563520549c79f7c0627ca32a5",
   "path": "plugins/chaos-pack.manifest.json",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "platforms": ["web"],
   "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
-  "compat": { "min_app_version": "1.0.0" }
+  "icon": "boxes",
+  "compat": { "min_app_version": "1.0.0" },
+  "typepacks": []
 }
 ```
 
@@ -109,14 +111,15 @@ A **Type Pack**, filed as `packs/run.vineyard.typepacks.infrastructure.json` (no
   "content_type": "vineyard:typepack",
   "name": "Infrastructure",
   "author": "VINEYARD",
-  "description": "Network-infrastructure and web OSINT entities and their relationships.",
+  "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
-  "ref": "dab427e4dfac4a6040c7be4cec37befb92b592c4",
+  "ref": "81dd71ddeeebfbeba47762d87dd3f89ecd7d11df",
   "path": "typepacks/infrastructure.json",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "categories": ["infrastructure", "web"],
-  "type_count": 13,
-  "edge_count": 11
+  "type_count": 15,
+  "icon": "network",
+  "edge_count": 14
 }
 ```
 
@@ -152,7 +155,7 @@ Deprecating your own pack is an ordinary pull request. **Withdrawal is the opera
 Two things to expect:
 
 - **Fix the dependants first.** A live pack may not `require` (or list in `typepacks`) a delisted one, so CI will name every pack that depends on yours. Update them, or delist them in the same pull request.
-- **A withdrawn entry is no longer pin-verified**, so its content may be gone. A deprecated pack is still pin-verified, so it must still resolve.
+- **A withdrawn entry is not pin-verified**, so its content may be gone. A deprecated pack is still pin-verified, so it must still resolve.
 
 Removing the row outright is only for an entry nobody could have installed: a mistaken submission, or a duplicate.
 

@@ -14,7 +14,7 @@ hide:
 Build the graph, pull in the intelligence, work on the project together.
 
 <p class="vy-home__lede" markdown>
-VINEYARD is a graph analysis tool for CTI and OSINT investigations. You map entities and the
+VINEYARD is an open investigation workbench for CTI and OSINT. You map entities and the
 relationships between them, enrich them with **packs** you install from the Marketplace, and
 share the project with the people working on it — with plugins running in your own session, never
 on a server.

@@ -11,6 +11,8 @@ The view controls are exposed twice, and both stay in sync:
 
 ## View controls (toolbar + View menu)
 
+![Canvas toolbar](../assets/guide/canvas-toolbar.webp){ .vy-toolbar align=right width="44" loading=lazy }
+
 Toolbar toggle buttons appear highlighted when on; menu items are checkmarked when on.
 
 | Control | Action | Surfaces |
@@ -30,7 +32,7 @@ Toolbar toggle buttons appear highlighted when on; menu items are checkmarked wh
 
 ## Other toolbar buttons
 
-Below the view controls, the toolbar repeats the **Edit** menu's selection actions (Select all, connected neighbors, outbound, inbound (1 hop), Invert, Select isolated, Clear). It ends with **Run plugins**, whose tooltip names the scope — "Run plugins on N selected nodes", or "nothing selected" for the whole project — and **Ask the AI agent**; with nodes selected, the agent's chat opens pre-filled with a question about them.
+Below the view controls, the toolbar repeats the **Edit** menu's selection actions (Select all, connected neighbors, outbound, inbound (1 hop), Invert, Select isolated, Clear). It ends with **Run plugins**, whose tooltip names the scope — "Run plugins on N selected nodes", or "nothing selected" for the whole project — and **Ask the AI agent**; with nodes selected, the AI agent panel opens pre-filled with a question about them.
 
 ## Top menu bar
 
@@ -38,13 +40,18 @@ Below the view controls, the toolbar repeats the **Edit** menu's selection actio
 
 | Item | Action |
 | --- | --- |
-| **Project settings…** | Opens the project settings dialog. **General** holds the project's name, **Leave** (collaborators only) and deleting the project (owner only). **Access** holds the project link, the organization the project belongs to, and who can view it, see it in their project lists and edit it; only the project owner or an owner/admin of its organization can change these, and others see them read-only. **People** lists the owner and the collaborators; the project owner or an organization owner/admin can invite collaborators by username (View only / Can edit), change their permission and remove them. An invitee gets access only after accepting the invitation, which appears on their dashboard; until then they show as "Invitation pending" and the invite can be cancelled. In local mode the dialog has **General** only. |
+| **Project settings…** | Opens the project settings dialog. **General** holds the project's name, **Leave** (collaborators only) and deleting the project (owner only). **Access** holds the project link, the organization the project belongs to, and who can view it, see it in their project lists and edit it; only the project owner or an owner/admin of its organization can change these, and others see them read-only. **People** lists the owner and the collaborators; the project owner or an organization owner/admin can invite collaborators by username (View only / Can edit), change their permission and remove them. An invitee gets access only after accepting the invitation, which appears on their dashboard and Projects page; until then they show as "Invitation pending" and the invite can be cancelled. In local mode the dialog has **General** only. |
 | **Export graph (JSON)** | Downloads the current graph as a JSON file (see [Export graph](#export-graph-json)). |
-| **Import graph (JSON)…** | Opens a dialog to load a previously exported JSON file back into the project. |
+| **Import graph (JSON)…** | Opens a dialog to load an exported JSON file into the project. Every node is created fresh, so importing the same file twice adds every node again. |
 | **Activity log…** | Opens the project's activity log. |
 | **Add from Marketplace…** | Opens the [Marketplace](../marketplace.md) scoped to this project so you can add plugins and Type Packs. |
 
 If you opened the project only through its public link, **Activity log…** is disabled — it is for project members only — and **Project settings…** shows only the project link.
+
+<figure class="vy-shot" markdown="span">
+  ![Project settings, Access tab](../assets/guide/project-settings.webp){ width="800" loading=lazy }
+  <figcaption>Project settings → Access: the project link, its organization, and who can view, list and edit the project.</figcaption>
+</figure>
 
 ### Edit
 
@@ -67,7 +74,7 @@ The three 1-hop actions add to the selection, so pressing one again walks one mo
 
 | Item | Action |
 | --- | --- |
-| **Ask the AI agent…** | Opens the AI chat to start or continue an agent turn. |
+| **Ask the AI agent…** | Opens the AI agent panel on a new conversation (an open one is kept in **Tasks**). To return to an earlier conversation, click its row in **Tasks**. |
 | **Run plugins…** | Opens the run panel, scoped to the current selection if any nodes are selected. |
 | *(Skill packs)* | Every skill pack installed in the project is listed below a divider; picking one opens it for reading, it does not run anything (see [Skill Packs](skillpacks.md)). |
 
@@ -78,9 +85,19 @@ The three 1-hop actions add to the selection, so pressing one again walks one mo
 - **Selection** — right-click empty canvas with anything selected, or a node inside a multi-item selection; the header shows the count (*Selected: N nodes, M edges*). Run plugins… and Connect to… (when nodes are selected), Delete (N), Select all, Fit view.
 - **Empty canvas** (nothing selected, headed *Nothing selected — whole project*) — Run plugins… on the whole project, Select all, Fit view.
 
+<figure class="vy-shot" markdown="span">
+  ![Node right-click menu](../assets/guide/canvas-context-menu.webp){ width="301" loading=lazy }
+  <figcaption>The node menu.</figcaption>
+</figure>
+
 ## Layouts
 
 Applying a layout re-computes node positions and then fits the view.
+
+<figure class="vy-shot" markdown="span">
+  ![View, Layout menu](../assets/guide/canvas-layouts.webp){ width="443" loading=lazy }
+  <figcaption>View ▸ Layout, with the active layout checkmarked.</figcaption>
+</figure>
 
 | Layout | Description |
 | --- | --- |
@@ -98,9 +115,14 @@ Applying a layout re-computes node positions and then fits the view.
 
 ## Overlays
 
+<figure class="vy-shot" markdown="span">
+  ![Legend and minimap](../assets/guide/canvas-overlays.webp){ width="800" loading=lazy }
+  <figcaption>The legend (bottom-left) lists the types in the graph with counts and the evidence grades; the minimap (bottom-right) marks the current view.</figcaption>
+</figure>
+
 ### Search
 
-The **Search entities…** field at the top-right of the canvas finds nodes by type or by any of their property values. Picking a result selects that node and centers it. While the project is still loading, an empty result means the node has not arrived yet, not that it doesn't exist.
+The **Search entities…** field at the top-right of the canvas finds nodes by type or by any of their property values; typing an AS number such as `AS64496` also finds nodes whose ASN is 64496. **⌘F** (Mac) or **Ctrl+F** jumps to the field; **↑**/**↓** and **Enter** pick a result, and **Esc** closes the list. Picking a result selects that node and centers it. While the project is still loading, an empty result means the node has not arrived yet, not that it doesn't exist.
 
 ### Grid
 
@@ -133,6 +155,11 @@ individually clickable.
 ## Drawing edges
 
 Select the node(s) you want to link from, then **⌘-click** (Mac) or **Ctrl-click** (Windows/Linux) the node to link them to. A small box opens at the click; type the relation (free text, e.g. `resolves to`) and press **Enter**. One edge is created from every selected node to the clicked node. Hold **Shift** while clicking, or press **Reverse** in the box, to link the other way (clicked node → selection). You can also right-click a node or a selection and choose **Connect to…**, then plain-click the target. **Esc** cancels at either step, and nothing is written until you press Enter. An edge is unique per ordered pair of nodes, so pairs that are already connected are skipped and counted as "already connected"; the reverse direction is a separate edge. If nothing is selected, the click only shows a hint to select the nodes first.
+
+<figure class="vy-shot">
+  <video src="../../assets/guide/draw-edge.mp4" poster="../../assets/guide/draw-edge.webp" width="960" height="638" muted loop playsinline controls preload="none" aria-label="Click one IP, Shift-click another, ⌘-click the AS node, type the relation and press Enter: one edge from each selected node."></video>
+  <figcaption>Click one IP, Shift-click another, ⌘-click the AS node, type the relation and press Enter: one edge from each selected node.</figcaption>
+</figure>
 
 ## Export graph (JSON) {#export-graph-json}
 
