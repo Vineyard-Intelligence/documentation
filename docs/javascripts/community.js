@@ -1,8 +1,8 @@
 /* ============================================================================
    VINEYARD community browser — fully static, client-side only.
-   Renders the plugin + typepack registry (fetched from the registry site)
-   as a searchable/filterable card grid with a detail drawer.
-   No backend, no build: fetches the two community-*.json index files for the
+   Renders the plugin pack, type pack and skill pack registry (fetched from the
+   registry site) as a searchable/filterable card grid with a detail drawer.
+   No backend, no build: fetches the three community-*.json index files for the
    cards, and lazy-loads each pack's full document from jsDelivr for the drawer.
    ========================================================================== */
 (function () {
@@ -23,7 +23,10 @@
     ])
       .then(function (res) {
         if (res[0] === null && res[1] === null && res[2] === null) throw new Error("registry unreachable");
-        var entries = normalize([].concat(res[0] || [], res[1] || [], res[2] || []));
+        // A withdrawn pack is off the shelf: the app hides it from browse (it shows it only to a
+        // project that already has it, so it can be removed), and this site has no projects.
+        var entries = normalize([].concat(res[0] || [], res[1] || [], res[2] || []))
+          .filter(function (e) { return !isWithdrawn(e); });
         new Browser(mount, entries).render();
       })
       .catch(function (err) {
@@ -35,8 +38,8 @@
       });
   }
 
-  // The catalog is published by the registry site (separate repo) as two index
-  // files; each pack's full document is fetched from its content repo via jsDelivr.
+  // The catalog is published by the registry site (separate repo) as three index
+  // files, one per kind; each pack's full document is fetched from its content repo via jsDelivr.
   // Override the base for local preview / staging.
   function registryBase() {
     return (typeof window !== "undefined" && window.VINEYARD_REGISTRY_BASE) ||
@@ -153,6 +156,16 @@
     return /^[A-Za-z0-9-]+\/[A-Za-z0-9._-]+$/.test(e.repo || "") && e.ref
       ? "https://github.com/" + e.repo + "/tree/" + encodeURIComponent(e.ref)
       : null;
+  }
+
+  // A delisted pack carries `status: { state, reason, since, replacement? }`. Only `withdrawn`
+  // leaves the grid; `deprecated` stays browsable and is badged, as in the app.
+  function isWithdrawn(e) { return !!(e.status && e.status.state === "withdrawn"); }
+  function isDeprecated(e) { return !!(e.status && e.status.state === "deprecated"); }
+  // The badge's tooltip, in the app's words: the registry's reason, then where to go instead.
+  function statusTip(e) {
+    var st = e.status || {};
+    return (st.reason || "") + (st.replacement ? " Use " + st.replacement + " instead." : "");
   }
 
   // --- Normalize registry into a flat, render-friendly array ---------------
@@ -350,6 +363,9 @@
           '<div class="vy-pcard__icon vy-tile--' + e.type + '">' + kindIcon(e) + "</div>" +
           '<div class="vy-pcard__title">' +
             '<button class="vy-pcard__name" data-idx="' + i + '" type="button">' + escapeHtml(e.name) + "</button>" +
+            (isDeprecated(e)
+              ? '<span class="vy-badge vy-badge--deprecated" title="' + escapeAttr(statusTip(e)) + '">Deprecated</span>'
+              : "") +
             '<div class="vy-pcard__author">' + author(e) +
               " &middot; " + KIND[e.type].label + (kindCount(e) ? " &middot; " + kindCount(e) : "") +
               (e.version ? " &middot; v" + escapeHtml(e.version) : "") + "</div>" +
@@ -462,6 +478,21 @@
 
     var body = "";
 
+    // The registry's delisting notice, above everything else, as the app's drawer puts it.
+    var notice = "";
+    if (isDeprecated(e)) {
+      var st = e.status;
+      var hit = st.replacement ? all.filter(function (x) { return x.identifier === st.replacement; })[0] : null;
+      notice =
+        '<div class="vy-notice" role="note"><strong>Deprecated' + (st.since ? " on " + escapeHtml(st.since) : "") + "</strong>" +
+        (st.reason ? "<p>" + escapeHtml(st.reason) + "</p>" : "") +
+        (st.replacement
+          ? "<p>Use " + (hit ? '<strong title="' + escapeAttr(st.replacement) + '">' + escapeHtml(hit.name) + "</strong>"
+                             : "<code>" + escapeHtml(st.replacement) + "</code>") + " instead.</p>"
+          : "") +
+        "</div>";
+    }
+
     // Plugin packs read as the app's drawer does: what is in the pack, then what it may do.
     if (e.type === "pluginpack") {
       // A single-plugin document (no members) carries its own io.
@@ -541,6 +572,7 @@
             " &middot; " + KIND[e.type].label + "</div>" +
         "</div>" +
       "</div>" +
+      notice +
       '<p class="vy-drawer__desc">' + escapeHtml(e.description || "") + "</p>" +
       body +
       "<h4>Details</h4><dl class=\"vy-kv\">" + rows.join("") + "</dl>"

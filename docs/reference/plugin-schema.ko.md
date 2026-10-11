@@ -19,7 +19,7 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 | `identifier` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$` | — | Reverse-DNS 고유 ID, 예: `run.vineyard.plugins.rdap_ip`. |
 | `content_type` | string | yes | `const`: `vineyard:plugin` | — | 문서 판별자. 정확히 이 값이어야 합니다. |
 | `name` | string | yes | minLength 1, maxLength 128 | — | 사람이 읽을 수 있는 표시 이름. |
-| `version` | string | yes | pattern `^\d+\.\d+\.\d+(?:[-+].+)?$` | — | SemVer 문자열 (레거시 float 아님), 예: `1.0.0`, `2.1.0-beta.1`. |
+| `version` | string | yes | pattern `^\d+\.\d+\.\d+(?:[-+].+)?$` | — | SemVer 문자열, 예: `1.0.0`, `2.1.0-beta.1`. |
 | `description` | string | yes | minLength 1, maxLength 1024 | — | 한 문단 요약. |
 | `author` | object | no | [author](#author) 참조 | — | 저작자 메타데이터. |
 | `license` | string | no | — | — | SPDX 라이선스 ID, 예: `MIT`. |
@@ -104,7 +104,7 @@ plugin이 Type Pack에서 참조하는 엔티티 유형. `type: object`, `additi
 
 ## params
 
-실행 전 폼을 설명하는 JSON-Schema (draft 2020-12). 사용자가 입력한 내용은 `Task.input`이 됩니다. `type: object`. 이 객체는 `additionalProperties: false`가 **아니며**, 그 자체로 JSON Schema이며 표준 스키마 키워드를 포함할 수 있습니다. 아래 세 키만 명시적으로 모델링됩니다.
+실행 전 폼을 설명하는 JSON-Schema (draft 2020-12). 제출된 객체는 `ctx.params`로 `run`에 전달됩니다(실행의 작업 행에도 보관됨). `type: object`. 이 객체는 `additionalProperties: false`가 **아니며**, 그 자체로 JSON Schema이며 표준 스키마 키워드를 포함할 수 있습니다. 아래 세 키만 명시적으로 모델링됩니다.
 
 | Property | Type | Req. | Constraints | Meaning |
 |---|---|---|---|---|
@@ -230,7 +230,7 @@ Task 실행 모델. `type: object`, `additionalProperties: false`. 모든 속성
 
 ## distribution
 
-`$defs.distribution` — plugin과 Type Pack 양쪽에서 사용되는 공유 distribution 블록. `type: object`, `additionalProperties: false`. **필수:** `kind`. 번들의 서버 측 복사본은 없습니다. 클라이언트는 실행마다 직접 가져옵니다.
+`$defs.distribution` — plugin과 Type Pack 양쪽에서 사용되는 공유 distribution 블록. `type: object`, `additionalProperties: false`. **필수:** `kind`. 번들의 서버 측 복사본은 없습니다. 클라이언트는 작성자의 저장소에서 고정된 커밋을 가져옵니다 — 매니페스트는 프로젝트를 열 때마다, 코드 모듈은 플러그인을 실행할 때마다.
 
 | Property | Type | Req. | Allowed values / constraints | Meaning |
 |---|---|---|---|---|
@@ -268,8 +268,8 @@ Task 실행 모델. `type: object`, `additionalProperties: false`. 모든 속성
   "identifier": "run.vineyard.plugins.rdap_ip", // (1)!
   "content_type": "vineyard:plugin",            // (2)!
   "name": "RDAP IP",
-  "version": "1.0.0",                           // (3)!
-  "description": "Looks up each selected IP's allocation in RDAP: adds the owning Netblock node (CIDR / network name / country) and fills the IP's organization + country. Keyless, CORS-native.",
+  "version": "1.0.2",                           // (3)!
+  "description": "Looks up each selected IP Address in RDAP. Creates a Netblock node (CIDR, network name, country) linked \"within netblock\" and fills the IP's organization and country_code if empty.",
   "icon": "boxes",                              // (4)!
 
   "platforms": {
@@ -292,7 +292,7 @@ Task 실행 모델. `type: object`, `additionalProperties: false`. 모든 속성
     "graph": ["node:read", "node:create", "node:update", "edge:create"],
     "network": [
       { "endpoint": "https://rdap.org/", "methods": ["GET"],
-        "purpose": "RDAP bootstrap → authoritative RIR (both send CORS *)." }
+        "purpose": "Look up each selected IP's netblock and owner in RDAP." }
     ]
   },
 
@@ -308,7 +308,7 @@ Task 실행 모델. `type: object`, `additionalProperties: false`. 모든 속성
 
 1.  `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$`에 일치하는 Reverse-DNS 식별자.
 2.  `const` 판별자 — 정확히 `vineyard:plugin`이어야 합니다.
-3.  레거시 float가 아닌 SemVer.
+3.  SemVer — `MAJOR.MINOR.PATCH`, 선택적으로 프리릴리스나 빌드 접미사 포함.
 4.  Marketplace 팩 상세에서 plugin 옆에 표시되는 아이콘 — 여기서는 lucide 이름.
 5.  `primary: web`이며 `sandbox-js` 런타임 — 오늘 실제로 실행되는 유일한 web 런타임입니다.
 6.  그래프 동사와 네트워크 엔드포인트 하나. 런타임에 호스트의 이그레스 허용 목록으로 검사됩니다.

@@ -32,7 +32,7 @@ The static [Marketplace browser](../marketplace.md) loads its catalog live from 
 
 ## Naming, at a glance
 
-- **Identifiers** are reverse-DNS: `run.vineyard.plugins.<name>`, `run.vineyard.pluginpacks.<name>`, `run.vineyard.typepacks.<name>`, and `run.vineyard.skillpacks.<name>`.
+- **Identifiers** are reverse-DNS under the author's own namespace: `<your-namespace>.plugins.<name>`, `<your-namespace>.pluginpacks.<name>`, `<your-namespace>.typepacks.<name>`, and `<your-namespace>.skillpacks.<name>` (first-party packs use `run.vineyard`).
 - Every document carries a `content_type` discriminator: `vineyard:plugin`, `vineyard:pluginpack`, `vineyard:typepack`, or `vineyard:skillpack`.
 - `version` is a SemVer string everywhere.
 - Types are referenced in qualified `category.name` form (e.g. `infrastructure.ip_address`).

@@ -13,18 +13,17 @@ A manifest's `latest_url` field is accepted but not used; the app has no update 
 
 ## How the app detects an update
 
-The app holds an install record per project of the form `{ identifier, url, version }` — **no `ref` field is stored**. To find updates it compares the installed `version` string against the registry entry's `version` for the same identifier:
+The app holds an install record per project of the form `{ identifier, url, version }` — **no `ref` field is stored**. To find updates it compares the installed `version` with the registry entry's `version` for the same identifier, as SemVer: only a **newer** catalog version is offered (`1.10.0` is newer than `1.9.0`, and a release is newer than its own pre-releases). An equal or lower version, or one that is not SemVer, offers nothing.
 
-- If they match, you are current.
-- If the entry's `version` is different, the marketplace shows an **Update** button on the card and **Update available** on the detail page. A legacy pointer that stored no version is also offered the update, so it can be pinned to the current revision.
+When a newer version is in the catalog, the marketplace shows an **Update** button on the card and **Update available** in the detail drawer.
 
-The check is a plain string compare on `version`, not on `ref`, so it relies on the author bumping `version`.
+The check compares `version`, not `ref`: re-pinning a new `ref` without raising `version` never reaches projects that already have the pack.
 
 ## Applying an update
 
-Choosing **Update** re-points your project's pointer directly to the new entry's `{ identifier, url, version }`. It does not show the scope-approval dialog that a fresh install shows, so a version bump can add scopes or endpoints without re-prompting you.
+Choosing **Update** opens the same approval dialog as a fresh install, and nothing changes until the analyst confirms. For a Plugin Pack, every permission the new version adds is marked **New**. Packs the new version needs and the project does not have yet — Type Packs for a Plugin Pack, Plugin Packs for a Skill Pack — are listed under **Also installs** and added in the same step. If one of them is missing from the catalog or withdrawn, the update is refused. Confirming re-points the project's pointer to the new entry's `{ identifier, url, version }`.
 
-If your manifest still declares the removed `publish` scope (`message:post`), remove it. The key is ignored, and plugins cannot post chat messages.
+`publish` is not in the scopes schema; the app ignores it and grants nothing, so remove it if your manifest declares it.
 
 ## Gating: which version is even offered
 
@@ -38,7 +37,7 @@ There is no separate deprecation file. Delisting a version is the registry entry
 
 ## Type Packs update the same way
 
-Type Packs follow the identical model: the `community-typepacks.json` entry is the latest pointer, and the update check is the same plain `version` string compare described above. Type Packs declare no scopes, and the registry-typepack-entry schema carries no `compat` field, so there is no min-version metadata to show. `status` (deprecated/withdrawn) exclusion applies the same as for Plugin Packs. Skill Packs do too: the `community-skillpacks.json` entry is the latest pointer, and Update re-points the project's `skills` pointer. See [Type Packs](typepacks.md) for the schema and [registry schema](../reference/registry-schema.md) for the entry projection.
+Type Packs follow the identical model: the `community-typepacks.json` entry is the latest pointer, and the update check is the same SemVer comparison described above. Type Packs declare no scopes, and the registry-typepack-entry schema carries no `compat` field, so there is no min-version metadata to show. `status` (deprecated/withdrawn) exclusion applies the same as for Plugin Packs. Skill Packs do too: the `community-skillpacks.json` entry is the latest pointer, and Update re-points the project's `skills` pointer. See [Type Packs](typepacks.md) for the schema and [registry schema](../reference/registry-schema.md) for the entry projection.
 
 ## Next / See also
 

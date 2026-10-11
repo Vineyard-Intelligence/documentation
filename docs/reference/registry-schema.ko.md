@@ -1,12 +1,12 @@
 # Registry entry schemas
 
-**registry entry** 스키마에 대한 참조 — `community-pluginpacks.json`의 한 행, `community-typepacks.json`의 한 행, `community-skillpacks.json`의 한 행입니다. 각 항목은 정적 브라우저가 모든 업스트림 manifest를 가져오지 않고도 카드를 렌더링할 수 있게 하는 간결하고 비정규화된 포인터입니다. 이 페이지는 Plugin과 Type Pack 항목을 다룹니다. Skill Pack 항목은 스키마를 직접 읽으세요.
+**registry entry** 스키마에 대한 참조 — `community-pluginpacks.json`의 한 행, `community-typepacks.json`의 한 행, `community-skillpacks.json`의 한 행입니다. 각 항목은 정적 브라우저가 모든 업스트림 manifest를 가져오지 않고도 카드를 렌더링할 수 있게 하는 간결하고 비정규화된 포인터입니다. 이 페이지는 세 가지를 모두 다룹니다.
 
 스키마는 다음 위치에 있습니다:
 
 - [`schemas/registry-plugin-entry.schema.json`](https://registry.vineyard.run/schemas/registry-plugin-entry.schema.json)
 - [`schemas/registry-typepack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-typepack-entry.schema.json)
-- [`schemas/registry-skillpack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-skillpack-entry.schema.json) — `community-skillpacks.json`의 한 행. 아래 두 항목과 같은 비정규화 포인터 형태(`identifier`, `repo`/`ref`/`path`, 의존 플러그인팩용 `requires`)입니다.
+- [`schemas/registry-skillpack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-skillpack-entry.schema.json)
 
 ## What a registry entry is (and is not)
 
@@ -15,7 +15,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 따라서 registry 항목은 **카탈로그 프로젝션**입니다: 브라우저에서 항목을 검색, 필터링, 배지 표시하기에 충분한 필드와, 상세 페이지가 실제 항목을 하이드레이트하는 데 사용하는 `repo@ref/path` 포인터입니다.
 
 !!! info "Denormalized — the manifest is the source of truth"
-    `platforms`, `scopes_summary`, `services`, `plugin_count`, `desktop_only`, `icon`, `typepacks`, `categories`, `type_count`, `edge_count`는 **파생된** 필드로, 병합 시점에 업스트림 manifest에서 계산됩니다. 업데이트 사이에 실제 manifest와 차이가 발생할 수 있습니다. 의심스러운 경우 manifest가 우선합니다.
+    `platforms`, `scopes_summary`, `services`, `plugin_count`, `desktop_only`, `icon`, `type_count`, `edge_count`, `section_count`는 **파생** 필드입니다. 항목에 직접 적되, CI가 고정된 문서에서 각 값을 다시 계산해 하나라도 불일치하면 항목을 거부합니다. `categories`와 `applies_to`도 문서의 투영이지만 CI가 다시 계산하지 않으므로 문서에서 직접 옮겨 적으세요. `typepacks`와 `requires`는 파생 필드가 아닙니다: 작성자가 선언하고 CI가 검사합니다. 업데이트 사이에 실제 manifest와 차이가 발생할 수 있습니다. 의심스러운 경우 manifest가 우선합니다.
 
 ## Plugin entry
 
@@ -25,7 +25,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 
 | Field | Type | Required | Meaning |
 |---|---|---|---|
-| `identifier` | string | yes | Reverse-DNS 기본 키, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}(?:plugins\|pluginpacks)\\.[a-z0-9_]+$` (`plugins.*` = 단일 plugin, `pluginpacks.*` = 번들). `manifest.identifier`와 동일. **전체** registry(두 카탈로그 모두)에서 고유합니다. |
+| `identifier` | string | yes | Reverse-DNS 기본 키, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}(?:plugins|pluginpacks)\.[a-z0-9_]+$` (`plugins.*` = 단일 plugin, `pluginpacks.*` = 번들). `manifest.identifier`와 동일. **전체** registry(세 카탈로그 모두)에서 고유합니다. |
 | `content_type` | string | yes | `vineyard:plugin` (단일 plugin) 또는 `vineyard:pluginpack` (번들: 하나의 파일 → 여러 plugin). |
 | `name` | string | yes | 표시 이름, 1–128자. |
 | `author` | string | yes | 저자 핸들, `verified-authors.json`과 대조됨. |
@@ -42,13 +42,13 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `plugin_count` | integer | no | **파생됨**: `identifier`가 **pack**을 명명할 때 번들된 plugin 수 (하나의 파일 → 여러 plugin). 단일 plugin 항목의 경우 생략되거나 `1`. 카드는 포함된 모든 plugin을 함께 설치합니다. 최소 `1`. |
 | `desktop_only` | string | no | **파생됨**: 팩의 모든 plugin이 데스크탑 앱에서만 실행되면 `all`, 일부만 그렇다면 `some`. 하나도 없으면 생략됩니다. |
 | `icon` | string | no | **파생됨**: manifest의 `icon`이 kebab-case [lucide](https://lucide.dev/icons/) 아이콘 이름일 때 그 값. 아니면 생략됩니다. |
-| `typepacks` | string[] | no | **파생됨**: 팩의 플러그인이 소비/생산하는 Type Pack 식별자(`io.consumes`/`io.produces`), 고유값. skillpack의 `requires`가 pluginpack을 제공하는 것과 같은 방식으로 marketplace가 이들을 함께 설치하도록 제안합니다. 프로젝트가 설치하지 않은 팩의 type을 쓰는 plugin은 노드 생성 시점에 실패합니다. |
+| `typepacks` | string[] | no | 작성자가 **선언**하고 CI가 검사: 팩의 플러그인이 소비/생산하는 Type Pack 식별자(`io.consumes`/`io.produces`), 고유값. `io` 항목이 참조하는 모든 type은 여기 나열된 Type Pack에서 와야 하며, 나열된 팩은 모두 카탈로그에 있어야 합니다. skillpack의 `requires`가 pluginpack을 제공하는 것과 같은 방식으로 marketplace가 이들을 함께 설치하도록 제안합니다. 프로젝트가 설치하지 않은 팩의 type을 쓰는 plugin은 노드 생성 시점에 실패합니다. |
 | `services` | string[] | no | **파생**: 팩의 플러그인이 이름으로 호출하는 Vineyard 서비스(`rdap`, `telegram`). `scopes_summary` 플래그가 아니라 별도 필드입니다. [scopes](scopes.md#services) 참조. |
 | `compat` | object | no | 런타임 호환성 (`versions.json`과 유사). |
-| `compat.min_app_version` | string | no | 이 `ref`가 지원하는 가장 오래된 Vineyard 런타임 (`^\d+\.\d+\.\d+$`). Marketplace 상세에 "Min app version"으로 표시되며, 오늘 클라이언트가 강제하지는 않습니다. |
+| `compat.min_app_version` | string | no | 이 `ref`가 지원하는 가장 오래된 Vineyard 런타임 (`^\d+\.\d+\.\d+$`). 앱의 Marketplace 상세에 "Min app version"으로 표시되며, 현재 클라이언트가 강제하지는 않습니다. |
 | `thumbnail_url` | string (uri) | no | 선택적 카드 아이콘. |
-| `verified` | boolean | no | `verified-authors.json` 멤버십의 미러. CI에 의해 설정되며, **자체 주장되지 않음**. 기본값 `false`. |
-| `status` | object | no | **게시가 취소된** 팩에만 존재: `{ state: "deprecated" \| "withdrawn", reason, since, replacement? }`. 행은 카탈로그에 남습니다. 항목을 지우면 이미 설치한 프로젝트엔 아무 신호도 가지 않기 때문입니다. `deprecated`는 계속 로드되며 경고만, `withdrawn`은 설치 거부 + 로드 시 제외됩니다. [Publishing → 팩 내리기](../develop/publishing.ko.md) 참조. |
+| `verified` | boolean | no | 식별자의 네임스페이스가 `verified-authors.json`에서 `author`의 핸들 소유로 등재되어 있을 때만 `true`. CI에 의해 설정되며, **자체 주장되지 않음**. 기본값 `false`. |
+| `status` | object | no | **게시가 취소된** 팩에만 존재: `{ state: "deprecated" | "withdrawn", reason, since, replacement? }`. 행은 카탈로그에 남습니다. 항목을 지우면 이미 설치한 프로젝트엔 아무 신호도 가지 않기 때문입니다. `deprecated`는 계속 로드되며 경고만, `withdrawn`은 설치 거부 + 로드 시 제외됩니다. [Publishing → 팩 내리기](../develop/publishing.md#taking-a-pack-down) 참조. |
 
 ### Example plugin row
 
@@ -60,11 +60,11 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
   "content_type": "vineyard:pluginpack",
   "name": "Chaos Reference Pack",
   "author": "VINEYARD",
-  "description": "A bundle of 6 graph-manipulation plugins for demo/validation: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node. Installing once adds all 6 together.",
+  "description": "Six graph-manipulation plugins for demos and validation.",
   "repo": "Vineyard-Intelligence/pluginpack-chaos",
-  "ref": "0e5240752c33ec62ec8e597acf7089bfd802d972",
+  "ref": "4501ffcf55e8e0b563520549c79f7c0627ca32a5",
   "path": "plugins/chaos-pack.manifest.json",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "platforms": ["web"],
   "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
@@ -101,7 +101,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `icon` | string | no | **파생됨**: 첫 번째 type의 `icon`이 kebab-case [lucide](https://lucide.dev/icons/) 아이콘 이름일 때 그 값. 아니면 생략됩니다. |
 | `thumbnail_url` | string (uri) | no | 선택적 카드 아이콘. |
 | `verified` | boolean | no | plugin 항목과 동일 — CI 설정 `verified-authors.json`의 미러. 기본값 `false`. |
-| `status` | object | no | **게시가 취소된** 팩에만 존재: `{ state: "deprecated" \| "withdrawn", reason, since, replacement? }`. 행은 카탈로그에 남습니다. 항목을 지우면 이미 설치한 프로젝트엔 아무 신호도 가지 않기 때문입니다. `deprecated`는 계속 로드되며 경고만, `withdrawn`은 설치 거부 + 로드 시 제외됩니다. [Publishing → 팩 내리기](../develop/publishing.ko.md) 참조. |
+| `status` | object | no | **게시가 취소된** 팩에만 존재: `{ state: "deprecated" | "withdrawn", reason, since, replacement? }`. 행은 카탈로그에 남습니다. 항목을 지우면 이미 설치한 프로젝트엔 아무 신호도 가지 않기 때문입니다. `deprecated`는 계속 로드되며 경고만, `withdrawn`은 설치 거부 + 로드 시 제외됩니다. [Publishing → 팩 내리기](../develop/publishing.md#taking-a-pack-down) 참조. |
 
 ### Example Type Pack row
 
@@ -115,18 +115,39 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
   "author": "VINEYARD",
   "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
-  "ref": "33bc454b03c3bca6091260a521a210784951c834",
+  "ref": "81dd71ddeeebfbeba47762d87dd3f89ecd7d11df",
   "path": "typepacks/infrastructure.json",
-  "version": "2.6.0",
+  "version": "3.0.0",
   "categories": ["infrastructure", "web"],
   "type_count": 15,
-  "edge_count": 14,
   "icon": "network",
+  "edge_count": 14,
   "verified": true
 }
 ```
 
 동반 Threat 팩은 `categories: ["threat"]`, `type_count: 10`, `edge_count: 10`으로 동일한 형태입니다.
+
+## Skill Pack entry
+
+`community-skillpacks.json`의 한 행으로, 위 두 항목과 같은 포인터 형태입니다. Skill Pack은 텍스트이므로 scope를 가지지 않으며, 유일한 의존성은 `requires`의 Plugin Pack입니다. 역시 `additionalProperties: false`.
+
+**필수:** `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`.
+
+| Field | Type | Required | Meaning |
+|---|---|---|---|
+| `identifier` | string | yes | Reverse-DNS 기본 키, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}skillpacks\.[a-z0-9_]+$`. 스킬 문서의 `identifier`와 동일. |
+| `content_type` | string | yes | 상수 `vineyard:skillpack`. |
+| `name`, `author`, `description`, `repo`, `ref`, `path` | string | yes | plugin 항목과 같은 규칙. `path`는 `repo@ref` 내 스킬 JSON 경로. |
+| `version` | string | no | 이 `ref`에서 문서 `version`의 SemVer 미러. |
+| `applies_to` | string[] | no | **파생됨**: 플레이북이 다루는 노드 유형(`category.name`)으로, 상세 보기에 표시됩니다. CI가 다시 계산하지 않으므로 문서에서 그대로 옮겨 적으세요. |
+| `section_count` | integer | no | **파생됨**: 문서의 `sections` 개수. CI가 다시 계산합니다. 최소 `0`. |
+| `requires` | string[] | no | 플레이북의 단계가 호출하는 Plugin Pack 식별자. 각각 카탈로그의 살아 있는 팩이어야 하며, marketplace가 함께 설치하도록 제안합니다. |
+| `thumbnail_url` | string (uri) | no | 선택적 카드 아이콘. |
+| `verified` | boolean | no | plugin 항목과 동일. 기본값 `false`. |
+| `status` | object | no | plugin 항목과 동일. |
+
+Account & identity pivoting의 실제 행은 [Skill Packs](../develop/skillpacks.md#publishing-to-the-registry)에 있습니다.
 
 ## How entries are validated and merged
 
@@ -138,5 +159,5 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 - [Type Pack schema](typepack-schema.md) — Type Pack 항목이 가리키는 업스트림 문서.
 - [Scopes reference](scopes.md) — `scopes_summary` 뒤의 동사들.
 - [Publishing](../develop/publishing.md) — registry에 항목 제출하기.
-- [Updates](../develop/updates.md) — 새로운 `ref`가 "Update available"이 되는 방식.
+- [Updates](../develop/updates.md) — 새 버전이 "Update available"이 되는 방식.
 - [Marketplace browser](../marketplace.md) — 이 항목들이 공급하는 정적 사이트.

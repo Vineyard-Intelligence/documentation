@@ -53,12 +53,13 @@ their qualified `category.name` form, and a Skill Pack's steps call plugin packs
 
 ## Prerequisites
 
-- **Plugin Packs** need JavaScript or TypeScript, the SDK (`@vineyard/plugin-sdk`), and a
-  bundler (esbuild, Vite, Rollup, or similar). A plugin ships as a single bundled module
+- **Plugin Packs** need JavaScript or TypeScript, the SDK (a single `sdk.ts` you copy into your
+  repo), and a bundler (esbuild, Vite, Rollup, or similar). A plugin ships as a single bundled module
   referenced from your manifest's `platforms.web.entry`.
 - **Type Packs and Skill Packs** are plain JSON — author them in any editor, no toolchain.
-- **A GitHub repository** with releases. The registry stores only a pointer; your repo hosts
-  the actual pack content that clients fetch directly.
+- **A GitHub repository.** Push a version and pin its commit SHA in a one-entry registry PR. The
+  registry stores only that pointer; your repo hosts the actual pack content that clients fetch
+  directly.
 
 !!! note "Initial scope is browser + desktop"
     Both the **browser** runtime (`platforms.web.runtime: "sandbox-js"`) and the **desktop**

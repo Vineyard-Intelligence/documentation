@@ -18,7 +18,7 @@ The `distribution` block records where a plugin's or Type Pack's source lives. T
 The full field-by-field reference lives in the [registry schema](../reference/registry-schema.md); the plugin/Type Pack schemas that embed this block are in [plugin manifest](plugin-manifest.md) and [Type Pack schema](../reference/typepack-schema.md).
 
 !!! warning "`ref` must be immutable — branches and tags are rejected"
-    The registry entry's `ref` (the one in `packs/<identifier>.json`) must be a commit SHA, 40-hex or 64-hex. Branches and tags are **rejected** by the entry schema and by `verify_pinned.py`, because they can be moved after review. `distribution.ref` inside the manifest is not checked by CI or read by the client. See [updates](updates.md) for how a *new* `ref` surfaces as an offered upgrade.
+    The registry entry's `ref` (the one in `packs/<identifier>.json`) must be a commit SHA, 40-hex or 64-hex. Branches and tags are **rejected** by the entry schema and by `verify_pinned.py`, because they can be moved after review. `distribution.ref` inside the manifest is not checked by CI or read by the client. See [updates](updates.md) for how a new version becomes an offered update.
 
 ## `kind` values
 
@@ -66,7 +66,7 @@ The full field-by-field reference lives in the [registry schema](../reference/re
 ## Storage: metadata only
 
 - The registry holds **path/metadata only** (plus, in its approved-ref lists, a SHA-256 of each approved document). There is **no server-side copy** of the bundle content.
-- The **client** fetches the bundle via jsDelivr, pinned to the entry's commit SHA, each time a project opens. There is no persistent local cache.
+- The **client** fetches pack content via jsDelivr, pinned to the entry's commit SHA: the pack document each time a project opens, and a plugin's code module each time it runs. There is no persistent local cache.
 
 ### `integrity`
 
@@ -79,7 +79,7 @@ Installing a Plugin Pack fetches the document at the entry's `repo@ref/path` (vi
 ## Next / See also
 
 - [publishing](publishing.md) — submit a one-entry PR; the immutable-`ref` and integrity gates.
-- [updates](updates.md) — how a newer `ref` becomes an offered upgrade.
+- [updates](updates.md) — how a new version becomes an offered update.
 - [quickstart](quickstart.md) — Developer Mode loads bundles without GitHub.
 - [plugin manifest](plugin-manifest.md) and [Type Pack schema](../reference/typepack-schema.md) — both embed this block.
 - [registry schema](../reference/registry-schema.md) — what the metadata-only entry stores.

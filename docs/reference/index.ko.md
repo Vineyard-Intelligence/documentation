@@ -32,7 +32,7 @@ VINEYARD의 plugin 및 Type Pack 형식에 대한 규범적 참조 자료: 모�
 
 ## Naming, at a glance
 
-- **식별자(Identifier)** 는 reverse-DNS입니다: `run.vineyard.plugins.<name>`, `run.vineyard.pluginpacks.<name>`, `run.vineyard.typepacks.<name>`, `run.vineyard.skillpacks.<name>`.
+- **식별자(Identifier)** 는 작성자 자신의 네임스페이스 아래의 reverse-DNS입니다: `<본인-네임스페이스>.plugins.<name>`, `<본인-네임스페이스>.pluginpacks.<name>`, `<본인-네임스페이스>.typepacks.<name>`, `<본인-네임스페이스>.skillpacks.<name>`(퍼스트파티 팩은 `run.vineyard` 사용).
 - 모든 문서는 `content_type` 판별자를 가집니다: `vineyard:plugin`, `vineyard:pluginpack`, `vineyard:typepack`, 또는 `vineyard:skillpack`.
 - `version`은 모든 곳에서 SemVer 문자열입니다.
 - Type은 정규화된 `category.name` 형식으로 참조됩니다(예: `infrastructure.ip_address`).

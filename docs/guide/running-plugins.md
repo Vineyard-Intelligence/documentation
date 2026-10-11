@@ -22,6 +22,11 @@ You can tick several plugins and press **Run (N)**. Once there are more than 6 p
 box searches names, descriptions and types. Selection chips can be dropped from this run with their
 ×, which leaves the canvas selection unchanged.
 
+<figure class="vy-shot" markdown="span">
+  ![Run plugins panel](../assets/guide/run-plugins-panel.webp){ width="800" loading=lazy }
+  <figcaption>Run plugins opened from a right-click on example.com: the scope switch, the selection chip, and the plugins that match it.</figcaption>
+</figure>
+
 ## Launch surfaces
 
 === "Right-click a node"
@@ -46,8 +51,12 @@ Plugins that need stored settings (for example an API key or gateway URL) show a
 **Settings (x/y set)** block. These values are saved as you type and reused on later runs. They are
 kept separately for each account on this device — in the browser only for this session, in the
 desktop app encrypted and kept across launches. This separates accounts inside Vineyard, not from
-someone with direct access to this computer. Values saved by earlier versions were discarded — enter
-them once more. Press **Run (N)** to start every ticked plugin.
+someone with direct access to this computer. Press **Run (N)** to start every ticked plugin.
+
+<figure class="vy-shot" markdown="span">
+  ![Pre-run form](../assets/guide/pre-run-form.webp){ width="800" loading=lazy }
+  <figcaption>Ticking OTX Passive DNS shows its field and its collapsed Settings (1/1 set) block.</figcaption>
+</figure>
 
 ## Reviewing a run's changes
 
@@ -57,6 +66,11 @@ on its Tasks row. Click the row to open the Review dialog, untick anything you d
 press **Apply (N)** — or **Discard all**. Nothing is written to the project until you apply; while the
 Review dialog is open, the changes are only previewed on the canvas. A run that stages nothing ends
 with a toast showing its summary (or "No changes").
+
+<figure class="vy-shot" markdown="span">
+  ![Review dialog](../assets/guide/review-changes.webp){ width="800" loading=lazy }
+  <figcaption>The Review dialog for one run: the staged nodes and edges, the selected row's properties, and Apply (4) / Discard all.</figcaption>
+</figure>
 
 ## Progress and cancellation
 

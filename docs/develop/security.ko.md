@@ -9,7 +9,7 @@ Vineyard가 플러그인 JavaScript를 격리하는 방법: 바로 적용되지 
 플러그인이 요청할 수 있는 권한 전체는 매니페스트의 다섯 개 키입니다: `graph` 동사, `network`, `web_probe`(데스크톱 전용), `services`, `config`. `services`는 플러그인이 `ctx.service`를 통해 URL이 아니라 이름으로 호출하는 Vineyard 운영 서비스(`rdap`, `telegram`)를 가리킵니다: 목적지는 호스트가 고정하고 호출에는 분석가 본인의 자격 증명이 붙습니다.
 
 !!! note "플러그인은 채팅 메시지를 게시할 수 없습니다"
-    `ctx.message`는 존재하지 않으며, `publish` / `message:post` 스코프도 없습니다. 예전 초안에 `publish`가 남아 있다면 제거하세요.
+    `ctx.message`는 존재하지 않으며, `publish` / `message:post` 스코프도 없습니다: `publish`는 스코프 스키마에 없고, 앱은 이를 무시하며 아무 권한도 주지 않으므로 제거하세요.
 
 ## 그래프 쓰기는 적용되지 않고 스테이징됩니다
 

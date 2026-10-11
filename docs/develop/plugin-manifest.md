@@ -8,7 +8,9 @@ The required top-level keys are `identifier`, `content_type`, `name`, `version`,
 
 ## Identity
 
-The identity block names and attributes the plugin: `identifier` (a reverse-DNS `<your-namespace>.plugins.<slug>` string that the marketplace and update checks key off), the constant `content_type` of `vineyard:plugin`, the display `name`, a **SemVer** `version`, a one- to two-sentence `description`, and the optional `author`, `license`, and `icon`. `icon` is a kebab-case **lucide** icon name (e.g. `sitemap`); anything else renders as the default puzzle icon. The optional presentation pointers `thumbnail_url`, `marketing_url`, and `latest_url` are in the [schema reference](../reference/plugin-schema.md) (the update check does not use `latest_url`: an update is offered when the catalog's `version` differs from the installed one — see [Updates](updates.md)).
+The identity block names and attributes the plugin: `identifier` (a reverse-DNS `<your-namespace>.plugins.<slug>` string that the marketplace and update checks key off), the constant `content_type` of `vineyard:plugin`, the display `name`, a **SemVer** `version`, a one- to two-sentence `description`, and the optional `author`, `license`, and `icon`. `icon` is a kebab-case **lucide** icon name (e.g. `sitemap`); anything else renders as the default puzzle icon. The optional presentation pointers `thumbnail_url`, `marketing_url`, and `latest_url` are in the [schema reference](../reference/plugin-schema.md) (the update check does not use `latest_url`: an update is offered when the catalog's `version` is newer than the installed one, compared as SemVer — see [Updates](updates.md)).
+
+The AI agent chooses a plugin by its `description`, so say what the plugin takes and what it adds. It also reads each parameter's `description` (or `title`). In its plugin list, a parameter description longer than 300 characters is cut to its first sentence until the agent asks for that plugin, so put the essential rule first.
 
 ## Platforms
 
@@ -43,7 +45,7 @@ The identity block names and attributes the plugin: `identifier` (a reverse-DNS 
 !!! warning "Desktop: the app runs the `web` entry; `native`/`subprocess` deferred"
     The schema accepts a `desktop` block (with runtimes `sandbox-js`, `native`, or `subprocess`), but the host does not read it: the Electron shell runs the plugin's `platforms.web` `sandbox-js` entry in the same sandbox worker, not a separate desktop runtime. `native` and `subprocess` runtimes are forward-looking design — do not rely on them executing yet.
 
-The host executes `platforms.web` (runtime `sandbox-js`) on both the web and the desktop app — the `desktop` block and both `fallback` fields are accepted by the schema but not read, so every plugin needs a `web` block. `primary: "desktop"` marks the plugin desktop-only: in a browser it stays listed in the Run plugins panel under **Desktop only**, greyed out and not runnable, rather than hidden. The marketplace itself does not check platforms.
+The host executes `platforms.web` (runtime `sandbox-js`) on both the web and the desktop app — the `desktop` block and both `fallback` fields are accepted by the schema but not read, so every plugin needs a `web` block. `primary: "desktop"` marks the plugin desktop-only: in a browser it stays listed in the Run plugins panel under **Desktop only**, greyed out and not runnable, rather than hidden. The marketplace labels such packs **Desktop only** but still installs them in the browser.
 
 ## io — consumes and produces
 
@@ -66,7 +68,7 @@ This is RDAP IP's `io`: it takes an `infrastructure.ip_address` node and adds th
 
 - `consumes` decides where a plugin is offered in the **Run plugins…** panel (opened from a node's or the canvas's right-click menu, the toolbar, or the menu bar): a plugin is listed under *Matches selection* / *Matches project data* when any consumed type is present in the chosen scope (Selected or Whole project). RDAP IP is offered whenever an `infrastructure.ip_address` node is in scope.
 - A type reference also accepts an optional `as` binding alias (to pre-bind the consumed node's value into `params` under that key); the schema accepts it, but the run form does not read it yet.
-- A plugin with an **empty `consumes` array** is a whole-graph plugin: it is listed in the panel's *Whole-graph / input via form* section instead.
+- A plugin with an **empty `consumes` array** is a whole-graph plugin: it is listed in the panel's *Whole-graph / input via form* section instead. A whole-graph plugin with at least one parameter is also offered to the AI agent as a query tool: the agent runs it with no nodes and fills `params` itself.
 
 `produces` is informational — it tells the marketplace and the canvas which node types this plugin can create. See [Type Packs (develop)](typepacks.md) for how these types are defined.
 
@@ -80,8 +82,8 @@ This is RDAP IP's `io`: it takes an `infrastructure.ip_address` node and adds th
   "properties": {
     "from": { "type": "string", "pattern": "^\\d{8}$", "description": "Earliest capture date, YYYYMMDD. Empty = no lower bound." },
     "to": { "type": "string", "pattern": "^\\d{8}$", "description": "Latest capture date, YYYYMMDD. Empty = no upper bound." },
-    "limit": { "type": "integer", "minimum": 1, "maximum": 500, "default": 50, "description": "Maximum captures to fetch." },
-    "drop_duplicates": { "type": "boolean", "default": true, "description": "Drop captures whose content digest repeats an earlier one." }
+    "limit": { "type": "integer", "minimum": 1, "maximum": 500, "default": 50, "description": "Maximum captures to fetch per node, 1–500. Default 50." },
+    "drop_duplicates": { "type": "boolean", "default": true, "description": "Keep only the newest capture of each content digest. On by default." }
   }
 }
 ```
@@ -97,7 +99,7 @@ This is RDAP IP's `io`: it takes an `infrastructure.ip_address` node and adds th
 "scopes": {
   "graph": ["node:read", "node:create", "node:update", "edge:create"],
   "network": [
-    { "endpoint": "https://rdap.org/", "methods": ["GET"], "purpose": "RDAP bootstrap → authoritative RIR" }
+    { "endpoint": "https://rdap.org/", "methods": ["GET"], "purpose": "Look up each selected IP's netblock and owner in RDAP." }
   ]
 }
 ```

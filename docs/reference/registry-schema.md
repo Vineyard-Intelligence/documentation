@@ -1,12 +1,12 @@
 # Registry entry schemas
 
-Reference for the **registry entry** schemas — one row in `community-pluginpacks.json`, one row in `community-typepacks.json`, and one row in `community-skillpacks.json`. Each entry is a lean, denormalized pointer that lets the static browser render a card without fetching every upstream manifest. This page covers the Plugin and Type Pack entries; for the Skill Pack entry, read its schema directly.
+Reference for the **registry entry** schemas — one row in `community-pluginpacks.json`, one row in `community-typepacks.json`, and one row in `community-skillpacks.json`. Each entry is a lean, denormalized pointer that lets the static browser render a card without fetching every upstream manifest. This page covers all three.
 
 The schemas live at:
 
 - [`schemas/registry-plugin-entry.schema.json`](https://registry.vineyard.run/schemas/registry-plugin-entry.schema.json)
 - [`schemas/registry-typepack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-typepack-entry.schema.json)
-- [`schemas/registry-skillpack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-skillpack-entry.schema.json) — one `community-skillpacks.json` row; same denormalized-pointer shape as the two below (`identifier`, `repo`/`ref`/`path`, `requires` for dependency pluginpacks).
+- [`schemas/registry-skillpack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-skillpack-entry.schema.json) 
 
 ## What a registry entry is (and is not)
 
@@ -15,7 +15,7 @@ The registry repo (`Vineyard-Intelligence/registry`) stores **path and metadata 
 A registry entry is therefore a **catalog projection**: enough fields to search, filter, and badge an item in the browser, plus the `repo@ref/path` pointer that the detail page uses to hydrate the real thing.
 
 !!! info "Denormalized — the manifest is the source of truth"
-    `platforms`, `scopes_summary`, `services`, `plugin_count`, `desktop_only`, `icon`, `typepacks`, `categories`, `type_count`, and `edge_count` are **derived** fields, computed from the upstream manifest at merge time. They can drift from the live manifest between updates. When in doubt, the manifest wins.
+    `platforms`, `scopes_summary`, `services`, `plugin_count`, `desktop_only`, `icon`, `type_count`, `edge_count` and `section_count` are **derived** fields. You write them in the entry, and CI recomputes each one from the pinned document and rejects the entry if any disagree. `categories` and `applies_to` are also projections of the document, but CI does not recompute them, so copy them from your document yourself. `typepacks` and `requires` are not derived: you declare them, and CI checks them. They can drift from the live manifest between updates. When in doubt, the manifest wins.
 
 ## Plugin entry
 
@@ -25,7 +25,7 @@ A row in `community-pluginpacks.json`. The schema sets `additionalProperties: fa
 
 | Field | Type | Required | Meaning |
 |---|---|---|---|
-| `identifier` | string | yes | Reverse-DNS primary key, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}(?:plugins\|pluginpacks)\\.[a-z0-9_]+$` (`plugins.*` = single plugin, `pluginpacks.*` = bundle). Equals `manifest.identifier`. Unique across the **whole** registry (both catalogs). |
+| `identifier` | string | yes | Reverse-DNS primary key, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}(?:plugins|pluginpacks)\.[a-z0-9_]+$` (`plugins.*` = single plugin, `pluginpacks.*` = bundle). Equals `manifest.identifier`. Unique across the **whole** registry (all three catalogs). |
 | `content_type` | string | yes | `vineyard:plugin` (a single plugin) or `vineyard:pluginpack` (a bundle: one file → many plugins). |
 | `name` | string | yes | Display name, 1–128 chars. |
 | `author` | string | yes | Author handle, matched against `verified-authors.json`. |
@@ -42,13 +42,13 @@ A row in `community-pluginpacks.json`. The schema sets `additionalProperties: fa
 | `plugin_count` | integer | no | **Derived**: number of plugins bundled when the `identifier` names a **pack** (one file → many plugins). Omitted or `1` for a single-plugin entry. The card installs all contained plugins together. Minimum `1`. |
 | `desktop_only` | string | no | **Derived**: `all` when every plugin in the pack runs only on the desktop app, `some` when at least one but not all do. Omitted when none do. |
 | `icon` | string | no | **Derived**: the manifest's `icon` when it is a kebab-case [lucide](https://lucide.dev/icons/) icon name. Omitted otherwise. |
-| `typepacks` | string[] | no | **Derived**: Type Pack identifiers the pack's plugins consume/produce (`io.consumes`/`io.produces`), unique. The marketplace offers these for co-install the same way a skillpack's `requires` offers pluginpacks; a plugin that writes a type from a pack the project never installed fails at node-create time. |
+| `typepacks` | string[] | no | **Declared** by you and checked by CI: the Type Pack identifiers the pack's plugins consume/produce (`io.consumes`/`io.produces`), unique. Every type an `io` entry references must come from a Type Pack listed here, and each listed pack must be in the catalog. The marketplace offers these for co-install the same way a skillpack's `requires` offers pluginpacks; a plugin that writes a type from a pack the project never installed fails at node-create time. |
 | `services` | string[] | no | **Derived**: Vineyard services the pack's plugins call by name (`rdap`, `telegram`). Its own field, not a `scopes_summary` flag. See [scopes](scopes.md#services). |
 | `compat` | object | no | Runtime compatibility (the `versions.json` analog). |
-| `compat.min_app_version` | string | no | Oldest Vineyard runtime this `ref` supports (`^\d+\.\d+\.\d+$`). Shown as "Min app version" on the Marketplace detail; not enforced by the client today. |
+| `compat.min_app_version` | string | no | Oldest Vineyard runtime this `ref` supports (`^\d+\.\d+\.\d+$`). Shown as "Min app version" in the app's Marketplace detail; not enforced by the client today. |
 | `thumbnail_url` | string (uri) | no | Optional card icon. |
-| `verified` | boolean | no | Mirror of `verified-authors.json` membership. Set by CI, **not self-asserted**. Default `false`. |
-| `status` | object | no | Present only on a **delisted** pack: `{ state: "deprecated" \| "withdrawn", reason, since, replacement? }`. The row stays in the catalog; deleting it would signal nothing to projects that already installed the pack. `deprecated` still loads and warns; `withdrawn` is refused at install and dropped at load. See [Publishing → Taking a pack down](../develop/publishing.md#taking-a-pack-down). |
+| `verified` | boolean | no | `true` only when the identifier's namespace is claimed in `verified-authors.json` by the handle in `author`. Set by CI, **not self-asserted**. Default `false`. |
+| `status` | object | no | Present only on a **delisted** pack: `{ state: "deprecated" | "withdrawn", reason, since, replacement? }`. The row stays in the catalog; deleting it would signal nothing to projects that already installed the pack. `deprecated` still loads and warns; `withdrawn` is refused at install and dropped at load. See [Publishing → Taking a pack down](../develop/publishing.md#taking-a-pack-down). |
 
 ### Example plugin row
 
@@ -60,11 +60,11 @@ This is the real Chaos reference pack — a single `identifier` that bundles six
   "content_type": "vineyard:pluginpack",
   "name": "Chaos Reference Pack",
   "author": "VINEYARD",
-  "description": "A bundle of 6 graph-manipulation plugins for demo/validation: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node. Installing once adds all 6 together.",
+  "description": "Six graph-manipulation plugins for demos and validation.",
   "repo": "Vineyard-Intelligence/pluginpack-chaos",
-  "ref": "0e5240752c33ec62ec8e597acf7089bfd802d972",
+  "ref": "4501ffcf55e8e0b563520549c79f7c0627ca32a5",
   "path": "plugins/chaos-pack.manifest.json",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "platforms": ["web"],
   "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
@@ -101,7 +101,7 @@ A row in `community-typepacks.json`, symmetric with the plugin entry. Type Packs
 | `icon` | string | no | **Derived**: the first type's `icon` when it is a kebab-case [lucide](https://lucide.dev/icons/) icon name. Omitted otherwise. |
 | `thumbnail_url` | string (uri) | no | Optional card icon. |
 | `verified` | boolean | no | Same as the plugin entry — CI-set mirror of `verified-authors.json`. Default `false`. |
-| `status` | object | no | Present only on a **delisted** pack: `{ state: "deprecated" \| "withdrawn", reason, since, replacement? }`. The row stays in the catalog; deleting it would signal nothing to projects that already installed the pack. `deprecated` still loads and warns; `withdrawn` is refused at install and dropped at load. See [Publishing → Taking a pack down](../develop/publishing.md#taking-a-pack-down). |
+| `status` | object | no | Present only on a **delisted** pack: `{ state: "deprecated" | "withdrawn", reason, since, replacement? }`. The row stays in the catalog; deleting it would signal nothing to projects that already installed the pack. `deprecated` still loads and warns; `withdrawn` is refused at install and dropped at load. See [Publishing → Taking a pack down](../develop/publishing.md#taking-a-pack-down). |
 
 ### Example Type Pack row
 
@@ -115,18 +115,39 @@ The real Infrastructure base pack, defining fifteen infrastructure and web entit
   "author": "VINEYARD",
   "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
-  "ref": "33bc454b03c3bca6091260a521a210784951c834",
+  "ref": "81dd71ddeeebfbeba47762d87dd3f89ecd7d11df",
   "path": "typepacks/infrastructure.json",
-  "version": "2.6.0",
+  "version": "3.0.0",
   "categories": ["infrastructure", "web"],
   "type_count": 15,
-  "edge_count": 14,
   "icon": "network",
+  "edge_count": 14,
   "verified": true
 }
 ```
 
 The companion Threat pack is the same shape with `categories: ["threat"]`, `type_count: 10` and `edge_count: 10`.
+
+## Skill Pack entry
+
+A row in `community-skillpacks.json`, the same pointer shape as the two above. A Skill Pack is text, so it carries no scopes; its only dependencies are the Plugin Packs in `requires`. Again `additionalProperties: false`.
+
+**Required:** `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`.
+
+| Field | Type | Required | Meaning |
+|---|---|---|---|
+| `identifier` | string | yes | Reverse-DNS primary key, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}skillpacks\.[a-z0-9_]+$`. Equals the skill document's `identifier`. |
+| `content_type` | string | yes | Constant `vineyard:skillpack`. |
+| `name`, `author`, `description`, `repo`, `ref`, `path` | string | yes | Same rules as the plugin entry; `path` is the skill JSON within `repo@ref`. |
+| `version` | string | no | SemVer mirror of the document's `version` at this `ref`. |
+| `applies_to` | string[] | no | **Derived**: node types (`category.name`) the playbook is about, shown in the detail view. Not recomputed by CI — copy it from your document. |
+| `section_count` | integer | no | **Derived**: number of `sections` in the document. Recomputed by CI. Minimum `0`. |
+| `requires` | string[] | no | Plugin Pack identifiers the playbook's steps call. Each must be a live pack in the catalog. The marketplace offers them for co-install. |
+| `thumbnail_url` | string (uri) | no | Optional card icon. |
+| `verified` | boolean | no | Same as the plugin entry. Default `false`. |
+| `status` | object | no | Same as the plugin entry. |
+
+The real row for Account & identity pivoting is shown on [Skill Packs](../develop/skillpacks.md#publishing-to-the-registry).
 
 ## How entries are validated and merged
 
@@ -138,5 +159,5 @@ Submission is a fork-and-PR that adds one `packs/<identifier>.json` file — the
 - [Type Pack schema](typepack-schema.md) — the upstream document a Type Pack entry points to.
 - [Scopes reference](scopes.md) — the verbs behind `scopes_summary`.
 - [Publishing](../develop/publishing.md) — submit an entry to the registry.
-- [Updates](../develop/updates.md) — how a new `ref` becomes an "Update available".
+- [Updates](../develop/updates.md) — how a new version becomes an "Update available".
 - [Marketplace browser](../marketplace.md) — the static site these entries feed.

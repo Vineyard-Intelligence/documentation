@@ -18,7 +18,7 @@ The `scopes` block has exactly five keys, all optional:
 
 ## graph
 
-Fine-grained verbs over nodes and edges (`node:*` / `edge:*` × read/create/update/delete). A plugin that deletes must declare `node:delete` / `edge:delete` explicitly. `ctx.graph` is present iff **at least one** graph verb is granted; each method below is present iff its specific verb is granted. (Source: the `@vineyard/plugin-sdk` package types — `GraphScope`, `HostContext.graph`.)
+Fine-grained verbs over nodes and edges (`node:*` / `edge:*` × read/create/update/delete). A plugin that deletes must declare `node:delete` / `edge:delete` explicitly. `ctx.graph` is present iff **at least one** graph verb is granted; each method below is present iff its specific verb is granted. (Source: the SDK's `sdk.ts` types — `GraphScope`, `HostContext.graph`.)
 
 | Scope string | Grants | `ctx` member(s) |
 | --- | --- | --- |
@@ -39,7 +39,7 @@ Fine-grained verbs over nodes and edges (`node:*` / `edge:*` × read/create/upda
 
 ## network
 
-Each entry is a `NetworkScope` object, **not** a bare string. `ctx.net.fetch` is present iff at least one network scope is declared. (Source: the `@vineyard/plugin-sdk` package types — `NetworkScope`, `HostContext.net`.)
+Each entry is a `NetworkScope` object, **not** a bare string. `ctx.net.fetch` is present iff at least one network scope is declared. (Source: the SDK's `sdk.ts` types — `NetworkScope`, `HostContext.net`.)
 
 ```jsonc
 "network": [
@@ -62,7 +62,7 @@ Each entry is a `NetworkScope` object, **not** a bare string. `ctx.net.fetch` is
 
 ## web_probe
 
-A single object, **not** an array. It grants `ctx.net.probe` — one anonymous request against an *arbitrary* public host, for plugins such as account discovery that cannot list their endpoints in advance. (Source: the `@vineyard/plugin-sdk` package types — `WebProbeScope`, `HostContext.net.probe`.)
+A single object, **not** an array. It grants `ctx.net.probe` — one anonymous request against an *arbitrary* public host, for plugins such as account discovery that cannot list their endpoints in advance. (Source: the SDK's `sdk.ts` types — `WebProbeScope`, `HostContext.net.probe`.)
 
 ```jsonc
 "web_probe": { "purpose": "check whether a username has a profile page" }
@@ -106,16 +106,16 @@ named packs; `telegram` is one.
 
 ## config
 
-Each entry is a `ConfigValue`. `ctx.config` is a read-only map of the declared keys the analyst has set a value for, secret ones included, coerced to the declared `type`. It is absent while none of them has a value, so read it as `ctx.config?.key ?? DEFAULT`. Values are kept per signed-in account — in the OS keychain on desktop, for the tab session in the browser. (Source: the `@vineyard/plugin-sdk` package types — `ConfigValue`, `HostContext.config`.)
+Each entry is a `ConfigValue`. `ctx.config` is a read-only map of the declared keys the analyst has set a value for, secret ones included, coerced to the declared `type`. It is absent while none of them has a value, so read it as `ctx.config?.key ?? DEFAULT`. Values are kept per signed-in account — in the OS keychain on desktop, for the tab session in the browser. (Source: the SDK's `sdk.ts` types — `ConfigValue`, `HostContext.config`.)
 
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `key` | `string` | Identifier, pattern `^[a-z0-9_]+$` |
 | `label` | `string` (optional) | Field label in the plugin's Settings section of the Run plugins dialog |
-| `type` | `"string" \| "number" \| "boolean" \| "url" \| "enum"` | Value type |
+| `type` | `"string" | "number" | "boolean" | "url" | "enum"` | Value type |
 | `enum` | `string[]` (optional) | Allowed values when `type` is `enum` |
 | `secret` | `boolean` (optional) | BYOK-style credential; see below |
-| `scope` | `"plugin" \| "project" \| "user"` (optional) | Where the value is stored. Accepted but not read today; values are stored per plugin |
+| `scope` | `"plugin" | "project" | "user"` (optional) | Where the value is stored. Accepted but not read today; values are stored per plugin |
 | `optional` | `boolean` (optional) | If false/absent the field is marked "required by this plugin" (not enforced; the plugin must handle a missing value) |
 
 !!! danger "secret semantics"
@@ -123,7 +123,7 @@ Each entry is a `ConfigValue`. `ctx.config` is a read-only map of the declared k
 
 ## Not scopes
 
-The following are **always available** and grant no authority over data or network. They require no declaration. (Source: the `@vineyard/plugin-sdk` package types — `HostContext`.)
+The following are **always available** and grant no authority over data or network. They require no declaration. (Source: the SDK's `sdk.ts` types — `HostContext`.)
 
 | Capability | `ctx` member | Notes |
 | --- | --- | --- |

@@ -4,7 +4,9 @@ A first-run walkthrough: open the Vineyard app, create a project, install a **Ty
 
 ## 1. Open the app
 
-Vineyard runs in your browser, or as the Vineyard desktop app. Sign in, and you land on your dashboard (reopening the app while still signed in goes to the last project you opened instead, if you chose that under **Settings → General → Start view**). The desktop app can also run in local mode with no account, and then it opens on your project list.
+Vineyard runs in your browser, or as the Vineyard desktop app. Sign in, and you land on your dashboard (reopening the app while still signed in goes to the last project you opened instead, if you chose that under **Settings → General → Start view**). The desktop app can also run in local mode with no account; it opens on the dashboard as well.
+
+The dashboard is your home page. **Continue** lists the project you opened last and your most recently active ones, **Since your last visit** shows what others changed in your projects while you were away, and **Activity** follows changes across all your projects. Signed in to a server, a search box above them finds entities across your projects.
 
 Plugins and Type Packs **execute on the client**: the server stores your graph and brokers collaboration, but it never runs plugin code.
 
@@ -16,7 +18,9 @@ Plugins and Type Packs **execute on the client**: the server stores your graph a
 A **project** owns a graph (nodes + edges), its collaborators, and its installed set of packs.
 
 - **Existing project:** pick it from the list.
-- **New project:** choose **Add New** on the project list or **New project** on the dashboard, give it a name and optionally an organization, click **Create**, and you're dropped straight onto its canvas.
+- **New project:** choose **New project** on the Projects page or the dashboard, give it a name and optionally an organization, click **Create project**, and you're dropped straight onto its canvas.
+
+An organization shares projects with a team: its page under **Organizations** lists its members and their roles and the projects attached to it, and its owners and admins invite members there.
 
 !!! note "Installs belong to the project"
     Packs are installed **onto a project**, not your account, so every collaborator on that project gets the same vocabulary and tools. Only the project owner can change the installed set.
@@ -24,6 +28,11 @@ A **project** owns a graph (nodes + edges), its collaborators, and its installed
 ## 3. Meet the canvas
 
 The canvas is your working surface — a node/edge graph you can pan, zoom, and lay out. For the full tour of menus, context menus, and side panels, see [The canvas](canvas.md).
+
+<figure class="vy-shot" markdown="span">
+  ![Project workspace](../assets/guide/workspace.webp){ width="800" loading=lazy }
+  <figcaption>The project workspace: 1 menu bar, 2 Types, 3 canvas toolbar, 4 entity search, 5 minimap, 6 Messages, 7 Properties, 8 Tasks.</figcaption>
+</figure>
 
 A brand-new project has **no entity types** yet. That's what a Type Pack fixes.
 
@@ -54,7 +63,12 @@ Every plugin launches from the same **Run plugins** panel; what it **consumes** 
 
 Tick the plugins you want. If a plugin takes input, its fields appear under it in the panel; fill in the required ones. Then press **Run**. The node you right-clicked is the run's target, not a form value.
 
-Watch it in the **Tasks** panel. A task starts `running` and ends `succeeded`, `failed`, or `cancelled`, with a **Stop** control while it runs. A run never edits the graph directly: its changes are staged, and the task shows **needs review**. Click it to open the Review dialog, check the changes, and press **Apply** (or **Discard all**). For Black Hole, the target node's 1-hop neighbours disappear from the canvas when you apply.
+Watch it in the **Tasks** panel. A task starts `running`, with a **Stop** control while it runs, and ends `succeeded`, `failed`, or `cancelled`. A run never edits the graph directly: when it stages changes, its badge shows **needs review** instead of `succeeded`. Click it to open the Review dialog, check the changes, and press **Apply** (or **Discard all**); the badge then reads **applied** (or **discarded**). For Black Hole, the target node's 1-hop neighbours disappear from the canvas when you apply.
+
+<figure class="vy-shot">
+  <video src="../../assets/guide/run-plugin.mp4" poster="../../assets/guide/run-plugin.webp" width="1280" height="800" muted loop playsinline controls preload="none" aria-label="Example: right-click example.com, choose Run plugins…, tick DNS Lookup (A Record) and press Run; then click needs review in Tasks and press Apply. Two IP address nodes join the graph. Black Hole follows the same steps."></video>
+  <figcaption>Example: right-click example.com, choose Run plugins…, tick DNS Lookup (A Record) and press Run; then click needs review in Tasks and press Apply. Two IP address nodes join the graph. Black Hole follows the same steps.</figcaption>
+</figure>
 
 ## 8. Runs are ephemeral
 

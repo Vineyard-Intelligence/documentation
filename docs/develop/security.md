@@ -9,7 +9,7 @@ A plugin is **third-party code the installing user chose to run**. It can only t
 The whole authority a plugin can ask for is five manifest keys: `graph` verbs, `network`, `web_probe` (desktop only), `services`, and `config`. `services` names a Vineyard-operated service (`rdap`, `telegram`) the plugin calls through `ctx.service` by name, never by URL: the host fixes the destination and attaches the analyst's own credential.
 
 !!! note "Plugins cannot post chat messages"
-    There is no `ctx.message`, and there is no `publish` / `message:post` scope. If an older draft still declares `publish`, remove it.
+    There is no `ctx.message`, and there is no `publish` / `message:post` scope: `publish` is not in the scopes schema, the app ignores it and grants nothing, so remove it.
 
 ## Graph writes are staged, not applied
 

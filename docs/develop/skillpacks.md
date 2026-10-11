@@ -17,18 +17,22 @@ repo at a pinned commit (exactly like a plugin manifest or Type Pack):
   "identifier": "run.vineyard.skillpacks.account_identity_pivot",
   "name": "Account & identity pivoting",
   "description": "Turn one account or handle into the person's other accounts, and know when a shared username is NOT the same person.",
-  "author": "vineyard-run",
-  "version": "1.3.0",
+  "author": "VINEYARD",
+  "version": "3.1.2",
 
   "applies_to": ["identity.handle", "identity.account", "identity.email_address", "identity.person"],
-  "triggers": ["account", "username", "handle", "same person", "sock puppet", "계정", "핸들"],
+  "triggers": ["account", "username", "handle", "email", "same person", "sock puppet", "persona", "계정", "핸들", "아이디", "동일인", "부계정"],
 
   "requires": ["run.vineyard.pluginpacks.whatsmyname"],
 
-  "overview": "Account & identity pivoting — from one handle or email to the accounts behind the same person…\nUse this when… Load a section: \"handles\" — …, \"corroborate" — …",
+  "overview": "Account & identity pivoting — from one handle or email to the accounts behind the same person…\nLoad the section for the lead you are holding:\n  - \"from-handle\"  - a username: spreading it across platforms\n  - \"from-email\"   - …\n  - \"corroborate\"  - deciding whether two accounts are one person\n…",
 
   "sections": [
-    { "id": "handles", "summary": "Spreading from one username across platforms.", "body": "From a USERNAME:\n- Run the account-search plugin…" }
+    { "id": "from-handle", "summary": "From a username: spreading it across platforms.", "body": "JUDGE THE CROWD BEFORE THE SWEEP — …" },
+    { "id": "from-email", "summary": "From an email address: the handles, keys and documents behind it.", "body": "…" },
+    { "id": "from-profile", "summary": "From one profile page: every pivot it carries.", "body": "…" },
+    { "id": "discriminate", "summary": "A candidate pair with a gap: the check that would settle it.", "body": "…" },
+    { "id": "corroborate", "summary": "Judging whether two accounts are one person — how narrow is the population?", "body": "…" }
   ],
 
   "starters": [
@@ -51,7 +55,7 @@ repo at a pinned commit (exactly like a plugin manifest or Type Pack):
 | --- | --- |
 | `identifier` | Reverse-DNS primary key, `<your-namespace>.skillpacks.<name>`. One manifest = one identifier (no member expansion, unlike a plugin pack). |
 | `applies_to` | Node types (`category.name`) the playbook is about — a hint for when it is relevant. |
-| `triggers` | Keyword hints for relevance, matched against the analyst's request. |
+| `triggers` | Keyword hints the agent sees when it lists skill packs. |
 | `requires` | Plugin pack identifiers the playbook's steps call. **A skill is only available when every one is installed in the project and can run on this build** (the marketplace co-installs them; at runtime a required pack that is blocked on the current platform, such as a desktop-only pack on the web, hides the skill even though it is installed). Empty or absent = the playbook leans on built-in graph tools only. |
 | `overview` | The router, not the procedure: what the pack is for and what sections it holds. The agent reads this first. |
 | `sections` | The actual steps. Each has an `id` (addressed by `load_skill(id, section)`), a one-line `summary` (so the agent can pick a section without loading them all), and the `body`. Loaded on demand — progressive disclosure. |
@@ -94,11 +98,11 @@ author repo, and the registry holds a single lean entry in `community-skillpacks
   "author": "VINEYARD",
   "description": "Turn one account or handle into the person's other accounts, and know when a shared username is NOT the same person.",
   "repo": "Vineyard-Intelligence/skillpack-account-identity-pivoting",
-  "ref": "86ffa0edc0d56ab99d6eae0d9e42067dda1f68e0",
+  "ref": "0ea57eaa9f00c0fe9c8a0393b158cdb85354c480",
   "path": "skillpacks/account-pivot.skill.json",
-  "version": "1.2.0",
+  "version": "3.1.2",
   "applies_to": ["identity.handle", "identity.account", "identity.email_address", "identity.person"],
-  "section_count": 2,
+  "section_count": 5,
   "requires": ["run.vineyard.pluginpacks.whatsmyname"]
 }
 ```

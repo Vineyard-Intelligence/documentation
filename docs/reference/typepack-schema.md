@@ -16,7 +16,7 @@ The root is an object with `additionalProperties: false` — unknown keys are re
 | `identifier` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$` | Reverse-DNS id, e.g. `run.vineyard.typepacks.infrastructure`. |
 | `content_type` | string | yes | `const: "vineyard:typepack"` | Discriminator marking the document as a Type Pack. |
 | `name` | string | yes | `minLength: 1`, `maxLength: 128` | Human-readable pack name. |
-| `version` | string | yes | SemVer pattern `^(0\|[1-9]\d*)\.(0\|[1-9]\d*)\.(0\|[1-9]\d*)$` | SemVer of the pack **content**. MAJOR = breaking type change requiring node migration. |
+| `version` | string | yes | SemVer pattern `^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$` | SemVer of the pack **content**. MAJOR = breaking type change requiring node migration. |
 | `description` | string | no | `maxLength: 1024` | Short summary of what the pack models. |
 | `authors` | array&lt;object&gt; | no | see [Authors](#authors) | Attribution list. |
 | `license` | string | no | — | SPDX expression, e.g. `MIT`, `Apache-2.0`, `CC-BY-4.0`. |

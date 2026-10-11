@@ -31,7 +31,7 @@ flowchart LR
 
 전체 설계는 [아키텍처 및 원칙](architecture.md)을 참조하세요.
 
-## 세 가지 콘텐츠 유형
+## 세 가지 콘텐츠 유형 {#the-three-content-types}
 
 모든 Vineyard 팩은 `content_type` 구분자를 가지며, 식별자는 reverse-DNS입니다:
 
@@ -51,13 +51,14 @@ flowchart LR
 
 ## 사전 요구 사항
 
-- **Plugin Pack**은 JavaScript 또는 TypeScript, SDK(`@vineyard/plugin-sdk`), 번들러
+- **Plugin Pack**은 JavaScript 또는 TypeScript, SDK(저장소에 복사해 두는 `sdk.ts` 파일 하나), 번들러
   (esbuild, Vite, Rollup 또는 유사)가 필요합니다. 플러그인은 매니페스트의
   `platforms.web.entry`에서 참조되는 단일 번들 모듈로 배포됩니다.
 - **Type Pack과 Skill Pack**은 일반 JSON입니다 — 도구 체인 없이 아무 편집기에서나
   작성할 수 있습니다.
-- **릴리스가 있는 GitHub 저장소.** 레지스트리는 포인터만 저장하며, 실제 팩 콘텐츠는
-  클라이언트가 직접 가져오는 귀하의 저장소에서 호스팅됩니다.
+- **GitHub 저장소.** 버전을 푸시하고, 그 커밋 SHA를 항목 하나짜리 레지스트리 PR에 고정합니다.
+  레지스트리는 그 포인터만 저장하며, 실제 팩 콘텐츠는 클라이언트가 직접 가져오는 귀하의
+  저장소에서 호스팅됩니다.
 
 !!! note "초기 범위는 브라우저 + 데스크톱"
     **브라우저** 런타임(`platforms.web.runtime: "sandbox-js"`)과 **데스크톱** 앱

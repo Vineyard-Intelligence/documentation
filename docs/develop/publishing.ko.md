@@ -31,8 +31,8 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 
 시작하기 전에 알아둘 것:
 
-- 항목의 `identifier`는 `manifest.identifier`(또는 `typepack.identifier`)와 동일해야 하며 reverse-DNS 형식 `<본인-네임스페이스>.pluginpacks.*` / `.typepacks.*` / `.skillpacks.*`을 사용합니다 — [세 가지 콘텐츠 유형](index.md) 참조.
-- `ref`가 코드를 고정하는 유일한 요소입니다. 새 버전을 배포하려면 해당 팩의 파일을 그 자리에서 새 `ref`와 `version`으로 수정하세요 — [Updates](updates.md)를 참조하세요.
+- 항목의 `identifier`는 `manifest.identifier`(또는 `typepack.identifier`)와 동일해야 하며 reverse-DNS 형식 `<본인-네임스페이스>.pluginpacks.*` / `.typepacks.*` / `.skillpacks.*`을 사용합니다 — [세 가지 콘텐츠 유형](index.md#the-three-content-types) 참조.
+- `ref`가 코드를 고정하는 유일한 요소입니다. 새 버전을 배포하려면 해당 팩의 파일을 그 자리에서 새 `ref`와 더 높은 `version`으로 수정하세요 — [Updates](updates.md)를 참조하세요.
 - 파생 필드(`platforms`, `scopes_summary`, `categories`, `type_count`, …)는 전체 매니페스트/Type Pack의 투영이므로, 찾아보기 페이지가 모든 매니페스트를 가져오지 않고도 렌더링됩니다. CI가 고정된 문서에서 `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count`, `type_count`, `edge_count`를 다시 계산해, 항목에 적힌 값 중 하나라도 불일치하면 거부합니다. `categories`와 Skill Pack의 `applies_to`/`requires`는 다시 계산하지 않으므로 직접 정확하게 유지하세요.
 
 ## CI가 강제하는 것
@@ -43,10 +43,10 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 
 - **파일명이 `identifier`와 일치하고, `content_type`이 알려진 네 종류 중 하나여야 합니다.** (`build_registry.py`)
 - **레지스트리 항목 스키마.** 항목이 `schemas/registry-plugin-entry`, `registry-typepack-entry`, `registry-skillpack-entry` 중 하나에 대해 유효성을 검사합니다. (`validate.py`)
-- **선언한 의존성이 해석되고, 아직 살아 있어야 합니다.** Skill Pack의 `requires`와 Plugin Pack의 `typepacks`는 이 카탈로그에 있는 팩을 가리켜야 합니다 — 마켓플레이스가 그 목록으로 동반 설치 제안을 만듭니다. **같은** 풀 리퀘스트에 추가된 팩도 인정되므로, Type Pack과 그것을 쓰는 플러그인을 함께 올릴 수 있습니다. 게시가 취소된(아래 「팩 내리기」) 팩을 의존성으로 두는 것도 거부됩니다. (`validate.py`)
+- **선언한 의존성이 해석되고, 아직 살아 있어야 합니다.** Skill Pack의 `requires`와 Plugin Pack의 `typepacks`는 이 카탈로그에 있는 팩을 가리켜야 합니다 — 마켓플레이스가 그 목록으로 동반 설치 제안을 만듭니다. **같은** 풀 리퀘스트에 추가된 팩도 인정되므로, Type Pack과 그것을 쓰는 플러그인을 함께 올릴 수 있습니다. [게시가 취소된](#taking-a-pack-down) 팩을 의존성으로 두는 것도 거부됩니다. (`validate.py`)
 - **네임스페이스와 저자.** `verified-authors.json`에 등재된 네임스페이스는 소유자만 게시할 수 있고, 등재된 저자명은 자기 네임스페이스 안에서만 쓸 수 있습니다 — 따라서 `run.vineyard.*`도 `author: VINEYARD`도 타인이 주장할 수 없습니다. (`validate.py`) `verified`는 제출하는 값이 아니라 파생되는 값입니다. `build_registry.py`는 식별자의 네임스페이스가 `verified-authors.json`에서 `author`의 핸들 소유로 등재되어 있으면 true로 설정하고, 제출에 적힌 값은 버립니다.
 
-### 고정(pin)
+### 고정(pin) {#the-pin}
 
 - **불변 `ref`.** 반드시 **커밋 SHA**(40-16진수 또는 64-16진수)여야 합니다. 태그와 브랜치는 옮겨질 수 있으므로 **거부**됩니다. (`verify_pinned.py`)
 - **고정된 문서가 항목과 일치해야 합니다.** `repo@ref/path`의 문서를 가져와 그 `identifier`, `content_type`, `version`이 항목이 광고하는 값과 같아야 합니다. `ref`를 다시 고정하지 않고 메타데이터만 올린 항목은 여기서 실패합니다.
@@ -89,15 +89,17 @@ Type Pack에는 여기서 자체 검사 두 가지가 더 있습니다. 하나�
   "content_type": "vineyard:pluginpack",
   "name": "Chaos Reference Pack",
   "author": "VINEYARD",
-  "description": "A bundle of 6 graph-manipulation plugins for demo/validation: Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node. Installing once adds all 6 together.",
+  "description": "Six graph-manipulation plugins for demos and validation.",
   "repo": "Vineyard-Intelligence/pluginpack-chaos",
-  "ref": "a3fd041b2e9f05e1c0b25cfe716dd8cdee342464",
+  "ref": "4501ffcf55e8e0b563520549c79f7c0627ca32a5",
   "path": "plugins/chaos-pack.manifest.json",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "platforms": ["web"],
   "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
-  "compat": { "min_app_version": "1.0.0" }
+  "icon": "boxes",
+  "compat": { "min_app_version": "1.0.0" },
+  "typepacks": []
 }
 ```
 
@@ -109,14 +111,15 @@ Type Pack에는 여기서 자체 검사 두 가지가 더 있습니다. 하나�
   "content_type": "vineyard:typepack",
   "name": "Infrastructure",
   "author": "VINEYARD",
-  "description": "Network-infrastructure and web OSINT entities and their relationships.",
+  "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
-  "ref": "dab427e4dfac4a6040c7be4cec37befb92b592c4",
+  "ref": "81dd71ddeeebfbeba47762d87dd3f89ecd7d11df",
   "path": "typepacks/infrastructure.json",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "categories": ["infrastructure", "web"],
-  "type_count": 13,
-  "edge_count": 11
+  "type_count": 15,
+  "icon": "network",
+  "edge_count": 14
 }
 ```
 
@@ -127,7 +130,7 @@ Type Pack에는 여기서 자체 검사 두 가지가 더 있습니다. 하나�
 
 병합되면 `packs/`에서 세 카탈로그 파일과 세 승인 ref 목록이 재생성되어 `main`에 바로 커밋됩니다. 다음에 클라이언트가 레지스트리를 가져올 때 귀하의 항목이 파생 배지와 함께 찾아보기에 나타납니다.
 
-## 팩 내리기
+## 팩 내리기 {#taking-a-pack-down}
 
 항목을 삭제하는 것은 팩을 내리는 방법이 **아닙니다**. 행을 지우면 찾아보기에서만 사라지고, 이미 설치한 프로젝트는 고정된 커밋에서 계속 로드합니다. 대신 행은 남기고 `status` 블록을 추가합니다:
 
@@ -152,7 +155,7 @@ Type Pack에는 여기서 자체 검사 두 가지가 더 있습니다. 하나�
 예상해야 할 두 가지:
 
 - **의존하는 쪽을 먼저 고쳐야 합니다.** 살아 있는 팩은 게시 취소된 팩을 `requires`(또는 `typepacks`)에 둘 수 없으므로, CI가 귀하의 팩에 의존하는 팩을 전부 짚어줍니다. 그것들을 갱신하거나, 같은 풀 리퀘스트에서 함께 내리십시오.
-- **`withdrawn` 항목은 더 이상 고정 검증을 받지 않으므로**, 콘텐츠가 사라져 있어도 됩니다. `deprecated` 팩은 고정 검증을 그대로 받으므로 계속 해석되어야 합니다.
+- **`withdrawn` 항목은 고정 검증을 받지 않으므로**, 콘텐츠가 사라져 있어도 됩니다. `deprecated` 팩은 고정 검증을 그대로 받으므로 계속 해석되어야 합니다.
 
 행을 통째로 지우는 것은 아무도 설치할 수 없었던 항목 — 잘못 낸 제출이나 중복 — 에만 해당합니다.
 

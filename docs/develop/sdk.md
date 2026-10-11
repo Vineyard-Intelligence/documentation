@@ -65,8 +65,8 @@ These members exist on every run, regardless of scopes.
 | Member | Type | What it gives you |
 |---|---|---|
 | `ctx.run` | `{ runId, projectId, pluginId, grantedScopes, platform }` | Identity of this run; `grantedScopes` is the manifest's scope set as approved at install; `platform` is `"web"` or `"desktop"`. |
-| `ctx.input` | `{ selection: string[] }` | The node ids this run targets. From the Run plugins panel: for a plugin with `consumes`, the selected nodes of a consumed type (scope *Selected*) or every node of those types in the project (scope *Whole project*); for a consumes-less plugin, the current selection. `run` is called **once** with the whole list — iterate all of it. **Black Hole** reads `ctx.input.selection[0]`. |
-| `ctx.params` | `Readonly<Record<string, unknown>>` | This run's user input from the pre-run form (only `required` is enforced — `pattern`/`minimum`/`maximum`/`default` are not applied, so validate and default in `run`). File fields arrive as `File` objects. |
+| `ctx.input` | `{ selection: string[] }` | The node ids this run targets. From the Run plugins panel: for a plugin with `consumes`, the selected nodes of a consumed type (scope *Selected*) or every node of those types in the project (scope *Whole project*); for a consumes-less plugin, the current selection. `run` is called **once** with the whole list — iterate all of it. **Black Hole** reads `ctx.input.selection[0]`. When the AI agent runs a plugin, `selection` holds the live node ids the agent passed. They are not filtered to your consumed types, and the agent is asked, but not forced, to pass none to a plugin with an empty `consumes`. Check each node's type, and have a whole-graph plugin ignore `selection`. |
+| `ctx.params` | `Readonly<Record<string, unknown>>` | This run's user input from the pre-run form (only `required` is enforced — `pattern`/`minimum`/`maximum`/`default` are not applied, so validate and default in `run`). File fields arrive as `File` objects. Nothing is enforced when the AI agent fills `params`, not even `required`, so validate and default every value in `run`. |
 | `ctx.progress` | `{ set?, log?, status? }` | Drives the continuously-managed task UI (details below). |
 | `ctx.signal` | `AbortSignal` | Cooperative cancellation — you **must** observe it. |
 | `ctx.onCancel` | `(handler) => void` | Register a cleanup handler invoked on cancel. |
@@ -128,7 +128,9 @@ ctx.graph?.deleteEdges?(ids: string[]): Promise<{ deleted: number }>
 cursor-paginated (used by whole-graph plugins like **Thanos Snap**). `neighbors` returns
 the 1-hop neighborhood (used by **Black Hole**). `updateNode` and `createEdge` take a
 delta/draft and stage it for review rather than returning the resulting record, so both
-resolve `void` — re-read via `get`/`list` if you need the applied state. `createNode`
+resolve `void` — re-read via `get`/`list` if you need the applied state. `updateNode` merges:
+values you pass replace those fields and every other field is kept, including on a node your run
+just created. Empty strings and `null` are ignored, so it cannot clear a field. `createNode`
 de-duplicates by identity — the canonical type plus that type's `identity_properties` (else its label property, else `value`): if
 a live node (or one this run already created) has the same identity, it is reused and your
 fields are merged in, and that node is returned. It throws if `type` is not defined by an
@@ -167,9 +169,18 @@ anonymous request to an arbitrary public host, for plugins that cannot know thei
 in advance: no cookies, no `Origin`, redirects are not followed (the caller sees the true
 status), and private/loopback hosts are refused. Only the default
 ports (80/443) and methods GET/HEAD/POST are allowed; `cookie`, `authorization`, `host` and
-forwarding headers are dropped. `maxBytes` defaults to 512 KiB (max 2 MiB) and `timeoutMs` to
-8 s (max 20 s); the shell runs at most 48 probes at once. A refused or failed probe resolves with
-`status: 0` and `error` set rather than throwing.
+forwarding headers are dropped; unless you set `User-Agent`, a desktop-browser one is sent.
+`maxBytes` defaults to 512 KiB (max 2 MiB). `timeoutMs` bounds the whole request: 8 s by default,
+at least 1 s and at most 20 s. The shell runs at most 48 probes at once. A refused or failed probe
+resolves with `status: 0` and `error` set rather than throwing.
+
+Two options change what comes back:
+
+- `bodyEncoding: "base64"` returns the body base64-encoded, for binary content such as a favicon.
+  Check `response.bodyEncoding === "base64"` before decoding.
+- `headerNames: true` (GET or HEAD only) makes the request over HTTP/1.1 and returns
+  `headerNames`: the response header names exactly as the server sent them — order, case and
+  repeats. The body is not read.
 
 ```ts
 ctx.net?.probe?(input: string, init?: SafeProbeInit): Promise<SafeProbeResponse>
@@ -203,10 +214,9 @@ ctx.config?: Readonly<Record<string, string | number | boolean>>
     [secrets handling](security.md#secret-handling).
 
 !!! note "There is no `publish` scope"
-    A plugin cannot post into the project chat/feed — there is no `ctx.message`, and `publish`
-    is not part of the scopes schema. `scopes` sets `additionalProperties: false`, so a
-    manifest declaring it **fails validation**. Report what you found by writing it into
-    the graph instead.
+    A plugin cannot post into the project chat/feed — there is no `ctx.message`. `publish` is
+    not in the scopes schema; the app ignores it and grants nothing, so remove it. Report what
+    you found by writing it into the graph instead.
 
 ### Bulk ops
 

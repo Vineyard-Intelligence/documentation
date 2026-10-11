@@ -8,7 +8,9 @@
 
 ## 식별 정보
 
-식별 정보 블록은 플러그인의 이름을 지정하고 속성을 부여합니다: `identifier`(마켓플레이스와 업데이트 확인이 키로 사용하는 reverse-DNS `<본인-네임스페이스>.plugins.<slug>` 문자열), 상수 `content_type`인 `vineyard:plugin`, 표시 `name`, **SemVer** `version`, 한두 문장의 `description`, 그리고 선택적 `author`, `license`, `icon`. `icon`은 케밥 케이스의 **lucide** 아이콘 이름(예: `sitemap`)이며, 그 외의 값은 기본 퍼즐 아이콘으로 렌더링됩니다. 선택적 프레젠테이션 포인터 `thumbnail_url`, `marketing_url`, `latest_url`은 [schema reference](../reference/plugin-schema.md)에 있습니다(업데이트 확인은 `latest_url`을 사용하지 않습니다: 카탈로그의 `version`이 설치된 버전과 다르면 업데이트가 제공됩니다 — [Updates](updates.md) 참조).
+식별 정보 블록은 플러그인의 이름을 지정하고 속성을 부여합니다: `identifier`(마켓플레이스와 업데이트 확인이 키로 사용하는 reverse-DNS `<본인-네임스페이스>.plugins.<slug>` 문자열), 상수 `content_type`인 `vineyard:plugin`, 표시 `name`, **SemVer** `version`, 한두 문장의 `description`, 그리고 선택적 `author`, `license`, `icon`. `icon`은 케밥 케이스의 **lucide** 아이콘 이름(예: `sitemap`)이며, 그 외의 값은 기본 퍼즐 아이콘으로 렌더링됩니다. 선택적 프레젠테이션 포인터 `thumbnail_url`, `marketing_url`, `latest_url`은 [schema reference](../reference/plugin-schema.md)에 있습니다(업데이트 확인은 `latest_url`을 사용하지 않습니다: 카탈로그의 `version`이 설치된 버전보다 SemVer로 더 새로우면 업데이트가 제공됩니다 — [Updates](updates.md) 참조).
+
+AI 에이전트는 `description`을 보고 플러그인을 고르므로, 플러그인이 무엇을 받아 무엇을 추가하는지 적으세요. 에이전트는 각 파라미터의 `description`(없으면 `title`)도 읽습니다. 에이전트의 플러그인 목록에서는 300자를 넘는 파라미터 설명이 첫 문장으로 잘리고, 에이전트가 그 플러그인을 따로 요청할 때 전체가 전달되므로, 핵심 규칙을 맨 앞에 두세요.
 
 ## 플랫폼 {#platforms}
 
@@ -38,12 +40,12 @@
     }
     ```
 
-`web-proxy`는 CORS 탈출구로 설계되었습니다: 워커가 정확히 **하나의** 작성자 제어 엔드포인트만 호출하는 씬 클라이언트가 되고, `proxy_endpoint`는 필수이며 단일 `scopes.network` 항목과 동일해야 합니다(팬아웃 불가). **스키마는 이 값을 허용하지만, 아직 이를 실행하는 런타임은 없습니다** — 이에 의존하는 플러그인을 배포하지 마세요.
+    `web-proxy`는 CORS 탈출구로 설계되었습니다: 워커가 정확히 **하나의** 작성자 제어 엔드포인트만 호출하는 씬 클라이언트가 되고, `proxy_endpoint`는 필수이며 단일 `scopes.network` 항목과 동일해야 합니다(팬아웃 불가). **스키마는 이 값을 허용하지만, 아직 이를 실행하는 런타임은 없습니다** — 이에 의존하는 플러그인을 배포하지 마세요.
 
 !!! warning "데스크톱: 앱은 `web` 진입점을 실행함; `native`/`subprocess`는 연기됨"
     스키마는 `desktop` 블록(런타임 `sandbox-js`, `native`, 또는 `subprocess`)을 허용하지만 호스트는 이를 읽지 않습니다: Electron 셸은 별도의 데스크톱 런타임이 아니라 같은 샌드박스 워커에서 플러그인의 `platforms.web` `sandbox-js` 진입점을 실행합니다. `native` 및 `subprocess` 런타임은 미래 지향적 설계입니다 — 아직 실행된다고 의존하지 마세요.
 
-호스트는 웹과 데스크톱 앱 모두에서 `platforms.web`(런타임 `sandbox-js`)을 실행합니다 — `desktop` 블록과 두 `fallback` 필드는 스키마상 허용되지만 읽히지 않으므로, 모든 플러그인에는 `web` 블록이 필요합니다. `primary: "desktop"`은 플러그인을 데스크톱 전용으로 표시합니다: 브라우저에서는 숨겨지지 않고 Run plugins 패널의 **Desktop only** 아래에 회색으로, 실행 불가 상태로 계속 표시됩니다. 마켓플레이스 자체는 플랫폼을 확인하지 않습니다.
+호스트는 웹과 데스크톱 앱 모두에서 `platforms.web`(런타임 `sandbox-js`)을 실행합니다 — `desktop` 블록과 두 `fallback` 필드는 스키마상 허용되지만 읽히지 않으므로, 모든 플러그인에는 `web` 블록이 필요합니다. `primary: "desktop"`은 플러그인을 데스크톱 전용으로 표시합니다: 브라우저에서는 숨겨지지 않고 Run plugins 패널의 **Desktop only** 아래에 회색으로, 실행 불가 상태로 계속 표시됩니다. 마켓플레이스는 이런 팩에 **Desktop only** 표시를 붙이지만, 브라우저에서도 설치는 됩니다.
 
 ## io — consumes 및 produces
 
@@ -66,7 +68,7 @@ RDAP IP의 실제 `io`입니다: `infrastructure.ip_address` 노드를 받아 �
 
 - `consumes`는 **Run plugins…** 패널(노드나 캔버스의 우클릭 메뉴, 툴바, 메뉴 바에서 열림)에서 플러그인이 제공되는 위치를 결정합니다: 선택한 범위(Selected 또는 Whole project)에 소비 타입 중 하나라도 있으면 플러그인이 *Matches selection* / *Matches project data* 아래에 나열됩니다. RDAP IP는 범위 안에 `infrastructure.ip_address` 노드가 있으면 언제나 제공됩니다.
 - 타입 참조는 선택적 `as` 바인딩 별칭(소비된 노드의 값을 그 키 아래 `params`에 미리 바인딩)도 허용합니다. 스키마는 이를 허용하지만 실행 폼은 아직 읽지 않습니다.
-- **빈 `consumes` 배열**을 가진 플러그인은 전체 그래프 플러그인입니다. 대신 패널의 *Whole-graph / input via form* 섹션에 나열됩니다.
+- **빈 `consumes` 배열**을 가진 플러그인은 전체 그래프 플러그인입니다. 대신 패널의 *Whole-graph / input via form* 섹션에 나열됩니다. 파라미터가 하나 이상인 전체 그래프 플러그인은 AI 에이전트에게 쿼리 도구로도 제공됩니다: 에이전트는 노드 없이 실행하고 `params`를 직접 채웁니다.
 
 `produces`는 정보 제공용입니다 — 이 플러그인이 생성할 수 있는 노드 타입을 마켓플레이스와 캔버스에 알려줍니다. 이러한 타입이 정의되는 방식은 [Type Packs (develop)](typepacks.md)를 참조하세요.
 
@@ -78,10 +80,10 @@ RDAP IP의 실제 `io`입니다: `infrastructure.ip_address` 노드를 받아 �
 "params": {
   "type": "object",
   "properties": {
-    "from": { "type": "string", "pattern": "^\\d{8}$", "description": "가장 이른 캡처 날짜, YYYYMMDD. 비워두면 하한 없음." },
-    "to": { "type": "string", "pattern": "^\\d{8}$", "description": "가장 늦은 캡처 날짜, YYYYMMDD. 비워두면 상한 없음." },
-    "limit": { "type": "integer", "minimum": 1, "maximum": 500, "default": 50, "description": "가져올 최대 캡처 수." },
-    "drop_duplicates": { "type": "boolean", "default": true, "description": "콘텐츠 다이제스트가 이전 캡처와 동일한 것은 제외." }
+    "from": { "type": "string", "pattern": "^\\d{8}$", "description": "Earliest capture date, YYYYMMDD. Empty = no lower bound." },
+    "to": { "type": "string", "pattern": "^\\d{8}$", "description": "Latest capture date, YYYYMMDD. Empty = no upper bound." },
+    "limit": { "type": "integer", "minimum": 1, "maximum": 500, "default": 50, "description": "Maximum captures to fetch per node, 1–500. Default 50." },
+    "drop_duplicates": { "type": "boolean", "default": true, "description": "Keep only the newest capture of each content digest. On by default." }
   }
 }
 ```
@@ -97,7 +99,7 @@ RDAP IP의 실제 `io`입니다: `infrastructure.ip_address` 노드를 받아 �
 "scopes": {
   "graph": ["node:read", "node:create", "node:update", "edge:create"],
   "network": [
-    { "endpoint": "https://rdap.org/", "methods": ["GET"], "purpose": "RDAP bootstrap → authoritative RIR" }
+    { "endpoint": "https://rdap.org/", "methods": ["GET"], "purpose": "Look up each selected IP's netblock and owner in RDAP." }
   ]
 }
 ```

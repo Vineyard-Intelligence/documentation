@@ -14,18 +14,22 @@ Skill Pack은 단일 JSON 문서로, `content_type: "vineyard:skillpack"`이며,
   "identifier": "run.vineyard.skillpacks.account_identity_pivot",
   "name": "Account & identity pivoting",
   "description": "Turn one account or handle into the person's other accounts, and know when a shared username is NOT the same person.",
-  "author": "vineyard-run",
-  "version": "1.3.0",
+  "author": "VINEYARD",
+  "version": "3.1.2",
 
   "applies_to": ["identity.handle", "identity.account", "identity.email_address", "identity.person"],
-  "triggers": ["account", "username", "handle", "same person", "sock puppet", "계정", "핸들"],
+  "triggers": ["account", "username", "handle", "email", "same person", "sock puppet", "persona", "계정", "핸들", "아이디", "동일인", "부계정"],
 
   "requires": ["run.vineyard.pluginpacks.whatsmyname"],
 
-  "overview": "Account & identity pivoting — from one handle or email to the accounts behind the same person…\nUse this when… Load a section: \"handles\" — …, \"corroborate\" — …",
+  "overview": "Account & identity pivoting — from one handle or email to the accounts behind the same person…\nLoad the section for the lead you are holding:\n  - \"from-handle\"  - a username: spreading it across platforms\n  - \"from-email\"   - …\n  - \"corroborate\"  - deciding whether two accounts are one person\n…",
 
   "sections": [
-    { "id": "handles", "summary": "Spreading from one username across platforms.", "body": "From a USERNAME:\n- Run the account-search plugin…" }
+    { "id": "from-handle", "summary": "From a username: spreading it across platforms.", "body": "JUDGE THE CROWD BEFORE THE SWEEP — …" },
+    { "id": "from-email", "summary": "From an email address: the handles, keys and documents behind it.", "body": "…" },
+    { "id": "from-profile", "summary": "From one profile page: every pivot it carries.", "body": "…" },
+    { "id": "discriminate", "summary": "A candidate pair with a gap: the check that would settle it.", "body": "…" },
+    { "id": "corroborate", "summary": "Judging whether two accounts are one person — how narrow is the population?", "body": "…" }
   ],
 
   "starters": [
@@ -48,7 +52,7 @@ Skill Pack은 단일 JSON 문서로, `content_type: "vineyard:skillpack"`이며,
 | --- | --- |
 | `identifier` | Reverse-DNS 기본 키, `<본인-네임스페이스>.skillpacks.<name>`. 매니페스트 하나 = 식별자 하나(플러그인 팩과 달리 멤버 확장 없음). |
 | `applies_to` | 플레이북이 다루는 노드 타입(`category.name`) — 언제 관련이 있는지에 대한 힌트. |
-| `triggers` | 관련성에 대한 키워드 힌트, 분석가의 요청과 매칭됩니다. |
+| `triggers` | 에이전트가 Skill Pack 목록을 볼 때 함께 보는 키워드 힌트. |
 | `requires` | 플레이북의 단계가 호출하는 플러그인 팩 식별자. **모두 프로젝트에 설치되어 있고 현재 빌드에서 실행 가능한 경우에만 스킬을 사용할 수 있습니다**(마켓플레이스가 함께 설치하며, 런타임에는 필요한 팩이 현재 플랫폼에서 차단된 경우 — 예: 웹에서의 데스크탑 전용 팩 — 설치되어 있어도 스킬이 숨겨집니다). 비어 있거나 없으면 = 플레이북이 내장 그래프 툴만 사용합니다. |
 | `overview` | 라우터이지 절차가 아닙니다: 팩이 무엇을 위한 것인지, 어떤 섹션이 있는지. 에이전트가 먼저 읽습니다. |
 | `sections` | 실제 단계. 각각 `id`(`load_skill(id, section)`으로 주소 지정), 한 줄 `summary`(전부 로드하지 않고 섹션을 고를 수 있게), `body`를 가집니다. 요청 시 로드 — 점진적 공개. |
@@ -68,7 +72,7 @@ Skill Pack은 단일 JSON 문서로, `content_type: "vineyard:skillpack"`이며,
 - **필드는 다듬어집니다.** 라벨은 한 줄로 접히고 제어 문자를 제거합니다. 섹션 본문은 제한되며(~8,000자) 개행을 제외한 제어 문자를 제거합니다. starter는 단단히 제한됩니다(~1,200자 — starter는 문단이지 문서가 아닙니다).
 - **턴당 로드 예산이 컨텍스트를 제한합니다.** 각 턴은 최대 12개의 (스킬, 섹션) 문서와 총 ~40,000자를 읽을 수 있으며, 재읽기도 다른 읽기와 똑같이 예산에 계상됩니다.
 
-## 레지스트리에 게시
+## 레지스트리에 게시 {#publishing-to-the-registry}
 
 Skill Pack은 Plugin Pack 및 Type Pack과 정확히 같은 방식으로 배포됩니다: 문서는 **귀하의** 작성자 저장소에 남아 있고, 레지스트리는 `community-skillpacks.json`에 단일 간소화 항목을 보유합니다:
 
@@ -80,11 +84,11 @@ Skill Pack은 Plugin Pack 및 Type Pack과 정확히 같은 방식으로 배포�
   "author": "VINEYARD",
   "description": "Turn one account or handle into the person's other accounts, and know when a shared username is NOT the same person.",
   "repo": "Vineyard-Intelligence/skillpack-account-identity-pivoting",
-  "ref": "86ffa0edc0d56ab99d6eae0d9e42067dda1f68e0",
+  "ref": "0ea57eaa9f00c0fe9c8a0393b158cdb85354c480",
   "path": "skillpacks/account-pivot.skill.json",
-  "version": "1.2.0",
+  "version": "3.1.2",
   "applies_to": ["identity.handle", "identity.account", "identity.email_address", "identity.person"],
-  "section_count": 2,
+  "section_count": 5,
   "requires": ["run.vineyard.pluginpacks.whatsmyname"]
 }
 ```
