@@ -11,8 +11,6 @@
 
 ## 보기 컨트롤 (툴바 + View 메뉴)
 
-![캔버스 툴바](../assets/guide/canvas-toolbar.webp){ .vy-toolbar align=right width="44" loading=lazy }
-
 툴바 토글 버튼은 켜져 있을 때 강조 표시되고, 메뉴 항목은 켜져 있을 때 체크 표시됩니다.
 
 | 컨트롤 | 동작 | 인터페이스 |

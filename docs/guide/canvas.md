@@ -11,8 +11,6 @@ The view controls are exposed twice, and both stay in sync:
 
 ## View controls (toolbar + View menu)
 
-![Canvas toolbar](../assets/guide/canvas-toolbar.webp){ .vy-toolbar align=right width="44" loading=lazy }
-
 Toolbar toggle buttons appear highlighted when on; menu items are checkmarked when on.
 
 | Control | Action | Surfaces |
