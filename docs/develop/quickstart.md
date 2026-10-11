@@ -183,7 +183,7 @@ nodes and edges change. A dev build does not block the plugin's own network acce
 
 ## 7. Going live
 
-When the plugin works locally, publish it: author repo → GitHub release (tag = `version`) → a one-entry registry PR. The full process — repo layout, release tags, immutable refs, and the registry pull request — is in [Publishing](publishing.md). Shipping more than one plugin from a single bundle? See [Plugin Packs](plugin-packs.md) (the Chaos pack ships all six reference plugins from one bundle this way).
+When the plugin works locally, publish it: push the version to your repo, then pin its commit SHA in a one-entry registry PR. The full process — repo layout, immutable refs, and the registry pull request — is in [Publishing](publishing.md). Shipping more than one plugin from a single bundle? See [Plugin Packs](plugin-packs.md) (the Chaos pack ships all six reference plugins from one bundle this way).
 
 ## Next / See also
 

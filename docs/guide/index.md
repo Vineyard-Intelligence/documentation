@@ -1,6 +1,6 @@
 # User Guide
 
-VINEYARD is a client-side graph-analysis tool. You build a graph of
+VINEYARD is an open investigation workbench for CTI and OSINT. You build a graph of
 entities and relationships, then extend the app with **packs** that you browse,
 install, and run entirely in your own session.
 

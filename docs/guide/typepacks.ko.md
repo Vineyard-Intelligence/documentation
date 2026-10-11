@@ -12,23 +12,28 @@ Type Pack은 **엔티티(노드) 유형**과 선택적으로 **엣지(관계) �
 - **`label_property`** — 캔버스에서 노드 이름으로 표시되는 속성 값. IP 주소의 경우
   주소 자체, 취약점의 경우 CVE ID입니다.
 - **속성** 세트 — 입력할 수 있는 명명된 필드(예: `country_code`, `asn`, `registrar`).
-  노드 선택 시 속성 패널에 나타납니다.
-- **`icon`** 및 **`color`** — 노드가 캔버스와 유형 및 속성 패널에서 렌더링되는 방식을
+  노드 선택 시 **Properties**(속성) 패널에 나타납니다.
+- **`icon`** 및 **`color`** — 노드가 캔버스와 **Types**(유형) 및 **Properties** 패널에서 렌더링되는 방식을
   결정하는 시각적 요소.
 
 ## Type Pack 활성화하기
 
 다른 항목을 설치하는 것과 동일한 방식으로 Type Pack을 설치하고 활성화합니다
-([설치하기](installing.md) 참조). 활성화되면 해당 유형이 **유형** 패널에 나타나고
+([설치하기](installing.md) 참조). 활성화되면 해당 유형이 **Types** 패널에 나타나고
 노드 생성 시 선택 가능해집니다. 최소 하나의 Type Pack이 활성화될 때까지 선택할 수
 있는 엔티티 유형이 없습니다.
 
-유형 패널에서 유형은 팩이 아니라 **카테고리**별로 묶이므로, 한 팩이 여러 그룹을 채울 수
-있습니다(Infrastructure 팩은 Infrastructure와 Web 양쪽에 나타남). 각 그룹에는 개수가
+**Types** 패널에서 유형은 팩이 아니라 **카테고리**별로 묶이므로, 한 팩이 여러 그룹을 채울 수
+있습니다(Infrastructure 팩은 **Infrastructure**와 **Web** 양쪽에 나타남). 각 그룹에는 개수가
 표시됩니다. 유형에 마우스를 올리면 설명과 **Category:**, 그리고 출처인 **Type pack:**이
 표시됩니다. 유형을 클릭하면 해당 유형의 새 노드(`New <유형>` 라벨의 자리표시자)가 생성되고
 바로 선택되어 속성을 채울 수 있습니다. 설치된 Type Pack이 없으면 패널이 그렇게 알려 주고
 **Browse the marketplace** 버튼을 제공합니다.
+
+<figure class="vy-shot" markdown="span">
+  ![ip_address 툴팁이 열린 Types 패널](../assets/guide/types-panel.webp){ width="410" loading=lazy }
+  <figcaption>Types 패널은 유형을 카테고리별로 묶습니다. 유형에 마우스를 올리면 설명, 카테고리, 타입 팩이 표시됩니다.</figcaption>
+</figure>
 
 노드를 생성할 때 활성화된 Type Pack에서 유형을 선택합니다. Vineyard는 해당 선택을
 `category.name` 형식의 **정규화된 문자열**로 저장합니다 — 예:

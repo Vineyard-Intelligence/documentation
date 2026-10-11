@@ -434,6 +434,22 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
   white-space: nowrap;
 }
 .vy-verified { color: var(--vy-500); display: inline-flex; }
+/* A deprecated pack: Mantine's light yellow, as the app's badge. Raised over the title button's
+   ::after overlay so its tooltip (the registry's reason) is reachable. */
+.vy-badge--deprecated {
+  position: relative; z-index: 1;
+  margin-top: .3rem; cursor: help;
+  background: rgba(250, 176, 5, .15); color: #e67700;
+}
+[data-md-color-scheme="slate"] .vy-badge--deprecated { color: #ffd43b; }
+/* The drawer's delisting notice */
+.vy-notice {
+  font-size: .8rem; line-height: 1.5;
+  margin: 0 0 1rem; padding: .6rem .75rem;
+  border: 1px solid rgba(250, 176, 5, .45); border-radius: .2rem;
+  background: rgba(250, 176, 5, .1);
+}
+.vy-notice p { margin: .25rem 0 0; }
 
 /* Skill Pack playbook overview (drawer) */
 .vy-skill-overview {
@@ -526,10 +542,24 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
   border-radius: .2rem; padding: .15rem .4rem; cursor: pointer; font-size: .68rem;
   color: var(--md-default-fg-color); margin-left: .4rem;
 }
-/* .vy-drawer__install / .vy-drawer__note were here and are gone with the button they styled —
-   see the note above the drawer template in community.js. The drawer's own bottom padding
-   (.vy-drawer, 3rem) already holds the spacing they used to contribute. */
-
 @media (max-width: 44rem) {
   .vy-community__toolbar { top: 0; }
+}
+
+/* ── User-guide screenshots and clips ─────────────────────────────────────────────────────────── */
+/* App captures are dark; a hairline border and a soft shadow keep their edge on the light theme. */
+.md-typeset figure.vy-shot { margin: 1.2em auto; }
+.md-typeset .vy-shot img,
+.md-typeset .vy-shot video {
+  display: block; max-width: 100%; height: auto; margin: 0 auto;
+  border: 1px solid var(--md-default-fg-color--lightest); border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .18);
+  background: #1a1b1e;
+}
+.md-typeset .vy-shot figcaption { max-width: 40rem; margin: .6em auto 0; font-size: .68rem; }
+/* The canvas toolbar, set beside the table of its controls. */
+.md-typeset img.vy-toolbar {
+  margin: 0 0 1em 1.5em;
+  border: 1px solid var(--md-default-fg-color--lightest); border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .18);
 }

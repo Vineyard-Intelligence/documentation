@@ -18,7 +18,7 @@
 전체 필드별 참조는 [registry schema](../reference/registry-schema.md)에 있습니다. 이 블록을 임베드하는 플러그인/Type Pack 스키마는 [plugin manifest](plugin-manifest.md)와 [Type Pack schema](../reference/typepack-schema.md)에 있습니다.
 
 !!! warning "`ref`는 불변이어야 합니다 — 브랜치와 태그는 거부됨"
-    레지스트리 항목의 `ref`(`packs/<identifier>.json`에 있는 값)는 40-16진수 또는 64-16진수 커밋 SHA여야 합니다. 브랜치와 태그는 검토 후 옮겨질 수 있으므로 항목 스키마와 `verify_pinned.py`가 **거부**합니다. 매니페스트 안의 `distribution.ref`는 CI가 검사하지도, 클라이언트가 읽지도 않습니다. *새로운* `ref`가 제공된 업그레이드로 표시되는 방식은 [updates](updates.md)를 참조하세요.
+    레지스트리 항목의 `ref`(`packs/<identifier>.json`에 있는 값)는 40-16진수 또는 64-16진수 커밋 SHA여야 합니다. 브랜치와 태그는 검토 후 옮겨질 수 있으므로 항목 스키마와 `verify_pinned.py`가 **거부**합니다. 매니페스트 안의 `distribution.ref`는 CI가 검사하지도, 클라이언트가 읽지도 않습니다. 새 버전이 업데이트로 제공되는 방식은 [updates](updates.md)를 참조하세요.
 
 ## `kind` 값
 
@@ -66,11 +66,11 @@
 ## 저장: 메타데이터 전용
 
 - 레지스트리는 **경로/메타데이터만** 보유합니다(승인된 ref 목록에 기록되는 각 승인 문서의 SHA-256 포함). 번들 콘텐츠의 **서버 측 복사본이 없습니다**.
-- **클라이언트**가 프로젝트를 열 때마다 번들을 jsDelivr 경유로, 항목의 커밋 SHA에 고정해 가져옵니다. 영속 로컬 캐시는 없습니다.
+- **클라이언트**는 팩 콘텐츠를 jsDelivr 경유로, 항목의 커밋 SHA에 고정해 가져옵니다: 팩 문서는 프로젝트를 열 때마다, 플러그인 코드 모듈은 실행할 때마다 가져옵니다. 영속 로컬 캐시는 없습니다.
 
 ### `integrity`
 
-`distribution.integrity`는 스키마상 허용되지만 아무것도 읽지 않습니다. 검증은 대신 레지스트리에서 옵니다: 클라이언트는 팩의 `repo@ref/path`가 `registry/approved-{plugin,type,skill}packs.json`에 있고, 가져온 문서가 거기 기록된 SHA-256과 일치할 때만 로드합니다. 레지스트리에 닿을 수 없으면 이 기기가 전에 검증한 포인터는 계속 로드되고, 나머지는 보류됩니다. 플러그인 코드 모듈(`platforms.web.entry`)이 매니페스트와 같은 버전과 라이선스를 선언하는지는 CI가 확인합니다([publishing](publishing.md) 참조).
+`distribution.integrity`는 스키마상 허용되지만 아무것도 읽지 않습니다. 검증은 대신 레지스트리에서 옵니다: 클라이언트는 팩의 `repo@ref/path`가 `registry/approved-{plugin,type,skill}packs.json`에 있고, 가져온 문서가 거기 기록된 SHA-256과 일치할 때만 로드합니다. 레지스트리에 닿을 수 없으면 이 기기가 전에 검증한 포인터는 계속 로드되고, 나머지는 보류됩니다. 플러그인 코드 모듈(`platforms.web.entry`)이 매니페스트와 같은 버전과 라이선스를 선언하는지는 CI가 확인합니다([publishing](publishing.md#the-pin) 참조).
 
 ## 설치 흐름에서의 위치
 
@@ -79,7 +79,7 @@ Plugin Pack을 설치하면 설치 대화상자의 권한 보기를 위해 항�
 ## 다음 / 참고
 
 - [publishing](publishing.md) — 단일 항목 PR 제출. 불변 `ref` 및 무결성 게이트.
-- [updates](updates.md) — 새로운 `ref`가 제공된 업그레이드로 표시되는 방식.
+- [updates](updates.md) — 새 버전이 업데이트로 제공되는 방식.
 - [quickstart](quickstart.md) — Developer Mode는 GitHub 없이 번들을 로드합니다.
 - [plugin manifest](plugin-manifest.md) 및 [Type Pack schema](../reference/typepack-schema.md) — 둘 다 이 블록을 임베드합니다.
 - [registry schema](../reference/registry-schema.md) — 메타데이터 전용 항목이 저장하는 것.

@@ -1,6 +1,6 @@
 # Task lifecycle
 
-Every plugin run and every AI-chat turn in Vineyard is a **task**, tracked client-side.
+Every plugin run and every AI agent turn in Vineyard is a **task**, tracked client-side.
 
 ## States
 
@@ -16,7 +16,7 @@ running → succeeded | failed | cancelled | incomplete
 | `succeeded` | Completed normally. |
 | `failed` | Completed with an error. |
 | `cancelled` | Stopped: the Tasks panel's Stop button, or leaving the project (a run the agent launched is also cancelled when its turn is stopped). Changes it had already staged stay available for review. |
-| `incomplete` | AI-chat only — the turn stopped before finishing, holding unanswered tool calls. |
+| `incomplete` | AI agent only — the turn ended before the agent finished. While the app is open, that means the turn ended holding tool calls it never got answers for. When the project is reopened, a turn that ran out of steps or was cut off by the app closing also comes back as `incomplete`. What it did is kept and can be continued. |
 
 Each run gets one dedicated Web Worker, spawned directly — there is no worker pool or queue.
 

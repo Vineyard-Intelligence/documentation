@@ -48,11 +48,17 @@ lists the pack on the left — **Overview** (what it is about, which plugins it 
 agent reads first), every **section**, and the **starters** grouped by category (`Find accounts`,
 `Corroborate`, `Report`, …) — and shows the one you pick on the right. It opens on the first starter,
 and like the other panels it can be moved and resized while you keep working on the graph.
+
+<figure class="vy-shot" markdown="span">
+  ![Skill pack panel](../assets/guide/skillpack-panel.webp){ width="800" loading=lazy }
+  <figcaption>The Skill pack panel: overview, sections and starters on the left; the chosen starter, its blanks and the prompt preview on the right.</figcaption>
+</figure>
+
 Then either:
 
 - start a run from it: pick a **starter** on the left, fill the blanks (required ones are marked),
   set the run options and answer language if you want, check the preview, and press **Ask the agent
-  to follow this**. The prompt is placed in the AI chat composer for you to edit and send; or
+  to follow this**. The prompt is placed in the message box of a new AI agent conversation (one you already had open stays in Tasks); nothing is sent until you edit it as you like and send it; or
 - just ask in your own words — the agent decides a pack is relevant (via `applies_to` / `triggers`)
   and reads it on its own.
 

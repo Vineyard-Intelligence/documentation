@@ -18,7 +18,7 @@ plugin이 `manifest.scopes`에서 선언할 수 있는 모든 scope 문자열, �
 
 ## graph
 
-노드와 엣지에 대한 세분화된 동사 (`node:*` / `edge:*` × read/create/update/delete). 삭제하는 plugin은 `node:delete` / `edge:delete`를 명시적으로 선언해야 합니다. `ctx.graph`는 **하나 이상의** graph 동사가 부여된 경우에만 존재합니다. 아래 각 메서드는 해당 특정 동사가 부여된 경우에만 존재합니다. (출처: `@vineyard/plugin-sdk` 패키지 타입 — `GraphScope`, `HostContext.graph`.)
+노드와 엣지에 대한 세분화된 동사 (`node:*` / `edge:*` × read/create/update/delete). 삭제하는 plugin은 `node:delete` / `edge:delete`를 명시적으로 선언해야 합니다. `ctx.graph`는 **하나 이상의** graph 동사가 부여된 경우에만 존재합니다. 아래 각 메서드는 해당 특정 동사가 부여된 경우에만 존재합니다. (출처: SDK의 `sdk.ts` 타입 — `GraphScope`, `HostContext.graph`.)
 
 | Scope string | Grants | `ctx` member(s) |
 | --- | --- | --- |
@@ -39,7 +39,7 @@ plugin이 `manifest.scopes`에서 선언할 수 있는 모든 scope 문자열, �
 
 ## network
 
-각 항목은 `NetworkScope` 객체이며, **단순 문자열이 아닙니다**. `ctx.net.fetch`는 하나 이상의 network scope가 선언된 경우에만 존재합니다. (출처: `@vineyard/plugin-sdk` 패키지 타입 — `NetworkScope`, `HostContext.net`.)
+각 항목은 `NetworkScope` 객체이며, **단순 문자열이 아닙니다**. `ctx.net.fetch`는 하나 이상의 network scope가 선언된 경우에만 존재합니다. (출처: SDK의 `sdk.ts` 타입 — `NetworkScope`, `HostContext.net`.)
 
 ```jsonc
 "network": [
@@ -62,7 +62,7 @@ plugin이 `manifest.scopes`에서 선언할 수 있는 모든 scope 문자열, �
 
 ## web_probe
 
-배열이 **아닌** 단일 객체입니다. `ctx.net.probe`를 부여합니다 — *임의의* 공개 호스트에 대한 한 번의 익명 요청으로, 계정 탐지처럼 엔드포인트를 미리 나열할 수 없는 plugin을 위한 것입니다. (출처: `@vineyard/plugin-sdk` 패키지 타입 — `WebProbeScope`, `HostContext.net.probe`.)
+배열이 **아닌** 단일 객체입니다. `ctx.net.probe`를 부여합니다 — *임의의* 공개 호스트에 대한 한 번의 익명 요청으로, 계정 탐지처럼 엔드포인트를 미리 나열할 수 없는 plugin을 위한 것입니다. (출처: SDK의 `sdk.ts` 타입 — `WebProbeScope`, `HostContext.net.probe`.)
 
 ```jsonc
 "web_probe": { "purpose": "check whether a username has a profile page" }
@@ -106,16 +106,16 @@ const who = await ctx.service('telegram', 'resolve', {
 
 ## config
 
-각 항목은 `ConfigValue`입니다. `ctx.config`는 분석가가 값을 설정한 선언된 키들(비밀 키 포함)을 선언된 `type`으로 변환해 담은 읽기 전용 맵입니다. 그중 어느 것에도 값이 없는 동안에는 존재하지 않으므로, `ctx.config?.key ?? DEFAULT`로 읽으세요. 값은 로그인한 계정별로 보관됩니다 — 데스크톱에서는 OS 키체인에, 브라우저에서는 해당 탭 세션 동안. (출처: `@vineyard/plugin-sdk` 패키지 타입 — `ConfigValue`, `HostContext.config`.)
+각 항목은 `ConfigValue`입니다. `ctx.config`는 분석가가 값을 설정한 선언된 키들(비밀 키 포함)을 선언된 `type`으로 변환해 담은 읽기 전용 맵입니다. 그중 어느 것에도 값이 없는 동안에는 존재하지 않으므로, `ctx.config?.key ?? DEFAULT`로 읽으세요. 값은 로그인한 계정별로 보관됩니다 — 데스크톱에서는 OS 키체인에, 브라우저에서는 해당 탭 세션 동안. (출처: SDK의 `sdk.ts` 타입 — `ConfigValue`, `HostContext.config`.)
 
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `key` | `string` | 식별자, 패턴 `^[a-z0-9_]+$` |
 | `label` | `string` (선택 사항) | Run plugins 대화상자의 해당 plugin Settings 섹션에 표시되는 필드 라벨 |
-| `type` | `"string" \| "number" \| "boolean" \| "url" \| "enum"` | 값 유형 |
+| `type` | `"string" | "number" | "boolean" | "url" | "enum"` | 값 유형 |
 | `enum` | `string[]` (선택 사항) | `type`이 `enum`일 때 허용된 값 |
 | `secret` | `boolean` (선택 사항) | BYOK 방식 자격 증명; 아래 참조 |
-| `scope` | `"plugin" \| "project" \| "user"` (선택 사항) | 값이 저장되는 위치. 허용되지만 오늘은 읽히지 않으며, 값은 plugin별로 저장됨 |
+| `scope` | `"plugin" | "project" | "user"` (선택 사항) | 값이 저장되는 위치. 허용되지만 오늘은 읽히지 않으며, 값은 plugin별로 저장됨 |
 | `optional` | `boolean` (선택 사항) | false/없으면 필드에 "required by this plugin"이 표시됨 (강제되지 않음; plugin이 값이 없는 경우를 처리해야 함) |
 
 !!! danger "secret semantics"
@@ -123,7 +123,7 @@ const who = await ctx.service('telegram', 'resolve', {
 
 ## Not scopes
 
-다음은 **항상 사용 가능**하며 데이터나 네트워크에 대한 권한을 부여하지 않습니다. 선언이 필요하지 않습니다. (출처: `@vineyard/plugin-sdk` 패키지 타입 — `HostContext`.)
+다음은 **항상 사용 가능**하며 데이터나 네트워크에 대한 권한을 부여하지 않습니다. 선언이 필요하지 않습니다. (출처: SDK의 `sdk.ts` 타입 — `HostContext`.)
 
 | Capability | `ctx` member | Notes |
 | --- | --- | --- |

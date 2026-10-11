@@ -30,6 +30,11 @@ Click a type to create a new node of that type (a placeholder labelled `New <typ
 selected right away so you can fill in its properties. With no Type Pack installed, the panel
 says so and offers **Browse the marketplace**.
 
+<figure class="vy-shot" markdown="span">
+  ![Types panel with the ip_address tooltip](../assets/guide/types-panel.webp){ width="410" loading=lazy }
+  <figcaption>The Types panel groups types by category; hovering one shows its description, category and type pack.</figcaption>
+</figure>
+
 When you create a node, you pick a type from an active Type Pack. Vineyard stores that choice as
 a qualified string in the form `category.name` — for example `infrastructure.ip_address` or
 `threat.malware`. Plugins reference the same form when they declare what they consume and

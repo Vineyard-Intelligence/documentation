@@ -19,7 +19,7 @@ The manifest is the single source of truth for a plugin; there is no separate se
 | `identifier` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$` | — | Reverse-DNS unique id, e.g. `run.vineyard.plugins.rdap_ip`. |
 | `content_type` | string | yes | `const`: `vineyard:plugin` | — | Document discriminator; must be exactly this value. |
 | `name` | string | yes | minLength 1, maxLength 128 | — | Human-readable display name. |
-| `version` | string | yes | pattern `^\d+\.\d+\.\d+(?:[-+].+)?$` | — | SemVer string (not the legacy float), e.g. `1.0.0`, `2.1.0-beta.1`. |
+| `version` | string | yes | pattern `^\d+\.\d+\.\d+(?:[-+].+)?$` | — | SemVer string, e.g. `1.0.0`, `2.1.0-beta.1`. |
 | `description` | string | yes | minLength 1, maxLength 1024 | — | One-paragraph summary. |
 | `author` | object | no | see [author](#author) | — | Authorship metadata. |
 | `license` | string | no | — | — | SPDX license id, e.g. `MIT`. |
@@ -104,7 +104,7 @@ Entity types the plugin references from Type Packs. `type: object`, `additionalP
 
 ## params
 
-JSON-Schema (draft 2020-12) describing the pre-run form. Whatever the user fills in becomes `Task.input`. `type: object`. Note this object is **not** `additionalProperties: false` — it is itself a JSON Schema and may carry any standard schema keywords; only the three keys below are explicitly modeled.
+JSON-Schema (draft 2020-12) describing the pre-run form. The submitted object is passed to `run` as `ctx.params` (and kept on the run's task row). `type: object`. Note this object is **not** `additionalProperties: false` — it is itself a JSON Schema and may carry any standard schema keywords; only the three keys below are explicitly modeled.
 
 | Property | Type | Req. | Constraints | Meaning |
 |---|---|---|---|---|
@@ -230,7 +230,7 @@ Task execution model. `type: object`, `additionalProperties: false`. All propert
 
 ## distribution
 
-`$defs.distribution` — the shared distribution block used by both plugins and Type Packs. `type: object`, `additionalProperties: false`. **Required:** `kind`. There is no server-side copy of the bundle; the client fetches it directly on each run.
+`$defs.distribution` — the shared distribution block used by both plugins and Type Packs. `type: object`, `additionalProperties: false`. **Required:** `kind`. There is no server-side copy of the bundle; the client fetches it from the author's repository at the pinned commit — the manifest each time a project opens, and the code module each time the plugin runs.
 
 | Property | Type | Req. | Allowed values / constraints | Meaning |
 |---|---|---|---|---|
@@ -268,8 +268,8 @@ A real, shipped plugin manifest — **RDAP IP**, a member of the [IP Recon](http
   "identifier": "run.vineyard.plugins.rdap_ip", // (1)!
   "content_type": "vineyard:plugin",            // (2)!
   "name": "RDAP IP",
-  "version": "1.0.0",                           // (3)!
-  "description": "Looks up each selected IP's allocation in RDAP: adds the owning Netblock node (CIDR / network name / country) and fills the IP's organization + country. Keyless, CORS-native.",
+  "version": "1.0.2",                           // (3)!
+  "description": "Looks up each selected IP Address in RDAP. Creates a Netblock node (CIDR, network name, country) linked \"within netblock\" and fills the IP's organization and country_code if empty.",
   "icon": "boxes",                              // (4)!
 
   "platforms": {
@@ -292,7 +292,7 @@ A real, shipped plugin manifest — **RDAP IP**, a member of the [IP Recon](http
     "graph": ["node:read", "node:create", "node:update", "edge:create"],
     "network": [
       { "endpoint": "https://rdap.org/", "methods": ["GET"],
-        "purpose": "RDAP bootstrap → authoritative RIR (both send CORS *)." }
+        "purpose": "Look up each selected IP's netblock and owner in RDAP." }
     ]
   },
 
@@ -308,7 +308,7 @@ This manifest has no top-level `distribution` block: it ships as one of four mem
 
 1. Reverse-DNS identifier matching `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$`.
 2. The `const` discriminator — must be exactly `vineyard:plugin`.
-3. SemVer, not the legacy float.
+3. SemVer — `MAJOR.MINOR.PATCH`, optionally with a pre-release or build suffix.
 4. Icon shown next to the plugin in the Marketplace pack detail — here a lucide name.
 5. `primary: web` with the `sandbox-js` runtime, the only web runtime that actually executes today.
 6. `graph` verbs plus one `network` endpoint, checked against the host's egress allowlist at runtime.
