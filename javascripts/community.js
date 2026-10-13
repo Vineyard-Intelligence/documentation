@@ -467,7 +467,6 @@
     if (e.license) rows.push(kv("License", escapeHtml(e.license)));
     if (e.type === "typepack") {
       if (typeof e.type_count === "number") rows.push(kv("Entity types", String(e.type_count)));
-      if (typeof e.edge_count === "number") rows.push(kv("Edge types", String(e.edge_count)));
       if ((e.categories || []).length) rows.push(kv("Categories", (e.categories || []).map(cap).join(", ")));
     }
     if (e.type === "skillpack") {
@@ -527,13 +526,6 @@
           escapeHtml(t.display_name || t.label || t.name) + "</span>";
       }).join("");
       body += "</div>";
-      if ((e.edge_types || []).length) {
-        body += "<h4>Edge types</h4><div class=\"vy-chiprow\">";
-        body += e.edge_types.map(function (t) {
-          return '<span class="vy-typechip">' + escapeHtml(t.label || t.name) + "</span>";
-        }).join("");
-        body += "</div>";
-      }
     }
 
     // Skill packs are text — the whole playbook can be shown before install.
@@ -558,10 +550,8 @@
     if (loading) body += '<p class="vy-loading" style="font-size:.85rem;color:var(--vy-text-muted);margin:.5rem 0 0">Loading details…</p>';
 
     // NO install button here, deliberately. This site is a read-only browser — installing happens
-    // inside the app, and nothing on this page can start it. The button that used to sit at the
-    // bottom of this drawer had no click handler at all (wireDrawer binds only .vy-drawer__close
-    // and [data-copy]), so it was a control that looked like the primary action of the page and
-    // did nothing when pressed. A dead primary button is worse than no button.
+    // inside the app, and nothing on this page can start it. A button here could only look like the
+    // page's primary action and do nothing when pressed, which is worse than no button.
     return (
       '<button class="vy-drawer__close" aria-label="Close">' + ICON.x + "</button>" +
       '<div class="vy-drawer__head">' +
@@ -641,8 +631,7 @@
   function mergeDetail(e, doc) {
     if (!doc) return;
     if (e.type === "typepack") {
-      e.types = doc.types || doc.node_types || [];
-      e.edge_types = doc.edge_types || [];
+      e.types = doc.types || [];
     } else if (e.type === "skillpack") {
       e.overview = typeof doc.overview === "string" ? doc.overview : "";
       e.sections = Array.isArray(doc.sections) ? doc.sections : [];
