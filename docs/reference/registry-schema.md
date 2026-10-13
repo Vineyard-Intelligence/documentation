@@ -15,7 +15,7 @@ The registry repo (`Vineyard-Intelligence/registry`) stores **path and metadata 
 A registry entry is therefore a **catalog projection**: enough fields to search, filter, and badge an item in the browser, plus the `repo@ref/path` pointer that the detail page uses to hydrate the real thing.
 
 !!! info "Denormalized — the manifest is the source of truth"
-    `platforms`, `scopes_summary`, `services`, `plugin_count`, `desktop_only`, `icon`, `type_count`, `edge_count` and `section_count` are **derived** fields. You write them in the entry, and CI recomputes each one from the pinned document and rejects the entry if any disagree. `categories` and `applies_to` are also projections of the document, but CI does not recompute them, so copy them from your document yourself. `typepacks` and `requires` are not derived: you declare them, and CI checks them. They can drift from the live manifest between updates. When in doubt, the manifest wins.
+    `platforms`, `scopes_summary`, `services`, `plugin_count`, `desktop_only`, `icon`, `type_count` and `section_count` are **derived** fields. You write them in the entry, and CI recomputes each one from the pinned document and rejects the entry if any disagree. `categories` and `applies_to` are also projections of the document, but CI does not recompute them, so copy them from your document yourself. `typepacks` and `requires` are not derived: you declare them, and CI checks them. They can drift from the live manifest between updates. When in doubt, the manifest wins.
 
 ## Plugin entry
 
@@ -44,8 +44,6 @@ A row in `community-pluginpacks.json`. The schema sets `additionalProperties: fa
 | `icon` | string | no | **Derived**: the manifest's `icon` when it is a kebab-case [lucide](https://lucide.dev/icons/) icon name. Omitted otherwise. |
 | `typepacks` | string[] | no | **Declared** by you and checked by CI: the Type Pack identifiers the pack's plugins consume/produce (`io.consumes`/`io.produces`), unique. Every type an `io` entry references must come from a Type Pack listed here, and each listed pack must be in the catalog. The marketplace offers these for co-install the same way a skillpack's `requires` offers pluginpacks; a plugin that writes a type from a pack the project never installed fails at node-create time. |
 | `services` | string[] | no | **Derived**: Vineyard services the pack's plugins call by name (`rdap`, `telegram`). Its own field, not a `scopes_summary` flag. See [scopes](scopes.md#services). |
-| `compat` | object | no | Runtime compatibility (the `versions.json` analog). |
-| `compat.min_app_version` | string | no | Oldest Vineyard runtime this `ref` supports (`^\d+\.\d+\.\d+$`). Shown as "Min app version" in the app's Marketplace detail; not enforced by the client today. |
 | `thumbnail_url` | string (uri) | no | Optional card icon. |
 | `verified` | boolean | no | `true` only when the identifier's namespace is claimed in `verified-authors.json` by the handle in `author`. Set by CI, **not self-asserted**. Default `false`. |
 | `status` | object | no | Present only on a **delisted** pack: `{ state: "deprecated" | "withdrawn", reason, since, replacement? }`. The row stays in the catalog; deleting it would signal nothing to projects that already installed the pack. `deprecated` still loads and warns; `withdrawn` is refused at install and dropped at load. See [Publishing → Taking a pack down](../develop/publishing.md#taking-a-pack-down). |
@@ -69,7 +67,6 @@ This is the real Chaos reference pack — a single `identifier` that bundles six
   "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
   "icon": "boxes",
-  "compat": { "min_app_version": "1.0.0" },
   "typepacks": [],
   "verified": true
 }
@@ -93,11 +90,10 @@ A row in `community-typepacks.json`, symmetric with the plugin entry. Type Packs
 | `description` | string | yes | ≤250 chars (same prose rules as the plugin entry). |
 | `repo` | string | yes | `owner/name` GitHub path. |
 | `ref` | string | yes | **Immutable commit SHA** (40-hex SHA-1 or 64-hex SHA-256), captured at PR time. Tags and branches are rejected (both re-pointable). `version` carries the human-readable release. |
-| `path` | string | yes | Path to the Type Pack JSON within `repo@ref` (equals `distribution.path`). |
+| `path` | string | yes | Path to the Type Pack JSON within `repo@ref`. |
 | `version` | string | no | SemVer (`^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$`). |
 | `categories` | string[] | no | **Derived**: distinct `types[].category` values (each `^[a-z][a-z0-9_]*$`, unique). Drives the category facet. |
 | `type_count` | integer | no | **Derived**: `types[].length`. Minimum `1`. |
-| `edge_count` | integer | no | **Derived**: `edge_types[].length`. Minimum `0`. |
 | `icon` | string | no | **Derived**: the first type's `icon` when it is a kebab-case [lucide](https://lucide.dev/icons/) icon name. Omitted otherwise. |
 | `thumbnail_url` | string (uri) | no | Optional card icon. |
 | `verified` | boolean | no | Same as the plugin entry — CI-set mirror of `verified-authors.json`. Default `false`. |
@@ -105,7 +101,7 @@ A row in `community-typepacks.json`, symmetric with the plugin entry. Type Packs
 
 ### Example Type Pack row
 
-The real Infrastructure base pack, defining fifteen infrastructure and web entity types and fourteen edge types:
+The real Infrastructure base pack, defining fifteen infrastructure and web entity types:
 
 ```json
 {
@@ -121,12 +117,11 @@ The real Infrastructure base pack, defining fifteen infrastructure and web entit
   "categories": ["infrastructure", "web"],
   "type_count": 15,
   "icon": "network",
-  "edge_count": 14,
   "verified": true
 }
 ```
 
-The companion Threat pack is the same shape with `categories: ["threat"]`, `type_count: 10` and `edge_count: 10`.
+The companion Threat pack is the same shape with `categories: ["threat"]` and `type_count: 10`.
 
 ## Skill Pack entry
 

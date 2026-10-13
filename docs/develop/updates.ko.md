@@ -27,20 +27,16 @@ Vineyard는 업데이트를 위해 작성자 저장소를 폴링하지 않습니
 
 ## 게이팅: 어떤 버전이 제공되는가
 
-### `compat.min_app_version`
-
-각 레지스트리 항목은 `compat.min_app_version`을 가질 수 있습니다 — 항목의 ref가 지원하는 가장 오래된 Vineyard 런타임(`MAJOR.MINOR.PATCH` 문자열)입니다. 현재는 정보 제공용일 뿐입니다: 마켓플레이스 상세 페이지가 "Min app version"으로 표시하지만, 실행 중인 앱 버전과 비교하는 로직은 없습니다.
-
 ### `status` (deprecated / withdrawn)
 
 별도의 폐기 파일은 없습니다. 버전 게시 취소는 레지스트리 항목 자체의 `status` 블록 — `{ state, reason, since, replacement }` — 으로 이루어지며, `packs/`의 해당 팩 행을 수정하는 방식입니다([팩 내리기](publishing.md#taking-a-pack-down) 참조). **`withdrawn`** ref는 업데이트로 제공되지 않고, 신규 설치도 불가능하며, 이미 설치한 프로젝트도 다음 실행에서 로드를 거부합니다 — 대신 사유가 표시됩니다. **`deprecated`** ref는 설치와 업데이트가 정상적으로 계속되며, 분석가에게는 프로젝트를 열 때마다 한 번 알림만 표시됩니다.
 
 ## Type Pack도 동일한 방식으로 업데이트됩니다
 
-Type Pack은 동일한 모델을 따릅니다: `community-typepacks.json` 항목이 최신 포인터이고, 위에서 설명한 것과 같은 SemVer 비교로 업데이트를 확인합니다. Type Pack은 스코프를 선언하지 않고, registry-typepack-entry 스키마에는 `compat` 필드 자체가 없어 최소 버전 메타데이터도 없습니다. `status`(deprecated/withdrawn)에 따른 제외는 Plugin Pack과 동일하게 적용됩니다. Skill Pack도 마찬가지입니다: `community-skillpacks.json` 항목이 최신 포인터이고, Update는 프로젝트의 `skills` 포인터를 새 항목으로 바꿉니다. 스키마는 [Type Packs](typepacks.md)를, 항목 투영은 [registry schema](../reference/registry-schema.md)를 참조하세요.
+Type Pack은 동일한 모델을 따릅니다: `community-typepacks.json` 항목이 최신 포인터이고, 위에서 설명한 것과 같은 SemVer 비교로 업데이트를 확인합니다. Type Pack은 스코프를 선언하지 않습니다. `status`(deprecated/withdrawn)에 따른 제외는 Plugin Pack과 동일하게 적용됩니다. Skill Pack도 마찬가지입니다: `community-skillpacks.json` 항목이 최신 포인터이고, Update는 프로젝트의 `skills` 포인터를 새 항목으로 바꿉니다. 스키마는 [Type Packs](typepacks.md)를, 항목 투영은 [registry schema](../reference/registry-schema.md)를 참조하세요.
 
 ## 다음 / 참고
 
 - [Distribution & storage](distribution.md) — 불변 ref와 번들이 실제로 오는 경로.
 - [Publishing](publishing.md) — 새 버전이 새 레지스트리 항목이 되는 방식.
-- [Registry schema](../reference/registry-schema.md) — `version`, `ref`, `compat` 필드.
+- [Registry schema](../reference/registry-schema.md) — `version`, `ref`, `status` 필드.

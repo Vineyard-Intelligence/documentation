@@ -66,7 +66,6 @@ export default definePlugin({
     io: { consumes: [], produces: [] },
     scopes: { graph: ["node:read", "node:delete", "edge:delete"] },
     lifecycle: { persistence: "ephemeral", controls: ["progress", "cancel"] },
-    distribution: { kind: "inline" },
   },
   async run(ctx) {
     const { nodes } = await ctx.graph!.list!();           // node:read
@@ -95,11 +94,10 @@ export default definePlugin({
 | `identifier` | Reverse-DNS, `<본인-네임스페이스>.plugins.*`. |
 | `content_type` | 반드시 리터럴 `vineyard:plugin`이어야 합니다. |
 | `name`, `version`, `description` | `version`은 SemVer입니다. |
-| `platforms.web` | `{ runtime: "sandbox-js", entry: "dist/main.js" }`. `sandbox-js`는 워커에서 JS를 실행합니다 — 호스트가 실행하는 유일한 런타임입니다. (`web-proxy`는 스키마상 허용되지만 디스패치되지 않습니다. [plugin-manifest](plugin-manifest.md#platforms) 참조.) |
+| `platforms.web` | `{ runtime: "sandbox-js", entry: "dist/main.js" }`. `sandbox-js`는 워커에서 JS를 실행합니다 — 호스트가 실행하는 유일한 런타임입니다. (`web-proxy`는 스키마상 허용되지만 디스패치되지 않습니다. [plugin-manifest](plugin-manifest.md#platforms) 참조.) 설치된 코드는 레지스트리 항목의 고정 커밋에서, 개발 코드는 개발 로더에 넣은 URL에서 가져옵니다([distribution](distribution.md) 참조). |
 | `io` | `{ consumes: [], produces: [] }` — 빈 `consumes` = 전체 그래프 플러그인. 비어 있지 않은 항목은 `infrastructure.ip_address`와 같은 정규화된 타입이며 **Run plugins…** 패널에서 플러그인이 제공되는 위치를 결정합니다. [Type Packs](typepacks.md)를 참조하세요. |
 | `scopes` | 플러그인이 얻는 유일한 권한. 여기서 `scopes.graph`는 `node:read`, `node:delete`, `edge:delete`를 나열합니다. [scopes](../reference/scopes.md)를 참조하세요. |
 | `lifecycle` | `persistence: "ephemeral"`과 지원하는 `controls`(`progress`, `cancel`, …). [lifecycle](lifecycle.md)을 참조하세요. |
-| `distribution` | 스키마상 필수인 설명용 블록(`kind`: `git`, `zip` 또는 `inline`)이며, 호스트는 이를 읽지 않습니다. 설치된 코드는 레지스트리 항목의 고정 커밋에서, 개발 코드는 개발 로더에 넣은 URL에서 가져옵니다([distribution](distribution.md) 참조). |
 
 !!! warning "`params`에 시크릿을 절대 넣지 마세요"
     시크릿처럼 보이는 키를 `params`에 절대 넣지 마세요 — 그 값은 기록됩니다. 시크릿은 `secret: true`와 함께 `scopes.config`로 선언하세요: 플러그인 설정 폼에서 (마스킹되어) 입력되고, 로그인한 계정별로 (데스크톱에서는 OS 키체인에, 브라우저에서는 탭 세션 동안) 보관되며, 이를 선언한 플러그인에게만 `ctx.config`로 전달됩니다 — [Security](security.md)를 참조하세요. Korean Roulette은 시크릿과 네트워크가 필요 없기 때문에 깔끔한 첫 플러그인으로 적합합니다.
@@ -156,8 +154,7 @@ GitHub와 레지스트리는 **배포** 계층이며, 개발 중에는 여러분
   "platforms": { "primary": "web", "web": { "runtime": "sandbox-js", "entry": "dist/main.js" } },
   "io": { "consumes": [], "produces": [] },
   "scopes": { "graph": ["node:read", "node:delete", "edge:delete"] },
-  "lifecycle": { "persistence": "ephemeral", "controls": ["progress", "cancel"] },
-  "distribution": { "kind": "inline" }
+  "lifecycle": { "persistence": "ephemeral", "controls": ["progress", "cancel"] }
 }
 ```
 
