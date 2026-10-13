@@ -15,7 +15,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 따라서 registry 항목은 **카탈로그 프로젝션**입니다: 브라우저에서 항목을 검색, 필터링, 배지 표시하기에 충분한 필드와, 상세 페이지가 실제 항목을 하이드레이트하는 데 사용하는 `repo@ref/path` 포인터입니다.
 
 !!! info "Denormalized — the manifest is the source of truth"
-    `platforms`, `scopes_summary`, `services`, `plugin_count`, `desktop_only`, `icon`, `type_count`, `edge_count`, `section_count`는 **파생** 필드입니다. 항목에 직접 적되, CI가 고정된 문서에서 각 값을 다시 계산해 하나라도 불일치하면 항목을 거부합니다. `categories`와 `applies_to`도 문서의 투영이지만 CI가 다시 계산하지 않으므로 문서에서 직접 옮겨 적으세요. `typepacks`와 `requires`는 파생 필드가 아닙니다: 작성자가 선언하고 CI가 검사합니다. 업데이트 사이에 실제 manifest와 차이가 발생할 수 있습니다. 의심스러운 경우 manifest가 우선합니다.
+    `platforms`, `scopes_summary`, `services`, `plugin_count`, `desktop_only`, `icon`, `type_count`, `section_count`는 **파생** 필드입니다. 항목에 직접 적되, CI가 고정된 문서에서 각 값을 다시 계산해 하나라도 불일치하면 항목을 거부합니다. `categories`와 `applies_to`도 문서의 투영이지만 CI가 다시 계산하지 않으므로 문서에서 직접 옮겨 적으세요. `typepacks`와 `requires`는 파생 필드가 아닙니다: 작성자가 선언하고 CI가 검사합니다. 업데이트 사이에 실제 manifest와 차이가 발생할 수 있습니다. 의심스러운 경우 manifest가 우선합니다.
 
 ## Plugin entry
 
@@ -44,8 +44,6 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `icon` | string | no | **파생됨**: manifest의 `icon`이 kebab-case [lucide](https://lucide.dev/icons/) 아이콘 이름일 때 그 값. 아니면 생략됩니다. |
 | `typepacks` | string[] | no | 작성자가 **선언**하고 CI가 검사: 팩의 플러그인이 소비/생산하는 Type Pack 식별자(`io.consumes`/`io.produces`), 고유값. `io` 항목이 참조하는 모든 type은 여기 나열된 Type Pack에서 와야 하며, 나열된 팩은 모두 카탈로그에 있어야 합니다. skillpack의 `requires`가 pluginpack을 제공하는 것과 같은 방식으로 marketplace가 이들을 함께 설치하도록 제안합니다. 프로젝트가 설치하지 않은 팩의 type을 쓰는 plugin은 노드 생성 시점에 실패합니다. |
 | `services` | string[] | no | **파생**: 팩의 플러그인이 이름으로 호출하는 Vineyard 서비스(`rdap`, `telegram`). `scopes_summary` 플래그가 아니라 별도 필드입니다. [scopes](scopes.md#services) 참조. |
-| `compat` | object | no | 런타임 호환성 (`versions.json`과 유사). |
-| `compat.min_app_version` | string | no | 이 `ref`가 지원하는 가장 오래된 Vineyard 런타임 (`^\d+\.\d+\.\d+$`). 앱의 Marketplace 상세에 "Min app version"으로 표시되며, 현재 클라이언트가 강제하지는 않습니다. |
 | `thumbnail_url` | string (uri) | no | 선택적 카드 아이콘. |
 | `verified` | boolean | no | 식별자의 네임스페이스가 `verified-authors.json`에서 `author`의 핸들 소유로 등재되어 있을 때만 `true`. CI에 의해 설정되며, **자체 주장되지 않음**. 기본값 `false`. |
 | `status` | object | no | **게시가 취소된** 팩에만 존재: `{ state: "deprecated" | "withdrawn", reason, since, replacement? }`. 행은 카탈로그에 남습니다. 항목을 지우면 이미 설치한 프로젝트엔 아무 신호도 가지 않기 때문입니다. `deprecated`는 계속 로드되며 경고만, `withdrawn`은 설치 거부 + 로드 시 제외됩니다. [Publishing → 팩 내리기](../develop/publishing.md#taking-a-pack-down) 참조. |
@@ -69,7 +67,6 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
   "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
   "icon": "boxes",
-  "compat": { "min_app_version": "1.0.0" },
   "typepacks": [],
   "verified": true
 }
@@ -93,11 +90,10 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `description` | string | yes | ≤250자 (plugin 항목과 동일한 산문 규칙). |
 | `repo` | string | yes | `owner/name` GitHub 경로. |
 | `ref` | string | yes | **불변 커밋 SHA** (40자 16진수 SHA-1 또는 64자 16진수 SHA-256), PR 시점에 캡처됨. 태그와 브랜치는 거부됩니다(둘 다 재지정 가능). `version`은 사람이 읽을 수 있는 릴리스를 전달합니다. |
-| `path` | string | yes | `repo@ref` 내 Type Pack JSON 경로 (`distribution.path`와 동일). |
+| `path` | string | yes | `repo@ref` 내 Type Pack JSON 경로. |
 | `version` | string | no | SemVer (`^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$`). |
 | `categories` | string[] | no | **파생됨**: 고유한 `types[].category` 값 (각각 `^[a-z][a-z0-9_]*$`, 고유). 카테고리 패싯을 구동합니다. |
 | `type_count` | integer | no | **파생됨**: `types[].length`. 최소 `1`. |
-| `edge_count` | integer | no | **파생됨**: `edge_types[].length`. 최소 `0`. |
 | `icon` | string | no | **파생됨**: 첫 번째 type의 `icon`이 kebab-case [lucide](https://lucide.dev/icons/) 아이콘 이름일 때 그 값. 아니면 생략됩니다. |
 | `thumbnail_url` | string (uri) | no | 선택적 카드 아이콘. |
 | `verified` | boolean | no | plugin 항목과 동일 — CI 설정 `verified-authors.json`의 미러. 기본값 `false`. |
@@ -105,7 +101,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 
 ### Example Type Pack row
 
-15개의 인프라·웹 엔티티 유형과 14개의 엣지 유형을 정의하는 실제 Infrastructure 기본 팩입니다:
+15개의 인프라·웹 엔티티 유형을 정의하는 실제 Infrastructure 기본 팩입니다:
 
 ```json
 {
@@ -121,12 +117,11 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
   "categories": ["infrastructure", "web"],
   "type_count": 15,
   "icon": "network",
-  "edge_count": 14,
   "verified": true
 }
 ```
 
-동반 Threat 팩은 `categories: ["threat"]`, `type_count: 10`, `edge_count: 10`으로 동일한 형태입니다.
+동반 Threat 팩은 `categories: ["threat"]`, `type_count: 10`으로 동일한 형태입니다.
 
 ## Skill Pack entry
 

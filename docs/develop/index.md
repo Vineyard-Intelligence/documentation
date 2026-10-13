@@ -40,7 +40,7 @@ Every Vineyard pack carries a `content_type` discriminator, and identifiers are 
 | Content type | `content_type` | Identifier form | What it is |
 |---|---|---|---|
 | **Plugin Pack** | `vineyard:pluginpack` | `<namespace>.pluginpacks.<name>` | One or more bundled JS modules exporting `definePlugin({ manifest, run })` that read the graph and stage changes to it for the analyst's review. |
-| **Type Pack** | `vineyard:typepack` | `<namespace>.typepacks.<name>` | JSON that defines node **entity types** and optional **edge types** (icons, colors, properties, validators). |
+| **Type Pack** | `vineyard:typepack` | `<namespace>.typepacks.<name>` | JSON that defines node **entity types** (icons, colors, properties, validators). |
 | **Skill Pack** | `vineyard:skillpack` | `<namespace>.skillpacks.<name>` | JSON text: an investigation **playbook** the agent follows. No code, no permissions. |
 
 `<namespace>` is **your own** reverse-DNS prefix, two labels or more: `com.acme`,
@@ -72,7 +72,7 @@ their qualified `category.name` form, and a Skill Pack's steps call plugin packs
 - [Plugin manifest](plugin-manifest.md) — every field, with real worked examples.
 - [Plugin Packs](plugin-packs.md) — one bundle, many plugins.
 - [SDK](sdk.md) — `definePlugin`, the `HostContext`, and the sandbox.
-- [Type Packs](typepacks.md) — entity types, edge types, icons, validators.
+- [Type Packs](typepacks.md) — entity types, icons, validators.
 - [Skill Packs](skillpacks.md) — the document format, sections, and starters.
 - [Scopes](../reference/scopes.md) — the only authority a plugin gets.
 - [Security](security.md) — the worker sandbox, staged writes, the egress allowlist, and secrets.

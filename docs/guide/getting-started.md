@@ -42,7 +42,7 @@ From the canvas, choose **Project → Add from Marketplace…**. Search by name/
 
 ## 5. Add a Type Pack (entity types)
 
-A **Type Pack** is pure JSON that defines the **entity types** (and optional edge types) your nodes can be. Install one before plugins, because a plugin's inputs and outputs are expressed in terms of Type Pack types.
+A **Type Pack** is pure JSON that defines the **entity types** your nodes can be. Install one before plugins, because a plugin's inputs and outputs are expressed in terms of Type Pack types.
 
 In the Marketplace, switch to Type Packs and install **Infrastructure** (`run.vineyard.typepacks.infrastructure`). It ships entity types such as `infrastructure.ip_address`, `infrastructure.netblock`, and `infrastructure.domain`. More in [Type Packs](typepacks.md).
 

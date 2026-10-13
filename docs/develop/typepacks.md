@@ -1,10 +1,10 @@
 # Type Packs
 
-A Type Pack is a `vineyard:typepack` document that defines the **node entity types** and (optionally) the **edge types** your graph and plugins work with. For the field-by-field contract see the [Type Pack schema reference](../reference/typepack-schema.md).
+A Type Pack is a `vineyard:typepack` document that defines the **node entity types** your graph and plugins work with. For the field-by-field contract see the [Type Pack schema reference](../reference/typepack-schema.md).
 
 ## What a Type Pack is
 
-Plugins do not invent their own data shapes. They `consume` and `produce` node types that a Type Pack declares, addressed by a qualified string. A Type Pack that ships only `types` contributes node types; adding `edge_types` lets it describe the relationships between them. The shipping reference packs are [Infrastructure, Threat, Identity, Financial, Endpoint, Geospatial, Social Media, and Telegram](../guide/typepacks.md).
+Plugins do not invent their own data shapes. They `consume` and `produce` node types that a Type Pack declares, addressed by a qualified string. Edges carry no type: a relationship is stated in the edge's free-text `label`. The shipping reference packs are [Infrastructure, Threat, Identity, Financial, Endpoint, Geospatial, Social Media, and Telegram](../guide/typepacks.md).
 
 ## Top-level fields
 
@@ -17,18 +17,16 @@ Plugins do not invent their own data shapes. They `consume` and `produce` node t
   "description": "Network infrastructure entities.",
   "authors": [{ "name": "Vineyard", "url": "https://vineyard.run" }],
   "license": "Apache-2.0",                        // SPDX expression
-  "distribution": { /* shared distribution block, see Distribution */ },
   "marketing_url": "https://vineyard.run/packs/infrastructure",
   "thumbnail_url": "https://vineyard.run/img/infra.png",
-  "types": [ /* entity types — at least one required */ ],
-  "edge_types": [ /* optional relationship types */ ]
+  "types": [ /* entity types — at least one required */ ]
 }
 ```
 
-`types[]` requires at least one entity type; `edge_types[]` is optional. The full required/optional field table is in the [Type Pack schema reference](../reference/typepack-schema.md).
+`types[]` requires at least one entity type. The full required/optional field table is in the [Type Pack schema reference](../reference/typepack-schema.md).
 
 !!! note "The reference packs are valid templates"
-    The six shipped packs (`infrastructure.json`, `threat.json`, `identity.json`, `financial.json`, `endpoint.json`, `geo.json`) follow this schema — explicit property types, structured validators, `distribution`, and the required top-level fields — so you can read any of them as a working template. New authoring MUST follow the schema below.
+    The six shipped packs (`infrastructure.json`, `threat.json`, `identity.json`, `financial.json`, `endpoint.json`, `geo.json`) follow this schema — explicit property types, structured validators, and the required top-level fields — so you can read any of them as a working template. New authoring MUST follow the schema below.
 
 ## Entity types
 
@@ -118,26 +116,6 @@ Both are per-entity-type and optional.
 
 The Threat pack, for example, uses lucide names like `bug` (malware), `shield-alert` (vulnerability), and `venetian-mask` (threat actor).
 
-## Edge types
-
-`edge_types[]` declares directed relationships. Each requires `category`, `name`, `label`, `from`, and `to`.
-
-```jsonc
-{
-  "category": "threat",
-  "name": "exploits",
-  "label": "exploits",                 // <= 1024 chars
-  "directed": true,                     // default true
-  "from": ["threat.malware"],           // allowed source node-type refs (category.name); '*' = any
-  "to":   ["threat.vulnerability"],     // allowed target node-type refs; '*' = any
-  "properties": {                       // optional; same grammar as node props
-    "confidence": { "type": "enum", "enum": ["low", "medium", "high"], "optional": true }
-  }
-}
-```
-
-`edge_types[]` is accepted by the schema and counted in the registry's `edge_count`, but the app does not read it. An edge's relationship is its free-text `label` (up to 1024 chars), written by the analyst or the plugin. Nothing checks `from`/`to` against node types, and no declared edge type is offered or enforced when edges are drawn.
-
 ## Type identity & storage
 
 A node type is addressed as the qualified string `"<category>.<name>"` — e.g. `infrastructure.ip_address` or `threat.malware`. This qualified form is what `Node.type` stores and what a plugin's `io.consumes` / `io.produces` and `emit` reference. Edges have no type field; the relationship is stated in the free-text `Edge.label`.
@@ -161,7 +139,7 @@ packs in that list alongside the plugin.)
 
 `version` is the SemVer of the **pack content**.
 
-- **MAJOR** = a breaking change: a renamed or removed type. Nothing remaps existing nodes when a new MAJOR is activated. Nodes keep the old `type` string and render unresolved. Nodes record, at write time, the pack revision that resolved their type as `Node.type_pack` (`"<identifier>@<version>"`), so a later migration can tell which revision produced them.
+- **MAJOR** = a breaking change: a renamed or removed type. Nothing remaps existing nodes when a new MAJOR is activated. Nodes keep the old `type` string and render unresolved. Nodes record, at write time, the pack revision that resolved their type as `Node.type_pack` (`"<identifier>@<version>"`), so a later remapping can tell which revision produced them.
 - **MINOR / PATCH** = additive or fix-level changes that don't break existing `Node.type` values.
 
 !!! note "Open issue: Type Pack version pinning"
@@ -169,7 +147,7 @@ packs in that list alongside the plugin.)
 
 ## Validation checklist
 
-Nothing validates a Type Pack against this checklist at install time: the app loads any document with `content_type: vineyard:typepack`. Treat it as an authoring checklist. Registry CI enforces only these: the pinned document's `identifier`, `content_type` and `version` match the entry; `type_count`/`edge_count` match; every `identity_properties` key names an existing, scalar (not `array`/`object`/`json`) property; and no `category.name` is already defined by another published Type Pack.
+Nothing validates a Type Pack against this checklist at install time: the app loads any document with `content_type: vineyard:typepack`. Treat it as an authoring checklist. Registry CI enforces only these: the pinned document's `identifier`, `content_type` and `version` match the entry; `type_count` matches; every `identity_properties` key names an existing, scalar (not `array`/`object`/`json`) property; and no `category.name` is already defined by another published Type Pack.
 
 - [ ] `content_type` is `vineyard:typepack`.
 - [ ] `identifier` is a valid `<your-namespace>.typepacks.*` reverse-DNS string.
@@ -178,7 +156,6 @@ Nothing validates a Type Pack against this checklist at install time: the app lo
 - [ ] `validator`, when present, is the structured object — not a raw regex string.
 - [ ] `label_property` exists in `properties` and is non-optional.
 - [ ] `enum` properties supply `enum`; `reference` properties supply `reference.target`; any `default` matches `type`.
-- [ ] Edge `from`/`to` refs resolve to declared node types (or `*`).
 
 ## Next / See also
 
@@ -186,5 +163,5 @@ Nothing validates a Type Pack against this checklist at install time: the app lo
 - [Scopes reference](../reference/scopes.md) — what plugins are allowed to do with these types.
 - [Plugin manifest](plugin-manifest.md) — how a plugin's `io` references Type Pack types.
 - [Security](security.md) — why secrets never become graph properties.
-- [Distribution](distribution.md) — the shared `git`/`zip`/`inline` block.
+- [Distribution](distribution.md) — how pinned pack documents are fetched and verified.
 - Catalog: the [reference packs](../guide/typepacks.md) — Infrastructure, Threat, Identity, Financial, Endpoint, Geospatial, Social Media, Telegram.

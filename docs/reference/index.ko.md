@@ -6,7 +6,7 @@ VINEYARD의 plugin 및 Type Pack 형식에 대한 규범적 참조 자료: 모�
 
 | Page | What it documents |
 |---|---|
-| [Plugin manifest schema](plugin-schema.md) | `vineyard:plugin` manifest — `identifier`, `version`, `platforms`, `io`, `scopes`, `lifecycle`, `distribution`. |
+| [Plugin manifest schema](plugin-schema.md) | `vineyard:plugin` manifest — `identifier`, `version`, `platforms`, `io`, `scopes`, `lifecycle`. |
 | [Type Pack schema](typepack-schema.md) | `vineyard:typepack` 문서 — 정규화된 `category.name` 형식(예: `infrastructure.ip_address`)의 type 정의. |
 | [Registry entry schemas](registry-schema.md) | `community-pluginpacks.json` / `community-typepacks.json`의 한 행 — 브라우저가 읽는 메타데이터 전용 카탈로그 행. |
 | [Scopes](scopes.md) | 전체 권한 어휘: `graph` 동사(`node:read`, `edge:delete` 등), `network`, `web_probe`, `services`, `config`. |

@@ -12,7 +12,7 @@ The manifest is the single source of truth for a plugin; there is no separate se
 
 ## Top-level properties
 
-`additionalProperties: false`. **Required:** `identifier`, `content_type`, `name`, `version`, `description`, `platforms`, `io`, `scopes`, `lifecycle`, `distribution`.
+`additionalProperties: false`. **Required:** `identifier`, `content_type`, `name`, `version`, `description`, `platforms`, `io`, `scopes`, `lifecycle`.
 
 | Property | Type | Req. | Allowed / constraints | Default | Meaning |
 |---|---|---|---|---|---|
@@ -32,7 +32,6 @@ The manifest is the single source of truth for a plugin; there is no separate se
 | `params` | object | no | see [params](#params) | — | JSON-Schema for the pre-run form. |
 | `scopes` | object | yes | see [scopes](#scopes) | — | The plugin's authority surface. |
 | `lifecycle` | object | yes | see [lifecycle](#lifecycle) | — | Task execution model. |
-| `distribution` | object | yes | see [distribution](#distribution) | — | How the bundle is fetched. |
 
 ### author
 
@@ -55,7 +54,7 @@ Per-platform execution flags. `type: object`, `additionalProperties: false`, `mi
 | `desktop` | object | no | see [platforms.desktop](#platformsdesktop) | — | Desktop execution block. |
 
 !!! warning "What actually ships today"
-    Plugins execute from `platforms.web` (`runtime: "sandbox-js"`, `entry`) in both the browser and the desktop Electron shell. A plugin without one is not runnable (a pack member without its own entry inherits the pack's). The host does not read `platforms.desktop` (`runtime`, `entry`, `min_app_version`, `fallback`) or `platforms.web.fallback`, and the `web-proxy` runtime and `native`/`subprocess` desktop runtimes are valid in the schema as forward-looking design but are **deferred** — not built yet. Treat those fields as reserved, not as shipped behavior.
+    Plugins execute from `platforms.web` (`runtime: "sandbox-js"`, `entry`) in both the browser and the desktop Electron shell. A plugin without one is not runnable (a pack member without its own entry inherits the pack's). The host does not read `platforms.desktop` (`runtime`, `entry`, `fallback`) or `platforms.web.fallback`, and the `web-proxy` runtime and `native`/`subprocess` desktop runtimes are valid in the schema as forward-looking design but are **deferred** — not built yet. Treat those fields as reserved, not as shipped behavior.
 
 ### platforms.web
 
@@ -64,7 +63,7 @@ Per-platform execution flags. `type: object`, `additionalProperties: false`, `mi
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
 | `runtime` | string | yes | `sandbox-js`, `web-proxy` | — | `sandbox-js` = author JS in the browser worker; `web-proxy` = thin client calling ONE author endpoint (deferred). |
-| `entry` | string | yes | — | — | Entry path within the bundle, e.g. `dist/pack.mjs`. |
+| `entry` | string | yes | — | — | The module the plugin worker imports: a path relative to the repo root, e.g. `dist/pack.mjs`, or an absolute URL. Registry CI refuses `inline`, which names no module. |
 | `proxy_endpoint` | string | conditional | `format: uri` | — | **Required when `runtime: web-proxy`.** The single endpoint; MUST equal the one `scopes.network` entry. |
 | `fallback` | string | no | `desktop`, `none` | `none` | Where to fall back if web cannot run the plugin. |
 
@@ -76,7 +75,6 @@ Per-platform execution flags. `type: object`, `additionalProperties: false`, `mi
 |---|---|---|---|---|---|
 | `runtime` | string | yes | `sandbox-js`, `native`, `subprocess` | — | Desktop execution mode. |
 | `entry` | string | yes | — | — | Entry path within the bundle. |
-| `min_app_version` | string | no | pattern `^\d+\.\d+\.\d+$` | — | Minimum desktop app version required. |
 | `fallback` | string | no | `web`, `none` | `none` | Where to fall back if desktop cannot run the plugin. |
 
 ## io
@@ -199,16 +197,16 @@ key in the query string — it ends up in logs.
 
 ### configValue (scopes.config items)
 
-`$defs.configValue`. `type: object`, `additionalProperties: false`. **Required:** `key`, `type`. Config values are entered by the analyst in the plugin's Settings section of the Run plugins dialog and read by the declaring plugin as `ctx.config`. Values are kept per signed-in account — in the OS keychain on desktop, for the tab session in the browser. `secret: true` masks the field. Values are never recorded in a task or conversation.
+`$defs.configValue`. `type: object`, `additionalProperties: false`. **Required:** `key`, `type`. Config values are entered by the analyst in the plugin's Settings section of the Run plugins dialog, or under **Settings → Keys & Secrets**, and read by the declaring plugin as `ctx.config`. Members of the same pack that declare a key and call the same set of network origins (scheme, host and port of their `scopes.network` endpoints) share one value, entered once; a plugin published on its own, or one with no `scopes.network` entry, keeps its own. Each plugin still receives only the keys its own manifest declares — see [scopes → config](scopes.md#config). Values are kept per signed-in account — in the OS keychain on desktop, for the tab session in the browser. `secret: true` masks the field. Values are never recorded in a task or conversation.
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
 | `key` | string | yes | pattern `^[a-z0-9_]+$` | — | Stable config key. |
-| `label` | string | no | — | — | Field label in the Run plugins Settings section. |
+| `label` | string | no | — | — | Field label in the Run plugins Settings section and in Settings → Keys & Secrets. |
 | `type` | string | yes | `string`, `number`, `boolean`, `url`, `enum` | — | Value type. |
 | `enum` | array | no | items: string | — | Allowed choices when `type: enum`. |
 | `secret` | boolean | no | — | `false` | BYOK-style secret: masked field. Never written to any record. |
-| `scope` | string | no | `plugin`, `project`, `user` | `user` | Where the value is stored/shared. Accepted but not read today; values are stored per plugin. |
+| `scope` | string | no | `plugin`, `project`, `user` | `user` | Where the value is stored/shared. Accepted but not read; values are stored and shared by the pack and network-origin rule above. |
 | `optional` | boolean | no | — | `false` | Whether the user may leave it blank. Not enforced: a non-optional field is only marked "required by this plugin", and the run proceeds without it. |
 
 ## lifecycle
@@ -227,37 +225,6 @@ Task execution model. `type: object`, `additionalProperties: false`. All propert
     `controls`, `progress`, `persistence`, and `states` are accepted here but not read by the host today — the Tasks panel's only control is Stop, and a task's real terminal states are `succeeded` / `failed` / `cancelled` (plus `incomplete` for AI turns). See [Lifecycle](../develop/lifecycle.md).
 
     The host does read `lifecycle.timeout_ms`, a wall-clock budget per run (default 10 minutes, capped at 60). Past it, the sandbox is terminated and the task fails. It is not yet modeled in `plugin.schema.json`, so a manifest that declares it currently fails schema validation. See [Lifecycle](../develop/lifecycle.md#manifestlifecycletimeout_ms).
-
-## distribution
-
-`$defs.distribution` — the shared distribution block used by both plugins and Type Packs. `type: object`, `additionalProperties: false`. **Required:** `kind`. There is no server-side copy of the bundle; the client fetches it from the author's repository at the pinned commit — the manifest each time a project opens, and the code module each time the plugin runs.
-
-| Property | Type | Req. | Allowed values / constraints | Meaning |
-|---|---|---|---|---|
-| `kind` | string | yes | `git`, `zip`, `inline` | How the bundle is delivered. |
-| `repository` | string | no | `format: uri`, pattern `^https://github\.com/[^/]+/[^/]+$` | GitHub repo (git kind). |
-| `ref` | string | no | — | IMMUTABLE: 40-char commit SHA or annotated tag. Branches are rejected by registry CI. |
-| `path` | string | no | — | Path to `manifest.json` within `repo@ref` (git kind). |
-| `integrity` | object | no | see [integrity](#distributionintegrity) | Optional integrity hash. |
-| `archive` | object | no | see [archive](#distributionarchive) | Zip archive location + checksum (zip kind). |
-
-### distribution.integrity
-
-`type: object`, `additionalProperties: false`. **Required:** `algo`, `hash`. **Optional** block, accepted by the schema but not checked by the client today — see [distribution](../develop/distribution.md#integrity).
-
-| Property | Type | Req. | Allowed values / constraints | Meaning |
-|---|---|---|---|---|
-| `algo` | string | yes | `sha256`, `sha512` | Hash algorithm. |
-| `hash` | string | yes | pattern `^[a-f0-9]{64,128}$` | Lowercase hex digest of the bundle. |
-
-### distribution.archive
-
-`type: object`, `additionalProperties: false`. **Required:** `url`, `sha256`.
-
-| Property | Type | Req. | Constraints | Meaning |
-|---|---|---|---|---|
-| `url` | string | yes | `format: uri`, pattern `^https://.*\.zip$` | HTTPS URL ending in `.zip`. |
-| `sha256` | string | yes | pattern `^[a-f0-9]{64}$` | SHA-256 of the archive. |
 
 ## Complete annotated example
 
@@ -304,7 +271,7 @@ A real, shipped plugin manifest — **RDAP IP**, a member of the [IP Recon](http
 }
 ```
 
-This manifest has no top-level `distribution` block: it ships as one of four members inside the IP Recon pack, which the schema allows to omit `distribution` and ride the pack's own (see [Plugin Packs](../develop/plugin-packs.md)).
+This manifest ships as one of four members inside the IP Recon pack, so its `platforms.web.entry` names the pack's bundle (see [Plugin Packs](../develop/plugin-packs.md)).
 
 1. Reverse-DNS identifier matching `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$`.
 2. The `const` discriminator — must be exactly `vineyard:plugin`.

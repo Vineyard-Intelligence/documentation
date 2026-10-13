@@ -1,10 +1,10 @@
 # Plugin manifest
 
-플러그인 매니페스트는 하나의 플러그인을 완전히 설명하는 `vineyard:plugin` 문서입니다: 누가 만들었는지, 어디서 실행되는지, 어떤 그래프 타입을 읽고 쓰는지, 실행 전에 표시되는 폼, 필요한 권한, 그리고 배포 방법. 이것이 단일 진실 공급원입니다.
+플러그인 매니페스트는 하나의 플러그인을 완전히 설명하는 `vineyard:plugin` 문서입니다: 누가 만들었는지, 어디서 실행되는지, 어떤 그래프 타입을 읽고 쓰는지, 실행 전에 표시되는 폼, 그리고 필요한 권한. 이것이 단일 진실 공급원입니다.
 
 이 페이지는 실제로 배포된 두 플러그인을 예제로 사용해 매니페스트 블록을 설명합니다: [IP Recon](https://github.com/Vineyard-Intelligence/pluginpack-ip-recon) 팩의 **RDAP IP**, 그리고 Wayback Machine 팩의 **Wayback Snapshot History**. 모든 타입, 패턴, 기본값을 포함한 필드별 전체 스키마는 [plugin schema reference](../reference/plugin-schema.md)를 참조하세요.
 
-필수 최상위 키는 `identifier`, `content_type`, `name`, `version`, `description`, `platforms`, `io`, `scopes`, `lifecycle`, `distribution`입니다.
+필수 최상위 키는 `identifier`, `content_type`, `name`, `version`, `description`, `platforms`, `io`, `scopes`, `lifecycle`입니다.
 
 ## 식별 정보
 
@@ -122,18 +122,9 @@ RDAP IP의 실제 `io`입니다: `infrastructure.ip_address` 노드를 받아 �
 
 호스트가 실제로 강제하는 유일한 필드는 `timeout_ms`입니다 — 실행에 대한 wall-clock 예산이며, 이를 넘으면 호스트가 샌드박스를 종료하고 작업을 실패시킵니다. `timeout_ms`를 생략하면 호스트가 10분 기본값을 적용하고, 선언된 값은 60분으로 제한됩니다 — 매니페스트는 예산을 늘릴 수는 있지만 없앨 수는 없습니다. `controls`, `progress`, `persistence`는 스키마상 허용되지만 호스트가 오늘 읽지는 않습니다. [Lifecycle](lifecycle.md)과 사용자 대상 [Tasks](../guide/tasks.md) 페이지를 참조하세요.
 
-## distribution
+## 로드 위치
 
-`distribution`은 공유 설명용 블록(플러그인과 Type Pack 모두에서 사용)이며, 호스트는 이를 읽지 않습니다. 클라이언트가 무엇을 실행할지는 레지스트리 항목이 결정합니다 — jsDelivr를 통해 `repo@ref/path`에서 매니페스트를 가져와 레지스트리가 기록한 다이제스트와 대조한 뒤, 같은 커밋에서 `platforms.web.entry`를 로드합니다.
-
-```json
-"distribution": {
-  "kind": "inline",
-  "integrity": { "algo": "sha256", "hash": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad" }
-}
-```
-
-`kind`는 `git`, `zip`, 또는 `inline`입니다. 레지스트리 항목의 `ref`는 전체 커밋 SHA(40자 또는 64자 16진수)여야 하며 — 레지스트리 CI는 태그와 브랜치를 거부합니다([Distribution](distribution.md#integrity) 참조). `repository`, `path`, `archive`를 포함한 전체 distribution 블록은 [Distribution](distribution.md) 페이지와 [schema reference](../reference/plugin-schema.md)에서 다룹니다.
+클라이언트가 무엇을 실행할지는 레지스트리 항목이 결정합니다 — jsDelivr를 통해 `repo@ref/path`에서 매니페스트를 가져와 레지스트리가 기록한 다이제스트와 대조한 뒤, 같은 커밋에서 `platforms.web.entry`를 로드합니다. 레지스트리 항목의 `ref`는 전체 커밋 SHA(40자 또는 64자 16진수)여야 하며 — 레지스트리 CI는 태그와 브랜치를 거부합니다. [Distribution](distribution.md)을 참조하세요.
 
 ## 여러 플러그인 번들링
 

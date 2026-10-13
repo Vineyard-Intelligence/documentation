@@ -6,8 +6,9 @@
 
 ## Type Pack이 제공하는 것
 
-Type Pack은 **엔티티(노드) 유형**과 선택적으로 **엣지(관계) 유형**을 선언합니다.
-각 엔티티 유형은 다음을 포함합니다:
+Type Pack은 **엔티티(노드) 유형**을 선언합니다. 엣지에는 유형이 없습니다: 각 엣지는
+자유 텍스트 라벨을 가지며, 이 라벨은 사용자가 [엣지를 그릴 때](canvas.md#엣지-그리기)
+입력하거나 연결을 찾아낸 플러그인이 씁니다. 각 엔티티 유형은 다음을 포함합니다:
 
 - **`label_property`** — 캔버스에서 노드 이름으로 표시되는 속성 값. IP 주소의 경우
   주소 자체, 취약점의 경우 CVE ID입니다.
@@ -43,8 +44,8 @@ Type Pack은 **엔티티(노드) 유형**과 선택적으로 **엣지(관계) �
 ## 레퍼런스 팩
 
 Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입니다 — 조사에 필요한
-것만 설치하세요 — 그리고 함께 사용하도록 설계되어 있으며, 한 팩에서 다른 팩으로
-교차하는 엣지 유형이 있습니다(`threat.malware`가 `infrastructure.ip_address`와
+것만 설치하세요 — 그리고 함께 사용하도록 설계되어 있습니다: 엣지 하나가 서로 다른
+팩의 노드를 연결할 수 있습니다(`threat.malware`가 `infrastructure.ip_address`와
 **통신하는**, `financial.crypto_address`가 `identity.person`에 의해 **제어되는** 등).
 
 | 팩 (`identifier`) | 카테고리 | 유형 | 모델링 대상 |
@@ -86,13 +87,7 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 | `web.dom_hash` | DOM 구조 해시 | `tag_count` |
 | `web.tracking_id` | 페이지에 적힌 그대로의 식별자 (예: `G-SXM8TFRYSW`), 동일성은 `provider` + `value` | `provider`, `kind` |
 
-엣지 유형이 두 카테고리를 가로질러 정찰 그래프를 연결합니다: `resolves_to`,
-`has_address`, `announced_by`, `contains`, `has_record`, `subdomain_of`, `has_domain`,
-`redirects_to`, `has_whois`, `presents_certificate`, `presents_host_key`, `runs_technology`(호스트, IP,
-도메인, URL을 그것이 실행하거나 제공받는 소프트웨어, 하드웨어, 또는 서드파티 서비스 —
-예: Cloudflare — 에 연결), `carries_tracking_id`(페이지, 도메인, IP가 서드파티 광고/분석
-계정 ID를 포함), 그리고 `payment_recipient`(페이지의 결제 양식이 `identity.email_address`
-앞으로 되어 있음). 각 유형은 자체 아이콘과 색상을 제공합니다.
+각 유형은 자체 아이콘과 색상을 제공합니다.
 
 다른 팩도 같은 형태를 따릅니다 — 예를 들어 **Threat** 팩은 `threat.malware`,
 `threat.threat_actor`, `threat.indicator`, `threat.operation`(캠페인 내의 경계된 작업 —
@@ -123,8 +118,8 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 ## 버전
 
 Type Pack은 시맨틱 버저닝을 사용합니다. **MAJOR 버전 증가는 유형 정의의 파괴적
-변경**을 의미합니다 — 예: 유형 이름 변경 또는 제거 — 기존 유형을 사용하는 노드에
-마이그레이션 과정이 필요할 수 있습니다. 마이너 및 패치 업데이트(새 선택적 속성,
+변경**을 의미합니다 — 예: 유형 이름 변경 또는 제거 — 기존 유형을 사용하는 노드를
+수정해야 할 수 있습니다. 마이너 및 패치 업데이트(새 선택적 속성,
 시각적 조정)는 기존 노드를 깨지 않습니다.
 
 ## 다음 / 함께 보기

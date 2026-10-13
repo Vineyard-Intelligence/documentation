@@ -108,14 +108,16 @@ const who = await ctx.service('telegram', 'resolve', {
 
 각 항목은 `ConfigValue`입니다. `ctx.config`는 분석가가 값을 설정한 선언된 키들(비밀 키 포함)을 선언된 `type`으로 변환해 담은 읽기 전용 맵입니다. 그중 어느 것에도 값이 없는 동안에는 존재하지 않으므로, `ctx.config?.key ?? DEFAULT`로 읽으세요. 값은 로그인한 계정별로 보관됩니다 — 데스크톱에서는 OS 키체인에, 브라우저에서는 해당 탭 세션 동안. (출처: SDK의 `sdk.ts` 타입 — `ConfigValue`, `HostContext.config`.)
 
+같은 Plugin Pack의 멤버 가운데 같은 키를 선언하고 같은 네트워크 오리진 집합을 호출하는 멤버들은 그 키의 값 하나를 공유하므로, 분석가는 한 번만 입력합니다. 오리진은 멤버의 `scopes.network` 엔드포인트의 스킴·호스트·포트이며 경로는 상관없으므로, 한 API 호스트의 서로 다른 경로를 호출하는 멤버들도 값을 공유합니다. 단독으로 게시된 plugin이나 `scopes.network` 항목이 없는 plugin은 자기 값을 따로 가지며, 서로 다른 두 팩은 같은 호스트를 호출하더라도 값을 공유하지 않습니다. 다른 멤버보다 오리진을 하나 더 호출하는 멤버는 자기 값을 따로 가지므로, 키를 함께 써야 하는 멤버들에는 같은 오리진을 주세요. 공유한다고 plugin이 받는 범위가 넓어지지는 않습니다: 각 plugin은 여전히 자신의 매니페스트가 선언한 키만 받습니다.
+
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `key` | `string` | 식별자, 패턴 `^[a-z0-9_]+$` |
-| `label` | `string` (선택 사항) | Run plugins 대화상자의 해당 plugin Settings 섹션에 표시되는 필드 라벨 |
+| `label` | `string` (선택 사항) | Run plugins 대화상자의 해당 plugin Settings 섹션과 **Settings → Keys & Secrets**에 표시되는 필드 라벨 |
 | `type` | `"string" | "number" | "boolean" | "url" | "enum"` | 값 유형 |
 | `enum` | `string[]` (선택 사항) | `type`이 `enum`일 때 허용된 값 |
 | `secret` | `boolean` (선택 사항) | BYOK 방식 자격 증명; 아래 참조 |
-| `scope` | `"plugin" | "project" | "user"` (선택 사항) | 값이 저장되는 위치. 허용되지만 오늘은 읽히지 않으며, 값은 plugin별로 저장됨 |
+| `scope` | `"plugin" | "project" | "user"` (선택 사항) | 값이 저장되는 위치. 허용되지만 읽히지 않으며, 값은 위에 설명한 대로 저장·공유됨 |
 | `optional` | `boolean` (선택 사항) | false/없으면 필드에 "required by this plugin"이 표시됨 (강제되지 않음; plugin이 값이 없는 경우를 처리해야 함) |
 
 !!! danger "secret semantics"

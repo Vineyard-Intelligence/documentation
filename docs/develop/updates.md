@@ -27,20 +27,16 @@ Choosing **Update** opens the same approval dialog as a fresh install, and nothi
 
 ## Gating: which version is even offered
 
-### `compat.min_app_version`
-
-Each registry entry may carry `compat.min_app_version` — the oldest Vineyard runtime that the entry's ref supports (a `MAJOR.MINOR.PATCH` string). Today this is informational only: the marketplace detail page shows it under "Min app version," but nothing compares it against your running app version.
-
 ### `status` (deprecated / withdrawn)
 
 There is no separate deprecation file. Delisting a version is the registry entry's own `status` block — `{ state, reason, since, replacement }` — set by editing the pack's row in `packs/` (see [Taking a pack down](publishing.md#taking-a-pack-down)). A **`withdrawn`** ref is never offered as an update, cannot be freshly installed, and a project that already has it refuses to load it on the next run — the analyst sees the reason instead. A **`deprecated`** ref keeps installing and updating normally; the analyst is just shown the notice once per project open.
 
 ## Type Packs update the same way
 
-Type Packs follow the identical model: the `community-typepacks.json` entry is the latest pointer, and the update check is the same SemVer comparison described above. Type Packs declare no scopes, and the registry-typepack-entry schema carries no `compat` field, so there is no min-version metadata to show. `status` (deprecated/withdrawn) exclusion applies the same as for Plugin Packs. Skill Packs do too: the `community-skillpacks.json` entry is the latest pointer, and Update re-points the project's `skills` pointer. See [Type Packs](typepacks.md) for the schema and [registry schema](../reference/registry-schema.md) for the entry projection.
+Type Packs follow the identical model: the `community-typepacks.json` entry is the latest pointer, and the update check is the same SemVer comparison described above. Type Packs declare no scopes. `status` (deprecated/withdrawn) exclusion applies the same as for Plugin Packs. Skill Packs do too: the `community-skillpacks.json` entry is the latest pointer, and Update re-points the project's `skills` pointer. See [Type Packs](typepacks.md) for the schema and [registry schema](../reference/registry-schema.md) for the entry projection.
 
 ## Next / See also
 
 - [Distribution & storage](distribution.md) — immutable refs and where the bundle actually comes from.
 - [Publishing](publishing.md) — how a new version becomes a new registry entry.
-- [Registry schema](../reference/registry-schema.md) — `version`, `ref`, and `compat` fields.
+- [Registry schema](../reference/registry-schema.md) — `version`, `ref`, and `status` fields.

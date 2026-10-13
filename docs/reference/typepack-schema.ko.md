@@ -1,6 +1,6 @@
 # Type Pack schema
 
-`typepack.schema.json`에 대한 완전한 필드 참조 — 모든 `vineyard:typepack` 문서가 검증되는 메타 스키마입니다. Type Pack은 그래프의 어휘를 확장하는 **노드 엔티티 유형**과 선택적 **엣지 유형**을 선언합니다. 개념적 설명 및 작성 안내는 [Developing Type Packs](../develop/typepacks.md)를 참조하세요.
+`typepack.schema.json`에 대한 완전한 필드 참조 — 모든 `vineyard:typepack` 문서가 검증되는 메타 스키마입니다. Type Pack은 그래프의 어휘를 확장하는 **노드 엔티티 유형**을 선언합니다. 개념적 설명 및 작성 안내는 [Developing Type Packs](../develop/typepacks.md)를 참조하세요.
 
 !!! info "Canonical schema"
     `$id`: `https://vineyard.run/schemas/typepack.json` · JSON Schema draft 2020-12. 이 문서는 진실 공급원이며, 이 페이지는 필드별로 열거합니다.
@@ -9,22 +9,20 @@
 
 루트는 `additionalProperties: false`인 객체입니다 — 알 수 없는 키는 거부됩니다.
 
-**필수:** `identifier`, `name`, `content_type`, `version`, `distribution`, `types`.
+**필수:** `identifier`, `name`, `content_type`, `version`, `types`.
 
 | Field | Type | Req | Constraints / default | Meaning |
 |-------|------|-----|-----------------------|---------|
 | `identifier` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$` | Reverse-DNS ID, 예: `run.vineyard.typepacks.infrastructure`. |
 | `content_type` | string | yes | `const: "vineyard:typepack"` | 문서가 Type Pack임을 표시하는 판별자. |
 | `name` | string | yes | `minLength: 1`, `maxLength: 128` | 사람이 읽을 수 있는 팩 이름. |
-| `version` | string | yes | SemVer pattern `^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$` | 팩 **내용**의 SemVer. MAJOR = 노드 마이그레이션이 필요한 파괴적 type 변경. |
+| `version` | string | yes | SemVer pattern `^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$` | 팩 **내용**의 SemVer. MAJOR = 파괴적 type 변경. 변경된 type을 쓰는 노드는 수정이 필요할 수 있습니다. |
 | `description` | string | no | `maxLength: 1024` | 팩이 모델링하는 내용에 대한 간략한 요약. |
 | `authors` | array&lt;object&gt; | no | [Authors](#authors) 참조 | 기여자 목록. |
 | `license` | string | no | — | SPDX 표현식, 예: `MIT`, `Apache-2.0`, `CC-BY-4.0`. |
-| `distribution` | object | yes | [Distribution](#distribution) 참조 | 문서가 위치한 곳 (git / zip / inline). |
 | `marketing_url` | string | no | `format: uri` | 팩의 랜딩 페이지. |
 | `thumbnail_url` | string | no | `format: uri` | 아이콘/썸네일 이미지. |
 | `types` | array&lt;[entityType](#entity-type-types)&gt; | yes | `minItems: 1` | 노드 엔티티 유형 정의. |
-| `edge_types` | array&lt;[edgeType](#edge-types-edge_types)&gt; | no | — | 관계 유형 정의. 없음 ⇒ 팩은 노드 유형만 기여합니다. |
 
 ### identifierSegment
 
@@ -46,33 +44,6 @@
 | `email` | string | no | `format: email` |
 | `url` | string | no | `format: uri` |
 
-## Distribution
-
-plugin과 Type Pack 양쪽에서 사용되는 공유 블록 (`#/$defs/distribution`). `additionalProperties: false`; **필수:** `kind`. `kind`별 관련 필드는: `git` → `repository` + `ref` + `path`; `zip` → `archive`; `inline` → 문서가 내장됩니다.
-
-| Field | Type | Req | Constraints | Meaning |
-|-------|------|-----|-------------|---------|
-| `kind` | string (enum) | yes | `git` \| `zip` \| `inline` | 소스 메커니즘. |
-| `repository` | string | no | `format: uri`, pattern `^https://github\.com/[^/]+/[^/]+$` | HTTPS 저장소 URL, `.git`이나 슬래시 접미사 없음. |
-| `ref` | string | no | — | **불변** ref: 40자 커밋 SHA 또는 주석 태그. 브랜치는 registry CI에서 거부됩니다. |
-| `path` | string | no | — | `repo@ref` 내 문서 경로, 예: `typepacks/infrastructure.json`. |
-| `integrity` | object | no | 아래 참조 | 선택적 무결성 블록. 스키마는 허용하지만 클라이언트는 오늘 이를 확인하지 않습니다 — [distribution](../develop/distribution.md#integrity) 참조. |
-| `archive` | object | no | 아래 참조 | 선택적 검증 가능 zip 미러 (`kind=zip`). |
-
-**`integrity`** (`additionalProperties: false`; 필수 `algo`, `hash`):
-
-| Field | Type | Constraints |
-|-------|------|-------------|
-| `algo` | string (enum) | `sha256` \| `sha512` |
-| `hash` | string | pattern `^[a-f0-9]{64,128}$` |
-
-**`archive`** (`additionalProperties: false`; 필수 `url`, `sha256`):
-
-| Field | Type | Constraints |
-|-------|------|-------------|
-| `url` | string | `format: uri`, pattern `^https://.*\.zip$` |
-| `sha256` | string | pattern `^[a-f0-9]{64}$` |
-
 ## Entity type (`types[]`)
 
 `types`의 각 항목은 하나의 **노드** 엔티티 유형을 정의합니다 (`#/$defs/entityType`, `additionalProperties: false`). **필수:** `category`, `name`, `label_property`, `properties`.
@@ -90,7 +61,7 @@ plugin과 Type Pack 양쪽에서 사용되는 공유 블록 (`#/$defs/distributi
 | `identity_properties` | array&lt;string&gt; | no | `minItems: 1`, `uniqueItems`; 각 항목은 `properties`의 키를 지정해야 함 | 중복 제거를 위해 하나의 엔티티를 함께 식별하는 키들. 기본값은 `[label_property]`. 예: `user_account`는 사용자명으로 표시되지만 `(username, platform)`으로 식별됩니다. |
 | `label_template` | string | no | 참조된 키는 `properties`에 존재해야 함 | 여러 속성으로 구성된 표시 라벨, 예: `"{username} · {platform}"`. 참조된 필드가 비어 있으면 `label_property`로 폴백하므로, 일부만 채워진 노드가 구분자만 덩그러니 남는 일이 없습니다. 표시 전용 — 중복 제거는 `identity_properties`를 사용합니다. |
 
-완전한 정규화 type 참조는 `category.name`입니다 (예: `infrastructure.ip_address`). 이 정규화된 형식은 엣지 엔드포인트와 `reference` 대상이 가리키는 것입니다.
+완전한 정규화 type 참조는 `category.name`입니다 (예: `infrastructure.ip_address`). 이 정규화된 형식은 `Node.type`이 저장하는 값이며 `reference` 대상이 가리키는 것입니다.
 
 !!! info "Icon resolution order"
     `icon`은 다형적이며 다음 순서로 해석됩니다: `data:` / `http(s):` 이미지 URI; 그 외 kebab-case [lucide](https://lucide.dev) 아이콘 이름 (예: `shield-alert`); 그 외 리터럴 글리프/이모지. 어떤 kebab-case lucide 이름이든 해석됩니다.
@@ -158,25 +129,9 @@ plugin과 Type Pack 양쪽에서 사용되는 공유 블록 (`#/$defs/distributi
 |-------|------|---------|
 | `target` | string | 참조된 노드 유형의 정규화된 `category.name`, 또는 모든 유형에 대한 `*`. |
 
-## Edge types (`edge_types[]`)
-
-각 항목은 방향성 관계 유형을 정의합니다 (`#/$defs/edgeType`, `additionalProperties: false`). **필수:** `category`, `name`, `label`, `from`, `to`. `label`은 `Edge.label`에 그대로 저장됩니다. `from`/`to`는 엔드포인트 노드 유형을 제한합니다.
-
-| Field | Type | Req | Constraints / default | Meaning |
-|-------|------|-----|-----------------------|---------|
-| `category` | identifierSegment | yes | snake_case, ≤31 | 그룹화 네임스페이스. |
-| `name` | identifierSegment | yes | snake_case, ≤31 | 엣지 type 이름. |
-| `label` | string | yes | `maxLength: 1024` | `Edge.label`에 그대로 저장됨. |
-| `display_name` | string | no | — | 사람용 라벨. |
-| `description` | string | no | — | 관계의 의미. |
-| `directed` | boolean | no | `default: true` | 엣지가 방향성인지 여부. |
-| `from` | array&lt;string&gt; | yes | 항목은 `category.name` 참조; `*` = any | 허용된 소스 노드 유형 참조. |
-| `to` | array&lt;string&gt; | yes | 항목은 `category.name` 참조; `*` = any | 허용된 대상 노드 유형 참조. |
-| `properties` | object | no | 키 identifierSegment; 값 [property](#property-object) | 선택적 엣지 속성 스키마 (`Edge.data`에 저장됨). 노드 속성과 동일한 문법. |
-
 ## Annotated example: Infrastructure Type Pack
 
-최상위 블록, 두 개의 노드 유형(`ip`, `enum`, `string`, `integer`, `reference` 속성 유형과 `validator` 변형 포함), 하나의 엣지 유형을 보여주는 간결하고 완전히 유효한 `vineyard:typepack`입니다. 주석은 설명용이며 — JSON에서는 허용되지 않습니다.
+최상위 블록, 두 개의 노드 유형(`ip`, `enum`, `string`, `integer`, `reference` 속성 유형과 `validator` 변형 포함)을 보여주는 간결하고 완전히 유효한 `vineyard:typepack`입니다. 주석은 설명용이며 — JSON에서는 허용되지 않습니다.
 
 ```jsonc
 {
@@ -184,15 +139,9 @@ plugin과 Type Pack 양쪽에서 사용되는 공유 블록 (`#/$defs/distributi
   "content_type": "vineyard:typepack",                 // 판별자 (const)
   "version": "1.0.0",                                  // 팩 내용 SemVer
   "name": "VINEYARD Type Pack - Infrastructure",
-  "description": "Network infrastructure CTI entities and their relationships.",
+  "description": "Network infrastructure CTI entities.",
   "authors": [{ "name": "VINEYARD", "url": "https://vineyard.run" }],
   "license": "Apache-2.0",                             // SPDX 표현식
-  "distribution": {                                    // 불변 git 소스
-    "kind": "git",
-    "repository": "https://github.com/Vineyard-Intelligence/typepacks",
-    "ref": "v1.0.0",                                   // 주석 태그 또는 40자 SHA
-    "path": "infrastructure/typepack.json"
-  },
   "marketing_url": "https://vineyard.run/typepacks/infrastructure",
   "thumbnail_url": "https://vineyard.run/typepacks/infrastructure/icon.png",
 
@@ -240,31 +189,19 @@ plugin과 Type Pack 양쪽에서 사용되는 공유 블록 (`#/$defs/distributi
         "autonomous_system_name": { "type": "string", "optional": true }
       }
     }
-  ],
-
-  "edge_types": [
-    {
-      "category": "infrastructure",
-      "name": "announced_by",
-      "label": "announced_by",                         // Edge.label에 저장됨 (<=1024)
-      "display_name": "Announced By",
-      "description": "An IP address is announced by an autonomous system.",
-      "from": ["infrastructure.ip_address"],           // 정규화된 엔드포인트 참조
-      "to": ["infrastructure.autonomous_system"]
-    }
   ]
 }
 ```
 
 !!! example "More patterns in the real pack"
-    출시된 Infrastructure 팩은 `category`가 한 팩 안에서나 엣지를 가로질러 일치할 필요가 없다는 점(`infrastructure.*`와 `web.*` 유형을 모두 정의함), `hash`/`date`/`datetime`/`text` 유형 (`whois_record` 및 `certificate` 내), 그리고 `from`/`to`가 여러 노드 유형을 나열하는 다중 소스 엣지 (예: `resolves_to`가 `infrastructure.domain` **및** `web.url`로부터)도 보여줍니다. [Type Packs guide](../guide/typepacks.md)를 참조하세요.
+    출시된 Infrastructure 팩은 `category`가 한 팩 안에서 일치할 필요가 없다는 점(`infrastructure.*`와 `web.*` 유형을 모두 정의함)과 `hash`/`date`/`datetime`/`text` 유형 (`whois_record` 및 `certificate` 내)도 보여줍니다. [Type Packs guide](../guide/typepacks.md)를 참조하세요.
 
 ## Validation notes
 
-- 모든 최상위, 엔티티, 엣지, 속성 및 중첩 블록은 `additionalProperties: false`를 설정합니다 — 알 수 없는 키는 검증에 실패합니다.
+- 모든 최상위, 엔티티, 속성 및 중첩 블록은 `additionalProperties: false`를 설정합니다 — 알 수 없는 키는 검증에 실패합니다.
 - `label_property`는 `properties`에 존재하고 **비선택적**인 키를 지정해야 합니다.
 - `enum`은 `type = "enum"`일 때 정확히 필수입니다. `reference`는 `type = "reference"`일 때 정확히 필수입니다.
-- `ref`는 불변이어야 합니다 (커밋 SHA 또는 주석 태그). registry CI는 브랜치 ref를 거부합니다.
+- 팩을 등록하는 레지스트리 항목은 팩을 불변 커밋 SHA로 고정합니다. registry CI는 태그와 브랜치를 거부합니다 ([registry schema](registry-schema.md) 참조).
 
 ## Next / See also
 

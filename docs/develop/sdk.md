@@ -136,7 +136,7 @@ a live node (or one this run already created) has the same identity, it is reuse
 fields are merged in, and that node is returned. It throws if `type` is not defined by an
 installed [Type Pack](typepacks.md) or the data fails the type's property checks.
 `EdgeDraft.from`/`to` are node ids — live ids or the ids `createNode` returned. `label` is free
-text describing the relationship (Type Pack `edge_types` are not consulted).
+text describing the relationship; edges have no type.
 
 `updateEdge` is gated by `edge:create` (the `edge:update` scope currently grants nothing). Omit
 `label` to leave the wording and its grade alone. `EdgeDraft`/`updateEdge` accept an optional

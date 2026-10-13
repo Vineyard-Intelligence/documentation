@@ -56,9 +56,8 @@ Vineyard는 브라우저에서, 또는 Vineyard 데스크탑 앱으로 실행됩
 
 ## 5. Type Pack 추가 (엔티티 유형)
 
-**Type Pack**은 노드가 될 수 있는 **엔티티 유형**(및 선택적 엣지 유형)을 정의하는
-순수 JSON입니다. 플러그인의 입력과 출력이 Type Pack 유형으로 표현되므로, 플러그인보다
-먼저 설치하세요.
+**Type Pack**은 노드가 될 수 있는 **엔티티 유형**을 정의하는 순수 JSON입니다.
+플러그인의 입력과 출력이 Type Pack 유형으로 표현되므로, 플러그인보다 먼저 설치하세요.
 
 마켓플레이스에서 **Type packs**로 전환하고 **Infrastructure**
 (`run.vineyard.typepacks.infrastructure`)를 설치하세요. `infrastructure.ip_address`,

@@ -6,8 +6,9 @@ types available when you create nodes, and tells the canvas how each node should
 
 ## What a Type Pack gives you
 
-A Type Pack declares **entity (node) types** and, optionally, **edge (relationship) types**.
-Each entity type carries:
+A Type Pack declares **entity (node) types**. Edges carry no type: each edge has a free-text
+label, written by you when you [draw it](canvas.md#drawing-edges) or by the plugin that found
+the link. Each entity type carries:
 
 - A **`label_property`** — the property whose value is shown as the node's name on the canvas.
   For an IP address that is the address itself; for a vulnerability it's the CVE id.
@@ -43,8 +44,8 @@ produce.
 ## The reference packs
 
 Vineyard ships several official Type Packs. Each is self-contained — install the ones your
-investigation needs — and they are designed to be used together, with edge types that cross from
-one pack to another (a `threat.malware` that **communicates with** an
+investigation needs — and they are designed to be used together: an edge can join nodes from
+different packs (a `threat.malware` that **communicates with** an
 `infrastructure.ip_address`, a `financial.crypto_address` **controlled by** an
 `identity.person`, and so on).
 
@@ -87,13 +88,7 @@ The same pack also ships five types in a separate `web` category:
 | `web.dom_hash` | the DOM structure hash | `tag_count` |
 | `web.tracking_id` | the identifier as the page carries it (e.g. `G-SXM8TFRYSW`); identity is `provider` + `value` | `provider`, `kind` |
 
-Edge types wire the recon graph together across both categories: `resolves_to`, `has_address`,
-`announced_by`, `contains`, `has_record`, `subdomain_of`, `has_domain`, `redirects_to`,
-`has_whois`, `presents_certificate`, `presents_host_key`, `runs_technology` (which links a host, IP, domain, or
-URL to the software, hardware, or third-party service — such as Cloudflare — it runs or is
-served by), `carries_tracking_id` (a page, domain, or IP embeds a third-party ad/analytics
-account ID), and `payment_recipient` (a page's payment form is addressed to an
-`identity.email_address`). Each type ships its own icon and color.
+Each type ships its own icon and color.
 
 The other packs follow the same shape — for example the **Threat** pack adds
 `threat.malware`, `threat.threat_actor`, `threat.indicator`, and `threat.operation` (a bounded
@@ -123,8 +118,8 @@ adds the people and personas behind the activity.
 ## Versions
 
 Type Packs use semantic versioning. A **MAJOR-version bump signals a breaking change** to the
-type definitions — a renamed or removed type, for example — which can require a migration pass
-over the nodes that already use the old type. Minor and patch updates (new optional properties,
+type definitions — a renamed or removed type, for example — which can mean updating the nodes
+that already use the old type. Minor and patch updates (new optional properties,
 visual tweaks) do not break existing nodes.
 
 ## Next / See also

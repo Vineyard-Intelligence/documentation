@@ -10,8 +10,8 @@ There are three kinds of pack:
 
 - **Plugin Packs** — JavaScript actions that read, create, or modify your graph's
   nodes and edges (and, with permission, call the network).
-- **Type Packs** — JSON definitions of the **entity types** and **edge types** your
-  graph understands, giving nodes their properties, validation rules, icons, and colors.
+- **Type Packs** — JSON definitions of the **entity types** your graph understands,
+  giving nodes their properties, validation rules, icons, and colors.
 - **Skill Packs** — investigation playbooks the AI agent can follow when working on your
   project. Text only — no code, no permissions.
 
@@ -45,7 +45,7 @@ Launch plugins from a node's right-click menu or the global Run menu.
 
 <div class="vy-card" markdown>
 ### :material-shape: Working with Type Packs
-Add entity and edge types so your graph recognizes new kinds of data.
+Add entity types so your graph recognizes new kinds of data.
 → [Working with Type Packs](typepacks.md)
 </div>
 

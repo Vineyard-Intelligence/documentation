@@ -38,7 +38,7 @@ flowchart LR
 | 콘텐츠 유형 | `content_type` | 식별자 형식 | 설명 |
 |---|---|---|---|
 | **Plugin Pack** | `vineyard:pluginpack` | `<namespace>.pluginpacks.<name>` | `definePlugin({ manifest, run })`을 내보내는 하나 이상의 번들 JS 모듈로, 그래프를 읽고 변경 사항을 분석가 검토용으로 스테이징합니다. |
-| **Type Pack** | `vineyard:typepack` | `<namespace>.typepacks.<name>` | 노드 **엔티티 타입**과 선택적 **엣지 타입**(아이콘, 색상, 프로퍼티, 유효성 검사기)을 정의하는 JSON입니다. |
+| **Type Pack** | `vineyard:typepack` | `<namespace>.typepacks.<name>` | 노드 **엔티티 타입**(아이콘, 색상, 프로퍼티, 유효성 검사기)을 정의하는 JSON입니다. |
 | **Skill Pack** | `vineyard:skillpack` | `<namespace>.skillpacks.<name>` | JSON 텍스트: 에이전트가 따르는 조사 **플레이북**. 코드도 권한도 없습니다. |
 
 `<namespace>`는 **본인 소유의** reverse-DNS 접두사이며 레이블 두 개 이상입니다: `com.acme`,
@@ -71,7 +71,7 @@ flowchart LR
 - [Plugin manifest](plugin-manifest.md) — 실제 예제와 함께 모든 필드 설명.
 - [Plugin Packs](plugin-packs.md) — 하나의 번들, 여러 플러그인.
 - [SDK](sdk.md) — `definePlugin`, `HostContext`, 샌드박스.
-- [Type Packs](typepacks.md) — 엔티티 타입, 엣지 타입, 아이콘, 유효성 검사기.
+- [Type Packs](typepacks.md) — 엔티티 타입, 아이콘, 유효성 검사기.
 - [Skill Packs](skillpacks.md) — 문서 형식, 섹션, 스타터.
 - [Scopes](../reference/scopes.md) — 플러그인이 얻는 유일한 권한.
 - [Security](security.md) — 워커 샌드박스, 스테이징된 쓰기, 이그레스 허용목록, 시크릿.

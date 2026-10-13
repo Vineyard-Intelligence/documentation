@@ -108,14 +108,16 @@ named packs; `telegram` is one.
 
 Each entry is a `ConfigValue`. `ctx.config` is a read-only map of the declared keys the analyst has set a value for, secret ones included, coerced to the declared `type`. It is absent while none of them has a value, so read it as `ctx.config?.key ?? DEFAULT`. Values are kept per signed-in account — in the OS keychain on desktop, for the tab session in the browser. (Source: the SDK's `sdk.ts` types — `ConfigValue`, `HostContext.config`.)
 
+Members of the same Plugin Pack that declare a key and call the same set of network origins share one value for it, so the analyst enters it once. The origins are the scheme, host and port of the member's `scopes.network` endpoints; paths do not matter, so members calling different paths on one API host share. A plugin published on its own, or one with no `scopes.network` entry, keeps its own values, and two packs never share a value even when they call the same host. A member that calls one more origin than the others keeps its own value, so give members that should share a key the same origins. Sharing does not widen what a plugin receives: each plugin still gets only the keys its own manifest declares.
+
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `key` | `string` | Identifier, pattern `^[a-z0-9_]+$` |
-| `label` | `string` (optional) | Field label in the plugin's Settings section of the Run plugins dialog |
+| `label` | `string` (optional) | Field label in the plugin's Settings section of the Run plugins dialog and in **Settings → Keys & Secrets** |
 | `type` | `"string" | "number" | "boolean" | "url" | "enum"` | Value type |
 | `enum` | `string[]` (optional) | Allowed values when `type` is `enum` |
 | `secret` | `boolean` (optional) | BYOK-style credential; see below |
-| `scope` | `"plugin" | "project" | "user"` (optional) | Where the value is stored. Accepted but not read today; values are stored per plugin |
+| `scope` | `"plugin" | "project" | "user"` (optional) | Where the value is stored. Accepted but not read; values are stored and shared as described above |
 | `optional` | `boolean` (optional) | If false/absent the field is marked "required by this plugin" (not enforced; the plugin must handle a missing value) |
 
 !!! danger "secret semantics"

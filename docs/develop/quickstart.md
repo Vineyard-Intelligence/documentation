@@ -66,7 +66,6 @@ export default definePlugin({
     io: { consumes: [], produces: [] },
     scopes: { graph: ["node:read", "node:delete", "edge:delete"] },
     lifecycle: { persistence: "ephemeral", controls: ["progress", "cancel"] },
-    distribution: { kind: "inline" },
   },
   async run(ctx) {
     const { nodes } = await ctx.graph!.list!();           // node:read
@@ -95,11 +94,10 @@ Every field below is required unless noted. The full schema is documented in [pl
 | `identifier` | Reverse-DNS, `<your-namespace>.plugins.*`. |
 | `content_type` | Must be the literal `vineyard:plugin`. |
 | `name`, `version`, `description` | `version` is SemVer. |
-| `platforms.web` | `{ runtime: "sandbox-js", entry: "dist/main.js" }`. `sandbox-js` runs your JS in the worker — it is the only runtime the host executes. (`web-proxy` is accepted by the schema but not dispatched; see [plugin-manifest](plugin-manifest.md#platforms).) |
+| `platforms.web` | `{ runtime: "sandbox-js", entry: "dist/main.js" }`. `sandbox-js` runs your JS in the worker — it is the only runtime the host executes. (`web-proxy` is accepted by the schema but not dispatched; see [plugin-manifest](plugin-manifest.md#platforms).) Installed code is fetched from the registry entry's pinned commit, dev code from the URL you load in the dev loader (see [distribution](distribution.md)). |
 | `io` | `{ consumes: [], produces: [] }` — empty `consumes` = whole-graph plugin. Non-empty entries are qualified types like `infrastructure.ip_address` and decide where the plugin is offered in the **Run plugins…** panel. See [Type Packs](typepacks.md). |
 | `scopes` | The only authority your plugin gets. Here, `scopes.graph` lists `node:read`, `node:delete`, `edge:delete`. See [scopes](../reference/scopes.md). |
 | `lifecycle` | `persistence: "ephemeral"` plus the `controls` you support (`progress`, `cancel`, …). See [lifecycle](lifecycle.md). |
-| `distribution` | Schema-required descriptive block (`kind`: `git`, `zip` or `inline`); the host does not read it. Installed code is fetched from the registry entry's pinned commit, dev code from the URL you load in the dev loader (see [distribution](distribution.md)). |
 
 !!! warning "Never put secrets in `params`"
     Never put a secret-looking key in `params` — those values are recorded. Declare secrets as `scopes.config` with `secret: true`: they are entered in the plugin's settings form (masked), kept per signed-in account (in the OS keychain on desktop, for the tab session in the browser), and handed only to the plugin that declared them via `ctx.config` — see [Security](security.md). Korean Roulette needs no secrets and no network, which is exactly why it's a clean first plugin.
@@ -156,8 +154,7 @@ GitHub and the registry are a **distribution** layer; during development the app
   "platforms": { "primary": "web", "web": { "runtime": "sandbox-js", "entry": "dist/main.js" } },
   "io": { "consumes": [], "produces": [] },
   "scopes": { "graph": ["node:read", "node:delete", "edge:delete"] },
-  "lifecycle": { "persistence": "ephemeral", "controls": ["progress", "cancel"] },
-  "distribution": { "kind": "inline" }
+  "lifecycle": { "persistence": "ephemeral", "controls": ["progress", "cancel"] }
 }
 ```
 
