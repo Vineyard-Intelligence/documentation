@@ -1,10 +1,10 @@
 # Plugin manifest
 
-The plugin manifest is a `vineyard:plugin` document that fully describes one plugin: who made it, where it runs, what graph types it reads and writes, the form it shows before running, the authority it needs, and how it is distributed. It is the single source of truth.
+The plugin manifest is a `vineyard:plugin` document that fully describes one plugin: who made it, where it runs, what graph types it reads and writes, the form it shows before running, and the authority it needs. It is the single source of truth.
 
 This page walks through the manifest blocks using two real, shipped plugins as examples: **RDAP IP** (from the [IP Recon](https://github.com/Vineyard-Intelligence/pluginpack-ip-recon) pack) and **Wayback Snapshot History** (from the Wayback Machine pack). For the exhaustive, field-by-field schema — every type, pattern, and default — see the [plugin schema reference](../reference/plugin-schema.md).
 
-The required top-level keys are `identifier`, `content_type`, `name`, `version`, `description`, `platforms`, `io`, `scopes`, `lifecycle`, and `distribution`.
+The required top-level keys are `identifier`, `content_type`, `name`, `version`, `description`, `platforms`, `io`, `scopes`, and `lifecycle`.
 
 ## Identity
 
@@ -122,18 +122,9 @@ For the full scope vocabulary, the scope families, and the enforcement model, se
 
 The one field the host actually enforces is `timeout_ms` — a wall-clock budget for the run, past which the host terminates the sandbox and fails the task. When `timeout_ms` is omitted the host applies a 10-minute default, and a declared value is clamped to 60 minutes — a manifest can raise its budget but not opt out of one. `controls`, `progress`, and `persistence` are accepted by the schema but not read by the host today. See [Lifecycle](lifecycle.md) and the user-facing [Tasks](../guide/tasks.md) page.
 
-## distribution
+## Where it is loaded from
 
-`distribution` is the shared descriptive block (used by plugins and Type Packs alike); the host does not read it. What the client runs is decided by the registry entry — it fetches the manifest from `repo@ref/path` via jsDelivr, verifies it against the digest the registry recorded, and loads `platforms.web.entry` from the same commit.
-
-```json
-"distribution": {
-  "kind": "inline",
-  "integrity": { "algo": "sha256", "hash": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad" }
-}
-```
-
-`kind` is `git`, `zip`, or `inline`. The registry entry's `ref` must be a full commit SHA (40- or 64-hex) — registry CI rejects tags and branches (see [Distribution](distribution.md#integrity)). The full distribution block, including `repository`, `path`, and `archive`, is covered on the [Distribution](distribution.md) page and in the [schema reference](../reference/plugin-schema.md).
+What the client runs is decided by the registry entry — it fetches the manifest from `repo@ref/path` via jsDelivr, verifies it against the digest the registry recorded, and loads `platforms.web.entry` from the same commit. The registry entry's `ref` must be a full commit SHA (40- or 64-hex) — registry CI rejects tags and branches. See [Distribution](distribution.md).
 
 ## Bundling many plugins
 

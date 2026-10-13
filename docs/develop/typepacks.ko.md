@@ -1,10 +1,10 @@
 # Type Packs
 
-Type Pack은 그래프와 플러그인이 사용할 **노드 엔티티 타입**과 (선택적으로) **엣지 타입**을 정의하는 `vineyard:typepack` 문서입니다. 필드별 계약은 [Type Pack schema reference](../reference/typepack-schema.md)를 참조하세요.
+Type Pack은 그래프와 플러그인이 사용할 **노드 엔티티 타입**을 정의하는 `vineyard:typepack` 문서입니다. 필드별 계약은 [Type Pack schema reference](../reference/typepack-schema.md)를 참조하세요.
 
 ## Type Pack이란 무엇인가
 
-플러그인은 자체 데이터 형태를 만들어내지 않습니다. Type Pack이 선언한 노드 타입을 정규화된 문자열로 주소 지정하여 `consume`하고 `produce`합니다. `types`만 제공하는 Type Pack은 노드 타입을 제공하며, `edge_types`를 추가하면 그들 간의 관계를 설명할 수 있습니다. 배포된 참조 팩은 [Infrastructure, Threat, Identity, Financial, Endpoint, Geospatial, Social Media, Telegram](../guide/typepacks.md)입니다.
+플러그인은 자체 데이터 형태를 만들어내지 않습니다. Type Pack이 선언한 노드 타입을 정규화된 문자열로 주소 지정하여 `consume`하고 `produce`합니다. 엣지에는 타입이 없습니다: 관계는 엣지의 자유 텍스트 `label`로 기술합니다. 배포된 참조 팩은 [Infrastructure, Threat, Identity, Financial, Endpoint, Geospatial, Social Media, Telegram](../guide/typepacks.md)입니다.
 
 ## 최상위 필드
 
@@ -17,18 +17,16 @@ Type Pack은 그래프와 플러그인이 사용할 **노드 엔티티 타입**�
   "description": "Network infrastructure entities.",
   "authors": [{ "name": "Vineyard", "url": "https://vineyard.run" }],
   "license": "Apache-2.0",                        // SPDX 표현식
-  "distribution": { /* 공유 distribution 블록, Distribution 참조 */ },
   "marketing_url": "https://vineyard.run/packs/infrastructure",
   "thumbnail_url": "https://vineyard.run/img/infra.png",
-  "types": [ /* 엔티티 타입 — 최소 하나 필수 */ ],
-  "edge_types": [ /* 선택적 관계 타입 */ ]
+  "types": [ /* 엔티티 타입 — 최소 하나 필수 */ ]
 }
 ```
 
-`types[]`에는 최소 하나의 엔티티 타입이 필요합니다. `edge_types[]`는 선택 사항입니다. 전체 필수/선택 필드 테이블은 [Type Pack schema reference](../reference/typepack-schema.md)에 있습니다.
+`types[]`에는 최소 하나의 엔티티 타입이 필요합니다. 전체 필수/선택 필드 테이블은 [Type Pack schema reference](../reference/typepack-schema.md)에 있습니다.
 
 !!! note "참조 팩은 유효한 템플릿입니다"
-    배포된 6개의 팩(`infrastructure.json`, `threat.json`, `identity.json`, `financial.json`, `endpoint.json`, `geo.json`)은 이 스키마를 따릅니다 — 명시적 프로퍼티 타입, 구조화된 유효성 검사기, `distribution`, 필수 최상위 필드 — 따라서 이들 중 아무거나 작업 템플릿으로 읽을 수 있습니다. 새 작성은 반드시 아래 스키마를 따라야 합니다.
+    배포된 6개의 팩(`infrastructure.json`, `threat.json`, `identity.json`, `financial.json`, `endpoint.json`, `geo.json`)은 이 스키마를 따릅니다 — 명시적 프로퍼티 타입, 구조화된 유효성 검사기, 필수 최상위 필드 — 따라서 이들 중 아무거나 작업 템플릿으로 읽을 수 있습니다. 새 작성은 반드시 아래 스키마를 따라야 합니다.
 
 ## 엔티티 타입
 
@@ -118,26 +116,6 @@ Type Pack은 `secret` 또는 `credential` 프로퍼티 타입을 선언할 수 *
 
 예를 들어 Threat 팩은 `bug`(malware), `shield-alert`(vulnerability), `venetian-mask`(threat actor)와 같은 lucide 이름을 사용합니다.
 
-## 엣지 타입
-
-`edge_types[]`는 방향성 관계를 선언합니다. 각각 `category`, `name`, `label`, `from`, `to`가 필요합니다.
-
-```jsonc
-{
-  "category": "threat",
-  "name": "exploits",
-  "label": "exploits",                 // <= 1024자
-  "directed": true,                     // 기본값 true
-  "from": ["threat.malware"],           // 허용된 소스 노드 타입 참조 (category.name); '*' = 모든 것
-  "to":   ["threat.vulnerability"],     // 허용된 대상 노드 타입 참조; '*' = 모든 것
-  "properties": {                       // 선택 사항; 노드 props와 동일한 문법
-    "confidence": { "type": "enum", "enum": ["low", "medium", "high"], "optional": true }
-  }
-}
-```
-
-`edge_types[]`는 스키마상 허용되고 레지스트리의 `edge_count`에 집계되지만, 앱은 이를 읽지 않습니다. 엣지의 관계는 분석가나 플러그인이 작성하는 자유 텍스트 `label`(최대 1024자)입니다. `from`/`to`를 노드 타입과 대조하는 것은 없으며, 엣지를 그릴 때 선언된 엣지 타입이 제시되거나 강제되지도 않습니다.
-
 ## 타입 식별 및 저장
 
 노드 타입은 정규화된 문자열 `"<category>.<name>"`으로 주소 지정됩니다 — 예: `infrastructure.ip_address` 또는 `threat.malware`. 이 정규화된 형태가 `Node.type`이 저장하는 값이며, 플러그인의 `io.consumes` / `io.produces` 및 `emit`이 참조하는 값입니다. 엣지에는 타입 필드가 없습니다. 관계는 자유 텍스트 `Edge.label`로 기술됩니다.
@@ -161,7 +139,7 @@ typeRef는 그 타입을 정의하는 Type Pack으로 해석됩니다. 플러그
 
 `version`은 **팩 콘텐츠**의 SemVer입니다.
 
-- **MAJOR** = 주요 변경: 타입 이름 변경 또는 제거. 새 MAJOR가 활성화되어도 기존 노드를 다시 매핑하는 것은 없습니다. 노드는 이전 `type` 문자열을 유지하며 해석되지 않은 채로 렌더링됩니다. 노드는 작성 시점에 자기 타입을 해석한 팩 리비전을 `Node.type_pack`(`"<identifier>@<version>"`)으로 기록하므로, 이후 마이그레이션이 어느 리비전에서 만들어졌는지 알 수 있습니다.
+- **MAJOR** = 주요 변경: 타입 이름 변경 또는 제거. 새 MAJOR가 활성화되어도 기존 노드를 다시 매핑하는 것은 없습니다. 노드는 이전 `type` 문자열을 유지하며 해석되지 않은 채로 렌더링됩니다. 노드는 작성 시점에 자기 타입을 해석한 팩 리비전을 `Node.type_pack`(`"<identifier>@<version>"`)으로 기록하므로, 이후 재매핑 작업이 어느 리비전에서 만들어졌는지 알 수 있습니다.
 - **MINOR / PATCH** = 기존 `Node.type` 값을 깨뜨리지 않는 추가 또는 수정 수준의 변경.
 
 !!! note "미해결 이슈: Type Pack 버전 고정"
@@ -169,7 +147,7 @@ typeRef는 그 타입을 정의하는 Type Pack으로 해석됩니다. 플러그
 
 ## 유효성 검사 체크리스트
 
-설치 시점에 이 체크리스트로 Type Pack을 검증하는 것은 없습니다: 앱은 `content_type: vineyard:typepack`인 문서라면 무엇이든 로드합니다. 작성용 체크리스트로 활용하세요. 레지스트리 CI가 강제하는 것은 다음뿐입니다: 고정된 문서의 `identifier`, `content_type`, `version`이 항목과 일치할 것, `type_count`/`edge_count`가 일치할 것, 모든 `identity_properties` 키가 실제로 존재하는 스칼라(`array`/`object`/`json`이 아닌) 프로퍼티를 가리킬 것, 그리고 다른 게시된 Type Pack이 이미 정의한 `category.name`이 없을 것.
+설치 시점에 이 체크리스트로 Type Pack을 검증하는 것은 없습니다: 앱은 `content_type: vineyard:typepack`인 문서라면 무엇이든 로드합니다. 작성용 체크리스트로 활용하세요. 레지스트리 CI가 강제하는 것은 다음뿐입니다: 고정된 문서의 `identifier`, `content_type`, `version`이 항목과 일치할 것, `type_count`가 일치할 것, 모든 `identity_properties` 키가 실제로 존재하는 스칼라(`array`/`object`/`json`이 아닌) 프로퍼티를 가리킬 것, 그리고 다른 게시된 Type Pack이 이미 정의한 `category.name`이 없을 것.
 
 - [ ] `content_type`이 `vineyard:typepack`입니다.
 - [ ] `identifier`가 유효한 `<본인-네임스페이스>.typepacks.*` reverse-DNS 문자열입니다.
@@ -178,7 +156,6 @@ typeRef는 그 타입을 정의하는 Type Pack으로 해석됩니다. 플러그
 - [ ] `validator`(존재 시)가 원시 정규식 문자열이 아닌 구조화된 객체입니다.
 - [ ] `label_property`가 `properties`에 존재하고 non-optional입니다.
 - [ ] `enum` 프로퍼티는 `enum`을 제공합니다. `reference` 프로퍼티는 `reference.target`을 제공합니다. 모든 `default`는 `type`과 일치합니다.
-- [ ] 엣지 `from`/`to` 참조가 선언된 노드 타입(또는 `*`)으로 해석됩니다.
 
 ## 다음 / 참고
 
@@ -186,5 +163,5 @@ typeRef는 그 타입을 정의하는 Type Pack으로 해석됩니다. 플러그
 - [Scopes reference](../reference/scopes.md) — 플러그인이 이러한 타입으로 할 수 있는 작업.
 - [Plugin manifest](plugin-manifest.md) — 플러그인의 `io`가 Type Pack 타입을 참조하는 방식.
 - [Security](security.md) — 시크릿이 그래프 프로퍼티가 되지 않는 이유.
-- [Distribution](distribution.md) — 공유 `git`/`zip`/`inline` 블록.
+- [Distribution](distribution.md) — 고정된 팩 문서를 가져오고 검증하는 방식.
 - 카탈로그: [참조 팩](../guide/typepacks.md) — Infrastructure, Threat, Identity, Financial, Endpoint, Geospatial, Social Media, Telegram.

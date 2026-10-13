@@ -65,7 +65,7 @@ Marketplace 레지스트리는 **메타데이터 전용**(코드가 아닌 포�
 - `plugin_count` — 번들된 플러그인 수(Chaos 팩의 경우 6; 일반 단일 플러그인 항목의 경우 생략 또는 `1`). 마켓플레이스는 이를 사용해 카드에 레이블을 지정하고("6 plugins") 한 번 설치하면 모두 함께 추가됨을 알립니다.
 - `scopes_summary` — 포함된 플러그인 권한의 롤업(예: `graph_write: true`). 각 매니페스트를 가져오지 않고도 카드가 전체 팩의 기능을 요약할 수 있습니다.
 
-팩이 제공하는 플러그인은 `repo@ref/path`의 JSON 매니페스트에서 읽습니다(content_type `vineyard:pluginpack`이며 `identifier`, `name`, `version`, `description`, 번들을 가리키는 `platforms.web.entry`, 멤버 매니페스트의 `plugins` 배열을 가짐). 멤버가 실행될 때 클라이언트는 새 워커에서 번들을 가져와 기본 내보내기를 평탄화하고 식별자가 일치하는 멤버를 고릅니다 — 따라서 JSON의 모든 멤버는 같은 식별자로 번들 안에 있어야 합니다. 자체 `platforms.web.entry`가 없는(또는 `"inline"`인) 멤버는 팩의 것을 상속합니다. 정확한 레지스트리 항목 형태 — `plugin_count`, `scopes_summary`, 간소화된 투영 — 는 [Publishing](publishing.md)에 문서화되어 있습니다.
+팩이 제공하는 플러그인은 `repo@ref/path`의 JSON 매니페스트에서 읽습니다(content_type `vineyard:pluginpack`이며 `identifier`, `name`, `version`, `description`, 번들을 가리키는 `platforms.web.entry`, 멤버 매니페스트의 `plugins` 배열을 가짐). 멤버가 실행될 때 클라이언트는 새 워커에서 번들을 가져와 기본 내보내기를 평탄화하고 식별자가 일치하는 멤버를 고릅니다 — 따라서 JSON의 모든 멤버는 같은 식별자로 번들 안에 있어야 합니다. 자체 `platforms.web.entry`가 없는 멤버는 팩의 것을 상속하며, 모듈을 가리키지 않는 `"inline"` entry는 레지스트리 CI가 거부합니다. 정확한 레지스트리 항목 형태 — `plugin_count`, `scopes_summary`, 간소화된 투영 — 는 [Publishing](publishing.md)에 문서화되어 있습니다.
 
 ## 팩을 사용해야 하는 경우
 

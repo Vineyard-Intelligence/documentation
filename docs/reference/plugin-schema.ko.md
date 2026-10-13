@@ -12,7 +12,7 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 
 ## Top-level properties
 
-`additionalProperties: false`. **필수:** `identifier`, `content_type`, `name`, `version`, `description`, `platforms`, `io`, `scopes`, `lifecycle`, `distribution`.
+`additionalProperties: false`. **필수:** `identifier`, `content_type`, `name`, `version`, `description`, `platforms`, `io`, `scopes`, `lifecycle`.
 
 | Property | Type | Req. | Allowed / constraints | Default | Meaning |
 |---|---|---|---|---|---|
@@ -32,7 +32,6 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 | `params` | object | no | [params](#params) 참조 | — | 실행 전 폼을 위한 JSON-Schema. |
 | `scopes` | object | yes | [scopes](#scopes) 참조 | — | plugin의 권한 범위. |
 | `lifecycle` | object | yes | [lifecycle](#lifecycle) 참조 | — | Task 실행 모델. |
-| `distribution` | object | yes | [distribution](#distribution) 참조 | — | 번들을 가져오는 방법. |
 
 ### author
 
@@ -55,7 +54,7 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 | `desktop` | object | no | [platforms.desktop](#platformsdesktop) 참조 | — | Desktop 실행 블록. |
 
 !!! warning "What actually ships today"
-    브라우저와 데스크톱 Electron 셸 모두 `platforms.web`(`runtime: "sandbox-js"`, `entry`)으로 plugin을 실행합니다. 이것이 없는 plugin은 실행할 수 없습니다(자체 entry가 없는 팩 멤버는 팩의 것을 물려받습니다). 호스트는 `platforms.desktop`(`runtime`, `entry`, `min_app_version`, `fallback`)과 `platforms.web.fallback`을 읽지 않으며, `web-proxy` 런타임과 `native`/`subprocess` 데스크톱 런타임은 스키마에서 미래 지향적 설계로 유효하지만 **연기되었습니다** — 아직 빌드되지 않았습니다. 이 필드들은 제공되는 동작이 아닌 예약된 것으로 취급하세요.
+    브라우저와 데스크톱 Electron 셸 모두 `platforms.web`(`runtime: "sandbox-js"`, `entry`)으로 plugin을 실행합니다. 이것이 없는 plugin은 실행할 수 없습니다(자체 entry가 없는 팩 멤버는 팩의 것을 물려받습니다). 호스트는 `platforms.desktop`(`runtime`, `entry`, `fallback`)과 `platforms.web.fallback`을 읽지 않으며, `web-proxy` 런타임과 `native`/`subprocess` 데스크톱 런타임은 스키마에서 미래 지향적 설계로 유효하지만 **연기되었습니다** — 아직 빌드되지 않았습니다. 이 필드들은 제공되는 동작이 아닌 예약된 것으로 취급하세요.
 
 ### platforms.web
 
@@ -64,7 +63,7 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
 | `runtime` | string | yes | `sandbox-js`, `web-proxy` | — | `sandbox-js` = 브라우저 worker에서 저자 JS 실행; `web-proxy` = 하나의 저자 엔드포인트를 호출하는 씬 클라이언트 (연기됨). |
-| `entry` | string | yes | — | — | 번들 내 진입 경로, 예: `dist/pack.mjs`. |
+| `entry` | string | yes | — | — | plugin 워커가 임포트하는 모듈: 저장소 루트 기준 상대 경로(예: `dist/pack.mjs`) 또는 절대 URL. 모듈을 가리키지 않는 `inline`은 레지스트리 CI가 거부합니다. |
 | `proxy_endpoint` | string | conditional | `format: uri` | — | **`runtime: web-proxy`일 때 필수.** 단일 엔드포인트. 반드시 하나의 `scopes.network` 항목과 동일해야 합니다. |
 | `fallback` | string | no | `desktop`, `none` | `none` | web이 plugin을 실행할 수 없을 때 폴백할 곳. |
 
@@ -76,7 +75,6 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 |---|---|---|---|---|---|
 | `runtime` | string | yes | `sandbox-js`, `native`, `subprocess` | — | 데스크톱 실행 모드. |
 | `entry` | string | yes | — | — | 번들 내 진입 경로. |
-| `min_app_version` | string | no | pattern `^\d+\.\d+\.\d+$` | — | 필요한 최소 데스크톱 앱 버전. |
 | `fallback` | string | no | `web`, `none` | `none` | 데스크톱이 plugin을 실행할 수 없을 때 폴백할 곳. |
 
 ## io
@@ -199,16 +197,16 @@ await ctx.net.fetch(url, { headers: { Authorization: `Bearer ${ctx.config.api_ke
 
 ### configValue (scopes.config items)
 
-`$defs.configValue`. `type: object`, `additionalProperties: false`. **필수:** `key`, `type`. config 값은 분석가가 Run plugins 대화상자의 해당 플러그인 Settings 섹션에서 입력하며, 선언한 플러그인이 `ctx.config`로 읽습니다. 값은 로그인한 계정별로 보관됩니다 — 데스크톱에서는 OS 키체인에, 브라우저에서는 해당 탭 세션 동안. `secret: true`는 필드를 마스킹합니다. 값은 작업이나 대화에 기록되지 않습니다.
+`$defs.configValue`. `type: object`, `additionalProperties: false`. **필수:** `key`, `type`. config 값은 분석가가 Run plugins 대화상자의 해당 플러그인 Settings 섹션이나 **Settings → Keys & Secrets**에서 입력하며, 선언한 플러그인이 `ctx.config`로 읽습니다. 같은 팩의 멤버 가운데 같은 키를 선언하고 같은 네트워크 오리진 집합(`scopes.network` 엔드포인트의 스킴·호스트·포트)을 호출하는 멤버들은 값 하나를 공유하므로 한 번만 입력하면 됩니다. 단독으로 게시된 플러그인이나 `scopes.network` 항목이 없는 플러그인은 자기 값을 따로 가집니다. 각 플러그인은 여전히 자신의 매니페스트가 선언한 키만 받습니다 — [scopes → config](scopes.md#config)를 참조하세요. 값은 로그인한 계정별로 보관됩니다 — 데스크톱에서는 OS 키체인에, 브라우저에서는 해당 탭 세션 동안. `secret: true`는 필드를 마스킹합니다. 값은 작업이나 대화에 기록되지 않습니다.
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
 | `key` | string | yes | pattern `^[a-z0-9_]+$` | — | 안정적인 config 키. |
-| `label` | string | no | — | — | Run plugins Settings 섹션의 필드 라벨. |
+| `label` | string | no | — | — | Run plugins Settings 섹션과 Settings → Keys & Secrets의 필드 라벨. |
 | `type` | string | yes | `string`, `number`, `boolean`, `url`, `enum` | — | 값 유형. |
 | `enum` | array | no | items: string | — | `type: enum`일 때 허용된 선택지. |
 | `secret` | boolean | no | — | `false` | BYOK 방식 비밀: 폼에서 마스킹. 어떤 레코드에도 기록되지 않음. |
-| `scope` | string | no | `plugin`, `project`, `user` | `user` | 값이 저장/공유되는 위치. 허용되지만 오늘은 읽히지 않으며, 값은 plugin별로 저장됩니다. |
+| `scope` | string | no | `plugin`, `project`, `user` | `user` | 값이 저장/공유되는 위치. 허용되지만 읽히지 않으며, 값은 위의 팩·네트워크 오리진 규칙에 따라 저장·공유됩니다. |
 | `optional` | boolean | no | — | `false` | 사용자가 비워둘 수 있는지 여부. 강제되지 않음: optional이 아닌 필드는 "required by this plugin"으로 표시될 뿐이며, 값 없이도 실행이 진행됩니다. |
 
 ## lifecycle
@@ -227,37 +225,6 @@ Task 실행 모델. `type: object`, `additionalProperties: false`. 모든 속성
     `controls`, `progress`, `persistence`, `states`는 여기서 허용되지만 호스트가 오늘 읽지는 않습니다 — Tasks 패널의 유일한 컨트롤은 Stop이고, task의 실제 종료 상태는 `succeeded` / `failed` / `cancelled`(AI 턴의 경우 `incomplete` 추가)입니다. [Lifecycle](../develop/lifecycle.md) 참조.
 
     다만 호스트는 `lifecycle.timeout_ms`를 읽습니다. 실행당 벽시계 시간 예산입니다(기본 10분, 상한 60분). 이를 넘기면 샌드박스가 종료되고 task는 실패합니다. 아직 `plugin.schema.json`에 모델링되지 않았으므로, 이를 선언한 manifest는 현재 스키마 검증에 실패합니다. [Lifecycle](../develop/lifecycle.md#manifestlifecycletimeout_ms) 참조.
-
-## distribution
-
-`$defs.distribution` — plugin과 Type Pack 양쪽에서 사용되는 공유 distribution 블록. `type: object`, `additionalProperties: false`. **필수:** `kind`. 번들의 서버 측 복사본은 없습니다. 클라이언트는 작성자의 저장소에서 고정된 커밋을 가져옵니다 — 매니페스트는 프로젝트를 열 때마다, 코드 모듈은 플러그인을 실행할 때마다.
-
-| Property | Type | Req. | Allowed values / constraints | Meaning |
-|---|---|---|---|---|
-| `kind` | string | yes | `git`, `zip`, `inline` | 번들 제공 방식. |
-| `repository` | string | no | `format: uri`, pattern `^https://github\.com/[^/]+/[^/]+$` | GitHub 저장소 (git 방식). |
-| `ref` | string | no | — | 불변: 40자 커밋 SHA 또는 주석 태그. 브랜치는 registry CI에서 거부됩니다. |
-| `path` | string | no | — | `repo@ref` 내 `manifest.json`까지의 경로 (git 방식). |
-| `integrity` | object | no | [integrity](#distributionintegrity) 참조 | 선택적 무결성 해시. |
-| `archive` | object | no | [archive](#distributionarchive) 참조 | Zip 아카이브 위치 + 체크섬 (zip 방식). |
-
-### distribution.integrity
-
-`type: object`, `additionalProperties: false`. **필수:** `algo`, `hash`. **선택적** 블록이며, 스키마는 허용하지만 클라이언트는 오늘 이를 확인하지 않습니다 — [distribution](../develop/distribution.md#integrity) 참조.
-
-| Property | Type | Req. | Allowed values / constraints | Meaning |
-|---|---|---|---|---|
-| `algo` | string | yes | `sha256`, `sha512` | 해시 알고리즘. |
-| `hash` | string | yes | pattern `^[a-f0-9]{64,128}$` | 번들의 소문자 16진수 다이제스트. |
-
-### distribution.archive
-
-`type: object`, `additionalProperties: false`. **필수:** `url`, `sha256`.
-
-| Property | Type | Req. | Constraints | Meaning |
-|---|---|---|---|---|
-| `url` | string | yes | `format: uri`, pattern `^https://.*\.zip$` | `.zip`으로 끝나는 HTTPS URL. |
-| `sha256` | string | yes | pattern `^[a-f0-9]{64}$` | 아카이브의 SHA-256. |
 
 ## Complete annotated example
 
@@ -304,7 +271,7 @@ Task 실행 모델. `type: object`, `additionalProperties: false`. 모든 속성
 }
 ```
 
-이 manifest에는 최상위 `distribution` 블록이 없습니다: IP Recon 팩 안에 네 멤버 중 하나로 배포되며, 스키마는 팩 멤버가 `distribution`을 생략하고 팩 자체의 것을 타도록 허용합니다([Plugin Packs](../develop/plugin-packs.md) 참조).
+이 manifest는 IP Recon 팩 안에 네 멤버 중 하나로 배포되므로, `platforms.web.entry`가 팩의 번들을 가리킵니다([Plugin Packs](../develop/plugin-packs.md) 참조).
 
 1.  `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$`에 일치하는 Reverse-DNS 식별자.
 2.  `const` 판별자 — 정확히 `vineyard:plugin`이어야 합니다.
