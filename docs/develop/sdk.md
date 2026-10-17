@@ -149,9 +149,10 @@ one.
 
 Present iff a [`network` scope](../reference/scopes.md) is declared (or, in the desktop app,
 `web_probe` — then only `probe` exists). `fetch` is limited to the `manifest.scopes.network`
-endpoints and their declared `methods`. Requests are sent without cookies, follow redirects, and
-pass your request headers — including `Authorization` — through unchanged, so put an API key
-there rather than in a custom header.
+endpoints and their declared `methods`. Requests are sent without cookies and pass your request
+headers, including `Authorization`, through unchanged. A request that carries any header or a body
+does not follow a redirect: a 3xx answer rejects with an `Error` whose message starts with
+`redirect not followed`. A request with neither follows redirects as the browser does.
 The six reference plugins use **no** network.
 
 ```ts

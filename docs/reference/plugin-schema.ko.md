@@ -189,9 +189,8 @@ plugin의 권한 범위. `type: object`, `additionalProperties: false`. `ctx` �
 await ctx.net.fetch(url, { headers: { Authorization: `Bearer ${ctx.config.api_key}` } });
 ```
 
-서비스가 둘 다 받는다면 커스텀 헤더(`X-Api-Key`, `api-key` 등)보다 **`Authorization`을 쓰십시오.**
-`Authorization`은 다른 오리진으로 리다이렉트될 때 제거되지만 커스텀 헤더는 제거되지 않습니다.
-쿼리스트링에 키를 넣지 마십시오 — 로그에 남습니다.
+헤더가 실린 요청은 리다이렉트되지 않으므로, `Authorization`이든 커스텀 헤더(`X-Api-Key`, `api-key` 등)든
+키는 선언한 엔드포인트에만 전달됩니다. 쿼리스트링에는 키를 넣지 마십시오. 로그에 남습니다.
 
 `Cookie`는 설정할 수 없으며, 플러그인 요청에는 쿠키가 실리지 않습니다.
 
