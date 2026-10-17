@@ -189,9 +189,9 @@ your endpoint needs a key, put it there:
 await ctx.net.fetch(url, { headers: { Authorization: `Bearer ${ctx.config.api_key}` } });
 ```
 
-Prefer `Authorization` over a custom header (`X-Api-Key`, `api-key`, …) whenever the service
-accepts both: `Authorization` is dropped on a cross-origin redirect, custom headers are not. Avoid a
-key in the query string — it ends up in logs.
+A request that carries a header is never redirected, so a key in `Authorization` or in a custom
+header (`X-Api-Key`, `api-key`, …) only reaches the endpoint you declared. Avoid a key in the query
+string, because it ends up in logs.
 
 `Cookie` cannot be set, and no cookies are sent with plugin requests.
 

@@ -107,7 +107,7 @@ ctx.graph?.deleteEdges?(ids: string[]): Promise<{ deleted: number }>
 
 #### `net` (network 스코프)
 
-[`network` 스코프](../reference/scopes.md)가 선언된 경우에만 존재합니다(또는 데스크톱 앱에서 `web_probe`만 있으면 `probe`만 존재). `fetch`는 `manifest.scopes.network` 엔드포인트와 그 선언된 `methods`로 제한됩니다. 요청은 쿠키 없이 전송되고, 리다이렉트를 따라가며, `Authorization`을 포함한 요청 헤더를 그대로 전달합니다 — 따라서 API 키는 커스텀 헤더가 아닌 거기에 넣으세요. 6개의 참조 플러그인은 네트워크를 **전혀** 사용하지 않습니다.
+[`network` 스코프](../reference/scopes.md)가 선언된 경우에만 존재합니다(또는 데스크톱 앱에서 `web_probe`만 있으면 `probe`만 존재). `fetch`는 `manifest.scopes.network` 엔드포인트와 그 선언된 `methods`로 제한됩니다. 요청은 쿠키 없이 전송되고, `Authorization`을 포함한 요청 헤더를 그대로 전달합니다. 헤더나 본문이 하나라도 있는 요청은 리다이렉트를 따라가지 않으며, 3xx 응답을 받으면 메시지가 `redirect not followed`로 시작하는 `Error`로 거부됩니다. 헤더도 본문도 없는 요청은 브라우저처럼 리다이렉트를 따라갑니다. 6개의 참조 플러그인은 네트워크를 **전혀** 사용하지 않습니다.
 
 ```ts
 ctx.net?.fetch?(input: string, init?: SafeRequestInit): Promise<SafeResponse>
