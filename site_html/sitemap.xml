@@ -134,6 +134,13 @@
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/installing/"/>
     </url>
     <url>
+        <loc>https://docs.vineyard.run/guide/modes/</loc>
+        <lastmod>2026-10-20</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/modes/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/modes/"/>
+    </url>
+    <url>
         <loc>https://docs.vineyard.run/guide/running-plugins/</loc>
         <lastmod>2026-10-20</lastmod>
         <changefreq>daily</changefreq>
@@ -328,6 +335,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/installing/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/installing/"/>
+    </url>
+    <url>
+        <loc>https://docs.vineyard.run/ko/guide/modes/</loc>
+        <lastmod>2026-10-20</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://docs.vineyard.run/ko/guide/modes/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://docs.vineyard.run/guide/modes/"/>
     </url>
     <url>
         <loc>https://docs.vineyard.run/ko/guide/running-plugins/</loc>

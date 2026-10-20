@@ -53,8 +53,8 @@ their qualified `category.name` form, and a Skill Pack's steps call plugin packs
 
 ## Prerequisites
 
-- **Plugin Packs** need JavaScript or TypeScript, the SDK (a single `sdk.ts` you copy into your
-  repo), and a bundler (esbuild, Vite, Rollup, or similar). A plugin ships as a single bundled module
+- **Plugin Packs** need JavaScript or TypeScript, the SDK (a single [`sdk.ts`](../assets/sdk/sdk.ts){ download="sdk.ts" } you
+  copy into your repo), and a bundler (esbuild, Vite, Rollup, or similar). A plugin ships as a single bundled module
   referenced from your manifest's `platforms.web.entry`.
 - **Type Packs and Skill Packs** are plain JSON — author them in any editor, no toolchain.
 - **A GitHub repository.** Push a version and pin its commit SHA in a one-entry registry PR. The
@@ -62,8 +62,9 @@ their qualified `category.name` form, and a Skill Pack's steps call plugin packs
   directly.
 
 !!! note "Initial scope is browser + desktop"
-    Both the **browser** runtime (`platforms.web.runtime: "sandbox-js"`) and the **desktop**
-    app (`platforms.desktop.runtime: "sandbox-js"`) ship today. The `web-proxy` and
+    The `sandbox-js` runtime (`platforms.web.runtime: "sandbox-js"`) ships today, in the
+    **browser** and in the **desktop** app: both run the plugin's `platforms.web` entry. A
+    `platforms.desktop` block is accepted by the schema but not read. The `web-proxy` and
     `native`/`subprocess` runtimes are accepted by the schemas but **not built yet**.
 
 ## Where to go next

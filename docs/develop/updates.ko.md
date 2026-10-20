@@ -1,4 +1,4 @@
-# Updates
+# 업데이트
 
 Vineyard가 설치된 Plugin Pack, Type Pack, Skill Pack의 새 버전을 감지하고 적용하는 방식.
 
@@ -9,7 +9,7 @@ Vineyard는 업데이트를 위해 작성자 저장소를 폴링하지 않습니
 매니페스트의 `latest_url` 필드는 허용되지만 사용되지 않습니다. 앱에는 카탈로그 밖의 업데이트 확인이 없습니다. [로컬 개발](quickstart.md) 중 URL에서 로드한 팩은 설치된 것이 아니며, 로드할 때마다 그 URL에서 다시 가져오므로 항상 현재 빌드입니다.
 
 !!! info "업데이트가 실제로 무엇인가"
-    `ref`는 불변입니다: 커밋 SHA(40-16진수, SHA-256 저장소는 64-16진수)입니다. 태그와 브랜치는 옮겨질 수 있으므로 거부됩니다([publishing](publishing.md#the-pin) 참조). 제자리에서 업데이트하지 **않습니다**. 새 버전은 새 레지스트리 항목 투영으로 게시된 새 ref이며, 이를 적용하는 것은 해당 ref에서의 전체 재설치입니다.
+    `ref`는 불변입니다: 커밋 SHA(40-16진수, SHA-256 저장소는 64-16진수)입니다. 태그와 브랜치는 옮겨질 수 있으므로 거부됩니다([레지스트리에 배포하기](publishing.md#the-pin) 참조). 제자리에서 업데이트하지 **않습니다**. 새 버전은 새 레지스트리 항목 투영으로 게시된 새 ref이며, 이를 적용하는 것은 해당 ref에서의 전체 재설치입니다.
 
 ## 앱이 업데이트를 감지하는 방법
 
@@ -21,7 +21,7 @@ Vineyard는 업데이트를 위해 작성자 저장소를 폴링하지 않습니
 
 ## 업데이트 적용
 
-**Update**를 선택하면 새로 설치할 때와 같은 승인 대화상자가 열리며, 분석가가 확인하기 전에는 아무것도 바뀌지 않습니다. Plugin Pack의 경우 새 버전이 추가하는 권한마다 **New** 표시가 붙습니다. 새 버전에 필요하지만 프로젝트에 아직 없는 팩 — Plugin Pack에는 Type Pack, Skill Pack에는 Plugin Pack — 은 **Also installs** 아래에 나열되고 같은 단계에서 함께 추가됩니다. 그중 하나라도 카탈로그에 없거나 `withdrawn` 상태이면 업데이트가 거부됩니다. 확인하면 프로젝트 포인터가 새 항목의 `{ identifier, url, version }`을 가리키도록 바뀝니다.
+**Update**를 선택하면 새로 설치할 때와 같은 승인 대화상자가 열리며, 분석가가 확인하기 전에는 아무것도 바뀌지 않습니다. Plugin Pack의 경우 새 버전이 추가하는 권한마다 **New** 표시가 붙습니다. 새 버전에 필요하지만 프로젝트에 아직 없는 팩 — Plugin Pack에는 Type Pack, Skill Pack에는 Plugin Pack과 그 Plugin Pack의 Type Pack — 은 **Also installs** 아래에 나열되고 같은 단계에서 함께 추가됩니다. 어느 단계에서든 그중 하나라도 카탈로그에 없거나 `withdrawn` 상태이면 업데이트가 거부됩니다. 확인하면 프로젝트 포인터가 새 항목의 `{ identifier, url, version }`을 가리키도록 바뀝니다.
 
 `publish`는 스코프 스키마에 없으며, 앱은 이를 무시하고 아무 권한도 주지 않으므로 매니페스트에 선언되어 있다면 제거하세요.
 
@@ -33,10 +33,10 @@ Vineyard는 업데이트를 위해 작성자 저장소를 폴링하지 않습니
 
 ## Type Pack도 동일한 방식으로 업데이트됩니다
 
-Type Pack은 동일한 모델을 따릅니다: `community-typepacks.json` 항목이 최신 포인터이고, 위에서 설명한 것과 같은 SemVer 비교로 업데이트를 확인합니다. Type Pack은 스코프를 선언하지 않습니다. `status`(deprecated/withdrawn)에 따른 제외는 Plugin Pack과 동일하게 적용됩니다. Skill Pack도 마찬가지입니다: `community-skillpacks.json` 항목이 최신 포인터이고, Update는 프로젝트의 `skills` 포인터를 새 항목으로 바꿉니다. 스키마는 [Type Packs](typepacks.md)를, 항목 투영은 [registry schema](../reference/registry-schema.md)를 참조하세요.
+Type Pack은 동일한 모델을 따릅니다: `community-typepacks.json` 항목이 최신 포인터이고, 위에서 설명한 것과 같은 SemVer 비교로 업데이트를 확인합니다. Type Pack은 스코프를 선언하지 않습니다. `status`(deprecated/withdrawn)에 따른 제외는 Plugin Pack과 동일하게 적용됩니다. Skill Pack도 마찬가지입니다: `community-skillpacks.json` 항목이 최신 포인터이고, Update는 프로젝트의 `skills` 포인터를 새 항목으로 바꿉니다. [프로젝트 자체 Skill Pack](../guide/skillpacks.md#custom-skill-packs)(레지스트리 팩의 사본 포함)은 카탈로그에서 설치한 것이 아니라 프로젝트에 저장되므로 레지스트리 업데이트를 받지 않습니다. 스키마는 [Type Pack](typepacks.md)을, 항목 투영은 [레지스트리 엔트리 스키마](../reference/registry-schema.md)를 참조하세요.
 
 ## 다음 / 참고
 
-- [Distribution & storage](distribution.md) — 불변 ref와 번들이 실제로 오는 경로.
-- [Publishing](publishing.md) — 새 버전이 새 레지스트리 항목이 되는 방식.
-- [Registry schema](../reference/registry-schema.md) — `version`, `ref`, `status` 필드.
+- [배포](distribution.md) — 불변 ref와 번들이 실제로 오는 경로.
+- [레지스트리에 배포하기](publishing.md) — 새 버전이 새 레지스트리 항목이 되는 방식.
+- [레지스트리 엔트리 스키마](../reference/registry-schema.md) — `version`, `ref`, `status` 필드.

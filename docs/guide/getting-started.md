@@ -4,7 +4,7 @@ A first-run walkthrough: open the Vineyard app, create a project, install a **Ty
 
 ## 1. Open the app
 
-Vineyard runs in your browser, or as the Vineyard desktop app. Sign in, and you land on your dashboard (reopening the app while still signed in goes to the last project you opened instead, if you chose that under **Settings → General → Start view**). The desktop app can also run in local mode with no account; it opens on the dashboard as well.
+Vineyard runs in your browser at [app.vineyard.run](https://app.vineyard.run), or as the Vineyard desktop app. Sign in, and you land on your dashboard (reopening the app while still signed in goes to the last project you opened instead, if you chose that under **Settings → General → Start view**). The desktop app can also run in local mode with no account; it opens on the dashboard as well.
 
 The dashboard is your home page. **Continue** lists the project you opened last and your most recently active ones, **Since your last visit** shows what others changed in your projects while you were away, and **Activity** follows changes across all your projects. Signed in to a server, a search box above them finds entities across your projects.
 
@@ -78,4 +78,4 @@ Nothing about a run is written to the server by the run itself. Its changes reac
 
 - [Browse & install](installing.md) — search, filter, install, and scope approval
 - [Running plugins](running-plugins.md) — launch paths and the Tasks panel
-- [Type Packs](typepacks.md) — what entity types do and how to manage them
+- [Working with Type Packs](typepacks.md) — what entity types do and how to manage them

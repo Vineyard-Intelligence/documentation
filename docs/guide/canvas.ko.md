@@ -7,7 +7,7 @@
 보기 컨트롤은 두 번 노출되며, 둘은 항상 동기화됩니다:
 
 - **캔버스 내 툴바** — 캔버스 왼쪽 상단 가장자리에 고정된 컴팩트한 세로 막대로, 작업 중 가장 자주 사용하는 컨트롤이 있습니다.
-- **상단 메뉴 바** — **Project**, **Edit**, **View** 메뉴로, 보기 토글과 함께 데이터 및 탐색 작업을 추가합니다 (네 번째 메뉴인 **Run**은 플러그인과 AI 에이전트를 실행합니다 — [플러그인 실행하기](running-plugins.md) 참조).
+- **상단 메뉴 바** — **Project**, **Edit**, **View** 메뉴로, 보기 토글과 함께 데이터 및 탐색 작업을 추가합니다 (네 번째 메뉴인 **Run**은 플러그인과 AI 에이전트를 실행합니다 — [플러그인 실행](running-plugins.md) 참조).
 
 ## 보기 컨트롤 (툴바 + View 메뉴)
 
@@ -42,9 +42,9 @@
 | **Export graph (JSON)** (그래프 내보내기) | 현재 그래프를 JSON 파일로 다운로드합니다 ([그래프 내보내기](#json-그래프-내보내기) 참조). |
 | **Import graph (JSON)…** (그래프 가져오기) | 내보낸 JSON 파일을 프로젝트로 불러오는 대화상자를 엽니다. 노드는 매번 새로 만들어지므로, 같은 파일을 두 번 가져오면 모든 노드가 한 번 더 추가됩니다. |
 | **Activity log…** (활동 로그) | 프로젝트의 활동 로그를 엽니다. |
-| **Add from Marketplace…** (마켓플레이스에서 추가) | 이 프로젝트에 범위가 지정된 [마켓플레이스](../marketplace.md)를 열어 플러그인과 Type Pack을 추가합니다. |
+| **Add from Marketplace…** (마켓플레이스에서 추가) | 이 프로젝트에 범위가 지정된 [마켓플레이스](../marketplace.md)를 열어 플러그인, Type Pack, Skill Pack을 추가합니다. |
 
-프로젝트를 공개 링크로만 열었다면 **Activity log…**는 비활성화되고(프로젝트 멤버 전용), **Project settings…**에는 프로젝트 링크만 보입니다.
+프로젝트를 공개 링크로만 열었다면 **Activity log…**는 비활성화되고(프로젝트 멤버 전용), **Project settings…**에는 프로젝트 링크만 보입니다. 로그인하지 않은 상태라면 **Add from Marketplace…**도 표시되지 않습니다. 로컬 모드에서는 **Activity log…**가 표시되지 않습니다.
 
 <figure class="vy-shot" markdown="span">
   ![Project settings의 Access 탭](../assets/guide/project-settings.webp){ width="800" loading=lazy }
@@ -66,7 +66,7 @@
 세 가지 1홉 작업은 선택에 추가하므로, 다시 누르면 한 홉씩 더 나아갑니다. 아무것도 선택되지 않았으면 비활성화됩니다.
 
 !!! note "노드 추가하기"
-    새 노드는 이 메뉴가 아니라 **Types**(유형) 패널에서 활성화된 유형을 선택해 생성합니다.
+    새 노드는 이 메뉴가 아니라 **Types**(유형) 패널에서 만듭니다. 프로젝트의 Type Pack이 제공하는 유형 중 하나를 클릭하세요.
 
 ### Run
 
@@ -74,13 +74,13 @@
 | --- | --- |
 | **Ask the AI agent…** (AI 에이전트에게 묻기) | AI 에이전트 패널을 새 대화로 엽니다(열려 있던 대화는 **Tasks**에 남습니다). 이전 대화는 **Tasks**에서 해당 행을 클릭해 다시 엽니다. |
 | **Run plugins…** (플러그인 실행) | 실행 패널을 엽니다. 노드가 선택되어 있으면 그 선택으로 범위가 지정됩니다. |
-| *(Skill packs)* | 프로젝트에 설치된 모든 Skill Pack이 구분선 아래에 나열됩니다. 선택하면 읽기용으로 열리며, 아무것도 실행하지 않습니다 ([Skill Pack](skillpacks.md) 참조). |
+| *(Skill packs)* | 구분선 아래 **Skill packs** 라벨 밑에, 여기서 사용할 수 있는 설치된 Skill Pack이 먼저 나열되고(팩이 요구하는 플러그인 팩이 모두 설치되어 있고 이 앱에서 실행될 수 있을 때만 나열되므로, 브라우저에서는 Account & identity pivoting이 빠집니다) 그다음 프로젝트 자체 팩이 나열됩니다. 자체 팩 중 플러그인을 실행할 수 없는 팩은 흐리게 표시되고 *needs plugins*가 붙습니다. 팩을 선택하면 읽기용으로 열리며, 아무것도 실행하지 않습니다 ([Skill Pack 사용하기](skillpacks.md) 참조). 이 그룹은 나열할 팩이 있을 때 나타나며, 프로젝트 소유자에게는 항상 보이고 끝에 **New skill pack**(프로젝트 자체 팩이 32개가 되면 사용할 수 없음)과 **Import skill pack…**이 있습니다 ([프로젝트 자체 Skill Pack](skillpacks.md#custom-skill-packs) 참조). |
 
 ## 우클릭 메뉴
 
 - **노드** — **Run plugins…**(이 노드에 대해), **Duplicate**(복제), **Connect to…**([엣지 그리기](#엣지-그리기) 참조), **Disconnect all**(노드에 닿는 모든 엣지 삭제), **Delete**.
 - **엣지** — **Reverse direction**(방향 반전), **Delete**.
-- **선택** — 무언가 선택된 상태에서 빈 캔버스를 우클릭하거나, 여러 항목 선택에 포함된 노드를 우클릭하면 열립니다. 머리글에 개수가 표시됩니다(*Selected: N nodes, M edges*). **Run plugins…**와 **Connect to…**(노드가 선택된 경우), **Delete (N)**, **Select all**, **Fit view**.
+- **선택** — 무언가 선택된 상태에서 빈 캔버스를 우클릭하거나, 여러 항목 선택에 포함된 노드나 엣지를 우클릭하면 열립니다. 머리글에 개수가 표시됩니다(*Selected: N nodes, M edges*). **Run plugins…**와 **Connect to…**(노드가 선택된 경우), **Delete (N)**, **Select all**, **Fit view**.
 - **빈 캔버스** (선택 없음, 머리글 *Nothing selected — whole project*) — 전체 프로젝트에 대한 **Run plugins…**, **Select all**, **Fit view**.
 
 <figure class="vy-shot" markdown="span">
@@ -108,7 +108,7 @@
 | **Hierarchical (Dagre)** | 위에서 아래로 계층적 레이아웃, 방향성/트리형 그래프에 적합. |
 | **Hierarchical (AntV Dagre)** | AntV 자체의 Dagre 변형 — 역시 위에서 아래로 계층 배치하며, 넓은 그래프에서 대개 더 빠릅니다. |
 
-!!! tip
+!!! tip "팁"
     낯선 그래프의 시작점으로는 ForceAtlas2가 가장 좋습니다. 어느 클러스터에 속하는지보다 두 개체가 몇 단계 떨어져 있는지가 중요하면 Stress로, 관계가 방향성이고 명확한 계층을 원할 때는 Hierarchical (Dagre)로 전환하세요.
 
 ## 오버레이
@@ -176,11 +176,11 @@
 
 ## 마켓플레이스에서 추가
 
-`Project ▸ Add from Marketplace…`는 현재 프로젝트에 범위가 지정된 [마켓플레이스](../marketplace.md)를 열어, 프로젝트에 직접 연결된 플러그인과 Type Pack을 추가할 수 있습니다. 전체 흐름은 [설치하기](installing.md)를 참조하세요.
+`Project ▸ Add from Marketplace…`는 현재 프로젝트에 범위가 지정된 [마켓플레이스](../marketplace.md)를 열어, 프로젝트에 직접 연결된 플러그인, Type Pack, Skill Pack을 추가할 수 있습니다. 전체 흐름은 [둘러보기 및 설치](installing.md)를 참조하세요.
 
 ## 다음 / 함께 보기
 
-- [플러그인 실행하기](running-plugins.md) — 캔버스의 노드에 대해 플러그인을 실행합니다.
-- [Type Pack](typepacks.md) — 노드 유형, 색상, 레이블이 범례를 구동하는 방식.
-- [작업](tasks.md) — 장기 실행 플러그인 실행을 추적합니다.
+- [플러그인 실행](running-plugins.md) — 캔버스의 노드에 대해 플러그인을 실행합니다.
+- [Type Pack 사용하기](typepacks.md) — 노드 유형, 색상, 레이블이 범례를 구동하는 방식.
+- [작업 및 실행](tasks.md) — 장기 실행 플러그인 실행을 추적합니다.
 - [마켓플레이스 둘러보기](../marketplace.md) — 추가할 팩을 찾습니다.

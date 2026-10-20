@@ -1,12 +1,12 @@
 # Plugin manifest schema
 
-The authoritative, field-by-field reference for `plugin.schema.json` — the JSON Schema (draft 2020-12) that every `vineyard:plugin` manifest validates against. For the prose walkthrough and authoring guidance, see the [manifest guide](../develop/plugin-manifest.md).
+The authoritative, field-by-field reference for `plugin.schema.json` — the JSON Schema (draft 2020-12) that defines the `vineyard:plugin` manifest format. It is the format contract, not a gate: neither registry CI nor the app validates pack documents against `plugin.schema.json` or `pluginpack.schema.json`. For the prose walkthrough and authoring guidance, see the [manifest guide](../develop/plugin-manifest.md).
 
 !!! info "Schema identity"
     - `$schema`: `https://json-schema.org/draft/2020-12/schema`
     - `$id`: `https://vineyard.run/schemas/plugin.json`
     - `title`: *VINEYARD Plugin Manifest*
-    - Root: `type: object`, `additionalProperties: false` — unknown top-level keys are rejected.
+    - Root: `type: object`, `additionalProperties: false` — the schema allows no unknown top-level keys.
 
 The manifest is the single source of truth for a plugin; there is no separate server-side plugin record.
 
@@ -24,9 +24,9 @@ The manifest is the single source of truth for a plugin; there is no separate se
 | `author` | object | no | see [author](#author) | — | Authorship metadata. |
 | `license` | string | no | — | — | SPDX license id, e.g. `MIT`. |
 | `icon` | string | no | — | — | Icon (lucide name) shown next to the plugin in the Marketplace pack detail. |
-| `thumbnail_url` | string | no | `format: uri` | — | Marketplace thumbnail image URL. |
-| `marketing_url` | string | no | `format: uri` | — | Landing / marketing page URL. |
-| `latest_url` | string | no | `format: uri` | — | Per-author fallback pointer to the always-newest manifest (update check). The registry entry is the primary latest pointer; this is the fallback. |
+| `thumbnail_url` | string | no | `format: uri` | — | Thumbnail image URL. Accepted but not read by the app. |
+| `marketing_url` | string | no | `format: uri` | — | Landing / marketing page URL. Accepted but not read by the app. |
+| `latest_url` | string | no | `format: uri` | — | Designed as a per-author pointer to the newest manifest. Accepted but not read: the update check compares the registry catalog's `version` (see [Updates](../develop/updates.md)). |
 | `platforms` | object | yes | see [platforms](#platforms) | — | Per-platform execution flags. |
 | `io` | object | yes | see [io](#io) | — | Consumed/produced Type Pack entity types. |
 | `params` | object | no | see [params](#params) | — | JSON-Schema for the pre-run form. |
@@ -45,7 +45,7 @@ The manifest is the single source of truth for a plugin; there is no separate se
 
 ## platforms
 
-Per-platform execution flags. `type: object`, `additionalProperties: false`, `minProperties: 1` — at least one of `web` / `desktop` must be present. `primary` is preferred.
+Per-platform execution flags. `type: object`, `additionalProperties: false`, `minProperties: 1` — at least one property, and `primary` counts, so `{ "primary": "web" }` alone satisfies the schema. The host needs a `web` block (see the warning below). `primary` is preferred.
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
@@ -168,7 +168,7 @@ The plugin's authority surface. `type: object`, `additionalProperties: false`. `
 | `edge:delete` | Delete edges. |
 
 !!! warning "Network fan-out rule"
-    For a **web-proxy** plugin, `scopes.network` must contain exactly **one** entry, equal to `platforms.web.proxy_endpoint` (no fan-out). A **sandbox-js** plugin's entries are checked instead against the host's egress allowlist — see [security](../develop/security.md). On **desktop** more entries are allowed — at the user's responsibility.
+    For a **web-proxy** plugin, `scopes.network` must contain exactly **one** entry, equal to `platforms.web.proxy_endpoint` (no fan-out). A **sandbox-js** plugin's entries are checked instead against the host's egress allowlist — see [security](../develop/security.md). A sandbox-js plugin may declare several entries, in the browser and in the desktop app alike.
 
 ### networkScope (scopes.network items)
 
@@ -177,7 +177,7 @@ The plugin's authority surface. `type: object`, `additionalProperties: false`. `
 | Property | Type | Req. | Constraints | Meaning |
 |---|---|---|---|---|
 | `endpoint` | string | yes | `format: uri` | Exact origin/path prefix; no cross-host wildcards. |
-| `methods` | array | yes | `uniqueItems`; items enum: `GET`, `POST`, `PUT`, `PATCH`, `DELETE` | Allowed HTTP methods. |
+| `methods` | array | yes | `uniqueItems`; items enum: `GET`, `POST`, `PUT`, `PATCH`, `DELETE` | Allowed HTTP methods. An empty list allows every method: the schema sets no `minItems`, and the host treats an empty list as no restriction. |
 | `purpose` | string | no | — | Human-readable reason, shown at install time. |
 
 #### Sending a credential
@@ -189,15 +189,17 @@ your endpoint needs a key, put it there:
 await ctx.net.fetch(url, { headers: { Authorization: `Bearer ${ctx.config.api_key}` } });
 ```
 
-A request that carries a header is never redirected, so a key in `Authorization` or in a custom
-header (`X-Api-Key`, `api-key`, …) only reaches the endpoint you declared. Avoid a key in the query
+A request that carries a header or a body does not follow a redirect: a 3xx answer rejects the call
+with an error that begins `redirect not followed`, and the plugin does not see the 3xx response. So
+a key in `Authorization` or in a custom header (`X-Api-Key`, `api-key`, …) only reaches the endpoint
+you declared. A request with neither header nor body still follows redirects. Avoid a key in the query
 string, because it ends up in logs.
 
 `Cookie` cannot be set, and no cookies are sent with plugin requests.
 
 ### configValue (scopes.config items)
 
-`$defs.configValue`. `type: object`, `additionalProperties: false`. **Required:** `key`, `type`. Config values are entered by the analyst in the plugin's Settings section of the Run plugins dialog, or under **Settings → Keys & Secrets**, and read by the declaring plugin as `ctx.config`. Members of the same pack that declare a key and call the same set of network origins (scheme, host and port of their `scopes.network` endpoints) share one value, entered once; a plugin published on its own, or one with no `scopes.network` entry, keeps its own. Each plugin still receives only the keys its own manifest declares — see [scopes → config](scopes.md#config). Values are kept per signed-in account — in the OS keychain on desktop, for the tab session in the browser. `secret: true` masks the field. Values are never recorded in a task or conversation.
+`$defs.configValue`. `type: object`, `additionalProperties: false`. **Required:** `key`, `type`. Config values are entered by the analyst in the plugin's Settings section of the Run plugins dialog, or under **Settings → Keys & Secrets**, and read by the declaring plugin as `ctx.config`. Members of the same pack that declare a key and call the same set of network origins (scheme, host and port of their `scopes.network` endpoints) share one value, entered once; a plugin published on its own, or one with no `scopes.network` entry, keeps its own. Each plugin still receives only the keys its own manifest declares — see [scopes → config](scopes.md#config). Values are kept per signed-in account — in the OS keychain on desktop (only until the app quits on a computer that cannot encrypt them), for the tab session in the browser. `secret: true` masks the field. Values are never recorded in a task or conversation.
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
@@ -215,16 +217,16 @@ Task execution model. `type: object`, `additionalProperties: false`. All propert
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
-| `long_running` | boolean | no | — | `false` | If true, the runtime continuously manages the task (status/pause/resume/cancel/retry/progress). |
+| `long_running` | boolean | no | — | `false` | Designed to have the runtime manage the task continuously (status/pause/resume/cancel/retry/progress). Accepted but not read. |
 | `controls` | array | no | `uniqueItems`; enum: `pause`, `resume`, `cancel`, `retry`, `progress` | — | Controls exposed to the user. |
 | `progress` | string | no | `none`, `determinate`, `indeterminate` | `none` | Progress reporting style. |
 | `persistence` | string | no | `ephemeral`, `opt-in`, `always` | `ephemeral` | `ephemeral` = no Task DB row, in-memory only. |
 | `states` | array | no | enum: `queued`, `running`, `waiting`, `paused`, `cancelled`, `succeeded`, `failed` | all 7 states | Canonical 7-state machine. |
 
 !!! warning "What the host actually reads"
-    `controls`, `progress`, `persistence`, and `states` are accepted here but not read by the host today — the Tasks panel's only control is Stop, and a task's real terminal states are `succeeded` / `failed` / `cancelled` (plus `incomplete` for AI turns). See [Lifecycle](../develop/lifecycle.md).
+    `long_running`, `controls`, `progress`, `persistence`, and `states` are accepted here but not read by the host today — the Tasks panel's only control is Stop, and a task's real terminal states are `succeeded` / `failed` / `cancelled` (plus `incomplete` for AI turns). See [Lifecycle](../develop/lifecycle.md).
 
-    The host does read `lifecycle.timeout_ms`, a wall-clock budget per run (default 10 minutes, capped at 60). Past it, the sandbox is terminated and the task fails. It is not yet modeled in `plugin.schema.json`, so a manifest that declares it currently fails schema validation. See [Lifecycle](../develop/lifecycle.md#manifestlifecycletimeout_ms).
+    The host does read `lifecycle.timeout_ms`, a wall-clock budget per run (default 10 minutes, capped at 60). Past it, the sandbox is terminated and the task fails. It is not in `plugin.schema.json` yet; since nothing validates manifests against the schema, a manifest can declare it. See [Lifecycle](../develop/lifecycle.md#manifestlifecycletimeout_ms).
 
 ## Complete annotated example
 
@@ -235,7 +237,7 @@ A real, shipped plugin manifest — **RDAP IP**, a member of the [IP Recon](http
   "identifier": "run.vineyard.plugins.rdap_ip", // (1)!
   "content_type": "vineyard:plugin",            // (2)!
   "name": "RDAP IP",
-  "version": "1.0.2",                           // (3)!
+  "version": "1.1.1",                           // (3)!
   "description": "Looks up each selected IP Address in RDAP. Creates a Netblock node (CIDR, network name, country) linked \"within netblock\" and fills the IP's organization and country_code if empty.",
   "icon": "boxes",                              // (4)!
 

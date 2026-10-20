@@ -30,6 +30,6 @@ Installing a Plugin Pack fetches the document at the entry's `repo@ref/path` (vi
 
 - [publishing](publishing.md) — submit a one-entry PR; the immutable-`ref` and integrity gates.
 - [updates](updates.md) — how a new version becomes an offered update.
-- [quickstart](quickstart.md) — Developer Mode loads bundles without GitHub.
+- [quickstart](quickstart.md) — **Settings → Plugins → Development → Load a pack from a URL** loads a pack you are writing from a URL, on this device only.
 - [plugin manifest](plugin-manifest.md) — `platforms.web.entry` and the rest of the manifest.
 - [registry schema](../reference/registry-schema.md) — what the metadata-only entry stores.

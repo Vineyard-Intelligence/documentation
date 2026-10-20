@@ -1,6 +1,6 @@
 # Reference
 
-The normative reference for VINEYARD's plugin and Type Pack formats: the JSON-Schemas every document is validated against, the permission scope vocabulary, and the shared terminology used across the docs. Use these pages when you need exact field names, allowed values, and constraints rather than narrative guidance.
+The normative reference for VINEYARD's plugin and Type Pack formats: the JSON-Schemas that define each document (registry CI validates registry entries against theirs, but neither registry CI nor the app validates a pack document against its schema), the permission scope vocabulary, and the shared terminology used across the docs. Use these pages when you need exact field names, allowed values, and constraints rather than narrative guidance.
 
 ## Pages
 
@@ -8,7 +8,7 @@ The normative reference for VINEYARD's plugin and Type Pack formats: the JSON-Sc
 |---|---|
 | [Plugin manifest schema](plugin-schema.md) | The `vineyard:plugin` manifest — `identifier`, `version`, `platforms`, `io`, `scopes`, `lifecycle`. |
 | [Type Pack schema](typepack-schema.md) | The `vineyard:typepack` document — type definitions in the qualified `category.name` form (e.g. `infrastructure.ip_address`). |
-| [Registry entry schemas](registry-schema.md) | One row of `community-pluginpacks.json` / `community-typepacks.json` — the metadata-only catalog rows the browser reads. |
+| [Registry entry schemas](registry-schema.md) | One row of `community-pluginpacks.json` / `community-typepacks.json` / `community-skillpacks.json` — the metadata-only catalog rows the browser reads. |
 | [Scopes](scopes.md) | The complete permission vocabulary: the `graph` verbs (`node:read`, `edge:delete`, …), `network`, `web_probe`, `services`, and `config`. |
 
 ## Where the canonical artifacts live
@@ -24,11 +24,11 @@ The authoritative JSON-Schemas are not duplicated here — they live in the regi
 | [`schemas/registry-typepack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-typepack-entry.schema.json) | One `community-typepacks.json` row. |
 | [`schemas/registry-skillpack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-skillpack-entry.schema.json) | One `community-skillpacks.json` row — the schema itself is the reference. |
 
-The reference pages summarize and explain these files; when the prose and the schema disagree, the schema in the registry's `schemas/` wins.
+The reference pages summarize and explain these files; when the prose and the schema disagree, the schema in the registry's `schemas/` wins. There is no schema for a Skill Pack document; its contract is described in [Skill Packs](../develop/skillpacks.md#the-document).
 
 ## The Marketplace catalog the browser reads
 
-The static [Marketplace browser](../marketplace.md) loads its catalog live from `https://registry.vineyard.run/registry/` — one metadata-only array per kind: `community-pluginpacks.json`, `community-typepacks.json`, `community-skillpacks.json`. These hold only listing metadata (`identifier`, `name`, `version`, `repo`, `ref`, `scopes_summary`, and similar); they never contain plugin bytes. Plugin Pack, Type Pack, and Skill Pack content is fetched from its GitHub source at install time, not from the registry.
+The static [Marketplace browser](../marketplace.md) loads its catalog live from `https://registry.vineyard.run/registry/` — one metadata-only array per kind: `community-pluginpacks.json`, `community-typepacks.json`, `community-skillpacks.json`. These hold only listing metadata (`identifier`, `name`, `version`, `repo`, `ref`, `scopes_summary`, and similar); they never contain plugin bytes. Plugin Pack, Type Pack, and Skill Pack content is fetched from the author's GitHub repo through jsDelivr, pinned to the entry's commit, each time a project opens (and a plugin's code each time it runs), not from the registry.
 
 ## Naming, at a glance
 
