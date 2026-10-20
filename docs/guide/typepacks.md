@@ -84,9 +84,14 @@ The same pack also ships five types in a separate `web` category:
 |---|---|---|
 | `web.url` | the URL | `domain` (→ `infrastructure.domain`), `http_status` |
 | `web.hhhash` | the HTTP header hash | `header_count`, `server_hint` |
-| `web.favicon_hash` | the favicon hash | `hash_algorithm`, `favicon_url` |
+| `web.favicon_hash` | the Shodan-style MMH3 hash (signed decimal) | `mmh3_hex`, `md5`, `sha256`, `phash`, `dhash`, `favicon_url` |
 | `web.dom_hash` | the DOM structure hash | `tag_count` |
 | `web.tracking_id` | the identifier as the page carries it (e.g. `G-SXM8TFRYSW`); identity is `provider` + `value` | `provider`, `kind` |
+
+`web.favicon_hash` holds one favicon in every form the search services index it under: `hash_value`
+for Shodan, FOFA, Censys and ZoomEye, `mmh3_hex` for Criminal IP, `md5` and `sha256` for Censys,
+VirusTotal, Netlas and others, and the perceptual `phash` and `dhash`, which are compared by how many
+of their bits differ.
 
 Each type ships its own icon and color.
 
