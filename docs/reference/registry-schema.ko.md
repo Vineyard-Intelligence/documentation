@@ -1,4 +1,4 @@
-# Registry entry schemas
+# 레지스트리 엔트리 스키마
 
 **registry entry** 스키마에 대한 참조 — `community-pluginpacks.json`의 한 행, `community-typepacks.json`의 한 행, `community-skillpacks.json`의 한 행입니다. 각 항목은 정적 브라우저가 모든 업스트림 manifest를 가져오지 않고도 카드를 렌더링할 수 있게 하는 간결하고 비정규화된 포인터입니다. 이 페이지는 세 가지를 모두 다룹니다.
 
@@ -8,47 +8,47 @@
 - [`schemas/registry-typepack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-typepack-entry.schema.json)
 - [`schemas/registry-skillpack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-skillpack-entry.schema.json)
 
-## What a registry entry is (and is not)
+## 레지스트리 항목이 무엇이고 무엇이 아닌가 {#what-a-registry-entry-is-and-is-not}
 
-registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데이터만 저장하며 — 코드나 복사본은 없습니다**. 전체 [plugin manifest](plugin-schema.md) 또는 [Type Pack](typepack-schema.md) JSON, README, 번들은 모두 고정된 `ref`의 **저자 저장소**에 남아 있습니다.
+registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데이터만 저장하며 — 코드나 복사본은 없습니다**. 전체 [플러그인 매니페스트](plugin-schema.md) 또는 [Type Pack](typepack-schema.md) JSON, README, 번들은 모두 고정된 `ref`의 **저자 저장소**에 남아 있습니다.
 
 따라서 registry 항목은 **카탈로그 프로젝션**입니다: 브라우저에서 항목을 검색, 필터링, 배지 표시하기에 충분한 필드와, 상세 페이지가 실제 항목을 하이드레이트하는 데 사용하는 `repo@ref/path` 포인터입니다.
 
-!!! info "Denormalized — the manifest is the source of truth"
+!!! info "비정규화 — manifest가 진실 공급원입니다"
     `platforms`, `scopes_summary`, `services`, `plugin_count`, `desktop_only`, `icon`, `type_count`, `section_count`는 **파생** 필드입니다. 항목에 직접 적되, CI가 고정된 문서에서 각 값을 다시 계산해 하나라도 불일치하면 항목을 거부합니다. `categories`와 `applies_to`도 문서의 투영이지만 CI가 다시 계산하지 않으므로 문서에서 직접 옮겨 적으세요. `typepacks`와 `requires`는 파생 필드가 아닙니다: 작성자가 선언하고 CI가 검사합니다. 업데이트 사이에 실제 manifest와 차이가 발생할 수 있습니다. 의심스러운 경우 manifest가 우선합니다.
 
-## Plugin entry
+## 플러그인 항목 {#plugin-entry}
 
-`community-pluginpacks.json`의 한 행. 스키마는 `additionalProperties: false`를 설정하므로, 알 수 없는 키는 리뷰 봇에 의해 거부됩니다.
+`community-pluginpacks.json`의 한 행. 스키마는 `additionalProperties: false`를 설정하므로, 알 수 없는 키는 레지스트리 CI가 거부합니다.
 
 **필수:** `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`.
 
-| Field | Type | Required | Meaning |
+| 필드 | 유형 | 필수 | 의미 |
 |---|---|---|---|
-| `identifier` | string | yes | Reverse-DNS 기본 키, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}(?:plugins|pluginpacks)\.[a-z0-9_]+$` (`plugins.*` = 단일 plugin, `pluginpacks.*` = 번들). `manifest.identifier`와 동일. **전체** registry(세 카탈로그 모두)에서 고유합니다. |
-| `content_type` | string | yes | `vineyard:plugin` (단일 plugin) 또는 `vineyard:pluginpack` (번들: 하나의 파일 → 여러 plugin). |
-| `name` | string | yes | 표시 이름, 1–128자. |
-| `author` | string | yes | 저자 핸들, `verified-authors.json`과 대조됨. |
-| `description` | string | yes | ≤250자, 문장형 대소문자, 마침표로 끝남, 이모지 없음. |
-| `repo` | string | yes | `owner/name` GitHub 경로 (`^[^/]+/[^/]+$`). 코드를 가리키는 **유일한** 포인터. |
-| `ref` | string | yes | **불변 커밋 SHA** (40자 16진수 SHA-1 또는 64자 16진수 SHA-256), PR 시점에 캡처됨. **태그와 브랜치는 거부됩니다** (둘 다 재지정 가능). `version`은 사람이 읽을 수 있는 릴리스를 전달합니다. |
-| `path` | string | yes | `repo@ref` 내 `manifest.json`까지의 경로. |
-| `version` | string | no | 이 `ref`에서 `manifest.version`의 SemVer 미러 (`^\d+\.\d+\.\d+(?:[-+].+)?$`). |
-| `platforms` | string[] | no | `platforms.{web,desktop}` + `web.runtime`에서 **파생된** 배지 세트. 항목: `web`, `web-proxy`, `desktop` (고유). |
-| `scopes_summary` | object | no | **파생된** 필터 패싯 (아래 참조). |
-| `scopes_summary.network` | boolean | no | `scopes.network`가 비어 있지 않거나 `web_probe`를 선언하면 `true`. |
-| `scopes_summary.graph_write` | boolean | no | `node:`/`edge:` create/update/delete 동사가 있으면 `true`. |
-| `scopes_summary.secret_config` | boolean | no | `scopes.config` 항목에 `secret: true`가 있으면 `true` (분석가가 직접 넣어야 하는 키). |
-| `plugin_count` | integer | no | **파생됨**: `identifier`가 **pack**을 명명할 때 번들된 plugin 수 (하나의 파일 → 여러 plugin). 단일 plugin 항목의 경우 생략되거나 `1`. 카드는 포함된 모든 plugin을 함께 설치합니다. 최소 `1`. |
-| `desktop_only` | string | no | **파생됨**: 팩의 모든 plugin이 데스크탑 앱에서만 실행되면 `all`, 일부만 그렇다면 `some`. 하나도 없으면 생략됩니다. |
-| `icon` | string | no | **파생됨**: manifest의 `icon`이 kebab-case [lucide](https://lucide.dev/icons/) 아이콘 이름일 때 그 값. 아니면 생략됩니다. |
-| `typepacks` | string[] | no | 작성자가 **선언**하고 CI가 검사: 팩의 플러그인이 소비/생산하는 Type Pack 식별자(`io.consumes`/`io.produces`), 고유값. `io` 항목이 참조하는 모든 type은 여기 나열된 Type Pack에서 와야 하며, 나열된 팩은 모두 카탈로그에 있어야 합니다. skillpack의 `requires`가 pluginpack을 제공하는 것과 같은 방식으로 marketplace가 이들을 함께 설치하도록 제안합니다. 프로젝트가 설치하지 않은 팩의 type을 쓰는 plugin은 노드 생성 시점에 실패합니다. |
-| `services` | string[] | no | **파생**: 팩의 플러그인이 이름으로 호출하는 Vineyard 서비스(`rdap`, `telegram`). `scopes_summary` 플래그가 아니라 별도 필드입니다. [scopes](scopes.md#services) 참조. |
-| `thumbnail_url` | string (uri) | no | 선택적 카드 아이콘. |
-| `verified` | boolean | no | 식별자의 네임스페이스가 `verified-authors.json`에서 `author`의 핸들 소유로 등재되어 있을 때만 `true`. CI에 의해 설정되며, **자체 주장되지 않음**. 기본값 `false`. |
-| `status` | object | no | **게시가 취소된** 팩에만 존재: `{ state: "deprecated" | "withdrawn", reason, since, replacement? }`. 행은 카탈로그에 남습니다. 항목을 지우면 이미 설치한 프로젝트엔 아무 신호도 가지 않기 때문입니다. `deprecated`는 계속 로드되며 경고만, `withdrawn`은 설치 거부 + 로드 시 제외됩니다. [Publishing → 팩 내리기](../develop/publishing.md#taking-a-pack-down) 참조. |
+| `identifier` | string | 예 | Reverse-DNS 기본 키, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}(?:plugins|pluginpacks)\.[a-z0-9_]+$` (`plugins.*` = 단일 plugin, `pluginpacks.*` = 번들). `manifest.identifier`와 동일. **전체** registry(세 카탈로그 모두)에서 고유합니다. |
+| `content_type` | string | 예 | `vineyard:plugin` (단일 plugin) 또는 `vineyard:pluginpack` (번들: 하나의 파일 → 여러 plugin). |
+| `name` | string | 예 | 표시 이름, 1–128자. |
+| `author` | string | 예 | 저자 핸들, `verified-authors.json`과 대조됨. |
+| `description` | string | 예 | ≤250자, 문장형 대소문자, 마침표로 끝남, 이모지 없음. |
+| `repo` | string | 예 | `owner/name` GitHub 경로 (`^[^/]+/[^/]+$`). 코드를 가리키는 **유일한** 포인터. |
+| `ref` | string | 예 | **불변 커밋 SHA** (40자 16진수 SHA-1 또는 64자 16진수 SHA-256), PR 시점에 캡처됨. **태그와 브랜치는 거부됩니다** (둘 다 재지정 가능). `version`은 사람이 읽을 수 있는 릴리스를 전달합니다. |
+| `path` | string | 예 | `repo@ref` 내 `manifest.json`까지의 경로. |
+| `version` | string | 아니요 | 이 `ref`에서 `manifest.version`의 SemVer 미러 (`^\d+\.\d+\.\d+(?:[-+].+)?$`). |
+| `platforms` | string[] | 아니요 | **파생됨**: 팩의 plugin들이 `platforms` 아래에 선언한 플랫폼 키(`web`, `desktop`)에서 `primary`를 뺀 것, 고유값. 스키마의 enum은 `web-proxy`도 허용하지만 CI가 이를 파생하는 일은 없으므로, 이 값을 적은 항목은 실패합니다. |
+| `scopes_summary` | object | 아니요 | **파생된** 필터 패싯 (아래 참조). |
+| `scopes_summary.network` | boolean | 아니요 | `scopes.network`가 비어 있지 않거나 `web_probe`를 선언하면 `true`. |
+| `scopes_summary.graph_write` | boolean | 아니요 | `node:`/`edge:` create/update/delete 동사가 있으면 `true`. |
+| `scopes_summary.secret_config` | boolean | 아니요 | `scopes.config` 항목에 `secret: true`가 있으면 `true` (분석가가 직접 넣어야 하는 키). |
+| `plugin_count` | integer | 아니요 | **파생됨**: `identifier`가 **pack**을 명명할 때 번들된 plugin 수 (하나의 파일 → 여러 plugin). 단일 plugin 항목의 경우 생략되거나 `1`. 카드는 포함된 모든 plugin을 함께 설치합니다. 최소 `1`. |
+| `desktop_only` | string | 아니요 | **파생됨**: 팩의 모든 plugin이 데스크탑 앱에서만 실행되면 `all`, 일부만 그렇다면 `some`. 하나도 없으면 생략됩니다. |
+| `icon` | string | 아니요 | **파생됨**: manifest의 `icon`이 kebab-case [lucide](https://lucide.dev/icons/) 아이콘 이름일 때 그 값. 아니면 생략됩니다. |
+| `typepacks` | string[] | 아니요 | 작성자가 **선언**하고 CI가 검사: 팩의 플러그인이 소비/생산하는 Type Pack 식별자(`io.consumes`/`io.produces`), 고유값. `io` 항목이 참조하는 모든 type은 여기 나열된 Type Pack에서 와야 하며, 나열된 팩은 모두 카탈로그에 있어야 합니다. skillpack의 `requires`가 pluginpack을 제공하는 것과 같은 방식으로 marketplace가 이들을 함께 설치하도록 제안합니다. 프로젝트가 설치하지 않은 팩의 type을 쓰는 plugin은 노드 생성 시점에 실패합니다. |
+| `services` | string[] | 아니요 | **파생**: 팩의 플러그인이 이름으로 호출하는 Vineyard 서비스(`rdap`, `telegram`). `scopes_summary` 플래그가 아니라 별도 필드입니다. [스코프 레퍼런스](scopes.md#services) 참조. |
+| `thumbnail_url` | string (uri) | 아니요 | 선택적 카드 아이콘. |
+| `verified` | boolean | 아니요 | 식별자의 네임스페이스가 `verified-authors.json`에서 `author`의 핸들 소유로 등재되어 있을 때만 `true`. CI에 의해 설정되며, **자체 주장되지 않음**. 기본값 `false`. |
+| `status` | object | 아니요 | **게시가 취소된** 팩에만 존재: `{ state: "deprecated" | "withdrawn", reason, since, replacement? }`. 행은 카탈로그에 남습니다. 항목을 지우면 이미 설치한 프로젝트엔 아무 신호도 가지 않기 때문입니다. `deprecated`는 계속 로드되며 경고만, `withdrawn`은 설치 거부 + 로드 시 제외됩니다. [레지스트리에 배포하기 → 팩 내리기](../develop/publishing.md#taking-a-pack-down) 참조. |
 
-### Example plugin row
+### 플러그인 행 예시 {#example-plugin-row}
 
 이것은 실제 Chaos 참조 팩입니다 — 6개의 그래프 조작 plugin(Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node)을 번들하는 단일 `identifier`이므로 `plugin_count`는 `6`입니다.
 
@@ -60,9 +60,9 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
   "author": "VINEYARD",
   "description": "Six graph-manipulation plugins for demos and validation.",
   "repo": "Vineyard-Intelligence/pluginpack-chaos",
-  "ref": "4501ffcf55e8e0b563520549c79f7c0627ca32a5",
+  "ref": "1ec7b4cab527ef6aa4d683330dc6191e4c21dbd8",
   "path": "plugins/chaos-pack.manifest.json",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "platforms": ["web"],
   "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
@@ -72,34 +72,34 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 }
 ```
 
-!!! example "Reading the facets"
+!!! example "패싯 읽기"
     `scopes_summary.graph_write`는 Chaos plugin이 그래프를 변경(노드/엣지 삭제 및 재배치)하기 때문에 `true`입니다. `network`는 `false` — 이 plugin들은 완전히 클라이언트 측에서 실행되며 엔드포인트를 호출하지 않으므로 — 카드는 "graph-write" 패싯을 표시하고 **network** 배지는 표시하지 않습니다. 브라우저는 이들을 필터로 표시합니다.
 
-## Type Pack entry
+## Type Pack 항목 {#type-pack-entry}
 
 `community-typepacks.json`의 한 행으로, plugin 항목과 대칭적입니다. Type Pack은 **scope를 가지지 않으며** — 코드가 실행되지 않으므로 — `scopes_summary` 패싯은 카테고리 필터를 구동하는 `categories`로 대체됩니다. 역시 `additionalProperties: false`.
 
 **필수:** `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`.
 
-| Field | Type | Required | Meaning |
+| 필드 | 유형 | 필수 | 의미 |
 |---|---|---|---|
-| `identifier` | string | yes | Reverse-DNS 기본 키, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$`. `typepack.identifier`와 동일. |
-| `content_type` | string | yes | 상수 `vineyard:typepack`. |
-| `name` | string | yes | 표시 이름, 1–128자. |
-| `author` | string | yes | 저자 핸들. |
-| `description` | string | yes | ≤250자 (plugin 항목과 동일한 산문 규칙). |
-| `repo` | string | yes | `owner/name` GitHub 경로. |
-| `ref` | string | yes | **불변 커밋 SHA** (40자 16진수 SHA-1 또는 64자 16진수 SHA-256), PR 시점에 캡처됨. 태그와 브랜치는 거부됩니다(둘 다 재지정 가능). `version`은 사람이 읽을 수 있는 릴리스를 전달합니다. |
-| `path` | string | yes | `repo@ref` 내 Type Pack JSON 경로. |
-| `version` | string | no | SemVer (`^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$`). |
-| `categories` | string[] | no | **파생됨**: 고유한 `types[].category` 값 (각각 `^[a-z][a-z0-9_]*$`, 고유). 카테고리 패싯을 구동합니다. |
-| `type_count` | integer | no | **파생됨**: `types[].length`. 최소 `1`. |
-| `icon` | string | no | **파생됨**: 첫 번째 type의 `icon`이 kebab-case [lucide](https://lucide.dev/icons/) 아이콘 이름일 때 그 값. 아니면 생략됩니다. |
-| `thumbnail_url` | string (uri) | no | 선택적 카드 아이콘. |
-| `verified` | boolean | no | plugin 항목과 동일 — CI 설정 `verified-authors.json`의 미러. 기본값 `false`. |
-| `status` | object | no | **게시가 취소된** 팩에만 존재: `{ state: "deprecated" | "withdrawn", reason, since, replacement? }`. 행은 카탈로그에 남습니다. 항목을 지우면 이미 설치한 프로젝트엔 아무 신호도 가지 않기 때문입니다. `deprecated`는 계속 로드되며 경고만, `withdrawn`은 설치 거부 + 로드 시 제외됩니다. [Publishing → 팩 내리기](../develop/publishing.md#taking-a-pack-down) 참조. |
+| `identifier` | string | 예 | Reverse-DNS 기본 키, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$`. `typepack.identifier`와 동일. |
+| `content_type` | string | 예 | 상수 `vineyard:typepack`. |
+| `name` | string | 예 | 표시 이름, 1–128자. |
+| `author` | string | 예 | 저자 핸들. |
+| `description` | string | 예 | ≤250자 (plugin 항목과 동일한 산문 규칙). |
+| `repo` | string | 예 | `owner/name` GitHub 경로. |
+| `ref` | string | 예 | **불변 커밋 SHA** (40자 16진수 SHA-1 또는 64자 16진수 SHA-256), PR 시점에 캡처됨. 태그와 브랜치는 거부됩니다(둘 다 재지정 가능). `version`은 사람이 읽을 수 있는 릴리스를 전달합니다. |
+| `path` | string | 예 | `repo@ref` 내 Type Pack JSON 경로. |
+| `version` | string | 아니요 | SemVer (`^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$`). |
+| `categories` | string[] | 아니요 | **파생됨**: 고유한 `types[].category` 값 (각각 `^[a-z][a-z0-9_]*$`, 고유). 카테고리 패싯을 구동합니다. |
+| `type_count` | integer | 아니요 | **파생됨**: `types[].length`. 최소 `1`. |
+| `icon` | string | 아니요 | **파생됨**: 첫 번째 type의 `icon`이 kebab-case [lucide](https://lucide.dev/icons/) 아이콘 이름일 때 그 값. 아니면 생략됩니다. |
+| `thumbnail_url` | string (uri) | 아니요 | 선택적 카드 아이콘. |
+| `verified` | boolean | 아니요 | plugin 항목과 동일 — CI 설정 `verified-authors.json`의 미러. 기본값 `false`. |
+| `status` | object | 아니요 | **게시가 취소된** 팩에만 존재: `{ state: "deprecated" | "withdrawn", reason, since, replacement? }`. 행은 카탈로그에 남습니다. 항목을 지우면 이미 설치한 프로젝트엔 아무 신호도 가지 않기 때문입니다. `deprecated`는 계속 로드되며 경고만, `withdrawn`은 설치 거부 + 로드 시 제외됩니다. [레지스트리에 배포하기 → 팩 내리기](../develop/publishing.md#taking-a-pack-down) 참조. |
 
-### Example Type Pack row
+### Type Pack 행 예시 {#example-type-pack-row}
 
 15개의 인프라·웹 엔티티 유형을 정의하는 실제 Infrastructure 기본 팩입니다:
 
@@ -111,9 +111,9 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
   "author": "VINEYARD",
   "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
-  "ref": "81dd71ddeeebfbeba47762d87dd3f89ecd7d11df",
+  "ref": "2e6dc6f762709dbc8a460a5ad5ad2417c86fe6cb",
   "path": "typepacks/infrastructure.json",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "categories": ["infrastructure", "web"],
   "type_count": 15,
   "icon": "network",
@@ -123,36 +123,36 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 
 동반 Threat 팩은 `categories: ["threat"]`, `type_count: 10`으로 동일한 형태입니다.
 
-## Skill Pack entry
+## Skill Pack 항목 {#skill-pack-entry}
 
 `community-skillpacks.json`의 한 행으로, 위 두 항목과 같은 포인터 형태입니다. Skill Pack은 텍스트이므로 scope를 가지지 않으며, 유일한 의존성은 `requires`의 Plugin Pack입니다. 역시 `additionalProperties: false`.
 
 **필수:** `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`.
 
-| Field | Type | Required | Meaning |
+| 필드 | 유형 | 필수 | 의미 |
 |---|---|---|---|
-| `identifier` | string | yes | Reverse-DNS 기본 키, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}skillpacks\.[a-z0-9_]+$`. 스킬 문서의 `identifier`와 동일. |
-| `content_type` | string | yes | 상수 `vineyard:skillpack`. |
-| `name`, `author`, `description`, `repo`, `ref`, `path` | string | yes | plugin 항목과 같은 규칙. `path`는 `repo@ref` 내 스킬 JSON 경로. |
-| `version` | string | no | 이 `ref`에서 문서 `version`의 SemVer 미러. |
-| `applies_to` | string[] | no | **파생됨**: 플레이북이 다루는 노드 유형(`category.name`)으로, 상세 보기에 표시됩니다. CI가 다시 계산하지 않으므로 문서에서 그대로 옮겨 적으세요. |
-| `section_count` | integer | no | **파생됨**: 문서의 `sections` 개수. CI가 다시 계산합니다. 최소 `0`. |
-| `requires` | string[] | no | 플레이북의 단계가 호출하는 Plugin Pack 식별자. 각각 카탈로그의 살아 있는 팩이어야 하며, marketplace가 함께 설치하도록 제안합니다. |
-| `thumbnail_url` | string (uri) | no | 선택적 카드 아이콘. |
-| `verified` | boolean | no | plugin 항목과 동일. 기본값 `false`. |
-| `status` | object | no | plugin 항목과 동일. |
+| `identifier` | string | 예 | Reverse-DNS 기본 키, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}skillpacks\.[a-z0-9_]+$`. 스킬 문서의 `identifier`와 동일. |
+| `content_type` | string | 예 | 상수 `vineyard:skillpack`. |
+| `name`, `author`, `description`, `repo`, `ref`, `path` | string | 예 | plugin 항목과 같은 규칙. `path`는 `repo@ref` 내 스킬 JSON 경로. |
+| `version` | string | 아니요 | 이 `ref`에서 문서 `version`의 SemVer 미러. |
+| `applies_to` | string[] | 아니요 | **파생됨**: 플레이북이 다루는 노드 유형(`category.name`)으로, 상세 보기에 표시됩니다. CI가 다시 계산하지 않으므로 문서에서 그대로 옮겨 적으세요. |
+| `section_count` | integer | 아니요 | **파생됨**: 문서의 `sections` 개수. CI가 다시 계산합니다. 최소 `0`. |
+| `requires` | string[] | 아니요 | 플레이북의 단계가 호출하는 Plugin Pack 식별자. 각각 카탈로그의 살아 있는 팩이어야 하며, marketplace가 함께 설치하도록 제안합니다. |
+| `thumbnail_url` | string (uri) | 아니요 | 선택적 카드 아이콘. |
+| `verified` | boolean | 아니요 | plugin 항목과 동일. 기본값 `false`. |
+| `status` | object | 아니요 | plugin 항목과 동일. |
 
-Account & identity pivoting의 실제 행은 [Skill Packs](../develop/skillpacks.md#publishing-to-the-registry)에 있습니다.
+Account & identity pivoting의 실제 행은 [Skill Pack](../develop/skillpacks.md#publishing-to-the-registry)에 있습니다.
 
-## How entries are validated and merged
+## 항목의 검증과 병합 {#how-entries-are-validated-and-merged}
 
-제출은 `packs/<identifier>.json` 파일 하나를 추가하는 포크 앤 PR이며(카탈로그는 여기서 생성됩니다), 차단 CI 검사(스키마, 불변 `ref`, 업스트림 manifest 검증, 번들 스캔)와 사람 병합에 의해 게이트됩니다. 전체 설명은 [Publishing](../develop/publishing.md)을 참조하세요.
+제출은 `packs/<identifier>.json` 파일 하나를 추가하는 포크 앤 PR이며(카탈로그는 여기서 생성됩니다), 차단 CI 검사와 사람 병합에 의해 게이트됩니다. CI는 항목이 스키마에 맞는지, `ref`가 불변 커밋 SHA인지, 고정된 문서가 항목과 일치하는지(`identifier`, `content_type`, `version`, 파생 필드), Plugin Pack의 번들이 manifest와 같은 버전과 라이선스를 선언하는지, 선언한 의존성과 typeRef가 해석되는지를 검사합니다. 고정된 문서 자체를 그 문서의 스키마로 검증하지는 않습니다. 전체 목록은 [CI가 강제하는 것](../develop/publishing.md#what-ci-enforces)을, 제출 과정은 [레지스트리에 배포하기](../develop/publishing.md)를 참조하세요.
 
-## Next / See also
+## 다음 / 참고 {#next-see-also}
 
-- [Plugin manifest schema](plugin-schema.md) — plugin 항목이 가리키는 업스트림 문서.
-- [Type Pack schema](typepack-schema.md) — Type Pack 항목이 가리키는 업스트림 문서.
-- [Scopes reference](scopes.md) — `scopes_summary` 뒤의 동사들.
-- [Publishing](../develop/publishing.md) — registry에 항목 제출하기.
-- [Updates](../develop/updates.md) — 새 버전이 "Update available"이 되는 방식.
-- [Marketplace browser](../marketplace.md) — 이 항목들이 공급하는 정적 사이트.
+- [플러그인 매니페스트 스키마](plugin-schema.md) — plugin 항목이 가리키는 업스트림 문서.
+- [Type Pack 스키마](typepack-schema.md) — Type Pack 항목이 가리키는 업스트림 문서.
+- [스코프 레퍼런스](scopes.md) — `scopes_summary` 뒤의 동사들.
+- [레지스트리에 배포하기](../develop/publishing.md) — registry에 항목 제출하기.
+- [업데이트](../develop/updates.md) — 새 버전이 "Update available"이 되는 방식.
+- [마켓플레이스 브라우저](../marketplace.md) — 이 항목들이 공급하는 정적 사이트.

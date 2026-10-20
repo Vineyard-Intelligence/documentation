@@ -13,7 +13,8 @@ VINEYARD는 CTI·OSINT를 위한 오픈 조사 워크벤치입니다. 엔티티�
 - **Type Pack** — 그래프가 이해하는 **엔티티 유형**의 JSON 정의로, 노드에 속성,
   유효성 검사 규칙, 아이콘, 색상을 부여합니다.
 - **Skill Pack** — AI 에이전트가 프로젝트를 다룰 때 따를 수 있는 조사 플레이북입니다.
-  텍스트만 있으며 — 코드도 권한도 없습니다.
+  텍스트만 있으며 — 코드도 권한도 없습니다. 마켓플레이스의 팩 말고도, 프로젝트는 앱에서 직접
+  쓰거나 가져온 [자체 Skill Pack](skillpacks.md#custom-skill-packs)을 가질 수 있습니다.
 
 ## 멘탈 모델
 
@@ -32,27 +33,33 @@ VINEYARD는 CTI·OSINT를 위한 오픈 조사 워크벤치입니다. 엔티티�
 </div>
 
 <div class="vy-card" markdown>
+### :material-account-switch: 로그인 모드와 로컬 모드
+로그인해서 쓸 때와 데스크탑 앱의 로컬 모드에서 무엇이 달라지는지, 어떻게 전환하는지 확인하세요.
+→ [로그인 모드와 로컬 모드](modes.md)
+</div>
+
+<div class="vy-card" markdown>
 ### :material-download: 둘러보기 및 설치
 팩을 찾고, 접근 가능한 항목을 검토하고, 설치하세요.
 → [둘러보기 및 설치](installing.md)
 </div>
 
 <div class="vy-card" markdown>
-### :material-play: 플러그인 실행하기
+### :material-play: 플러그인 실행
 노드의 우클릭 메뉴 또는 전역 **Run** 메뉴에서 플러그인을 실행하세요.
-→ [플러그인 실행하기](running-plugins.md)
+→ [플러그인 실행](running-plugins.md)
 </div>
 
 <div class="vy-card" markdown>
-### :material-shape: Type Pack 작업하기
+### :material-shape: Type Pack 사용하기
 엔티티 유형을 추가하여 그래프가 새로운 종류의 데이터를 인식하게 하세요.
-→ [Type Pack 작업하기](typepacks.md)
+→ [Type Pack 사용하기](typepacks.md)
 </div>
 
 <div class="vy-card" markdown>
-### :material-book-open-variant: Skill Pack 작업하기
+### :material-book-open-variant: Skill Pack 사용하기
 AI 에이전트에게 프로젝트를 다룰 조사 플레이북을 제공하세요.
-→ [Skill Pack 작업하기](skillpacks.md)
+→ [Skill Pack 사용하기](skillpacks.md)
 </div>
 
 <div class="vy-card" markdown>

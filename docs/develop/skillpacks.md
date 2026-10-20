@@ -79,11 +79,52 @@ costs nothing when unused.
 
 - **The app's own rules outrank the playbook.** Text telling the agent to ignore its rules, skip
   the analyst's review, or treat untrusted text as an instruction is refused.
-- **Fields are trimmed.** Labels are collapsed to one line and stripped of control characters;
-  section bodies are capped (~8,000 chars) and stripped of control characters except newlines;
-  starters are capped hard (~1,200 chars — a starter is a paragraph, not a document).
+- **Fields are trimmed.** One-line fields (names, descriptions, summaries, labels, ids and list
+  items) are collapsed to one line and stripped of control characters; the overview, section bodies
+  and starter prompts keep newlines and tabs and lose every other control character. Each field is
+  then cut to its [limit](#loader-limits): a starter prompt stops at 1,200 characters, because a
+  starter is a paragraph, not a document.
 - **A per-turn load budget bounds context.** Each turn may read at most 12 (skill, section)
   documents and ~40,000 chars total; a re-read is charged like any other read.
+
+### Loader limits {#loader-limits}
+
+The loader applies these limits to every pack, whether installed from the registry or written in a
+project:
+
+| Field | Limit |
+| --- | --- |
+| `identifier` | 200 characters |
+| `name`, `description`, each section `summary`, each `applies_to` / `triggers` / `requires` item | 240 characters |
+| `overview`, each section `body` | 8,000 characters |
+| `applies_to`, `triggers`, `requires` | 32 items each |
+| `sections` | 64; each `id` 120 characters |
+| `starters` | 48; each `id` 120, `label` 80, `summary` 200, `category` 40 and `prompt` 1,200 characters |
+| `variables` of one starter | 8; each `key` 40, `label` 80 and `placeholder` 120 characters |
+
+None of this is reported. Text over a limit is cut, entries past a count are dropped, a section
+without an `id` and a starter without an `id`, `label` or `prompt` are dropped, and when two sections
+or two starters share an `id` only the first is kept.
+
+**Check your starters before you publish.** The loader does not compare a starter's prompt with its
+`variables`. A `{{key}}` the starter does not declare gets no input field, and a line whose blanks
+are all empty is left out of the prompt; a declared variable the prompt never uses is a field the
+analyst fills for nothing. The app fills only blanks whose key uses ASCII letters, digits, `_`, `.`
+and `-`. The reference pack's CI,
+[`validate.yml`](https://github.com/Vineyard-Intelligence/skillpack-account-identity-pivoting/blob/main/.github/workflows/validate.yml),
+fails on undeclared and unused variables, on a repeated starter `id`, and on a `category` that is
+empty, has spaces at either end or is over 40 characters; copy it into your repo. The registry does
+not run these checks.
+
+### Drafting a pack in the app
+
+A project owner can also write a pack inside Vineyard, with **Run ▸ Skill packs ▸ New skill pack** or
+**Make a copy** of an installed pack, and download it with **Export JSON** (see [Your project's own
+skill packs](../guide/skillpacks.md#custom-skill-packs)). The export is the same document this page describes. Before you
+publish it, change its `local.project.skillpacks.*` identifier to your own namespace, in the editor's
+**Details** or in the file. The editor refuses what the loader would cut or drop, as well as unknown
+fields and undeclared or unused starter variables, so a pack that saves there reaches the agent
+exactly as written.
 
 ## Publishing to the registry
 

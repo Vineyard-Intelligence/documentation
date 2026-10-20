@@ -13,7 +13,8 @@ There are three kinds of pack:
 - **Type Packs** — JSON definitions of the **entity types** your graph understands,
   giving nodes their properties, validation rules, icons, and colors.
 - **Skill Packs** — investigation playbooks the AI agent can follow when working on your
-  project. Text only — no code, no permissions.
+  project. Text only — no code, no permissions. Besides the ones in the Marketplace, a project can
+  have [skill packs of its own](skillpacks.md#custom-skill-packs), written or imported in the app.
 
 ## The mental model
 
@@ -29,6 +30,12 @@ server never executes plugin code and by default never records your runs.
 ### :material-rocket-launch: Getting started
 Set up your graph and run your first plugin in a few minutes.
 → [Getting started](getting-started.md)
+</div>
+
+<div class="vy-card" markdown>
+### :material-account-switch: Signed in or local
+See what changes between working signed in and local mode in the desktop app, and how to switch.
+→ [Signed in or local](modes.md)
 </div>
 
 <div class="vy-card" markdown>

@@ -2,13 +2,16 @@
 
 ## 마켓플레이스 둘러보기
 
-마켓플레이스는 정적인 카탈로그입니다: 모든 검색, 필터링, 정렬은 브라우저에서 수행됩니다.
-계정, 서버 쿼리, 텔레메트리가 없습니다.
+마켓플레이스는 `registry.vineyard.run`에서 받아 오는 정적인 카탈로그입니다: 모든 검색, 필터링,
+정렬은 브라우저에서 수행되며, 서버 쿼리와 텔레메트리가 없습니다.
 
 두 곳에서 둘러볼 수 있습니다. 두 곳 모두 같은 카탈로그를 보여 주지만 필터는 동일하지 않습니다:
 
-- **이 사이트의 [마켓플레이스 페이지](../marketplace.md)** — 공개 읽기 전용 브라우저.
-- **Vineyard 앱 내부의 인앱 미러** — 여기서 바로 **Install**로 설치할 수 있습니다.
+- **이 사이트의 [마켓플레이스 페이지](../marketplace.md)** — 공개 읽기 전용 브라우저. 계정이
+  필요 없습니다.
+- **Vineyard 앱 내부의 인앱 미러** — 여기서 바로 **Install**로 설치할 수 있습니다. 로그인했거나
+  데스크탑 앱을 [로컬 모드](modes.md)로 실행 중이어야 하며, 로그인하지 않고 공유된 프로젝트를 보는 방문자에게는
+  표시되지 않습니다. 프로젝트에서 열면 그 프로젝트에 설치된 팩도 함께 읽어 옵니다.
 
 <figure class="vy-shot" markdown="span">
   ![프로젝트 안의 마켓플레이스](../assets/guide/marketplace.webp){ width="800" loading=lazy }
@@ -36,15 +39,15 @@ Type Pack과 Skill Pack이 적용되는 노드 유형과도 일치합니다. 이
 
 ### 카드 읽기
 
-각 카드는 간결한 요약입니다: **아이콘**과 **이름**, 메타 줄, 한 줄 **설명**, 그리고 푸터의
-칩. 메타 줄은 *작성자 · 종류 · 개수 · 버전* 형식이며(예: *VINEYARD · Plugin pack · 4 plugins ·
+각 카드는 간결한 요약입니다: **아이콘**과 **이름**, 메타 줄, 짧은 **설명**(최대 세 줄), 그리고
+푸터의 칩. 메타 줄은 *작성자 · 종류 · 개수 · 버전* 형식이며(예: *VINEYARD · Plugin pack · 4 plugins ·
 v1.2.0*), 인증된 경우 작성자 앞에 ✓ 표시가 붙습니다. 개수는 Plugin Pack이 묶은 플러그인
 수(둘 이상일 때), Type Pack이 정의하는 유형 수, Skill Pack의 섹션 수입니다. 칩은 팩이
 요구하는 것만 알려 줍니다:
 
-- **Plugin Pack**의 경우: 플러그인 전부 또는 일부가 데스크톱 앱에서만 실행되면
+- **Plugin Pack**의 경우: 플러그인 전부 또는 일부가 데스크탑 앱에서만 실행되면
   `Desktop only` 또는 `Some desktop only`, API 키를 요구하면 `API key`, Vineyard가 운영하는
-  서비스를 호출하면 `Vineyard service`.
+  서비스를 호출하면 `Vineyard service`(로컬 모드에서는 대신 `Account required`).
 - **Skill Pack**의 경우: 필요한 Plugin Pack에 대해 `Needs N plugins`. 적용되는 노드 유형은
   상세 보기에 나열됩니다.
 - **Type Pack**에는 칩이 없습니다.
@@ -121,7 +124,7 @@ Vineyard는 프로젝트를 열 때마다 고정된 커밋의 팩을 작성자�
 
 ## 다음 / 함께 보기
 
-- [플러그인 실행하기](running-plugins.md) — 활성화 후의 과정
-- [Type Pack](typepacks.md) — 유형 스키마 활성화
-- [Skill Pack](skillpacks.md) — 조사 플레이북 사용
-- [작업](tasks.md) — 실행이 임시인 이유
+- [플러그인 실행](running-plugins.md) — 활성화 후의 과정
+- [Type Pack 사용하기](typepacks.md) — 유형 스키마 활성화
+- [Skill Pack 사용하기](skillpacks.md) — 조사 플레이북 사용
+- [작업 및 실행](tasks.md) — 실행이 임시인 이유

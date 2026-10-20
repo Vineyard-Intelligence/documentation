@@ -19,7 +19,7 @@ A registry entry is therefore a **catalog projection**: enough fields to search,
 
 ## Plugin entry
 
-A row in `community-pluginpacks.json`. The schema sets `additionalProperties: false`, so unknown keys are rejected by the review bot.
+A row in `community-pluginpacks.json`. The schema sets `additionalProperties: false`, so unknown keys are rejected by registry CI.
 
 **Required:** `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`.
 
@@ -34,7 +34,7 @@ A row in `community-pluginpacks.json`. The schema sets `additionalProperties: fa
 | `ref` | string | yes | **Immutable commit SHA** (40-hex SHA-1 or 64-hex SHA-256), captured at PR time. **Tags and branches are rejected** (both re-pointable). `version` carries the human-readable release. |
 | `path` | string | yes | Path to `manifest.json` within `repo@ref`. |
 | `version` | string | no | SemVer mirror of `manifest.version` at this `ref` (`^\d+\.\d+\.\d+(?:[-+].+)?$`). |
-| `platforms` | string[] | no | **Derived** badge set from `platforms.{web,desktop}` + `web.runtime`. Items: `web`, `web-proxy`, `desktop` (unique). |
+| `platforms` | string[] | no | **Derived**: the platform keys the pack's plugins declare under `platforms` (`web`, `desktop`), without `primary`; unique. The schema's enum also allows `web-proxy`, but CI never derives it, so an entry that lists it fails. |
 | `scopes_summary` | object | no | **Derived** filter facets (see below). |
 | `scopes_summary.network` | boolean | no | `true` if `scopes.network` is non-empty **or** the plugin declares `web_probe`. |
 | `scopes_summary.graph_write` | boolean | no | `true` if any `node:`/`edge:` create/update/delete verb is present. |
@@ -60,9 +60,9 @@ This is the real Chaos reference pack — a single `identifier` that bundles six
   "author": "VINEYARD",
   "description": "Six graph-manipulation plugins for demos and validation.",
   "repo": "Vineyard-Intelligence/pluginpack-chaos",
-  "ref": "4501ffcf55e8e0b563520549c79f7c0627ca32a5",
+  "ref": "1ec7b4cab527ef6aa4d683330dc6191e4c21dbd8",
   "path": "plugins/chaos-pack.manifest.json",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "platforms": ["web"],
   "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
@@ -111,9 +111,9 @@ The real Infrastructure base pack, defining fifteen infrastructure and web entit
   "author": "VINEYARD",
   "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
-  "ref": "81dd71ddeeebfbeba47762d87dd3f89ecd7d11df",
+  "ref": "2e6dc6f762709dbc8a460a5ad5ad2417c86fe6cb",
   "path": "typepacks/infrastructure.json",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "categories": ["infrastructure", "web"],
   "type_count": 15,
   "icon": "network",
@@ -146,7 +146,7 @@ The real row for Account & identity pivoting is shown on [Skill Packs](../develo
 
 ## How entries are validated and merged
 
-Submission is a fork-and-PR that adds one `packs/<identifier>.json` file — the catalogs are generated from it — gated by blocking CI checks (schema, immutable `ref`, upstream manifest validation, bundle scan) plus a human merge; see [Publishing](../develop/publishing.md) for the full walkthrough.
+Submission is a fork-and-PR that adds one `packs/<identifier>.json` file — the catalogs are generated from it — gated by blocking CI checks plus a human merge. CI checks the entry against its schema, that `ref` is an immutable commit SHA, that the pinned document matches the entry (`identifier`, `content_type`, `version` and the derived fields), that a Plugin Pack's bundle declares the manifest's version and licence, and that declared dependencies and typeRefs resolve. It does not validate the pinned document against its own schema. See [What CI enforces](../develop/publishing.md#what-ci-enforces) for the full list, and [Publishing](../develop/publishing.md) for the walkthrough.
 
 ## Next / See also
 

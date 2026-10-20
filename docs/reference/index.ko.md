@@ -1,21 +1,21 @@
-# Reference
+# 레퍼런스
 
-VINEYARD의 plugin 및 Type Pack 형식에 대한 규범적 참조 자료: 모든 문서가 검증되는 JSON-Schema, 권한 scope 어휘, 문서 전반에서 사용되는 공유 용어입니다. 서사적 안내보다는 정확한 필드 이름, 허용 값, 제약 조건이 필요할 때 이 페이지를 사용하세요.
+VINEYARD의 plugin 및 Type Pack 형식에 대한 규범적 참조 자료: 각 문서를 정의하는 JSON-Schema(레지스트리 CI는 레지스트리 항목을 해당 스키마로 검증하지만, 팩 문서는 레지스트리 CI도 앱도 스키마로 검증하지 않습니다), 권한 scope 어휘, 문서 전반에서 사용되는 공유 용어입니다. 서사적 안내보다는 정확한 필드 이름, 허용 값, 제약 조건이 필요할 때 이 페이지를 사용하세요.
 
-## Pages
+## 페이지 {#pages}
 
-| Page | What it documents |
+| 페이지 | 다루는 내용 |
 |---|---|
-| [Plugin manifest schema](plugin-schema.md) | `vineyard:plugin` manifest — `identifier`, `version`, `platforms`, `io`, `scopes`, `lifecycle`. |
-| [Type Pack schema](typepack-schema.md) | `vineyard:typepack` 문서 — 정규화된 `category.name` 형식(예: `infrastructure.ip_address`)의 type 정의. |
-| [Registry entry schemas](registry-schema.md) | `community-pluginpacks.json` / `community-typepacks.json`의 한 행 — 브라우저가 읽는 메타데이터 전용 카탈로그 행. |
-| [Scopes](scopes.md) | 전체 권한 어휘: `graph` 동사(`node:read`, `edge:delete` 등), `network`, `web_probe`, `services`, `config`. |
+| [플러그인 매니페스트 스키마](plugin-schema.md) | `vineyard:plugin` manifest — `identifier`, `version`, `platforms`, `io`, `scopes`, `lifecycle`. |
+| [Type Pack 스키마](typepack-schema.md) | `vineyard:typepack` 문서 — 정규화된 `category.name` 형식(예: `infrastructure.ip_address`)의 type 정의. |
+| [레지스트리 엔트리 스키마](registry-schema.md) | `community-pluginpacks.json` / `community-typepacks.json` / `community-skillpacks.json`의 한 행 — 브라우저가 읽는 메타데이터 전용 카탈로그 행. |
+| [스코프 레퍼런스](scopes.md) | 전체 권한 어휘: `graph` 동사(`node:read`, `edge:delete` 등), `network`, `web_probe`, `services`, `config`. |
 
-## Where the canonical artifacts live
+## 정식 아티팩트가 있는 곳 {#where-the-canonical-artifacts-live}
 
 권위 있는 JSON-Schema는 여기에 중복되어 있지 않습니다 — registry 저장소(`Vineyard-Intelligence/registry`)의 `schemas/` 아래에 있습니다:
 
-| File | Schema for |
+| 파일 | 대상 |
 |---|---|
 | [`schemas/plugin.schema.json`](https://registry.vineyard.run/schemas/plugin.schema.json) | `vineyard:plugin` manifest. |
 | [`schemas/pluginpack.schema.json`](https://registry.vineyard.run/schemas/pluginpack.schema.json) | `vineyard:pluginpack` manifest — 스키마 자체가 레퍼런스. |
@@ -24,21 +24,21 @@ VINEYARD의 plugin 및 Type Pack 형식에 대한 규범적 참조 자료: 모�
 | [`schemas/registry-typepack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-typepack-entry.schema.json) | 하나의 `community-typepacks.json` 행. |
 | [`schemas/registry-skillpack-entry.schema.json`](https://registry.vineyard.run/schemas/registry-skillpack-entry.schema.json) | 하나의 `community-skillpacks.json` 행 — 스키마 자체가 레퍼런스. |
 
-참조 페이지는 이 파일들을 요약하고 설명합니다. 산문과 스키마가 불일치할 경우 registry의 `schemas/`에 있는 스키마가 우선합니다.
+참조 페이지는 이 파일들을 요약하고 설명합니다. 산문과 스키마가 불일치할 경우 registry의 `schemas/`에 있는 스키마가 우선합니다. Skill Pack 문서에는 스키마가 없으며, 그 계약은 [Skill Pack](../develop/skillpacks.md#the-document)에 설명되어 있습니다.
 
-## The Marketplace catalog the browser reads
+## 브라우저가 읽는 마켓플레이스 카탈로그 {#the-marketplace-catalog-the-browser-reads}
 
-정적 [Marketplace browser](../marketplace.md)는 `https://registry.vineyard.run/registry/`에서 카탈로그를 실시간으로 로드합니다 — 종류별로 하나씩인 메타데이터 전용 배열 `community-pluginpacks.json`, `community-typepacks.json`, `community-skillpacks.json`입니다. 이 파일들은 목록 메타데이터(`identifier`, `name`, `version`, `repo`, `ref`, `scopes_summary` 등)만 보유하며, plugin 바이트를 절대 포함하지 않습니다. Plugin Pack, Type Pack, Skill Pack 콘텐츠는 설치 시 GitHub 소스에서 가져오며, registry에서 가져오지 않습니다.
+정적 [마켓플레이스 브라우저](../marketplace.md)는 `https://registry.vineyard.run/registry/`에서 카탈로그를 실시간으로 로드합니다 — 종류별로 하나씩인 메타데이터 전용 배열 `community-pluginpacks.json`, `community-typepacks.json`, `community-skillpacks.json`입니다. 이 파일들은 목록 메타데이터(`identifier`, `name`, `version`, `repo`, `ref`, `scopes_summary` 등)만 보유하며, plugin 바이트를 절대 포함하지 않습니다. Plugin Pack, Type Pack, Skill Pack 콘텐츠는 registry가 아니라 작성자의 GitHub 저장소에서 jsDelivr를 거쳐, 항목의 커밋에 고정해 가져옵니다. 프로젝트를 열 때마다 가져오고, 플러그인 코드는 실행할 때마다 가져옵니다.
 
-## Naming, at a glance
+## 이름 규칙 한눈에 보기 {#naming-at-a-glance}
 
 - **식별자(Identifier)** 는 작성자 자신의 네임스페이스 아래의 reverse-DNS입니다: `<본인-네임스페이스>.plugins.<name>`, `<본인-네임스페이스>.pluginpacks.<name>`, `<본인-네임스페이스>.typepacks.<name>`, `<본인-네임스페이스>.skillpacks.<name>`(퍼스트파티 팩은 `run.vineyard` 사용).
 - 모든 문서는 `content_type` 판별자를 가집니다: `vineyard:plugin`, `vineyard:pluginpack`, `vineyard:typepack`, 또는 `vineyard:skillpack`.
 - `version`은 모든 곳에서 SemVer 문자열입니다.
 - Type은 정규화된 `category.name` 형식으로 참조됩니다(예: `infrastructure.ip_address`).
 
-## Next / See also
+## 다음 / 참고 {#next-see-also}
 
-- 개념적 오리엔테이션: [Developer guide](../develop/index.md) 및 [Architecture](../develop/architecture.md)
-- 무언가 빌드하기: [Plugin manifest](../develop/plugin-manifest.md) · [Type Packs](../develop/typepacks.md)
-- 실제 예제: [Marketplace](../marketplace.md)
+- 개념적 오리엔테이션: [개발자 가이드](../develop/index.md) 및 [아키텍처 및 원칙](../develop/architecture.md)
+- 무언가 빌드하기: [플러그인 매니페스트](../develop/plugin-manifest.md) · [Type Pack](../develop/typepacks.md)
+- 실제 예제: [마켓플레이스](../marketplace.md)

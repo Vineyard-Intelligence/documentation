@@ -91,9 +91,9 @@ A **Plugin Pack**, filed as `packs/run.vineyard.pluginpacks.chaos.json`. Note `p
   "author": "VINEYARD",
   "description": "Six graph-manipulation plugins for demos and validation.",
   "repo": "Vineyard-Intelligence/pluginpack-chaos",
-  "ref": "4501ffcf55e8e0b563520549c79f7c0627ca32a5",
+  "ref": "1ec7b4cab527ef6aa4d683330dc6191e4c21dbd8",
   "path": "plugins/chaos-pack.manifest.json",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "platforms": ["web"],
   "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
@@ -112,9 +112,9 @@ A **Type Pack**, filed as `packs/run.vineyard.typepacks.infrastructure.json` (no
   "author": "VINEYARD",
   "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
-  "ref": "81dd71ddeeebfbeba47762d87dd3f89ecd7d11df",
+  "ref": "2e6dc6f762709dbc8a460a5ad5ad2417c86fe6cb",
   "path": "typepacks/infrastructure.json",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "categories": ["infrastructure", "web"],
   "type_count": 15,
   "icon": "network"
@@ -152,7 +152,7 @@ Deprecating your own pack is an ordinary pull request. **Withdrawal is the opera
 
 Two things to expect:
 
-- **Fix the dependants first.** A live pack may not `require` (or list in `typepacks`) a delisted one, so CI will name every pack that depends on yours. Update them, or delist them in the same pull request.
+- **Fix the dependants first.** A live pack may not list a delisted one in `requires` (or `typepacks`), so CI will name every pack that depends on yours. Update them, or delist them in the same pull request.
 - **A withdrawn entry is not pin-verified**, so its content may be gone. A deprecated pack is still pin-verified, so it must still resolve.
 
 Removing the row outright is only for an entry nobody could have installed: a mistaken submission, or a duplicate.

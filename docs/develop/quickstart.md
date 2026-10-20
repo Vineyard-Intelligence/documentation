@@ -4,7 +4,7 @@ Build, test, and locally load a working Vineyard plugin end to end. By the end y
 
 ## What a plugin is
 
-A plugin is a **bundled `main.js`** whose default export is the result of `definePlugin({ manifest, run })`. At runtime (web) it executes inside a dedicated module Web Worker with **no DOM, no `window`, no `localStorage`, and no network of its own**. Everything it can do flows through the `ctx` object passed to `run` — and a `ctx` member is **absent unless its scope was granted**. See [Architecture](architecture.md) and [Security](security.md) for the full model.
+A plugin is a **bundled `main.js`** whose default export is the result of `definePlugin({ manifest, run })`. At runtime (web) it executes inside a dedicated module Web Worker with **no DOM, no `window`, no `localStorage`, and no network of its own**. The site's other storage is blocked too, in every build including a local dev build: IndexedDB, Cache Storage, `BroadcastChannel`, `navigator.storage` and Web Locks are `undefined` or throw a `SecurityError`, so keep a run's state in memory. Everything it can do flows through the `ctx` object passed to `run` — and a `ctx` member is **absent unless its scope was granted**. See [Architecture](architecture.md) and [Security](security.md) for the full model.
 
 ## 1. Set up a repo and bundler
 
@@ -16,7 +16,7 @@ npm init -y
 npm i -D esbuild typescript vitest
 ```
 
-There is no SDK package to install: the SDK is a single file. Copy `sdk.ts` — the app's SDK runtime copy, vendored e.g. as `src/sdk.ts` in the `pluginpack-otx` repo — into `src/` and import from `./sdk`.
+There is no SDK package to install: the SDK is a single file. Download [`sdk.ts`](../assets/sdk/sdk.ts){ download="sdk.ts" }, the app's own copy (its first line gives the date), into `src/` and import from `./sdk`. Copies vendored in published pack repos can be older and lack newer fields such as `SafeRequestInit.timeoutMs`, so use this one.
 
 === "esbuild"
 
@@ -32,21 +32,38 @@ There is no SDK package to install: the SDK is a single file. Copy `sdk.ts` — 
 
 === "Vite"
 
+    Vite needs library mode to emit a single ESM file (`npm i -D vite`):
+
+    ```ts
+    // vite.config.ts
+    import { defineConfig } from "vite";
+
+    export default defineConfig({
+      build: {
+        lib: { entry: "src/main.ts", formats: ["es"], fileName: () => "main.js" },
+        emptyOutDir: false, // lets the dev server see each rebuild of dist/main.js
+      },
+    });
+    ```
+
     ```jsonc
     // package.json (scripts)
     {
       "scripts": {
         "build": "vite build",
-        "dev": "vite"   // serves a hot-reloading dev URL for the dev loader
+        "watch": "vite build --watch",  // rebuilds dist/main.js on every save
+        "dev": "vite"                   // serves this folder (manifest and dist/main.js) for the dev loader
       }
     }
     ```
+
+    Run `watch` and `dev` side by side.
 
 The build output (`dist/main.js`) is what the `entry` field in your manifest points at, and what the dev loader imports when the plugin runs.
 
 ## 2. Write `definePlugin({ manifest, run })`
 
-Here is a minimal but real whole-graph plugin — **Korean Roulette**, from the reference set: it keeps one random node and deletes everything else. (`consumes: []` means it operates on the whole graph: it appears in the **Run plugins…** panel's "Whole-graph / input via form" section, whether the panel was opened from a node, the canvas, the toolbar or the menu bar.)
+Here is a minimal whole-graph plugin, a simplified copy of **Korean Roulette** from the Chaos reference pack under an example namespace (`com.example`; use your own): it keeps one random node and deletes everything else. (`consumes: []` means it operates on the whole graph: it appears in the **Run plugins…** panel's "Whole-graph / input via form" section, whether the panel was opened from a node, the canvas, the toolbar or the menu bar.)
 
 ```ts
 // src/main.ts
@@ -54,7 +71,7 @@ import { definePlugin } from "./sdk";
 
 export default definePlugin({
   manifest: {
-    identifier: "run.vineyard.plugins.korean_roulette",
+    identifier: "com.example.plugins.korean_roulette",
     content_type: "vineyard:plugin",
     name: "Korean Roulette",
     version: "1.0.0",
@@ -137,7 +154,7 @@ describe("Korean Roulette", () => {
 Useful `ctx.mock` fields for assertions: `deletedNodeIds`, `deletedEdgeIds`, `createdNodes`, `createdEdges`, `updatedNodes`, and `progress`. All six reference plugins (Korean Roulette, Russian Roulette, Thanos Snap, Black Hole, Dumb AI Optimizer, Schrödinger's Node) are testable exactly this way.
 
 !!! tip "Test the scope boundary, not just the happy path"
-    Pass `grantedScopes: {}` (or omit `graph`) and assert your plugin degrades gracefully when `ctx.graph` is `undefined`. This catches the most common runtime surprise: assuming a capability you didn't declare.
+    Pass `grantedScopes: {}` (or omit `graph`) and assert your plugin degrades gracefully when `ctx.graph` is `undefined`. This catches the most common runtime surprise: assuming a capability you didn't declare. It does not prove your read scopes: the mock provides `get`, `list`, `edges` and `neighbors` whenever any graph verb is granted, while the app requires `node:read` / `edge:read` for them. See [Testing with `createMockContext`](sdk.md#testing-with-createmockcontext).
 
 ## 5. Load it in the app (dev loader)
 
@@ -146,7 +163,7 @@ GitHub and the registry are a **distribution** layer; during development the app
 ```jsonc
 // plugin.manifest.json
 {
-  "identifier": "run.vineyard.plugins.korean_roulette",
+  "identifier": "com.example.plugins.korean_roulette",
   "content_type": "vineyard:plugin",
   "name": "Korean Roulette",
   "version": "1.0.0",
@@ -166,7 +183,7 @@ Open **Settings → Plugins → Development → Load a pack from a URL**, choose
 ## 6. Integration testing in the app
 
 When unit tests pass, exercise the plugin end-to-end against a real graph. On
-[vineyard.run](https://vineyard.run/) (and the packaged desktop app) plugin code is loaded only
+[app.vineyard.run](https://app.vineyard.run/) (and the packaged desktop app) plugin code is loaded only
 from the registry's CDN, so a dev-loaded plugin pack's manifest loads but its code is refused when
 you run it. Iterate against a local dev build of the app (e.g. `npm run dev`): load your manifest
 through the dev loader (a dev-server URL is ideal while you iterate), trigger a run on a throwaway
@@ -174,6 +191,9 @@ project, watch the run in the Tasks panel, then open its staged change set and a
 nodes and edges change. A dev build does not block the plugin's own network access: any direct
 `fetch`/XHR from your plugin will work there and fail in production — go through
 `ctx.net`/`ctx.service` only.
+
+!!! tip "Debugging"
+    `console.log` output from your plugin's worker shows in the browser DevTools console of the local dev build. `ctx.progress.log` is discarded, so use `ctx.progress.set({ message })` to show status: the message appears after the plugin's name in its Tasks row. The packaged desktop app has no DevTools.
 
 !!! warning "The dev loader relaxes two protections"
     To keep the loop fast, the dev loader **may auto-approve scopes and skip the integrity check** (no registry digest, no commit pin — see [Distribution](distribution.md) and [Updates](updates.md)). Use the dev loader only for code you wrote or trust, and re-test the *published* artifact through the normal install path before relying on it.
@@ -186,7 +206,7 @@ When the plugin works locally, publish it: push the version to your repo, then p
 
 - [Architecture](architecture.md) — worker sandbox and staged writes
 - [Plugin manifest](plugin-manifest.md) and the [plugin schema](../reference/plugin-schema.md)
-- [Scopes](../reference/scopes.md) and the [scopes reference](../reference/scopes.md)
+- [Scopes reference](../reference/scopes.md)
 - [SDK](sdk.md) — the full `ctx` surface and `definePlugin`
 - [Publishing](publishing.md)
 - [Running plugins](../guide/running-plugins.md) — the six validation plugins

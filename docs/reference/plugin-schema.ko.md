@@ -1,20 +1,20 @@
-# Plugin manifest schema
+# 플러그인 매니페스트 스키마
 
-`plugin.schema.json`에 대한 권위 있는 필드별 참조 — 모든 `vineyard:plugin` manifest가 검증되는 JSON Schema (draft 2020-12)입니다. 산문 설명 및 작성 안내는 [manifest guide](../develop/plugin-manifest.md)를 참조하세요.
+`plugin.schema.json`에 대한 권위 있는 필드별 참조 — `vineyard:plugin` manifest 형식을 정의하는 JSON Schema (draft 2020-12)입니다. 이 스키마는 형식의 기준일 뿐 강제되지는 않습니다: 레지스트리 CI도 앱도 팩 문서를 `plugin.schema.json`이나 `pluginpack.schema.json`으로 검증하지 않습니다. 산문 설명 및 작성 안내는 [플러그인 매니페스트](../develop/plugin-manifest.md)를 참조하세요.
 
-!!! info "Schema identity"
+!!! info "스키마 식별 정보"
     - `$schema`: `https://json-schema.org/draft/2020-12/schema`
     - `$id`: `https://vineyard.run/schemas/plugin.json`
     - `title`: *VINEYARD Plugin Manifest*
-    - Root: `type: object`, `additionalProperties: false` — 알 수 없는 최상위 키는 거부됩니다.
+    - 루트: `type: object`, `additionalProperties: false` — 스키마는 알 수 없는 최상위 키를 허용하지 않습니다.
 
 manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 측 plugin 레코드는 없습니다.
 
-## Top-level properties
+## 최상위 속성 {#top-level-properties}
 
 `additionalProperties: false`. **필수:** `identifier`, `content_type`, `name`, `version`, `description`, `platforms`, `io`, `scopes`, `lifecycle`.
 
-| Property | Type | Req. | Allowed / constraints | Default | Meaning |
+| 속성 | 타입 | 필수 | 허용 값 / 제약 | 기본값 | 의미 |
 |---|---|---|---|---|---|
 | `identifier` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$` | — | Reverse-DNS 고유 ID, 예: `run.vineyard.plugins.rdap_ip`. |
 | `content_type` | string | yes | `const`: `vineyard:plugin` | — | 문서 판별자. 정확히 이 값이어야 합니다. |
@@ -24,9 +24,9 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 | `author` | object | no | [author](#author) 참조 | — | 저작자 메타데이터. |
 | `license` | string | no | — | — | SPDX 라이선스 ID, 예: `MIT`. |
 | `icon` | string | no | — | — | Marketplace 팩 상세에서 plugin 옆에 표시되는 아이콘 (lucide 이름). |
-| `thumbnail_url` | string | no | `format: uri` | — | Marketplace 썸네일 이미지 URL. |
-| `marketing_url` | string | no | `format: uri` | — | 랜딩 / 마케팅 페이지 URL. |
-| `latest_url` | string | no | `format: uri` | — | 항상 최신 manifest를 가리키는 저자별 폴백 포인터 (업데이트 확인용). registry 항목이 기본 최신 포인터이며, 이것은 폴백입니다. |
+| `thumbnail_url` | string | no | `format: uri` | — | 썸네일 이미지 URL. 허용되지만 앱이 읽지 않습니다. |
+| `marketing_url` | string | no | `format: uri` | — | 랜딩 / 마케팅 페이지 URL. 허용되지만 앱이 읽지 않습니다. |
+| `latest_url` | string | no | `format: uri` | — | 최신 manifest를 가리키는 저자별 포인터로 설계되었습니다. 허용되지만 읽히지 않습니다: 업데이트 확인은 레지스트리 카탈로그의 `version`을 비교합니다([업데이트](../develop/updates.md) 참조). |
 | `platforms` | object | yes | [platforms](#platforms) 참조 | — | 플랫폼별 실행 플래그. |
 | `io` | object | yes | [io](#io) 참조 | — | 소비/생산되는 Type Pack 엔티티 유형. |
 | `params` | object | no | [params](#params) 참조 | — | 실행 전 폼을 위한 JSON-Schema. |
@@ -37,7 +37,7 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 
 `type: object`, `additionalProperties: false`. 모든 속성은 선택 사항입니다.
 
-| Property | Type | Req. | Constraints | Meaning |
+| 속성 | 타입 | 필수 | 제약 | 의미 |
 |---|---|---|---|---|
 | `name` | string | no | — | 저자 또는 조직 이름. |
 | `url` | string | no | `format: uri` | 저자 홈페이지. |
@@ -45,22 +45,22 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 
 ## platforms
 
-플랫폼별 실행 플래그. `type: object`, `additionalProperties: false`, `minProperties: 1` — `web` / `desktop` 중 최소 하나가 존재해야 합니다. `primary`가 선호됩니다.
+플랫폼별 실행 플래그. `type: object`, `additionalProperties: false`, `minProperties: 1` — 속성이 하나 이상이면 되고 `primary`도 개수에 들어가므로, `{ "primary": "web" }`만 있어도 스키마를 만족합니다. 호스트에는 `web` 블록이 필요합니다(아래 경고 참조). `primary`가 선호됩니다.
 
-| Property | Type | Req. | Allowed values | Default | Meaning |
+| 속성 | 타입 | 필수 | 허용 값 | 기본값 | 의미 |
 |---|---|---|---|---|---|
 | `primary` | string | no | `web`, `desktop` | — | 플랫폼 계약. `desktop`이면 plugin은 데스크톱 전용이 됩니다: web 빌드는 이를 회색으로("Desktop only — …") 표시하고 실행하지 않습니다. `web`이거나 없으면 어디서나 실행됩니다. |
 | `web` | object | no | [platforms.web](#platformsweb) 참조 | — | Web 실행 블록. |
 | `desktop` | object | no | [platforms.desktop](#platformsdesktop) 참조 | — | Desktop 실행 블록. |
 
-!!! warning "What actually ships today"
+!!! warning "현재 실제로 배포된 것"
     브라우저와 데스크톱 Electron 셸 모두 `platforms.web`(`runtime: "sandbox-js"`, `entry`)으로 plugin을 실행합니다. 이것이 없는 plugin은 실행할 수 없습니다(자체 entry가 없는 팩 멤버는 팩의 것을 물려받습니다). 호스트는 `platforms.desktop`(`runtime`, `entry`, `fallback`)과 `platforms.web.fallback`을 읽지 않으며, `web-proxy` 런타임과 `native`/`subprocess` 데스크톱 런타임은 스키마에서 미래 지향적 설계로 유효하지만 **연기되었습니다** — 아직 빌드되지 않았습니다. 이 필드들은 제공되는 동작이 아닌 예약된 것으로 취급하세요.
 
 ### platforms.web
 
 `type: object`, `additionalProperties: false`. **필수:** `runtime`, `entry`.
 
-| Property | Type | Req. | Allowed values | Default | Meaning |
+| 속성 | 타입 | 필수 | 허용 값 | 기본값 | 의미 |
 |---|---|---|---|---|---|
 | `runtime` | string | yes | `sandbox-js`, `web-proxy` | — | `sandbox-js` = 브라우저 worker에서 저자 JS 실행; `web-proxy` = 하나의 저자 엔드포인트를 호출하는 씬 클라이언트 (연기됨). |
 | `entry` | string | yes | — | — | plugin 워커가 임포트하는 모듈: 저장소 루트 기준 상대 경로(예: `dist/pack.mjs`) 또는 절대 URL. 모듈을 가리키지 않는 `inline`은 레지스트리 CI가 거부합니다. |
@@ -71,7 +71,7 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 
 `type: object`, `additionalProperties: false`. **필수:** `runtime`, `entry`. *(연기됨 — 위의 경고 참조.)*
 
-| Property | Type | Req. | Allowed values | Default | Meaning |
+| 속성 | 타입 | 필수 | 허용 값 | 기본값 | 의미 |
 |---|---|---|---|---|---|
 | `runtime` | string | yes | `sandbox-js`, `native`, `subprocess` | — | 데스크톱 실행 모드. |
 | `entry` | string | yes | — | — | 번들 내 진입 경로. |
@@ -81,43 +81,43 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 
 plugin이 Type Pack에서 참조하는 엔티티 유형. `type: object`, `additionalProperties: false`. **필수:** `consumes`, `produces`. 빈 `consumes` 배열은 전체 그래프 plugin(노드별 우클릭 액션이 아닌 전역 실행)을 의미합니다.
 
-| Property | Type | Req. | Items | Meaning |
+| 속성 | 타입 | 필수 | 항목 | 의미 |
 |---|---|---|---|---|
 | `consumes` | array | yes | [`typeRef`](#typeref) | plugin이 입력으로 읽는 노드 유형. |
 | `produces` | array | yes | [`typeRef`](#typeref) | plugin이 출력하는 노드 유형. |
 
-### typeRef (io.consumes / io.produces items) { #typeref }
+### typeRef (io.consumes / io.produces 항목) { #typeref }
 
 `$defs.typeRef`. `type: object`, `additionalProperties: false`. **필수:** `typepack`, `category`, `name`. 런타임에서 `Node.type = "<category>.<name>"`입니다 (예: `infrastructure.ip_address`).
 
-| Property | Type | Req. | Constraints | Meaning |
+| 속성 | 타입 | 필수 | 제약 | 의미 |
 |---|---|---|---|---|
 | `typepack` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$` | 소유 Type Pack 식별자. |
 | `category` | string | yes | — | Type 카테고리, 예: `infrastructure`. |
 | `name` | string | yes | — | 카테고리 내 Type 이름, 예: `ip_address`. |
 | `as` | string | no | — | 소비된 노드의 값을 이 키 아래 `params`에 미리 바인딩하도록 설계된 별칭. 스키마는 허용하지만, 이를 선언하는 배포된 plugin은 없고 실행 폼도 아직 읽지 않습니다. |
 
-!!! note "Open issue"
+!!! note "미해결 사항"
     `typeRef`는 아직 Type Pack 버전을 포함하지 **않습니다** — type 호환성은 식별자 + 정규화된 이름만으로 해결됩니다.
 
 ## params
 
 실행 전 폼을 설명하는 JSON-Schema (draft 2020-12). 제출된 객체는 `ctx.params`로 `run`에 전달됩니다(실행의 작업 행에도 보관됨). `type: object`. 이 객체는 `additionalProperties: false`가 **아니며**, 그 자체로 JSON Schema이며 표준 스키마 키워드를 포함할 수 있습니다. 아래 세 키만 명시적으로 모델링됩니다.
 
-| Property | Type | Req. | Constraints | Meaning |
+| 속성 | 타입 | 필수 | 제약 | 의미 |
 |---|---|---|---|---|
 | `type` | string | no | `const`: `object` | params 폼은 항상 객체 스키마입니다. |
 | `properties` | object | no | — | 필드별 JSON Schema 정의. |
 | `required` | array | no | items: string | 필수 필드 이름. |
 
-!!! warning "No secrets in params"
+!!! warning "params에 시크릿 금지"
     `params`는 비밀을 포함해서는 **안 됩니다**. API 키 및 자격 증명에는 `secret: true`가 있는 [`scopes.config`](#configvalue-scopesconfig-items) 항목을 대신 사용하세요.
 
-### 파일 필드
+### 파일 필드 {#file-fields}
 
 `"format": "file"`로 선언된 필드는 드롭존으로 렌더링됩니다 — 파일을 끌어놓거나 클릭해서 고릅니다. 여기에 `"type": "array"`를 더하면 **다중 선택**이 되고, 그 외에는 파일 하나만 받습니다(두 개를 떨어뜨리면 조용히 잘라내지 않고 거부합니다). 폴더를 떨어뜨리면 재귀적으로 펼쳐집니다.
 
-| Property | Type | Req. | Meaning |
+| 속성 | 타입 | 필수 | 의미 |
 |---|---|---|---|
 | `format` | string | yes | `file`. 없으면 일반 입력 필드입니다. |
 | `type` | string | no | 여러 파일이면 `array`. 생략하면(또는 다른 타입이면) 한 개. |
@@ -144,19 +144,19 @@ plugin이 Type Pack에서 참조하는 엔티티 유형. `type: object`, `additi
 
 ## scopes
 
-plugin의 권한 범위. `type: object`, `additionalProperties: false`. `ctx` 멤버는 부여되지 않으면 존재하지 않으며, 그래프 쓰기는 분석가의 검토를 거친 뒤에야 적용됩니다. 동사 의미는 [scopes reference](scopes.md)를 참조하세요.
+plugin의 권한 범위. `type: object`, `additionalProperties: false`. `ctx` 멤버는 부여되지 않으면 존재하지 않으며, 그래프 쓰기는 분석가의 검토를 거친 뒤에야 적용됩니다. 동사 의미는 [스코프 레퍼런스](scopes.md)를 참조하세요.
 
-| Property | Type | Req. | Items / constraints | Meaning |
+| 속성 | 타입 | 필수 | 항목 / 제약 | 의미 |
 |---|---|---|---|---|
 | `graph` | array | no | `uniqueItems`; enum 항목 (아래) | 세분화된 노드/엣지 동사. 프로젝트 `graph_edit` 티어에 의해 지원됩니다. |
 | `web_probe` | object | no | `{ purpose?: string }` — 배열이 아니라 객체 | **데스크탑 전용.** *임의의* 공개 호스트에 대한 익명 요청 1회. `ctx.net.probe`를 지원하며, 웹 빌드에서는 `ctx.net.probe`가 존재하지 않습니다. |
 | `network` | array | no | 항목: [`networkScope`](#networkscope-scopesnetwork-items) | 외부 XHR 대상. |
-| `services` | array | no | `uniqueItems`; enum: `rdap`, `telegram` | `ctx.service`를 통해 **이름으로** 호출하는 Vineyard 운영 서비스 — URL이 아닙니다. [scopes reference](scopes.md#services) 참조. |
+| `services` | array | no | `uniqueItems`; enum: `rdap`, `telegram` | `ctx.service`를 통해 **이름으로** 호출하는 Vineyard 운영 서비스 — URL이 아닙니다. [스코프 레퍼런스](scopes.md#services) 참조. |
 | `config` | array | no | 항목: [`configValue`](#configvalue-scopesconfig-items) | 런타임에만 주입되는 설치 시 값. |
 
 `scopes.graph` enum 값 (각각 최대 한 번만 나타날 수 있음):
 
-| Value | Meaning |
+| 값 | 의미 |
 |---|---|
 | `node:read` | 노드 읽기. |
 | `node:create` | 노드 생성. |
@@ -167,17 +167,17 @@ plugin의 권한 범위. `type: object`, `additionalProperties: false`. `ctx` �
 | `edge:update` | 엣지 필드 업데이트. |
 | `edge:delete` | 엣지 삭제. |
 
-!!! warning "Network fan-out rule"
-    **web-proxy** plugin은 `scopes.network`가 정확히 **하나**의 항목이어야 하며, `platforms.web.proxy_endpoint`와 동일해야 합니다 (팬아웃 없음). **sandbox-js** plugin의 항목은 대신 호스트의 이그레스 허용 목록으로 검사됩니다 — [security](../develop/security.md) 참조. **데스크톱**에서는 더 많은 항목이 허용됩니다 — 사용자의 책임하에.
+!!! warning "네트워크 팬아웃 규칙"
+    **web-proxy** plugin은 `scopes.network`가 정확히 **하나**의 항목이어야 하며, `platforms.web.proxy_endpoint`와 동일해야 합니다 (팬아웃 없음). **sandbox-js** plugin의 항목은 대신 호스트의 이그레스 허용 목록으로 검사됩니다 — [샌드박스 및 보안](../develop/security.md) 참조. sandbox-js plugin은 브라우저와 데스크톱 앱 모두에서 항목을 여러 개 선언할 수 있습니다.
 
-### networkScope (scopes.network items)
+### networkScope (scopes.network 항목) {#networkscope-scopesnetwork-items}
 
 `$defs.networkScope`. `type: object`, `additionalProperties: false`. **필수:** `endpoint`, `methods`.
 
-| Property | Type | Req. | Constraints | Meaning |
+| 속성 | 타입 | 필수 | 제약 | 의미 |
 |---|---|---|---|---|
 | `endpoint` | string | yes | `format: uri` | 정확한 origin/path 접두사. 교차 호스트 와일드카드 없음. |
-| `methods` | array | yes | `uniqueItems`; 항목 enum: `GET`, `POST`, `PUT`, `PATCH`, `DELETE` | 허용된 HTTP 메서드. |
+| `methods` | array | yes | `uniqueItems`; 항목 enum: `GET`, `POST`, `PUT`, `PATCH`, `DELETE` | 허용된 HTTP 메서드. 빈 목록은 모든 메서드를 허용합니다: 스키마에 `minItems`가 없고, 호스트는 빈 목록을 제한 없음으로 취급합니다. |
 | `purpose` | string | no | — | 사람이 읽을 수 있는 이유, 설치 시 표시됨. |
 
 #### 자격증명 보내기 {#sending-a-credential}
@@ -189,16 +189,17 @@ plugin의 권한 범위. `type: object`, `additionalProperties: false`. `ctx` �
 await ctx.net.fetch(url, { headers: { Authorization: `Bearer ${ctx.config.api_key}` } });
 ```
 
-헤더가 실린 요청은 리다이렉트되지 않으므로, `Authorization`이든 커스텀 헤더(`X-Api-Key`, `api-key` 등)든
-키는 선언한 엔드포인트에만 전달됩니다. 쿼리스트링에는 키를 넣지 마십시오. 로그에 남습니다.
+헤더나 본문이 실린 요청은 리다이렉트를 따라가지 않습니다: 3xx 응답이 오면 호출이 `redirect not followed`로
+시작하는 오류로 거부되며, plugin은 3xx 응답을 받지 못합니다. 따라서 `Authorization`이든 커스텀 헤더(`X-Api-Key`,
+`api-key` 등)든 키는 선언한 엔드포인트에만 전달됩니다. 헤더도 본문도 없는 요청은 여전히 리다이렉트를 따라갑니다. 쿼리스트링에는 키를 넣지 마십시오. 로그에 남습니다.
 
 `Cookie`는 설정할 수 없으며, 플러그인 요청에는 쿠키가 실리지 않습니다.
 
-### configValue (scopes.config items)
+### configValue (scopes.config 항목) {#configvalue-scopesconfig-items}
 
-`$defs.configValue`. `type: object`, `additionalProperties: false`. **필수:** `key`, `type`. config 값은 분석가가 Run plugins 대화상자의 해당 플러그인 Settings 섹션이나 **Settings → Keys & Secrets**에서 입력하며, 선언한 플러그인이 `ctx.config`로 읽습니다. 같은 팩의 멤버 가운데 같은 키를 선언하고 같은 네트워크 오리진 집합(`scopes.network` 엔드포인트의 스킴·호스트·포트)을 호출하는 멤버들은 값 하나를 공유하므로 한 번만 입력하면 됩니다. 단독으로 게시된 플러그인이나 `scopes.network` 항목이 없는 플러그인은 자기 값을 따로 가집니다. 각 플러그인은 여전히 자신의 매니페스트가 선언한 키만 받습니다 — [scopes → config](scopes.md#config)를 참조하세요. 값은 로그인한 계정별로 보관됩니다 — 데스크톱에서는 OS 키체인에, 브라우저에서는 해당 탭 세션 동안. `secret: true`는 필드를 마스킹합니다. 값은 작업이나 대화에 기록되지 않습니다.
+`$defs.configValue`. `type: object`, `additionalProperties: false`. **필수:** `key`, `type`. config 값은 분석가가 Run plugins 대화상자의 해당 플러그인 Settings 섹션이나 **Settings → Keys & Secrets**에서 입력하며, 선언한 플러그인이 `ctx.config`로 읽습니다. 같은 팩의 멤버 가운데 같은 키를 선언하고 같은 네트워크 오리진 집합(`scopes.network` 엔드포인트의 스킴·호스트·포트)을 호출하는 멤버들은 값 하나를 공유하므로 한 번만 입력하면 됩니다. 단독으로 게시된 플러그인이나 `scopes.network` 항목이 없는 플러그인은 자기 값을 따로 가집니다. 각 플러그인은 여전히 자신의 매니페스트가 선언한 키만 받습니다 — [scopes → config](scopes.md#config)를 참조하세요. 값은 로그인한 계정별로 보관됩니다 — 데스크톱에서는 OS 키체인에(컴퓨터가 값을 암호화할 수 없으면 앱을 종료할 때까지만), 브라우저에서는 해당 탭 세션 동안. `secret: true`는 필드를 마스킹합니다. 값은 작업이나 대화에 기록되지 않습니다.
 
-| Property | Type | Req. | Allowed values | Default | Meaning |
+| 속성 | 타입 | 필수 | 허용 값 | 기본값 | 의미 |
 |---|---|---|---|---|---|
 | `key` | string | yes | pattern `^[a-z0-9_]+$` | — | 안정적인 config 키. |
 | `label` | string | no | — | — | Run plugins Settings 섹션과 Settings → Keys & Secrets의 필드 라벨. |
@@ -212,20 +213,20 @@ await ctx.net.fetch(url, { headers: { Authorization: `Bearer ${ctx.config.api_ke
 
 Task 실행 모델. `type: object`, `additionalProperties: false`. 모든 속성은 선택 사항이며 기본값이 있습니다.
 
-| Property | Type | Req. | Allowed values | Default | Meaning |
+| 속성 | 타입 | 필수 | 허용 값 | 기본값 | 의미 |
 |---|---|---|---|---|---|
-| `long_running` | boolean | no | — | `false` | true이면 런타임이 task를 지속적으로 관리합니다 (status/pause/resume/cancel/retry/progress). |
+| `long_running` | boolean | no | — | `false` | 런타임이 task를 지속적으로 관리하도록(status/pause/resume/cancel/retry/progress) 설계되었습니다. 허용되지만 읽히지 않습니다. |
 | `controls` | array | no | `uniqueItems`; enum: `pause`, `resume`, `cancel`, `retry`, `progress` | — | 사용자에게 노출되는 컨트롤. |
 | `progress` | string | no | `none`, `determinate`, `indeterminate` | `none` | 진행률 보고 스타일. |
 | `persistence` | string | no | `ephemeral`, `opt-in`, `always` | `ephemeral` | `ephemeral` = Task DB 행 없음, 인메모리 전용. |
 | `states` | array | no | enum: `queued`, `running`, `waiting`, `paused`, `cancelled`, `succeeded`, `failed` | 모든 7개 상태 | 표준 7-상태 머신. |
 
 !!! warning "호스트가 실제로 읽는 것"
-    `controls`, `progress`, `persistence`, `states`는 여기서 허용되지만 호스트가 오늘 읽지는 않습니다 — Tasks 패널의 유일한 컨트롤은 Stop이고, task의 실제 종료 상태는 `succeeded` / `failed` / `cancelled`(AI 턴의 경우 `incomplete` 추가)입니다. [Lifecycle](../develop/lifecycle.md) 참조.
+    `long_running`, `controls`, `progress`, `persistence`, `states`는 여기서 허용되지만 호스트가 오늘 읽지는 않습니다 — Tasks 패널의 유일한 컨트롤은 Stop이고, task의 실제 종료 상태는 `succeeded` / `failed` / `cancelled`(AI 턴의 경우 `incomplete` 추가)입니다. [작업 생명주기](../develop/lifecycle.md) 참조.
 
-    다만 호스트는 `lifecycle.timeout_ms`를 읽습니다. 실행당 벽시계 시간 예산입니다(기본 10분, 상한 60분). 이를 넘기면 샌드박스가 종료되고 task는 실패합니다. 아직 `plugin.schema.json`에 모델링되지 않았으므로, 이를 선언한 manifest는 현재 스키마 검증에 실패합니다. [Lifecycle](../develop/lifecycle.md#manifestlifecycletimeout_ms) 참조.
+    다만 호스트는 `lifecycle.timeout_ms`를 읽습니다. 실행당 벽시계 시간 예산입니다(기본 10분, 상한 60분). 이를 넘기면 샌드박스가 종료되고 task는 실패합니다. 아직 `plugin.schema.json`에는 없지만, manifest를 스키마로 검증하는 곳이 없으므로 선언해도 됩니다. [작업 생명주기](../develop/lifecycle.md#manifestlifecycletimeout_ms) 참조.
 
-## Complete annotated example
+## 주석이 달린 전체 예제 {#complete-annotated-example}
 
 실제로 배포된 plugin manifest — [IP Recon](https://github.com/Vineyard-Intelligence/pluginpack-ip-recon) 팩의 멤버인 **RDAP IP**. `infrastructure.ip_address` 노드를 소비하고 그 소유 `infrastructure.netblock`을 추가합니다.
 
@@ -234,7 +235,7 @@ Task 실행 모델. `type: object`, `additionalProperties: false`. 모든 속성
   "identifier": "run.vineyard.plugins.rdap_ip", // (1)!
   "content_type": "vineyard:plugin",            // (2)!
   "name": "RDAP IP",
-  "version": "1.0.2",                           // (3)!
+  "version": "1.1.1",                           // (3)!
   "description": "Looks up each selected IP Address in RDAP. Creates a Netblock node (CIDR, network name, country) linked \"within netblock\" and fills the IP's organization and country_code if empty.",
   "icon": "boxes",                              // (4)!
 
@@ -270,7 +271,7 @@ Task 실행 모델. `type: object`, `additionalProperties: false`. 모든 속성
 }
 ```
 
-이 manifest는 IP Recon 팩 안에 네 멤버 중 하나로 배포되므로, `platforms.web.entry`가 팩의 번들을 가리킵니다([Plugin Packs](../develop/plugin-packs.md) 참조).
+이 manifest는 IP Recon 팩 안에 네 멤버 중 하나로 배포되므로, `platforms.web.entry`가 팩의 번들을 가리킵니다([플러그인 팩](../develop/plugin-packs.md) 참조).
 
 1.  `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}plugins\.[a-z0-9_]+$`에 일치하는 Reverse-DNS 식별자.
 2.  `const` 판별자 — 정확히 `vineyard:plugin`이어야 합니다.
@@ -280,9 +281,9 @@ Task 실행 모델. `type: object`, `additionalProperties: false`. 모든 속성
 6.  그래프 동사와 네트워크 엔드포인트 하나. 런타임에 호스트의 이그레스 허용 목록으로 검사됩니다.
 7.  `persistence`/`controls`/`progress`는 선언적일 뿐입니다 — 위 경고 참조.
 
-## Next / See also
+## 다음 / 참고
 
-- [Plugin manifest guide](../develop/plugin-manifest.md) — 이 필드들에 대한 서사적 설명.
-- [Scopes reference](scopes.md) — 전체 동사 및 티어 의미.
-- [Type Pack manifest schema](typepack-schema.md) — 동반 `vineyard:typepack` 스키마.
-- [Registry schema](registry-schema.md) — 게시된 manifest가 인덱싱되는 방식.
+- [플러그인 매니페스트](../develop/plugin-manifest.md) — 이 필드들에 대한 서사적 설명.
+- [스코프 레퍼런스](scopes.md) — 전체 동사 및 티어 의미.
+- [Type Pack 스키마](typepack-schema.md) — 동반 `vineyard:typepack` 스키마.
+- [레지스트리 엔트리 스키마](registry-schema.md) — 게시된 manifest가 인덱싱되는 방식.

@@ -1,6 +1,6 @@
-# Type Packs
+# Type Pack
 
-Type Pack은 그래프와 플러그인이 사용할 **노드 엔티티 타입**을 정의하는 `vineyard:typepack` 문서입니다. 필드별 계약은 [Type Pack schema reference](../reference/typepack-schema.md)를 참조하세요.
+Type Pack은 그래프와 플러그인이 사용할 **노드 엔티티 타입**을 정의하는 `vineyard:typepack` 문서입니다. 필드별 계약은 [Type Pack 스키마](../reference/typepack-schema.md)를 참조하세요.
 
 ## Type Pack이란 무엇인가
 
@@ -23,12 +23,12 @@ Type Pack은 그래프와 플러그인이 사용할 **노드 엔티티 타입**�
 }
 ```
 
-`types[]`에는 최소 하나의 엔티티 타입이 필요합니다. 전체 필수/선택 필드 테이블은 [Type Pack schema reference](../reference/typepack-schema.md)에 있습니다.
+`types[]`에는 최소 하나의 엔티티 타입이 필요합니다. 전체 필수/선택 필드 테이블은 [Type Pack 스키마](../reference/typepack-schema.md)에 있습니다.
 
 !!! note "참조 팩은 유효한 템플릿입니다"
-    배포된 6개의 팩(`infrastructure.json`, `threat.json`, `identity.json`, `financial.json`, `endpoint.json`, `geo.json`)은 이 스키마를 따릅니다 — 명시적 프로퍼티 타입, 구조화된 유효성 검사기, 필수 최상위 필드 — 따라서 이들 중 아무거나 작업 템플릿으로 읽을 수 있습니다. 새 작성은 반드시 아래 스키마를 따라야 합니다.
+    8개의 참조 팩(`typepack-basic`의 `infrastructure.json`, `threat.json`, `identity.json`, `financial.json`, `endpoint.json`, `geo.json`, `typepack-social`의 `social.json`, `typepack-telegram`의 `telegram.json`)은 이 스키마를 따릅니다 — 명시적 프로퍼티 타입, 구조화된 유효성 검사기, 필수 최상위 필드 — 따라서 이들 중 아무거나 작업 템플릿으로 읽을 수 있습니다. `telegram.json`은 일부 프로퍼티에서 `optional`을 생략하므로, 직접 만드는 팩에서는 모든 프로퍼티에 적으세요([프로퍼티 타입](#property-types) 참조). 새 작성은 반드시 아래 스키마를 따라야 합니다.
 
-## 엔티티 타입
+## 엔티티 타입 {#entity-types}
 
 ```jsonc
 {
@@ -50,13 +50,13 @@ Type Pack은 그래프와 플러그인이 사용할 **노드 엔티티 타입**�
 
 - `category`와 `name`은 **snake_case 식별자 세그먼트**입니다(`^[a-z][a-z0-9_]*$`, ≤31자).
 - `properties`는 반드시 비어 있지 않아야 합니다. 각 프로퍼티 키도 snake_case 세그먼트입니다.
-- `label_property`는 노드의 표시 레이블로 사용되는 키를 지정합니다. 이 키는 `properties`에 존재하고 **non-optional**이어야 합니다.
-- `identity_properties`(선택)는 중복 제거를 위해 하나의 엔티티를 함께 식별하는 키 목록입니다. 기본값은 `[label_property]`입니다. 표시와 식별은 서로 다른 문제입니다: `identity.account`는 `username`만으로 *표시*되지만 `(username, platform)`으로 *식별*됩니다 — 동일한 사용자명이 두 플랫폼에 있으면 서로 다른 두 계정이기 때문입니다. 나열된 모든 키는 반드시 `properties`에 존재해야 합니다.
+- `label_property`는 노드의 표시 레이블로 사용되는 키를 지정합니다. 이 키는 `properties`에 존재하고 **non-optional**(`"optional": false`)이어야 합니다.
+- `identity_properties`(선택)는 중복 제거를 위해 하나의 엔티티를 함께 식별하는 키 목록입니다. 기본값은 `[label_property]`입니다. 표시와 식별은 서로 다른 문제입니다: `identity.account`의 `label_property`는 `username`이지만 *식별*은 `(username, platform)`으로 합니다 — 동일한 사용자명이 두 플랫폼에 있으면 서로 다른 두 계정이기 때문입니다. 나열된 모든 키는 반드시 `properties`에 존재해야 합니다.
 - `label_template`(선택)은 여러 프로퍼티로 표시 레이블을 구성합니다(예: `"{username} · {platform}"`). 참조된 필드가 비어 있으면 `label_property`로 폴백하여, 부분적으로 채워진 노드가 매달린 구분자를 보여주지 않도록 합니다. 표시 전용이며 — 중복 제거는 항상 `identity_properties`를 사용합니다.
 
-## 프로퍼티 타입
+## 프로퍼티 타입 {#property-types}
 
-모든 프로퍼티는 열거형(enum)에서 명시적 `type`을 선언해야 합니다(전체 목록은 [schema reference](../reference/typepack-schema.md) 참조). 프로퍼티는 기본적으로 필수입니다. `"optional": true`로 설정하면 `Node.data`에서 키가 없을 수 있습니다. `default`를 제공할 수 있습니다(값이 `type`과 일치해야 함). 세 가지 타입은 추가 키가 필요합니다:
+모든 프로퍼티는 열거형(enum)에서 명시적 `type`을 선언해야 합니다(전체 목록은 [Type Pack 스키마](../reference/typepack-schema.md) 참조). `optional`도 모든 프로퍼티에 적으세요. `"optional": false`이면 키가 필수가 되어, 플러그인이나 에이전트가 그 키 없이 노드를 생성하면 거부됩니다. `"optional": true`이면 `Node.data`에 키가 없어도 됩니다. `optional`을 생략한 프로퍼티는 Properties 패널에서 필수(`*`)로 표시되지만, 그 키 없이 생성해도 받아들여지므로 생략했을 때의 기본값에 기대지 마세요. `default`를 적을 수는 있지만(값이 `type`과 일치해야 함) 앱은 이를 적용하지 않습니다. 빠진 키를 이 값으로 채우는 곳이 없으므로 문서 역할만 합니다. 세 가지 타입은 추가 키가 필요합니다:
 
 === "enum"
 
@@ -80,7 +80,7 @@ Type Pack은 그래프와 플러그인이 사용할 **노드 엔티티 타입**�
     }
     ```
 
-=== "validated string"
+=== "검증된 문자열"
 
     ```jsonc
     "cve_id": {
@@ -90,15 +90,29 @@ Type Pack은 그래프와 플러그인이 사용할 **노드 엔티티 타입**�
     }
     ```
 
-Type Pack은 `secret` 또는 `credential` 프로퍼티 타입을 선언할 수 **없습니다** — 해당 열거형 값이 없으므로 스키마가 강제로 거부합니다. API 키와 토큰은 그래프 데이터가 아닙니다. 시크릿은 `secret: true`인 플러그인 `config`를 통해서만 처리됩니다([security](security.md) 참조).
+Type Pack은 `secret` 또는 `credential` 프로퍼티 타입을 선언할 수 **없습니다** — 해당 열거형 값이 없으므로 스키마가 강제로 거부합니다. API 키와 토큰은 그래프 데이터가 아닙니다. 시크릿은 `secret: true`인 플러그인 `config`를 통해서만 처리됩니다([샌드박스 및 보안](security.md) 참조).
 
 ### 구조화된 유효성 검사기
 
-`validator`는 원시 정규식 문자열이 아닌 **구조화된 객체**입니다. 해당 키(`regex`, `min`/`max`, `min_length`/`max_length`, `format`)는 [schema reference](../reference/typepack-schema.md)에 표로 정리되어 있습니다.
+`validator`는 원시 정규식 문자열이 아닌 **구조화된 객체**입니다. 해당 키(`regex`, `min`/`max`, `min_length`/`max_length`, `format`)는 [Type Pack 스키마](../reference/typepack-schema.md)에 표로 정리되어 있습니다.
 
 ```jsonc
 "cvss_score": { "type": "number", "validator": { "min": 0, "max": 10 }, "optional": true }
 ```
+
+`regex`는 적힌 그대로 검사하므로 값의 어느 부분에서든 일치하면 통과합니다: `[A-Z]{2}`는 `xxUSyy`도 받아들입니다. 값 전체가 일치해야 한다면 모든 참조 팩처럼 `^…$`로 앵커를 거세요.
+
+### 앱이 노드 데이터에서 검사하는 것 {#what-the-app-checks-on-node-data}
+
+Type Pack의 프로퍼티 선언은 플러그인이나 AI 에이전트가 `createNode` 또는 `updateNode`를 호출할 때, 그리고 분석가가 Properties 패널에서 편집을 저장할 때 검사됩니다. 검사를 통과하지 못한 쓰기는 문제마다 이름을 밝힌 메시지와 함께 거부됩니다(플러그인의 호출은 예외를 던집니다). 검사 대상은 쓰려는 키와, 생성 시에는 필수 키입니다:
+
+- **`type`**: `string`, `text`, `hash`, `url`, `email`, `ip`, `date`, `datetime` 값은 문자열, `integer`는 정수, `number`는 유한한 숫자, `boolean`은 불리언, `array`는 배열, `object`는 배열이 아닌 객체여야 합니다. `reference` 값은 검사하지 않습니다.
+- **`enum`**: 값이 나열된 값 중 하나여야 합니다.
+- **`validator.regex`**: 문자열 값에 적힌 그대로 적용됩니다(위 참조). 4,096자보다 긴 값, 컴파일되지 않는 패턴, `(a+)+`처럼 역추적이 폭주하기 쉬운 형태의 패턴은 검사를 건너뜁니다.
+- **`validator.min` / `validator.max`**: 숫자 값에 적용됩니다.
+- **`"optional": false`**: 생성 시에만, 키가 있고 비어 있지 않아야 합니다.
+
+검사하지 않는 것: 힌트일 뿐인 `validator.min_length`, `max_length`, `format`; 유형이 선언하지 않은 키; 없는 것으로 취급되는 빈 값(`null`, `""`). Types 패널에서 만든 노드는 검사하지 않은 자리표시자(`New <type>`)로 시작하며, 분석가가 편집할 때 그 값이 검사됩니다.
 
 ## 시각 요소: icon 및 color
 
@@ -139,7 +153,7 @@ typeRef는 그 타입을 정의하는 Type Pack으로 해석됩니다. 플러그
 
 `version`은 **팩 콘텐츠**의 SemVer입니다.
 
-- **MAJOR** = 주요 변경: 타입 이름 변경 또는 제거. 새 MAJOR가 활성화되어도 기존 노드를 다시 매핑하는 것은 없습니다. 노드는 이전 `type` 문자열을 유지하며 해석되지 않은 채로 렌더링됩니다. 노드는 작성 시점에 자기 타입을 해석한 팩 리비전을 `Node.type_pack`(`"<identifier>@<version>"`)으로 기록하므로, 이후 재매핑 작업이 어느 리비전에서 만들어졌는지 알 수 있습니다.
+- **MAJOR** = 주요 변경: 타입 이름 변경 또는 제거. 새 MAJOR를 설치해도 기존 노드를 다시 매핑하는 것은 없으며, 노드는 이전 `type` 문자열을 유지합니다. 저장된 타입이 더 이상 없는 노드는 카테고리를 뺀 `name`이 같은 설치된 타입(팩 식별자 순으로 첫 번째)으로 렌더링됩니다. 그래서 다른 카테고리로 옮겨진 타입은 새 정의로 그려지지만, 새로 생성되는 노드와 병합되지는 않습니다. `name`이 설치된 어떤 타입과도 맞지 않는 노드만 해석되지 않은 채로 렌더링됩니다. 노드는 작성 시점에 자기 타입을 해석한 팩 리비전을 `Node.type_pack`(`"<identifier>@<version>"`)으로 기록하므로, 이후 재매핑 작업이 어느 리비전에서 만들어졌는지 알 수 있습니다.
 - **MINOR / PATCH** = 기존 `Node.type` 값을 깨뜨리지 않는 추가 또는 수정 수준의 변경.
 
 !!! note "미해결 이슈: Type Pack 버전 고정"
@@ -147,7 +161,7 @@ typeRef는 그 타입을 정의하는 Type Pack으로 해석됩니다. 플러그
 
 ## 유효성 검사 체크리스트
 
-설치 시점에 이 체크리스트로 Type Pack을 검증하는 것은 없습니다: 앱은 `content_type: vineyard:typepack`인 문서라면 무엇이든 로드합니다. 작성용 체크리스트로 활용하세요. 레지스트리 CI가 강제하는 것은 다음뿐입니다: 고정된 문서의 `identifier`, `content_type`, `version`이 항목과 일치할 것, `type_count`가 일치할 것, 모든 `identity_properties` 키가 실제로 존재하는 스칼라(`array`/`object`/`json`이 아닌) 프로퍼티를 가리킬 것, 그리고 다른 게시된 Type Pack이 이미 정의한 `category.name`이 없을 것.
+설치 시점에 이 체크리스트로 Type Pack을 검증하는 것은 없습니다: 앱은 `content_type: vineyard:typepack`인 문서라면 무엇이든 로드합니다. 작성용 체크리스트로 활용하고, 참조 팩 저장소들처럼 자체 CI에서 문서를 [`typepack.schema.json`](https://registry.vineyard.run/schemas/typepack.schema.json)으로 검증하세요. 레지스트리 CI가 강제하는 것은 다음뿐입니다: 고정된 문서의 `identifier`, `content_type`, `version`이 항목과 일치할 것, `type_count`가 일치할 것, 항목에 `icon`이 있으면 첫 번째 타입의 lucide 아이콘과 같을 것, 모든 `identity_properties` 키가 실제로 존재하는 스칼라(`array`/`object`/`json`이 아닌) 프로퍼티를 가리킬 것, 그리고 다른 게시된 Type Pack이 이미 정의한 `category.name`이 없을 것.
 
 - [ ] `content_type`이 `vineyard:typepack`입니다.
 - [ ] `identifier`가 유효한 `<본인-네임스페이스>.typepacks.*` reverse-DNS 문자열입니다.
@@ -155,13 +169,15 @@ typeRef는 그 타입을 정의하는 Type Pack으로 해석됩니다. 플러그
 - [ ] 각 프로퍼티가 열거형에서 명시적 `type`을 선언합니다(`secret`/`credential` 없음).
 - [ ] `validator`(존재 시)가 원시 정규식 문자열이 아닌 구조화된 객체입니다.
 - [ ] `label_property`가 `properties`에 존재하고 non-optional입니다.
+- [ ] 모든 프로퍼티가 `optional`을 명시합니다. 필수 프로퍼티는 `"optional": false`라고 적습니다.
+- [ ] 값 전체가 일치해야 하는 `validator.regex`는 모두 `^…$`로 앵커가 걸려 있습니다.
 - [ ] `enum` 프로퍼티는 `enum`을 제공합니다. `reference` 프로퍼티는 `reference.target`을 제공합니다. 모든 `default`는 `type`과 일치합니다.
 
 ## 다음 / 참고
 
-- [Type Pack schema reference](../reference/typepack-schema.md) — 권위 있는 필드 계약.
-- [Scopes reference](../reference/scopes.md) — 플러그인이 이러한 타입으로 할 수 있는 작업.
-- [Plugin manifest](plugin-manifest.md) — 플러그인의 `io`가 Type Pack 타입을 참조하는 방식.
-- [Security](security.md) — 시크릿이 그래프 프로퍼티가 되지 않는 이유.
-- [Distribution](distribution.md) — 고정된 팩 문서를 가져오고 검증하는 방식.
+- [Type Pack 스키마](../reference/typepack-schema.md) — 권위 있는 필드 계약.
+- [스코프 레퍼런스](../reference/scopes.md) — 플러그인이 이러한 타입으로 할 수 있는 작업.
+- [플러그인 매니페스트](plugin-manifest.md) — 플러그인의 `io`가 Type Pack 타입을 참조하는 방식.
+- [샌드박스 및 보안](security.md) — 시크릿이 그래프 프로퍼티가 되지 않는 이유.
+- [배포](distribution.md) — 고정된 팩 문서를 가져오고 검증하는 방식.
 - 카탈로그: [참조 팩](../guide/typepacks.md) — Infrastructure, Threat, Identity, Financial, Endpoint, Geospatial, Social Media, Telegram.

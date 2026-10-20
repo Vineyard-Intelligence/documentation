@@ -21,7 +21,7 @@ The check compares `version`, not `ref`: re-pinning a new `ref` without raising 
 
 ## Applying an update
 
-Choosing **Update** opens the same approval dialog as a fresh install, and nothing changes until the analyst confirms. For a Plugin Pack, every permission the new version adds is marked **New**. Packs the new version needs and the project does not have yet — Type Packs for a Plugin Pack, Plugin Packs for a Skill Pack — are listed under **Also installs** and added in the same step. If one of them is missing from the catalog or withdrawn, the update is refused. Confirming re-points the project's pointer to the new entry's `{ identifier, url, version }`.
+Choosing **Update** opens the same approval dialog as a fresh install, and nothing changes until the analyst confirms. For a Plugin Pack, every permission the new version adds is marked **New**. Packs the new version needs and the project does not have yet — Type Packs for a Plugin Pack; Plugin Packs and their Type Packs for a Skill Pack — are listed under **Also installs** and added in the same step. If one of them, at either level, is missing from the catalog or withdrawn, the update is refused. Confirming re-points the project's pointer to the new entry's `{ identifier, url, version }`.
 
 `publish` is not in the scopes schema; the app ignores it and grants nothing, so remove it if your manifest declares it.
 
@@ -33,7 +33,7 @@ There is no separate deprecation file. Delisting a version is the registry entry
 
 ## Type Packs update the same way
 
-Type Packs follow the identical model: the `community-typepacks.json` entry is the latest pointer, and the update check is the same SemVer comparison described above. Type Packs declare no scopes. `status` (deprecated/withdrawn) exclusion applies the same as for Plugin Packs. Skill Packs do too: the `community-skillpacks.json` entry is the latest pointer, and Update re-points the project's `skills` pointer. See [Type Packs](typepacks.md) for the schema and [registry schema](../reference/registry-schema.md) for the entry projection.
+Type Packs follow the identical model: the `community-typepacks.json` entry is the latest pointer, and the update check is the same SemVer comparison described above. Type Packs declare no scopes. `status` (deprecated/withdrawn) exclusion applies the same as for Plugin Packs. Skill Packs do too: the `community-skillpacks.json` entry is the latest pointer, and Update re-points the project's `skills` pointer. A project's [own skill packs](../guide/skillpacks.md#custom-skill-packs), including copies of registry packs, are stored on the project rather than installed from the catalog, so they never receive registry updates. See [Type Packs](typepacks.md) for the schema and [registry schema](../reference/registry-schema.md) for the entry projection.
 
 ## Next / See also
 

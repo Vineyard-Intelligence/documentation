@@ -5,7 +5,7 @@
 
 ## 1. 앱 열기
 
-Vineyard는 브라우저에서, 또는 Vineyard 데스크탑 앱으로 실행됩니다. 로그인하면 대시보드에
+Vineyard는 브라우저([app.vineyard.run](https://app.vineyard.run))에서, 또는 Vineyard 데스크탑 앱으로 실행됩니다. 로그인하면 대시보드에
 도착합니다(**Settings → General → Start view**에서 마지막으로 연 프로젝트를 선택했다면, 로그인된
 상태로 앱을 다시 열 때 그 프로젝트로 갑니다). 데스크탑 앱은 계정 없이 로컬 모드로도 실행할 수 있으며, 이때도 대시보드에서
 시작합니다.
@@ -62,7 +62,7 @@ Vineyard는 브라우저에서, 또는 Vineyard 데스크탑 앱으로 실행됩
 마켓플레이스에서 **Type packs**로 전환하고 **Infrastructure**
 (`run.vineyard.typepacks.infrastructure`)를 설치하세요. `infrastructure.ip_address`,
 `infrastructure.netblock`, `infrastructure.domain` 같은 엔티티 유형을 제공합니다.
-자세한 내용은 [Type Pack](typepacks.md)을 참조하세요.
+자세한 내용은 [Type Pack 사용하기](typepacks.md)을 참조하세요.
 
 ## 6. 플러그인 설치
 
@@ -115,5 +115,5 @@ Vineyard는 브라우저에서, 또는 Vineyard 데스크탑 앱으로 실행됩
 ## 다음 / 함께 보기
 
 - [둘러보기 및 설치](installing.md) — 검색, 필터, 설치, 스코프 승인
-- [플러그인 실행하기](running-plugins.md) — 실행 경로와 **Tasks** 패널
-- [Type Pack](typepacks.md) — 엔티티 유형이 하는 일과 관리 방법
+- [플러그인 실행](running-plugins.md) — 실행 경로와 **Tasks** 패널
+- [Type Pack 사용하기](typepacks.md) — 엔티티 유형이 하는 일과 관리 방법

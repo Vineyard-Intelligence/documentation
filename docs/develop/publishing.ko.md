@@ -1,4 +1,4 @@
-# Publishing to the registry
+# 레지스트리에 배포하기
 
 Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게시하는 것은 레지스트리 저장소에 대한 단일 풀 리퀘스트입니다. **파일 하나**를 추가하면 CI가 검증하고, 사람이 병합하며, 다음 레지스트리 가져오기 시 항목이 라이브로 전환됩니다 — 앱 릴리스가 필요하지 않습니다.
 
@@ -32,10 +32,10 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 시작하기 전에 알아둘 것:
 
 - 항목의 `identifier`는 `manifest.identifier`(또는 `typepack.identifier`)와 동일해야 하며 reverse-DNS 형식 `<본인-네임스페이스>.pluginpacks.*` / `.typepacks.*` / `.skillpacks.*`을 사용합니다 — [세 가지 콘텐츠 유형](index.md#the-three-content-types) 참조.
-- `ref`가 코드를 고정하는 유일한 요소입니다. 새 버전을 배포하려면 해당 팩의 파일을 그 자리에서 새 `ref`와 더 높은 `version`으로 수정하세요 — [Updates](updates.md)를 참조하세요.
+- `ref`가 코드를 고정하는 유일한 요소입니다. 새 버전을 배포하려면 해당 팩의 파일을 그 자리에서 새 `ref`와 더 높은 `version`으로 수정하세요 — [업데이트](updates.md)를 참조하세요.
 - 파생 필드(`platforms`, `scopes_summary`, `categories`, `type_count`, …)는 전체 매니페스트/Type Pack의 투영이므로, 찾아보기 페이지가 모든 매니페스트를 가져오지 않고도 렌더링됩니다. CI가 고정된 문서에서 `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count`, `type_count`를 다시 계산해, 항목에 적힌 값 중 하나라도 불일치하면 거부합니다. `categories`와 Skill Pack의 `applies_to`/`requires`는 다시 계산하지 않으므로 직접 정확하게 유지하세요.
 
-## CI가 강제하는 것
+## CI가 강제하는 것 {#what-ci-enforces}
 
 아래는 모두 **차단** 검사입니다 — 전부 통과해야 풀 리퀘스트를 병합할 수 있습니다. `.github/workflows/validate.yml`에서 실행됩니다.
 
@@ -91,9 +91,9 @@ Type Pack에는 여기서 자체 검사 두 가지가 더 있습니다. 하나�
   "author": "VINEYARD",
   "description": "Six graph-manipulation plugins for demos and validation.",
   "repo": "Vineyard-Intelligence/pluginpack-chaos",
-  "ref": "4501ffcf55e8e0b563520549c79f7c0627ca32a5",
+  "ref": "1ec7b4cab527ef6aa4d683330dc6191e4c21dbd8",
   "path": "plugins/chaos-pack.manifest.json",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "platforms": ["web"],
   "scopes_summary": { "network": false, "graph_write": true, "secret_config": false },
   "plugin_count": 6,
@@ -112,9 +112,9 @@ Type Pack에는 여기서 자체 검사 두 가지가 더 있습니다. 하나�
   "author": "VINEYARD",
   "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
-  "ref": "81dd71ddeeebfbeba47762d87dd3f89ecd7d11df",
+  "ref": "2e6dc6f762709dbc8a460a5ad5ad2417c86fe6cb",
   "path": "typepacks/infrastructure.json",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "categories": ["infrastructure", "web"],
   "type_count": 15,
   "icon": "network"
@@ -122,7 +122,7 @@ Type Pack에는 여기서 자체 검사 두 가지가 더 있습니다. 하나�
 ```
 
 !!! note "필드 참조"
-    필수 필드는 `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`입니다. `content_type`은 리터럴 `vineyard:plugin`, `vineyard:pluginpack`, `vineyard:typepack`, `vineyard:skillpack`입니다. 전체 필드 목록과 제약 조건은 [registry-schema](../reference/registry-schema.md)에 있습니다.
+    필수 필드는 `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`입니다. `content_type`은 리터럴 `vineyard:plugin`, `vineyard:pluginpack`, `vineyard:typepack`, `vineyard:skillpack`입니다. 전체 필드 목록과 제약 조건은 [레지스트리 엔트리 스키마](../reference/registry-schema.md)에 있습니다.
 
 ## 병합 후
 
@@ -159,8 +159,8 @@ Type Pack에는 여기서 자체 검사 두 가지가 더 있습니다. 하나�
 
 ## 다음 / 참고
 
-- [Distribution](distribution.md) — 팩 콘텐츠를 실제로 가져오고 검증하는 방식.
-- [Updates](updates.md) — 새로운 불변 `ref`로 다시 고정하여 새 버전 배포.
-- [registry-schema](../reference/registry-schema.md) — 필드별 전체 스키마 참조.
-- [scopes](../reference/scopes.md) — 스코프 문자열과 엔드포인트 허용목록 규칙.
-- [Marketplace](../marketplace.md) — 귀하의 항목이 등록되는 정적 마켓플레이스 브라우저.
+- [배포](distribution.md) — 팩 콘텐츠를 실제로 가져오고 검증하는 방식.
+- [업데이트](updates.md) — 새로운 불변 `ref`로 다시 고정하여 새 버전 배포.
+- [레지스트리 엔트리 스키마](../reference/registry-schema.md) — 필드별 전체 스키마 참조.
+- [스코프 레퍼런스](../reference/scopes.md) — 스코프 문자열과 엔드포인트 허용목록 규칙.
+- [마켓플레이스](../marketplace.md) — 귀하의 항목이 등록되는 정적 마켓플레이스 브라우저.

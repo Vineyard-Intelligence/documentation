@@ -1,5 +1,4 @@
 ---
-title: VINEYARD Documentation
 hide:
   - navigation
   - toc
@@ -53,8 +52,8 @@ VINEYARD는 CTI·OSINT를 위한 오픈 조사 워크벤치입니다. 엔티티�
 
 - :material-graph-outline: **[캔버스](guide/canvas.md)** — 엔티티와 관계를 배치하고,
   보고 있는 대상을 그룹화하고 필터링합니다.
-- :material-puzzle: **[팩](guide/installing.md)** — 세 가지 종류, 각각이 접근할 수 있는 범위,
-  그리고 설치 방식.
+- :material-puzzle: **[팩](guide/installing.md)** — 세 가지 종류의 팩을 둘러보고, 각각이 접근할
+  수 있는 범위를 확인하고, 설치합니다.
 - :material-play-circle: **[실행과 작업](guide/tasks.md)** — 플러그인 실행이란 무엇이고,
   무엇을 소모하며, 무엇을 남기는가.
 - :material-robot: **[Skill Pack과 에이전트](guide/skillpacks.md)** — 에이전트가 따르는

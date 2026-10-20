@@ -48,10 +48,22 @@ disabled until they are filled. The nodes a plugin runs on come from the panel's
 these fields. File inputs accept at most 25 MB per file, 50 files and 250 MB per run.
 
 Plugins that need stored settings (for example an API key or gateway URL) show a collapsible
-**Settings (x/y set)** block. These values are saved as you type and reused on later runs. They are
-kept separately for each account on this device — in the browser only for this session, in the
-desktop app encrypted and kept across launches. This separates accounts inside Vineyard, not from
-someone with direct access to this computer. Press **Run (N)** to start every ticked plugin.
+**Settings (x/y set)** block. These values are saved as you type and reused on later runs. Plugins
+of the same pack that call the same destinations share one value, so a key typed for one of them
+is filled in for the others that ask for it; a plugin published on its own, or one that declares
+no network destination, keeps its own. A secret field names the hosts its value is sent to and,
+when other plugins in the pack share it, how many (*Sent to … · shared with N other plugins in
+this pack*). Press **Run (N)** to start every ticked plugin.
+
+Values are kept separately for each account on this device — in the browser only in this tab, gone
+when it closes; in the desktop app encrypted and kept across launches (for the session only, on a
+computer that cannot encrypt them). This separates accounts inside Vineyard, not from someone with
+direct access to this computer. **Manage Keys & Secrets**, at the bottom of the panel, opens
+**Settings → Keys & Secrets**. Its **Plugin keys** table lists every plugin key stored for your
+account on this device, with **Pack**, **Key**, **Sent to** and **Value** columns; inside a project
+it also lists the keys the project's packs declare that are not set yet. From a row you can show a
+stored secret (**Show**), set or replace the value (**Set**, **Replace**) and remove it
+(**Forget**); **Forget all…** removes every stored plugin key.
 
 <figure class="vy-shot" markdown="span">
   ![Pre-run form](../assets/guide/pre-run-form.webp){ width="800" loading=lazy }
@@ -67,6 +79,17 @@ press **Apply (N)** — or **Discard all**. Nothing is written to the project un
 Review dialog is open, the changes are only previewed on the canvas. A run that stages nothing ends
 with a toast showing its summary (or "No changes").
 
+Unticking a node also leaves out the edges that need it, and the footer says how many (*N edges
+excluded — their endpoint nodes are not being created*). If some links point at nodes from another
+run that is still waiting for review, the footer says so: apply that review first, or those links
+are skipped. The optional **Why reject?** field beside **Discard all** gives your reason to the AI
+agent when the changes came from one of its conversations.
+
+If some changes cannot be written, a **Partly applied** toast says how many. Those stay staged with
+the reason on each row and the run is still waiting for review: reopen it to try them again. Once a
+run is applied or discarded, clicking its row opens a read-only record of what was applied or
+discarded.
+
 <figure class="vy-shot" markdown="span">
   ![Review dialog](../assets/guide/review-changes.webp){ width="800" loading=lazy }
   <figcaption>The Review dialog for one run: the staged nodes and edges, the selected row's properties, and Apply (4) / Discard all.</figcaption>
@@ -74,11 +97,25 @@ with a toast showing its summary (or "No changes").
 
 ## Progress and cancellation
 
-Every run becomes a **task** shown in the Tasks panel, with a live status badge, a progress bar
-where the plugin reports one, and a **Stop** control. Stop asks the plugin to wind down; if it has
-not finished within about 3 seconds, it is force-stopped. Any changes it had already staged are
-kept for you to review, not thrown away. A run that exceeds its time budget (10 minutes by default,
-at most 60) is stopped and marked failed. See [Tasks & runs](tasks.md) for states and controls.
+Every run you start becomes a **task** shown in the Tasks panel, with a live status badge, a
+progress bar where the plugin reports one, and a **Stop** control. Stop asks the plugin to wind down;
+if it has not finished within about 3 seconds, it is force-stopped. Any changes it had already staged
+are kept for you to review, not thrown away. A run that exceeds its time budget (10 minutes by
+default, at most 60) is stopped and marked failed. A run that fails discards anything it had staged:
+that includes a run stopped for exceeding its time budget, a sandbox that did not start, and a
+plugin error. Only **Stop** keeps partial results. See [Tasks & runs](tasks.md) for states and
+controls.
+
+Each request a plugin makes also has its own deadline, by default a minute at most unless the
+plugin sets another, so a host that does not answer fails that request instead of holding the run
+for its whole budget. If such a run still completes but stages nothing, its toast is yellow and
+names the hosts that did not answer (*no answer from …*). Read "No changes" there as "could not
+check", not "nothing found".
+
+Plugin runs the AI agent starts have no Tasks row of their own. Each one that staged something
+appears as a change set in that conversation and is reviewed there, or applied at the end of the
+turn under **Apply automatically**. Stopping the turn, or deleting the conversation, stops them. See
+[What the agent can do](tasks.md#what-the-agent-can-do).
 
 ## The Chaos reference pack
 
@@ -102,4 +139,4 @@ reshape your graph for learning the run loop:
 
 - [Tasks & runs](tasks.md) — task states, progress, stop, and review
 - [Browse & install](installing.md) — getting a plugin into your project
-- [Type Packs](typepacks.md) — the node types plugins act on
+- [Working with Type Packs](typepacks.md) — the node types plugins act on

@@ -1,8 +1,8 @@
 # Working with Type Packs
 
 A **Type Pack** is a small JSON bundle that defines the kinds of entities your graph can hold —
-IP addresses, domains, malware families, threat actors, and so on. Activating one makes those
-types available when you create nodes, and tells the canvas how each node should look.
+IP addresses, domains, malware families, threat actors, and so on. Installing one in a project
+makes those types available when you create nodes, and tells the canvas how each node should look.
 
 ## What a Type Pack gives you
 
@@ -11,32 +11,40 @@ label, written by you when you [draw it](canvas.md#drawing-edges) or by the plug
 the link. Each entity type carries:
 
 - A **`label_property`** — the property whose value is shown as the node's name on the canvas.
-  For an IP address that is the address itself; for a vulnerability it's the CVE id.
+  For an IP address that is the address itself; for a vulnerability it's the CVE id. Some types
+  build the label from several properties instead (a
+  [`label_template`](../develop/typepacks.md#entity-types)), and fall back to the
+  `label_property` until all of them are filled.
 - A set of **properties** — the named fields you can fill in (e.g. `country_code`, `asn`,
-  `registrar`). These appear in the Properties panel when a node is selected.
+  `registrar`). These appear in the Properties panel when a node is selected. When you edit one,
+  the value is checked against what the type declares: its kind, its allowed values, and any
+  pattern or range (for example, `country_code` must be two capital letters and `asn` a whole
+  number from 1 to 4294967295). A value that fails is not saved, and a message says why.
 - An **`icon`** and a **`color`** — the visuals that drive how the node renders on the canvas and
   in the Types and Properties panels.
 
-## Activating a Type Pack
+## Installing a Type Pack
 
-Install and activate a Type Pack the same way you install anything else (see
-[Installing](installing.md)). Once activated, its types show up in the **Types** panel and become
-selectable when you create a node. Until at least one Type Pack is active, there are no entity
-types to choose from.
+Install a Type Pack the same way you install anything else (see [Browse & install](installing.md)).
+Once it is installed, its types show up in the **Types** panel and become selectable when you
+create a node. Until at least one Type Pack is installed, there are no entity types to choose
+from.
 
 In the Types panel, types are grouped by **category**, not by pack, so one pack can fill several
 groups (the Infrastructure pack appears under both Infrastructure and Web), each with a count.
 Hover a type to see its description, its **Category:** and the **Type pack:** it comes from.
 Click a type to create a new node of that type (a placeholder labelled `New <type>`), which is
-selected right away so you can fill in its properties. With no Type Pack installed, the panel
-says so and offers **Browse the marketplace**.
+selected right away so you can fill in its properties. The **Search types…** box at the top
+filters the list by type name, category, description or pack name; a panel too narrow for it
+shows only the type icons. With no Type Pack installed, the panel says so and offers **Browse the
+marketplace**, except to a visitor reading a shared project without signing in.
 
 <figure class="vy-shot" markdown="span">
   ![Types panel with the ip_address tooltip](../assets/guide/types-panel.webp){ width="410" loading=lazy }
   <figcaption>The Types panel groups types by category; hovering one shows its description, category and type pack.</figcaption>
 </figure>
 
-When you create a node, you pick a type from an active Type Pack. Vineyard stores that choice as
+When you create a node, you pick a type from an installed Type Pack. Vineyard stores that choice as
 a qualified string in the form `category.name` — for example `infrastructure.ip_address` or
 `threat.malware`. Plugins reference the same form when they declare what they consume and
 produce.
@@ -72,7 +80,7 @@ reconnaissance, in the `infrastructure` category:
 | `infrastructure.host` | the hostname | `operating_system`, `open_ports`, `hosting_provider` |
 | `infrastructure.autonomous_system` | the ASN | `autonomous_system_name`, `registry` |
 | `infrastructure.netblock` | the CIDR | `network_name`, `asn` |
-| `infrastructure.dns_record` | the record name | `record_type`, `record_value`, `ttl` |
+| `infrastructure.dns_record` | name, type and value (e.g. `www.example.com A 93.184.216.34`); the record name until type and value are filled | `record_type`, `record_value`, `ttl` |
 | `infrastructure.whois_record` | the subject (domain/IP) | `registrant`, `registrar`, `created_at` |
 | `infrastructure.certificate` | the SHA-256 fingerprint | `subject_common_name`, `issuer`, `not_after` |
 | `infrastructure.ssh_host_key` | the SHA-256 of the key (hex) | `key_type` |
@@ -82,16 +90,16 @@ The same pack also ships five types in a separate `web` category:
 
 | Type (`category.name`) | Label shown | Notable properties |
 |---|---|---|
-| `web.url` | the URL | `domain` (→ `infrastructure.domain`), `http_status` |
+| `web.url` | the URL | `domain` (the hostname as plain text; an edge links a domain node), `http_status` |
 | `web.hhhash` | the HTTP header hash | `header_count`, `server_hint` |
 | `web.favicon_hash` | the Shodan-style MMH3 hash (signed decimal) | `mmh3_hex`, `md5`, `sha256`, `phash`, `dhash`, `favicon_url` |
 | `web.dom_hash` | the DOM structure hash | `tag_count` |
 | `web.tracking_id` | the identifier as the page carries it (e.g. `G-SXM8TFRYSW`); identity is `provider` + `value` | `provider`, `kind` |
 
 `web.favicon_hash` holds one favicon in every form the search services index it under: `hash_value`
-for Shodan, FOFA, Censys and ZoomEye, `mmh3_hex` for Criminal IP, `md5` and `sha256` for Censys,
-VirusTotal, Netlas and others, and the perceptual `phash` and `dhash`, which are compared by how many
-of their bits differ.
+for Shodan, FOFA, Censys and ZoomEye, `mmh3_hex` for Criminal IP, `md5` for Censys, ZoomEye,
+360 Quake, Hunter.how, ONYPHE and VirusTotal, `sha256` for Censys, Netlas and urlscan.io, and the
+perceptual `phash` and `dhash`, which are compared by how many of their bits differ.
 
 Each type ships its own icon and color.
 
@@ -101,7 +109,7 @@ operation within a campaign — one campaign can contain several operations), wh
 adds the people and personas behind the activity.
 
 !!! tip "Mixing Type Packs"
-    Activate as many Type Packs as you need — they share one qualified-type namespace and
+    Install as many Type Packs as you need — they share one qualified-type namespace and
     interlink by design. You might link a `threat.malware` to the `infrastructure.ip_address`
     it beacons to, attribute a `threat.campaign` to an `identity.organization`, and trace a
     ransom `financial.crypto_transaction`.
@@ -116,9 +124,10 @@ adds the people and personas behind the activity.
     useful label is therefore one that is both readable *and* identifying. Most types key on a naturally-unique field (an IP, a CVE id, a tx
     hash, a WHOIS subject). Where a type's label is inherently non-unique — a
     `identity.person`'s name, an `identity.organization`'s name — distinct entities sharing
-    that label will merge, so give them a distinguishing label (e.g. `John Smith (DOB 1990)`)
-    or populate the stable id the type provides. Nodes you add **manually** are never
-    auto-merged.
+    that label will merge, so give them a distinguishing label (e.g. `John Smith (DOB 1990)`).
+    These two types are identified by the label alone, so filling another property, such as a
+    date of birth or a registration number, does not keep them apart. Nodes you add
+    **manually** are never auto-merged.
 
 ## Versions
 

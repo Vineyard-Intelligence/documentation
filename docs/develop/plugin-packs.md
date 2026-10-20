@@ -14,7 +14,7 @@ The host accepts all three shapes and normalizes them. This lets one author repo
 
 ## `definePluginPack`
 
-A pack is declared with `definePluginPack` from the SDK (`sdk.ts`, vendored into your repo — see [SDK](sdk.md)). The pack-level fields describe the *bundle*, while each entry in `plugins` is a full plugin definition with its own manifest and `run`.
+A pack is declared with `definePluginPack` from the SDK ([`sdk.ts`](../assets/sdk/sdk.ts){ download="sdk.ts" }, copied into your repo — see [SDK](sdk.md)). The pack-level fields describe the *bundle*, while each entry in `plugins` is a full plugin definition with its own manifest and `run`.
 
 ```ts
 import { definePlugin, definePluginPack } from "./sdk";

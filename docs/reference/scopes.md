@@ -2,7 +2,7 @@
 
 A complete catalog of every scope string a plugin can declare in `manifest.scopes`, what each grants, and which `ctx` member it unlocks. A `ctx` member is absent unless its scope was granted. Declare least privilege: pick the narrowest verbs your plugin actually needs.
 
-For how grants are enforced at runtime (the Web Worker sandbox, the egress allowlist, secret scrubbing), see [security](../develop/security.md).
+For how grants are enforced at runtime (the Web Worker sandbox, the egress allowlist, secret handling), see [security](../develop/security.md).
 
 The `scopes` block has exactly five keys, all optional:
 
@@ -35,7 +35,7 @@ Fine-grained verbs over nodes and edges (`node:*` / `edge:*` × read/create/upda
     Granting `node:create` (or any create/update/delete verb) does not let a plugin change the project. Writes are captured into the run's change set and reach the graph only when the analyst reviews that change set and applies it, under their own account.
 
 !!! note "Bulk ops are one operation"
-    `deleteNodes(ids[])` and `deleteEdges(ids[])` are a **single** bounded call, not N separate writes: a legitimate mass-delete (Russian Roulette, Thanos Snap) is issued once and the host caps its own concurrency.
+    `deleteNodes(ids[])` and `deleteEdges(ids[])` are a **single** bounded call, not N separate writes: a legitimate mass-delete (Russian Roulette, Thanos Snap) is issued once, and each id becomes its own item in the run's change set for review. An unknown id fails the whole call.
 
 ## network
 
@@ -52,13 +52,13 @@ Each entry is a `NetworkScope` object, **not** a bare string. `ctx.net.fetch` is
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `endpoint` | `string` | Exact origin/path prefix the plugin may reach |
-| `methods` | `HttpMethod[]` | Allowed verbs: `GET` `POST` `PUT` `PATCH` `DELETE` |
+| `methods` | `HttpMethod[]` | Allowed verbs: `GET` `POST` `PUT` `PATCH` `DELETE`. An empty list allows every verb |
 | `purpose` | `string` (optional) | Human-readable reason, shown at install time |
 
-`ctx.net.fetch` is limited to these endpoints. A URL is matched on its **parsed origin** (protocol, host and port) plus a path-segment boundary, never as a string prefix — `https://h/v1` covers `/v1/search` but not `/v1beta` — and on the declared `methods`.
+`ctx.net.fetch` is limited to these endpoints. A URL is matched on its **parsed origin** (protocol, host and port) plus a path-segment boundary, never as a string prefix — `https://h/v1` covers `/v1/search` but not `/v1beta` — and on the declared `methods`. Each request also has its own deadline, response body included: 60 s unless the request's `init.timeoutMs` sets another (clamped to 1 s – 10 min). A missed deadline rejects with an `Error` named `TimeoutError`; see [`net`](../develop/sdk.md#net-network-scope) in the SDK.
 
 !!! warning "The host bridge is the only way out"
-    Plugin code has no network of its own: any `fetch`, XHR, WebSocket or nested worker the plugin opens itself is refused, on the web and in the desktop app. Use `ctx.net.fetch` (checked against these endpoints), [`ctx.net.probe`](#web_probe) or [`ctx.service`](#services). A dev server does not enforce this, so a pack that calls `fetch` directly works in development and fails in production. A sandbox-js plugin may declare several endpoints. Cookies are not sent; your request headers pass through as written, including `Authorization` (see [Sending a credential](plugin-schema.md#sending-a-credential)). On desktop, declared endpoints are reachable even without CORS headers.
+    Plugin code has no network of its own: any `fetch`, XHR, WebSocket or nested worker the plugin opens itself is refused, on the web and in the desktop app. Use `ctx.net.fetch` (checked against these endpoints), [`ctx.net.probe`](#web_probe) or [`ctx.service`](#services). A dev server does not enforce this, so a pack that calls `fetch` directly works in development and fails in production. A sandbox-js plugin may declare several endpoints. Cookies are not sent; your request headers pass through as written, including `Authorization` (see [Sending a credential](plugin-schema.md#sending-a-credential)). On desktop, declared endpoints are reachable even without CORS headers, except those on `localhost` or a loopback or private-network IP address and the Vineyard backend the app is connected to, which still need them (see [Sandbox & security](../develop/security.md)).
 
 ## web_probe
 
@@ -101,12 +101,18 @@ const who = await ctx.service('telegram', 'resolve', {
 });
 ```
 
-`Authorization` on a service call is ignored — the host sets it. Some services are restricted to
-named packs; `telegram` is one.
+`Authorization` on a service call is ignored — the host sets it. `init.timeoutMs` and the request
+deadline work as for `ctx.net.fetch`. Some services are restricted to named packs; `telegram` is
+one.
+
+A service call needs a Vineyard account. In local mode the Marketplace does not install a pack that
+declares `services` (its **Install** button is disabled, with the tooltip "Needs a Vineyard account — sign in
+to use this pack"), and in a pack installed earlier `ctx.service` throws
+`service '<name>' needs a Vineyard account`.
 
 ## config
 
-Each entry is a `ConfigValue`. `ctx.config` is a read-only map of the declared keys the analyst has set a value for, secret ones included, coerced to the declared `type`. It is absent while none of them has a value, so read it as `ctx.config?.key ?? DEFAULT`. Values are kept per signed-in account — in the OS keychain on desktop, for the tab session in the browser. (Source: the SDK's `sdk.ts` types — `ConfigValue`, `HostContext.config`.)
+Each entry is a `ConfigValue`. `ctx.config` is a read-only map of the declared keys the analyst has set a value for, secret ones included, coerced to the declared `type`. It is absent while none of them has a value, so read it as `ctx.config?.key ?? DEFAULT`. Values are kept per signed-in account — in the OS keychain on desktop (only until the app quits on a computer that cannot encrypt them), for the tab session in the browser. (Source: the SDK's `sdk.ts` types — `ConfigValue`, `HostContext.config`.)
 
 Members of the same Plugin Pack that declare a key and call the same set of network origins share one value for it, so the analyst enters it once. The origins are the scheme, host and port of the member's `scopes.network` endpoints; paths do not matter, so members calling different paths on one API host share. A plugin published on its own, or one with no `scopes.network` entry, keeps its own values, and two packs never share a value even when they call the same host. A member that calls one more origin than the others keeps its own value, so give members that should share a key the same origins. Sharing does not widen what a plugin receives: each plugin still gets only the keys its own manifest declares.
 
@@ -130,7 +136,7 @@ The following are **always available** and grant no authority over data or netwo
 | Capability | `ctx` member | Notes |
 | --- | --- | --- |
 | `params` | `ctx.params` | This run's user input (read-only). Not validated against the `params` JSON Schema: the Run dialog only checks that `required` fields are filled, so validate types yourself |
-| `progress` | `ctx.progress.set` | Drives the Task UI (`percent` / `message` / `phase`) |
+| `progress` | `ctx.progress.set` | Drives the task row: `percent` sets its progress and `message` is shown after the plugin's name. `phase` is accepted but not shown |
 | `log` | `ctx.progress.log` | Accepted but currently a no-op; nothing is recorded |
 | `status` | `ctx.progress.status` | Accepted but currently a no-op; the task state is set by the runner |
 | `signal` | `ctx.signal`, `ctx.onCancel` | Cooperative cancel — the plugin MUST observe it |
@@ -142,6 +148,6 @@ Two members are also always present and not gated: `ctx.run` (this run's identit
 
 ## Next / See also
 
-- [Security](../develop/security.md) — the worker sandbox, egress allowlist, secret scrubbing
+- [Security](../develop/security.md) — the worker sandbox, egress allowlist, secret handling
 - [Plugin schema](plugin-schema.md) — the full manifest reference
 - [SDK](../develop/sdk.md) — `ctx` interface and `definePlugin`

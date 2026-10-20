@@ -5,10 +5,10 @@ Vineyard executes plugins and Type Packs **in the user's app**, never on a serve
 ## Design facts
 
 - **Client-side execution.** Plugins (JS) and Type Packs (JSON) run in the user's app, in the browser or in the desktop app. The server never executes plugin code; it stores pointers and serves the ordinary graph API.
-- **Per-plugin platform flags.** A plugin declares supported platforms via `platforms.web` and/or `platforms.desktop`. A capability the browser cannot provide targets the **desktop** runtime.
+- **Per-plugin platform flags.** A plugin declares where it runs in `platforms`. The browser and the desktop app both run its `platforms.web` entry (`sandbox-js`); a `platforms.desktop` block is accepted but not read. A plugin that needs a capability the browser cannot provide (`web_probe`) sets `platforms.primary: "desktop"` to mark itself desktop-only.
 - **Metadata-only registry.** Distribution is GitHub + a registry of pointers, not code. The client fetches the bundle (via jsDelivr, pinned to the immutable commit SHA) and runs it directly. See [distribution](distribution.md).
 - **Ephemeral by default.** A plugin-run task lives only in the current tab's memory; AI conversations (and their task rows) are kept on this device. Neither is sent to the server — only applied changes reach the project's graph. See [lifecycle](lifecycle.md) and [Tasks](../guide/tasks.md).
-- **Least authority.** Plugin JS runs in a Web Worker sandbox with only its declared scopes — `graph` verbs, `network`, `web_probe` (desktop), `services`, `config`; the worker has no DOM and no network of its own. Graph writes are **staged, not live**: they are applied only after the analyst reviews and approves the change set. See [scopes](../reference/scopes.md) and [security](security.md).
+- **Least authority.** Plugin JS runs in a Web Worker sandbox with only its declared scopes — `graph` verbs, `network`, `web_probe` (desktop), `services`, `config`; the worker has no DOM, no access to the site's storage, and no network of its own. Graph writes are **staged, not live**: they are applied only after the analyst reviews and approves the change set. See [scopes](../reference/scopes.md) and [security](security.md).
 
 ## End-to-end flow
 
@@ -37,7 +37,7 @@ flowchart LR
 
 3. **App → sandbox.** The host loads the fetched `main.js` into a dedicated module **Web Worker** and exposes `ctx` as a [Comlink](https://github.com/GoogleChromeLabs/comlink) proxy whose shape is **exactly the granted scopes** — a `ctx` member is absent unless its scope was granted.
 
-4. **Execution → staging → graph.** The plugin calls `ctx.graph`. Reads are served from the project's in-memory graph; writes are **captured into the staging store rather than sent**. They are applied only once the analyst opens the change set, goes through it item by item and approves. Outbound `ctx.net.fetch` requests are matched against the plugin's declared endpoints by origin and whole path segments, never as a string prefix. The worker has no network of its own, so a direct `fetch` fails; go through `ctx`.
+4. **Execution → staging → graph.** The plugin calls `ctx.graph`. Reads are served from the project's in-memory graph; writes are **captured into the staging store rather than sent**. They are applied only once the analyst opens the change set and clicks **Apply (N)**, which applies every row left checked (a run the AI agent launched under **Apply automatically** is the exception; see [security](security.md#graph-writes-are-staged-not-applied)). Outbound `ctx.net.fetch` requests are matched against the plugin's declared endpoints by origin and whole path segments, never as a string prefix. The worker has no network of its own, so a direct `fetch` fails; go through `ctx`.
 
 See [SDK](sdk.md) for the `ctx` interface, [lifecycle](lifecycle.md) for how a run moves through the task states, and [security](security.md) for the sandbox boundary.
 
@@ -49,12 +49,13 @@ See [SDK](sdk.md) for the `ctx` interface, [lifecycle](lifecycle.md) for how a r
 ### Ships today
 
 - **Browser runtime** — `platforms.web.runtime: "sandbox-js"`: author JS runs in a Web Worker.
-- **Desktop runtime** — `platforms.desktop.runtime: "sandbox-js"`: the Electron desktop app, which adds the anonymous HTTP probe (`web_probe` capability).
+- **Desktop app** — the Electron shell runs the same `platforms.web` `sandbox-js` entry in the same worker sandbox and adds the anonymous HTTP probe (`web_probe` capability). It does not read `platforms.desktop`.
 - **Metadata-only registry** with GitHub-hosted bundles fetched via jsDelivr, pinned to an immutable commit SHA.
 - **Staged graph writes + analyst review** — captured node/edge changes, applied only on approval — plus the egress allowlist.
 - **Client-side task execution, one dedicated Web Worker per run.**
 - **Secret config** — `config.secret:true` values kept per signed-in account (in the OS keychain on desktop, for the tab session in the browser) and read by the declaring plugin (BYOK).
-- **The six Chaos reference plugins** and the [Infrastructure](../guide/typepacks.md) / [Threat](../guide/typepacks.md) Type Packs.
+- **Vineyard-operated services** — `scopes.services` (`rdap`, `telegram`), called by name through `ctx.service`.
+- **The packs listed in the [Marketplace](../marketplace.md)** — Plugin Packs (the six Chaos reference plugins among them), Type Packs such as [Infrastructure and Threat](../guide/typepacks.md), and Skill Packs.
 
 ### Deferred (designed, not built)
 

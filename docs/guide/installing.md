@@ -2,13 +2,16 @@
 
 ## Browsing the marketplace
 
-The marketplace is a static catalog: all search, filtering, and sorting happen in your browser.
-There is no account, no server query, and no telemetry.
+The marketplace is a static catalog, fetched from `registry.vineyard.run`: all search, filtering,
+and sorting happen in your browser, with no server query and no telemetry.
 
 You can browse from two places. Both show the same catalog, but their filters aren't identical:
 
-- **The [Marketplace page](../marketplace.md) on this site** — the public, read-only browser.
-- **The in-app mirror** inside the Vineyard app — where **Install** works directly.
+- **The [Marketplace page](../marketplace.md) on this site** — the public, read-only browser. It
+  needs no account.
+- **The in-app mirror** inside the Vineyard app — where **Install** works directly. It needs you
+  signed in, or the desktop app in [local mode](modes.md): a visitor reading a shared project without signing in
+  is not offered it. Opened from a project, it also reads which packs that project has installed.
 
 <figure class="vy-shot" markdown="span">
   ![Marketplace inside a project](../assets/guide/marketplace.webp){ width="800" loading=lazy }
@@ -37,15 +40,15 @@ second toggle narrows the grid to **All**, **Installed**, or **Updates available
 
 ### Reading a card
 
-Each card is a compact summary: an **icon** and **name**, a meta line, a one-line
-**description**, and chips in the footer. The meta line reads *author · kind · count · version*,
+Each card is a compact summary: an **icon** and **name**, a meta line, a short
+**description** (up to three lines), and chips in the footer. The meta line reads *author · kind · count · version*,
 for example *VINEYARD · Plugin pack · 4 plugins · v1.2.0*, with a verified tick ✓ before the author
 when verified. The count is the plugins a Plugin Pack bundles (when more than one), the types a
 Type Pack defines, or the sections a Skill Pack holds. The chips name only what a pack asks of you:
 
 - For a **Plugin Pack**: `Desktop only` or `Some desktop only` when all or some of its plugins run
   only in the desktop app, `API key` when it asks for one, and `Vineyard service` when it calls a
-  Vineyard-operated service.
+  Vineyard-operated service (`Account required` instead in local mode).
 - For a **Skill Pack**: `Needs N plugins` for the Plugin Packs it requires. The node types it
   applies to are listed in the detail view.
 - A **Type Pack** has no chips.
@@ -123,6 +126,6 @@ that has it, so you can remove it).
 ## Next / See also
 
 - [Running plugins](running-plugins.md) — what happens after activation
-- [Type Packs](typepacks.md) — activating type schemas
-- [Skill Packs](skillpacks.md) — using investigation playbooks
-- [Tasks](tasks.md) — why runs are ephemeral
+- [Working with Type Packs](typepacks.md) — activating type schemas
+- [Working with Skill Packs](skillpacks.md) — using investigation playbooks
+- [Tasks & runs](tasks.md) — why runs are ephemeral
