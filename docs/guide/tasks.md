@@ -39,7 +39,7 @@ Leaving a project while a plugin run or an AI turn is still working asks first: 
 Neither task rows nor conversation content are sent to the Vineyard server; only applied changes are written to the project — the ones you apply in a review, and the ones the agent applies under **Apply automatically**. The agent's model calls go from the app straight to your AI provider. Where its web searches and the pages it reads go depends on your settings. With the defaults, when you are signed in, the queries the agent writes from the project pass through the Vineyard server on their way to Serper and Google. In a browser tab, the default page-reading mode sends each URL the agent opens to the reader service r.jina.ai; the desktop app does so only when its own fetch fails. See [Web search and page reading](#web-search-and-page-reading).
 
 !!! tip "AI conversations stay on this device, under your account"
-    Conversations, messages, project memory, and each conversation's session scope and plan are kept on this device only and are never written to the server. Like your AI provider and web-search keys, they are kept separately for each account — this separates accounts inside Vineyard, not from someone with direct access to this computer. Set the AI provider, model and key in the AI agent panel under **Setup → Settings**; the web-search key is under **Settings → AI agent**. Both kinds of key are listed under **Settings → Keys & Secrets** (**LLM keys** and **Search engine keys**), where you can show, replace or forget them; they are kept on this device, not encrypted.
+    Conversations, messages, project memory, and each conversation's session scope and plan are kept on this device only and are never written to the server. Like your AI provider and web-search keys, they are kept separately for each account — this separates accounts inside Vineyard, not from someone with direct access to this computer. Set the AI provider, model and key in the AI agent panel under **Setup → Settings**; the web-search key is under **Settings → AI agent**. Both kinds of key are listed under **Settings → Keys & Secrets** (**LLM keys** and **Search engine keys**), where you can show, replace or forget them. The desktop app encrypts them with the computer's keychain (on a computer that cannot encrypt, they last for the session only); the web app keeps them only until you close the tab.
 
 ## The AI agent panel
 
@@ -137,6 +137,7 @@ Where the agent's queries go. A query is written by the agent from the project, 
 | **Jina** | App → Jina | Optional; without one, searches are heavily rate-limited | Browser and desktop app |
 | **Exa** | App → Exa | Yes | Browser and desktop app |
 | **Serper, with your own key** | App → Serper → Google | Yes | Browser and desktop app |
+| **DeepSeek, with your own key** | App → DeepSeek | Yes (your DeepSeek API key, billed per call; queries of up to 128 characters) | Browser and desktop app |
 | **Kimi (Moonshot), with your own key** | Desktop app → Moonshot | Yes (your Moonshot API key, billed per call) | Desktop app only |
 | **DuckDuckGo** | Desktop app → DuckDuckGo | None | Desktop app only; marked *unreliable*, since DuckDuckGo blocks datacenter and VPN addresses with a CAPTCHA |
 
@@ -145,7 +146,7 @@ When the chosen provider cannot run where you are, the agent searches with anoth
 - In a browser tab, a desktop-only choice (made in the desktop app, which shares your account's settings) falls back to **Serper, through the Vineyard server**.
 - In local mode, a server option, including the default, falls back to **DuckDuckGo**.
 
-The two server options run on the operator's key, so they can run out; for work that has to be reliable, pick a provider you supply your own key for. Choosing a provider that takes a key adds a key field below the list, and choosing SearXNG adds an address field. Both are **This device only**: what you enter stays on this device and is never sent to the Vineyard server.
+The two server options run on the operator's key, so they can run out; for work that has to be reliable, pick a provider you supply your own key for. Choosing a provider that takes a key adds a key field below the list, and choosing SearXNG adds an address field. Both are **This device only**: what you enter stays on this device and is never sent to the Vineyard server. The key is kept like the agent's other keys, encrypted by the desktop app or until the tab closes in the web app; the address stays until you change it.
 
 ### Reading a page
 
