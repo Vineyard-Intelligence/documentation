@@ -83,9 +83,13 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 |---|---|---|
 | `web.url` | URL | `domain` (→ `infrastructure.domain`), `http_status` |
 | `web.hhhash` | HTTP 헤더 해시 | `header_count`, `server_hint` |
-| `web.favicon_hash` | 파비콘 해시 | `hash_algorithm`, `favicon_url` |
+| `web.favicon_hash` | Shodan 방식 MMH3 해시 (부호 있는 10진수) | `mmh3_hex`, `md5`, `sha256`, `phash`, `dhash`, `favicon_url` |
 | `web.dom_hash` | DOM 구조 해시 | `tag_count` |
 | `web.tracking_id` | 페이지에 적힌 그대로의 식별자 (예: `G-SXM8TFRYSW`), 동일성은 `provider` + `value` | `provider`, `kind` |
+
+`web.favicon_hash`는 파비콘 하나를 검색 서비스들이 색인하는 형식별로 모두 담습니다. Shodan·FOFA·
+Censys·ZoomEye는 `hash_value`, Criminal IP는 `mmh3_hex`, Censys·VirusTotal·Netlas 등은 `md5`와
+`sha256`으로 찾고, `phash`와 `dhash`는 비트가 몇 개 다른지로 비교하는 지각 해시입니다.
 
 각 유형은 자체 아이콘과 색상을 제공합니다.
 
