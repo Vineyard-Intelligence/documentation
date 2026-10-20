@@ -15,7 +15,9 @@ The whole authority a plugin can ask for is five manifest keys: `graph` verbs, `
 
 `ctx.graph`'s write methods do not call the API. Reads come from the live graph, so the plugin sees the real graph, while its creates, updates and deletes accumulate as a **change set** belonging to that one run (`ctx.run.runId`).
 
-Nothing reaches the project until the analyst opens that change set and approves it — per item, with anything they uncheck excluded. The approved items are then applied under the analyst's own account. Other runs and collaborators may have changed the graph since the edits were staged, so each item is applied independently and ends as **applied / skipped / failed** — "delete an already-deleted node" is a recorded skip, not a failed batch.
+By default, nothing reaches the project until the analyst opens that change set and approves it — per item, with anything they uncheck excluded. The approved items are then applied under the analyst's own account. Other runs and collaborators may have changed the graph since the edits were staged, so each item is applied independently and ends as **applied / skipped / failed** — "delete an already-deleted node" is a recorded skip, not a failed batch.
+
+The exception is a run the AI agent launched while the analyst has the agent set to **Apply automatically** (see [Review and apply](../guide/tasks.md#review-and-apply) in the AI agent settings). Its change set is applied at the end of the agent's turn without the analyst opening it. What still waits for review: a change set that removes or overwrites something, together with every change set staged after it in that turn, while **Stop and ask before anything is removed or overwritten** is on (the default); and the items the independent check holds back, when **Have an independent check test each inference** is on. Runs started from the Run plugins panel always wait for review.
 
 A plugin can never do more than the analyst who approves its changes is allowed to do.
 
@@ -28,8 +30,11 @@ Plugin `main.js` runs in a **dedicated module Web Worker**, not on the page. Ins
 
 - no `DOM` and no `window`,
 - no `localStorage` / `sessionStorage`,
+- no IndexedDB, Cache Storage, `BroadcastChannel`, `navigator.storage` (including the origin-private file system), Web Locks or service-worker registration,
 - no account token, cookie, or session of any kind,
 - no network of its own: `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource` and a nested `new Worker` are all refused.
+
+The storage block is applied before the pack's code is imported and, unlike the network block, holds under `vite dev` too: `indexedDB`, `caches` and `BroadcastChannel` are `undefined`, and the methods of `navigator.storage` and `navigator.locks`, and service-worker registration, throw a `SecurityError` (`not available to plugins`). In a browser where it cannot be applied the plugin does not load, and the run fails with "the plugin sandbox could not block site storage in this browser". Keep a run's state in memory.
 
 Staging, egress, progress and notifications live on the main thread, in the **HostBridge**. The worker reaches it through a [Comlink](sdk.md) proxy shaped exactly like the granted scopes, so every request goes through `ctx.net.fetch`, `ctx.service`, or `ctx.net.probe` on desktop. Desktop runs the same plugin in the same worker.
 
@@ -56,7 +61,7 @@ Every `ctx.net.fetch` is checked on the host against the manifest's declared `ne
 |---|---|
 | The **parsed origin** must match — protocol, host and port | a different host, protocol or port is refused, even if the URL starts with the declared one |
 | A path prefix matches on a **segment boundary** | a scope of `https://h/v1` covers `/v1/search`, and does not cover `/v1beta` |
-| The method must be in the scope's `methods` list | a `GET`-only endpoint cannot be `POST`ed to |
+| The method must be in the scope's `methods` list | a `GET`-only endpoint cannot be `POST`ed to; an empty `methods` list allows every method |
 | A URL that will not parse **denies** | — |
 
 Requests are sent without the analyst's cookies, and cancelling the run aborts anything still in flight. Headers you set, including `Authorization`, reach the endpoint as written.
@@ -65,7 +70,7 @@ A `sandbox-js` plugin may declare several `network` endpoints; each is checked t
 
 ### Desktop
 
-On desktop, declared endpoints are reachable even if they send no CORS headers.
+On desktop, declared endpoints are reachable even if they send no CORS headers. Two kinds of endpoint are left out and still need the server's own CORS headers: one addressed as `localhost` or by a loopback or private-network IP address (e.g. `http://127.0.0.1:9200`), and the Vineyard backend the app is connected to.
 
 `ctx.net.probe` (the `web_probe` scope) exists only on desktop: an anonymous cross-origin request made by the desktop app itself, for reading sites that decline CORS. It follows no redirects and is capped in size and time. In the web build `ctx.net.probe` is absent, so the plugin must fall back.
 
@@ -73,7 +78,7 @@ On desktop, declared endpoints are reachable even if they send no CORS headers.
 
 API keys and secrets must **never** land in a task record or in AI-conversation history.
 
-1. **A secret goes to the plugin that declared it.** A `config` value with `secret: true` reaches the plugin as `ctx.config[key]` at run time — a plugin only gets the keys its own manifest declared. The flag masks the field in the install/run form, and the value is kept in the OS keychain on desktop, or in the browser only for that tab's session (it has to be re-entered after the tab closes). The form says which of the two is in effect.
+1. **A secret goes to the plugin that declared it.** A `config` value with `secret: true` reaches the plugin as `ctx.config[key]` at run time — a plugin only gets the keys its own manifest declared. The flag masks the field wherever the value is entered: the plugin's **Settings (x/y set)** block in the Run plugins panel, or **Settings → Keys & Secrets** under **Plugin keys**. Members of one pack that declare the same key and call the same network origins share one value, entered once; each plugin still receives only the keys it declares. The value is encrypted by the OS keychain on desktop; in the browser it is kept in that tab only and has to be re-entered after the tab closes; on a desktop that cannot encrypt it is kept for that session only. Both places say whether the value will be kept.
 2. **Secrets are not params.** Never put credentials in `params`: the run form's values are recorded in the task. Declare credentials as `scopes.config` with `secret: true` instead — those are never written to a task record or an AI conversation.
 3. **Type Packs may not declare secret property types.** A `secret` / `credential` property type is a **hard schema rejection** (see [Type Packs](../guide/typepacks.md)).
 4. **Kept per account.** Config values and keys are kept separately for each account on the device: another account signing in on the same device does not get them, signing out keeps them, and deleting the account removes them. This separates accounts inside Vineyard; it is not protection against someone with direct access to the computer.

@@ -1,93 +1,93 @@
-# Type Pack schema
+# Type Pack 스키마
 
-`typepack.schema.json`에 대한 완전한 필드 참조 — 모든 `vineyard:typepack` 문서가 검증되는 메타 스키마입니다. Type Pack은 그래프의 어휘를 확장하는 **노드 엔티티 유형**을 선언합니다. 개념적 설명 및 작성 안내는 [Developing Type Packs](../develop/typepacks.md)를 참조하세요.
+`typepack.schema.json`에 대한 완전한 필드 참조 — `vineyard:typepack` 문서의 작성 계약입니다. 레지스트리 CI도 앱도 문서를 이 스키마로 검증하지 않으므로, 참조 팩 저장소들처럼 자체 CI에서 실행하세요. Type Pack은 그래프의 어휘를 확장하는 **노드 엔티티 유형**을 선언합니다. 개념적 설명 및 작성 안내는 [Type Pack](../develop/typepacks.md)을 참조하세요.
 
-!!! info "Canonical schema"
+!!! info "정식 스키마"
     `$id`: `https://vineyard.run/schemas/typepack.json` · JSON Schema draft 2020-12. 이 문서는 진실 공급원이며, 이 페이지는 필드별로 열거합니다.
 
-## Top-level object
+## 최상위 객체 {#top-level-object}
 
-루트는 `additionalProperties: false`인 객체입니다 — 알 수 없는 키는 거부됩니다.
+루트는 `additionalProperties: false`인 객체입니다 — 알 수 없는 키는 스키마 검증에 실패합니다.
 
 **필수:** `identifier`, `name`, `content_type`, `version`, `types`.
 
-| Field | Type | Req | Constraints / default | Meaning |
+| 필드 | 유형 | 필수 | 제약 / 기본값 | 의미 |
 |-------|------|-----|-----------------------|---------|
-| `identifier` | string | yes | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$` | Reverse-DNS ID, 예: `run.vineyard.typepacks.infrastructure`. |
-| `content_type` | string | yes | `const: "vineyard:typepack"` | 문서가 Type Pack임을 표시하는 판별자. |
-| `name` | string | yes | `minLength: 1`, `maxLength: 128` | 사람이 읽을 수 있는 팩 이름. |
-| `version` | string | yes | SemVer pattern `^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$` | 팩 **내용**의 SemVer. MAJOR = 파괴적 type 변경. 변경된 type을 쓰는 노드는 수정이 필요할 수 있습니다. |
-| `description` | string | no | `maxLength: 1024` | 팩이 모델링하는 내용에 대한 간략한 요약. |
-| `authors` | array&lt;object&gt; | no | [Authors](#authors) 참조 | 기여자 목록. |
-| `license` | string | no | — | SPDX 표현식, 예: `MIT`, `Apache-2.0`, `CC-BY-4.0`. |
-| `marketing_url` | string | no | `format: uri` | 팩의 랜딩 페이지. |
-| `thumbnail_url` | string | no | `format: uri` | 아이콘/썸네일 이미지. |
-| `types` | array&lt;[entityType](#entity-type-types)&gt; | yes | `minItems: 1` | 노드 엔티티 유형 정의. |
+| `identifier` | string | 예 | pattern `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}typepacks\.[a-z0-9]+(?:[._-][a-z0-9]+)*$` | Reverse-DNS ID, 예: `run.vineyard.typepacks.infrastructure`. |
+| `content_type` | string | 예 | `const: "vineyard:typepack"` | 문서가 Type Pack임을 표시하는 판별자. |
+| `name` | string | 예 | `minLength: 1`, `maxLength: 128` | 사람이 읽을 수 있는 팩 이름. |
+| `version` | string | 예 | SemVer pattern `^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$` | 팩 **내용**의 SemVer. MAJOR = 파괴적 type 변경. 변경된 type을 쓰는 노드는 수정이 필요할 수 있습니다. |
+| `description` | string | 아니요 | `maxLength: 1024` | 팩이 모델링하는 내용에 대한 간략한 요약. |
+| `authors` | array&lt;object&gt; | 아니요 | [저자](#authors) 참조 | 기여자 목록. |
+| `license` | string | 아니요 | — | SPDX 표현식, 예: `MIT`, `Apache-2.0`, `CC-BY-4.0`. |
+| `marketing_url` | string | 아니요 | `format: uri` | 팩의 랜딩 페이지. |
+| `thumbnail_url` | string | 아니요 | `format: uri` | 아이콘/썸네일 이미지. |
+| `types` | array&lt;[entityType](#entity-type-types)&gt; | 예 | `minItems: 1` | 노드 엔티티 유형 정의. |
 
 ### identifierSegment
 
 여러 키(`category`, `name`, 속성 키)는 `identifierSegment` 정의를 재사용합니다:
 
-| Rule | Value |
+| 규칙 | 값 |
 |------|-------|
 | type | string |
 | pattern | `^[a-z][a-z0-9_]*$` (snake_case, 소문자로 시작해야 함) |
 | `maxLength` | 31 |
 
-## Authors
+## 저자 {#authors}
 
 `authors[]` — 객체 배열, 각각 `additionalProperties: false`.
 
-| Field | Type | Req | Constraints |
+| 필드 | 유형 | 필수 | 제약 |
 |-------|------|-----|-------------|
-| `name` | string | yes | — |
-| `email` | string | no | `format: email` |
-| `url` | string | no | `format: uri` |
+| `name` | string | 예 | — |
+| `email` | string | 아니요 | `format: email` |
+| `url` | string | 아니요 | `format: uri` |
 
-## Entity type (`types[]`)
+## 엔티티 유형 (`types[]`) {#entity-type-types}
 
 `types`의 각 항목은 하나의 **노드** 엔티티 유형을 정의합니다 (`#/$defs/entityType`, `additionalProperties: false`). **필수:** `category`, `name`, `label_property`, `properties`.
 
-| Field | Type | Req | Constraints / default | Meaning |
+| 필드 | 유형 | 필수 | 제약 / 기본값 | 의미 |
 |-------|------|-----|-----------------------|---------|
-| `category` | identifierSegment | yes | snake_case, ≤31 | 그룹화 네임스페이스, 예: `infrastructure`. |
-| `name` | identifierSegment | yes | snake_case, ≤31 | 카테고리 내 type 이름, 예: `ip_address`. |
-| `display_name` | string | no | — | type의 사람용 라벨. |
-| `description` | string | no | — | type이 나타내는 것. |
-| `label_property` | string | yes | **비선택적** `properties` 내 키를 지정해야 함 | 노드의 표시 라벨로 사용되는 속성 키. |
-| `icon` | string | no | 다형적 (아래 참조) | 노드 아이콘. 없으면 노드는 `color`만으로 렌더링됩니다. |
-| `color` | string | no | pattern `^#[0-9a-fA-F]{6}$` | 노드 색상 `#rrggbb`. 없으면 `category.name`에서 안정적인 색상이 파생됩니다. |
-| `properties` | object | yes | `minProperties: 1`; 키는 identifierSegment; 값은 [property](#property-object) | 속성 키 → 속성 스키마. 비어 있지 않아야 합니다. |
-| `identity_properties` | array&lt;string&gt; | no | `minItems: 1`, `uniqueItems`; 각 항목은 `properties`의 키를 지정해야 함 | 중복 제거를 위해 하나의 엔티티를 함께 식별하는 키들. 기본값은 `[label_property]`. 예: `user_account`는 사용자명으로 표시되지만 `(username, platform)`으로 식별됩니다. |
-| `label_template` | string | no | 참조된 키는 `properties`에 존재해야 함 | 여러 속성으로 구성된 표시 라벨, 예: `"{username} · {platform}"`. 참조된 필드가 비어 있으면 `label_property`로 폴백하므로, 일부만 채워진 노드가 구분자만 덩그러니 남는 일이 없습니다. 표시 전용 — 중복 제거는 `identity_properties`를 사용합니다. |
+| `category` | identifierSegment | 예 | snake_case, ≤31 | 그룹화 네임스페이스, 예: `infrastructure`. |
+| `name` | identifierSegment | 예 | snake_case, ≤31 | 카테고리 내 type 이름, 예: `ip_address`. |
+| `display_name` | string | 아니요 | — | type의 사람용 라벨. |
+| `description` | string | 아니요 | — | type이 나타내는 것. |
+| `label_property` | string | 예 | **비선택적** `properties` 내 키를 지정해야 함 | 노드의 표시 라벨로 사용되는 속성 키. |
+| `icon` | string | 아니요 | 다형적 (아래 참조) | 노드 아이콘. 없으면 노드는 `color`만으로 렌더링됩니다. |
+| `color` | string | 아니요 | pattern `^#[0-9a-fA-F]{6}$` | 노드 색상 `#rrggbb`. 없으면 `category.name`에서 안정적인 색상이 파생됩니다. |
+| `properties` | object | 예 | `minProperties: 1`; 키는 identifierSegment; 값은 [속성 객체](#property-object) | 속성 키 → 속성 스키마. 비어 있지 않아야 합니다. |
+| `identity_properties` | array&lt;string&gt; | 아니요 | `minItems: 1`, `uniqueItems`; 각 항목은 `properties`의 키를 지정해야 함 | 중복 제거를 위해 하나의 엔티티를 함께 식별하는 키들. 기본값은 `[label_property]`. 예: `identity.account`의 `label_property`는 `username`이지만 식별은 `(username, platform)`으로 합니다. |
+| `label_template` | string | 아니요 | 참조된 키는 `properties`에 존재해야 함 | 여러 속성으로 구성된 표시 라벨, 예: `"{username} · {platform}"`. 참조된 필드가 비어 있으면 `label_property`로 폴백하므로, 일부만 채워진 노드가 구분자만 덩그러니 남는 일이 없습니다. 표시 전용 — 중복 제거는 `identity_properties`를 사용합니다. |
 
 완전한 정규화 type 참조는 `category.name`입니다 (예: `infrastructure.ip_address`). 이 정규화된 형식은 `Node.type`이 저장하는 값이며 `reference` 대상이 가리키는 것입니다.
 
-!!! info "Icon resolution order"
+!!! info "아이콘 해석 순서"
     `icon`은 다형적이며 다음 순서로 해석됩니다: `data:` / `http(s):` 이미지 URI; 그 외 kebab-case [lucide](https://lucide.dev) 아이콘 이름 (예: `shield-alert`); 그 외 리터럴 글리프/이모지. 어떤 kebab-case lucide 이름이든 해석됩니다.
 
-## Property object
+## 속성 객체 {#property-object}
 
 `properties` 맵의 각 값에 대한 스키마 (`#/$defs/property`, `additionalProperties: false`). **필수:** `type` — 모든 속성은 명시적인 type을 선언해야 합니다.
 
-| Field | Type | Req | Constraints / default | Meaning |
+| 필드 | 유형 | 필수 | 제약 / 기본값 | 의미 |
 |-------|------|-----|-----------------------|---------|
-| `type` | string (enum) | yes | [type enum](#property-type-enum) 참조 | 논리적 속성 유형. |
-| `description` | string | no | — | 속성에 대한 사람용 설명. |
-| `optional` | boolean | no | `default: false` | `false` (기본값) ⇒ `Node.data`의 필수 키. |
-| `case_insensitive` | boolean | no | `default: false` | 이 속성이 중복 제거 식별자에 포함될 때 대소문자를 접습니다. 표시와 저장은 작성된 그대로 유지됩니다. 핸들, 도메인, 호스트명, 이메일, 16진 다이제스트에는 맞고, Base58/EIP-55 암호화폐 주소, URL 경로, 대소문자를 구분하는 파일 경로에는 틀립니다. 플래그가 빠지면 눈에 보이고 병합 가능한 중복이 생기지만, 잘못 붙이면 두 엔티티가 조용히 하나로 병합됩니다. |
-| `default` | any | no | type이 `type`과 일치해야 함 | 키가 없을 때 적용되는 기본값. |
-| `validator` | object | no | [validator](#validator-object) 참조 | 구조화된 검증 규칙. |
-| `enum` | array | conditional | `minItems: 1`; 항목 `string`\|`number`\|`boolean` | **`type = "enum"`일 때 필수.** |
-| `reference` | object | conditional | [reference](#reference-object) 참조 | **`type = "reference"`일 때 필수.** |
+| `type` | string (enum) | 예 | [type 열거형](#property-type-enum) 참조 | 논리적 속성 유형. |
+| `description` | string | 아니요 | — | 속성에 대한 사람용 설명. |
+| `optional` | boolean | 아니요 | `default: false` | `false` ⇒ `Node.data`의 필수 키. 모든 속성에 적으세요: 노드 생성은 속성이 `"optional": false`라고 명시했을 때만 빠진 키를 거부합니다. `optional`을 생략하면 Properties 패널은 그 속성을 필수(`*`)로 표시하지만, 그 키 없이 생성해도 받아들여집니다. |
+| `case_insensitive` | boolean | 아니요 | `default: false` | 이 속성이 중복 제거 식별자에 포함될 때 대소문자를 접습니다. 표시와 저장은 작성된 그대로 유지됩니다. 핸들, 도메인, 호스트명, 이메일, 16진 다이제스트에는 맞고, Base58/EIP-55 암호화폐 주소, URL 경로, 대소문자를 구분하는 파일 경로에는 틀립니다. 플래그가 빠지면 눈에 보이고 병합 가능한 중복이 생기지만, 잘못 붙이면 두 엔티티가 조용히 하나로 병합됩니다. |
+| `default` | any | 아니요 | `type`과 일치해야 함 (검사하지 않음) | 받아들여지지만 적용되지 않음: 앱에서 빠진 키를 이 값으로 채우는 곳이 없습니다. |
+| `validator` | object | 아니요 | [validator 객체](#validator-object) 참조 | 구조화된 검증 규칙. |
+| `enum` | array | 조건부 | `minItems: 1`; 항목 `string`\|`number`\|`boolean` | **`type = "enum"`일 때 필수.** |
+| `reference` | object | 조건부 | [reference 객체](#reference-object) 참조 | **`type = "reference"`일 때 필수.** |
 
-### Property `type` enum
+### 속성 `type` 열거형 {#property-type-enum}
 
 `type`은 다음 중 하나여야 합니다:
 
 `string`, `text`, `number`, `integer`, `boolean`, `date`, `datetime`, `enum`, `url`, `ip`, `hash`, `email`, `reference`, `array`, `object`
 
-| Value | Notes |
+| 값 | 비고 |
 |-------|-------|
 | `string` | 단일 라인 문자열. |
 | `text` | 여러 줄 / 긴 텍스트. |
@@ -105,33 +105,33 @@
 | `array` | 리스트 값. |
 | `object` | 중첩 객체 값. |
 
-!!! warning "No secret/credential types"
+!!! warning "secret/credential 유형 없음"
     enum은 의도적으로 `secret`과 `credential`을 제외합니다. API 키, 토큰, 비밀번호를 노드/엣지 속성으로 모델링하지 마세요.
 
-### validator object
+### validator 객체 {#validator-object}
 
 `additionalProperties: false`. 구조화된 검증. 모든 필드는 선택 사항이며 필요에 따라 조합합니다.
 
-| Field | Type | Constraints | Meaning |
+| 필드 | 유형 | 제약 | 의미 |
 |-------|------|-------------|---------|
-| `regex` | string | — | 문자열 형식이 **완전히** 일치해야 하는 ECMAScript 정규식. |
+| `regex` | string | — | 문자열 값에 적힌 그대로 검사하는 ECMAScript 정규식으로, 암묵적인 앵커가 없습니다: 값 전체가 일치해야 한다면 `^…$`를 쓰세요. 4,096자보다 긴 값, 컴파일되지 않는 패턴, 역추적이 폭주하기 쉬운 형태의 패턴은 검사를 건너뜁니다. |
 | `min` | number | — | 최소 숫자 값. |
 | `max` | number | — | 최대 숫자 값. |
-| `min_length` | integer | `minimum: 0` | 최소 문자열 길이. |
-| `max_length` | integer | `minimum: 0` | 최대 문자열 길이. |
-| `format` | string | — | 명명된 형식 힌트, 예: `ipv4`, `sha256`, `iso8601`. |
+| `min_length` | integer | `minimum: 0` | 최소 문자열 길이. 힌트이며 앱이 검사하지 않습니다. |
+| `max_length` | integer | `minimum: 0` | 최대 문자열 길이. 힌트이며 앱이 검사하지 않습니다. |
+| `format` | string | — | 명명된 형식 힌트, 예: `ipv4`, `sha256`, `iso8601`. 앱이 검사하지 않습니다. |
 
-### reference object
+### reference 객체 {#reference-object}
 
 `type = "reference"`일 때 필수. `additionalProperties: false`.
 
-| Field | Type | Meaning |
+| 필드 | 유형 | 의미 |
 |-------|------|---------|
 | `target` | string | 참조된 노드 유형의 정규화된 `category.name`, 또는 모든 유형에 대한 `*`. |
 
-## Annotated example: Infrastructure Type Pack
+## 주석이 달린 예시: Infrastructure Type Pack {#annotated-example-infrastructure-type-pack}
 
-최상위 블록, 두 개의 노드 유형(`ip`, `enum`, `string`, `integer`, `reference` 속성 유형과 `validator` 변형 포함)을 보여주는 간결하고 완전히 유효한 `vineyard:typepack`입니다. 주석은 설명용이며 — JSON에서는 허용되지 않습니다.
+최상위 블록, 두 개의 노드 유형(`ip`, `enum`, `string`, `integer` 속성 유형과 `validator` 변형 포함)을 보여주는 간결하고 완전히 유효한 `vineyard:typepack`입니다. 주석은 설명용이며 — JSON에서는 허용되지 않습니다.
 
 ```jsonc
 {
@@ -169,7 +169,7 @@
         "country_code": {
           "type": "string",
           "optional": true,
-          "validator": { "regex": "^[A-Z]{2}$" }       // 완전히 일치해야 함
+          "validator": { "regex": "^[A-Z]{2}$" }       // 앵커가 있어 값 전체가 일치해야 함
         }
       }
     },
@@ -193,20 +193,23 @@
 }
 ```
 
-!!! example "More patterns in the real pack"
-    출시된 Infrastructure 팩은 `category`가 한 팩 안에서 일치할 필요가 없다는 점(`infrastructure.*`와 `web.*` 유형을 모두 정의함)과 `hash`/`date`/`datetime`/`text` 유형 (`whois_record` 및 `certificate` 내)도 보여줍니다. [Type Packs guide](../guide/typepacks.md)를 참조하세요.
+!!! example "실제 팩의 더 많은 패턴"
+    출시된 Infrastructure 팩은 `category`가 한 팩 안에서 일치할 필요가 없다는 점(`infrastructure.*`와 `web.*` 유형을 모두 정의함)과 `hash`/`date`/`datetime`/`text` 유형 (`whois_record` 및 `certificate` 내)도 보여줍니다. [Type Pack 사용하기](../guide/typepacks.md)를 참조하세요.
 
-## Validation notes
+## 검증 참고 사항 {#validation-notes}
 
 - 모든 최상위, 엔티티, 속성 및 중첩 블록은 `additionalProperties: false`를 설정합니다 — 알 수 없는 키는 검증에 실패합니다.
 - `label_property`는 `properties`에 존재하고 **비선택적**인 키를 지정해야 합니다.
 - `enum`은 `type = "enum"`일 때 정확히 필수입니다. `reference`는 `type = "reference"`일 때 정확히 필수입니다.
-- 팩을 등록하는 레지스트리 항목은 팩을 불변 커밋 SHA로 고정합니다. registry CI는 태그와 브랜치를 거부합니다 ([registry schema](registry-schema.md) 참조).
+- 위의 두 규칙은 작성 규칙입니다. 스키마는 이를 설명(description)으로만 적고 있으므로 스키마 검증기로도 강제되지 않으며, 다른 무엇도 강제하지 않습니다.
+- 레지스트리 CI가 Type Pack 문서에서 검사하는 것은 다음뿐입니다: `identifier`, `content_type`, `version`이 항목과 일치할 것, `type_count`와 (항목에 있다면) `icon`이 문서와 일치할 것, 모든 `identity_properties` 키가 `array`, `object`, `json`이 아닌 실제 속성을 가리킬 것, 그리고 다른 게시된 Type Pack이 같은 `category.name`을 정의하지 않을 것([레지스트리에 배포하기](../develop/publishing.md#what-ci-enforces) 참조).
+- 앱은 노드를 쓸 때 선언된 속성으로 노드 데이터를 검사합니다. [앱이 노드 데이터에서 검사하는 것](../develop/typepacks.md#what-the-app-checks-on-node-data)을 참조하세요.
+- 팩을 등록하는 레지스트리 항목은 팩을 불변 커밋 SHA로 고정합니다. registry CI는 태그와 브랜치를 거부합니다 ([레지스트리 엔트리 스키마](registry-schema.md) 참조).
 
-## Next / See also
+## 다음 / 참고 {#next-see-also}
 
-- [Developing Type Packs](../develop/typepacks.md) — 작성 가이드 및 라이프사이클
-- [Plugin schema reference](plugin-schema.md) — 형제 `vineyard:plugin` 메타 스키마
-- [Registry schema reference](registry-schema.md) — 팩이 목록화되는 방식
-- [Scopes reference](scopes.md) — plugin이 요청하는 기능 문자열
-- [Type Packs guide](../guide/typepacks.md) — 사용 중인 Type Packs
+- [Type Pack](../develop/typepacks.md) — 작성 가이드 및 라이프사이클
+- [플러그인 매니페스트 스키마](plugin-schema.md) — 형제 `vineyard:plugin` 메타 스키마
+- [레지스트리 엔트리 스키마](registry-schema.md) — 팩이 목록화되는 방식
+- [스코프 레퍼런스](scopes.md) — plugin이 요청하는 기능 문자열
+- [Type Pack 사용하기](../guide/typepacks.md) — 사용 중인 Type Pack

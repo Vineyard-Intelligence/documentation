@@ -1,5 +1,4 @@
 ---
-title: VINEYARD Documentation
 hide:
   - navigation
   - toc
@@ -54,8 +53,8 @@ Field-by-field schemas for pack manifests and registry entries, plus the scopes 
 
 - :material-graph-outline: **[The canvas](guide/canvas.md)** — lay out entities and
   relationships, group and filter what you are looking at.
-- :material-puzzle: **[Packs](guide/installing.md)** — the three kinds, what each one can
-  reach, and how installing works.
+- :material-puzzle: **[Packs](guide/installing.md)** — browse the three kinds, check what each
+  one can reach, and install them.
 - :material-play-circle: **[Runs and tasks](guide/tasks.md)** — what a plugin run is, what it
   costs you, and what it leaves behind.
 - :material-robot: **[Skill Packs and the agent](guide/skillpacks.md)** — playbooks the agent

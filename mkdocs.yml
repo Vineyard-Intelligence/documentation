@@ -125,21 +125,22 @@ plugins:
             Marketplace: 마켓플레이스
             "User Guide": 사용자 가이드
             "Getting started": 시작하기
-            "Browse & install": 둘러보기 & 설치
+            "Signed in or local": 로그인 모드와 로컬 모드
+            "Browse & install": 둘러보기 및 설치
             "Running plugins": 플러그인 실행
             "Working with Type Packs": Type Pack 사용하기
             "The canvas": 캔버스
-            "Tasks & runs": 태스크 & 실행
+            "Tasks & runs": 작업 및 실행
             "Working with Skill Packs": Skill Pack 사용하기
             "Developer Guide": 개발자 가이드
-            "Architecture & principles": 아키텍처 & 원칙
-            "Quickstart — your first plugin": 퀵스타트 - 첫 플러그인
+            "Architecture & principles": 아키텍처 및 원칙
+            "Quickstart — your first plugin": "퀵스타트: 첫 플러그인"
             "Plugin manifest": 플러그인 매니페스트
             "Plugin Packs": 플러그인 팩
             "Type Packs": Type Pack
-            "SDK & host context": SDK & 호스트 컨텍스트
-            "Sandbox & security": 샌드박스 & 보안
-            "Task lifecycle": 태스크 생명주기
+            "SDK & host context": SDK 및 호스트 컨텍스트
+            "Sandbox & security": 샌드박스 및 보안
+            "Task lifecycle": 작업 생명주기
             Distribution: 배포
             "Skill Packs": Skill Pack
             "Publishing to the registry": 레지스트리에 배포하기
@@ -159,6 +160,7 @@ nav:
   - User Guide:
       - guide/index.md
       - Getting started: guide/getting-started.md
+      - Signed in or local: guide/modes.md
       - Browse & install: guide/installing.md
       - Running plugins: guide/running-plugins.md
       - Working with Type Packs: guide/typepacks.md

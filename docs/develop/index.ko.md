@@ -51,7 +51,7 @@ flowchart LR
 
 ## 사전 요구 사항
 
-- **Plugin Pack**은 JavaScript 또는 TypeScript, SDK(저장소에 복사해 두는 `sdk.ts` 파일 하나), 번들러
+- **Plugin Pack**은 JavaScript 또는 TypeScript, SDK(저장소에 복사해 두는 [`sdk.ts`](../assets/sdk/sdk.ts){ download="sdk.ts" } 파일 하나), 번들러
   (esbuild, Vite, Rollup 또는 유사)가 필요합니다. 플러그인은 매니페스트의
   `platforms.web.entry`에서 참조되는 단일 번들 모듈로 배포됩니다.
 - **Type Pack과 Skill Pack**은 일반 JSON입니다 — 도구 체인 없이 아무 편집기에서나
@@ -61,25 +61,26 @@ flowchart LR
   저장소에서 호스팅됩니다.
 
 !!! note "초기 범위는 브라우저 + 데스크톱"
-    **브라우저** 런타임(`platforms.web.runtime: "sandbox-js"`)과 **데스크톱** 앱
-    (`platforms.desktop.runtime: "sandbox-js"`) 모두 현재 배포되어 있습니다. `web-proxy`와
+    `sandbox-js` 런타임(`platforms.web.runtime: "sandbox-js"`)은 현재 **브라우저**와 **데스크톱**
+    앱 모두에서 배포되어 있으며, 둘 다 플러그인의 `platforms.web` 진입점을 실행합니다.
+    `platforms.desktop` 블록은 스키마에서 허용되지만 읽히지 않습니다. `web-proxy`와
     `native`/`subprocess` 런타임은 스키마에서 허용되지만 **아직 빌드되지 않았습니다**.
 
 ## 다음 단계
 
-- [Quickstart](quickstart.md) — 스캐폴딩, 번들링, 로컬에서 플러그인 테스트.
-- [Plugin manifest](plugin-manifest.md) — 실제 예제와 함께 모든 필드 설명.
-- [Plugin Packs](plugin-packs.md) — 하나의 번들, 여러 플러그인.
-- [SDK](sdk.md) — `definePlugin`, `HostContext`, 샌드박스.
-- [Type Packs](typepacks.md) — 엔티티 타입, 아이콘, 유효성 검사기.
-- [Skill Packs](skillpacks.md) — 문서 형식, 섹션, 스타터.
-- [Scopes](../reference/scopes.md) — 플러그인이 얻는 유일한 권한.
-- [Security](security.md) — 워커 샌드박스, 스테이징된 쓰기, 이그레스 허용목록, 시크릿.
-- [Publishing](publishing.md) — 모든 팩 유형에 대한 레지스트리 PR.
-- [Updates](updates.md) — 새 버전 배포.
+- [퀵스타트: 첫 플러그인](quickstart.md) — 스캐폴딩, 번들링, 로컬에서 플러그인 테스트.
+- [플러그인 매니페스트](plugin-manifest.md) — 실제 예제와 함께 모든 필드 설명.
+- [플러그인 팩](plugin-packs.md) — 하나의 번들, 여러 플러그인.
+- [SDK 및 호스트 컨텍스트](sdk.md) — `definePlugin`, `HostContext`, 샌드박스.
+- [Type Pack](typepacks.md) — 엔티티 타입, 아이콘, 유효성 검사기.
+- [Skill Pack](skillpacks.md) — 문서 형식, 섹션, 스타터.
+- [스코프 레퍼런스](../reference/scopes.md) — 플러그인이 얻는 유일한 권한.
+- [샌드박스 및 보안](security.md) — 워커 샌드박스, 스테이징된 쓰기, 이그레스 허용목록, 시크릿.
+- [레지스트리에 배포하기](publishing.md) — 모든 팩 유형에 대한 레지스트리 PR.
+- [업데이트](updates.md) — 새 버전 배포.
 
 ## 참고
 
-- [Architecture](architecture.md) — 클라이언트 측 실행, 레지스트리, 임시 작업이 어떻게
+- [아키텍처 및 원칙](architecture.md) — 클라이언트 측 실행, 레지스트리, 임시 작업이 어떻게
   함께 작동하는지.
-- [Home](../index.md) · [Marketplace](../marketplace.md)
+- [홈](../index.md) · [마켓플레이스](../marketplace.md)

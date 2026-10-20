@@ -42,9 +42,9 @@ Below the view controls, the toolbar repeats the **Edit** menu's selection actio
 | **Export graph (JSON)** | Downloads the current graph as a JSON file (see [Export graph](#export-graph-json)). |
 | **Import graph (JSON)…** | Opens a dialog to load an exported JSON file into the project. Every node is created fresh, so importing the same file twice adds every node again. |
 | **Activity log…** | Opens the project's activity log. |
-| **Add from Marketplace…** | Opens the [Marketplace](../marketplace.md) scoped to this project so you can add plugins and Type Packs. |
+| **Add from Marketplace…** | Opens the [Marketplace](../marketplace.md) scoped to this project so you can add plugins, Type Packs and Skill Packs. |
 
-If you opened the project only through its public link, **Activity log…** is disabled — it is for project members only — and **Project settings…** shows only the project link.
+If you opened the project only through its public link, **Activity log…** is disabled — it is for project members only — and **Project settings…** shows only the project link; if you are not signed in either, **Add from Marketplace…** is not shown. In local mode **Activity log…** is not shown.
 
 <figure class="vy-shot" markdown="span">
   ![Project settings, Access tab](../assets/guide/project-settings.webp){ width="800" loading=lazy }
@@ -66,7 +66,7 @@ If you opened the project only through its public link, **Activity log…** is d
 The three 1-hop actions add to the selection, so pressing one again walks one more hop; they are disabled until something is selected.
 
 !!! note "Adding a node"
-    New nodes are created from the **Types** panel — pick an active type there — not from this menu.
+    New nodes are created from the **Types** panel, not from this menu: click one of the types that the project's Type Packs provide.
 
 ### Run
 
@@ -74,13 +74,13 @@ The three 1-hop actions add to the selection, so pressing one again walks one mo
 | --- | --- |
 | **Ask the AI agent…** | Opens the AI agent panel on a new conversation (an open one is kept in **Tasks**). To return to an earlier conversation, click its row in **Tasks**. |
 | **Run plugins…** | Opens the run panel, scoped to the current selection if any nodes are selected. |
-| *(Skill packs)* | Every skill pack installed in the project is listed below a divider; picking one opens it for reading, it does not run anything (see [Skill Packs](skillpacks.md)). |
+| *(Skill packs)* | Below a divider, under a **Skill packs** label: the installed skill packs that can be used here (a pack is listed only when every plugin pack it requires is installed and can run in this app, so in the browser Account & identity pivoting is missing), then the project's own packs, where one whose plugins cannot run is dimmed and marked *needs plugins*. Picking a pack opens it for reading; it does not run anything (see [Skill Packs](skillpacks.md)). The group appears once there is a pack to list; the project owner always sees it, with **New skill pack** (unavailable once the project has 32 packs of its own) and **Import skill pack…** at the end (see [Your project's own skill packs](skillpacks.md#custom-skill-packs)). |
 
 ## Right-click menus
 
 - **Node** — Run plugins… (on this node), Duplicate, Connect to… (see [Drawing edges](#drawing-edges)), Disconnect all (deletes every edge touching the node), Delete.
 - **Edge** — Reverse direction, Delete.
-- **Selection** — right-click empty canvas with anything selected, or a node inside a multi-item selection; the header shows the count (*Selected: N nodes, M edges*). Run plugins… and Connect to… (when nodes are selected), Delete (N), Select all, Fit view.
+- **Selection** — right-click empty canvas with anything selected, or a node or edge inside a multi-item selection; the header shows the count (*Selected: N nodes, M edges*). Run plugins… and Connect to… (when nodes are selected), Delete (N), Select all, Fit view.
 - **Empty canvas** (nothing selected, headed *Nothing selected — whole project*) — Run plugins… on the whole project, Select all, Fit view.
 
 <figure class="vy-shot" markdown="span">
@@ -176,11 +176,11 @@ While the project is still loading (for example while it re-syncs after a reconn
 
 ## Add from Marketplace
 
-`Project ▸ Add from Marketplace…` opens the [Marketplace](../marketplace.md) scoped to the current project, where you can add plugins and Type Packs that are wired straight to it. See [Installing](installing.md) for the full flow.
+`Project ▸ Add from Marketplace…` opens the [Marketplace](../marketplace.md) scoped to the current project, where you can add plugins, Type Packs and Skill Packs that are wired straight to it. See [Browse & install](installing.md) for the full flow.
 
 ## Next / See also
 
 - [Running plugins](running-plugins.md) — execute plugins against nodes on the canvas.
-- [Type Packs](typepacks.md) — how node types, colors, and labels drive the legend.
+- [Working with Type Packs](typepacks.md) — how node types, colors, and labels drive the legend.
 - [Tasks](tasks.md) — track long-running plugin runs.
 - [Browse the Marketplace](../marketplace.md) — find packs to add.

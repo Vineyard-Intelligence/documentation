@@ -1,4 +1,4 @@
-# Plugin Packs
+# 플러그인 팩
 
 **Plugin Pack**은 여러 플러그인을 하나의 번들로 배포하는 방식으로 — 여러 `types`를 포함하는 Type Pack의 플러그인 측 유사체입니다.
 
@@ -14,7 +14,7 @@
 
 ## `definePluginPack`
 
-팩은 SDK(저장소에 포함해 두는 `sdk.ts` — [SDK](sdk.md) 참조)의 `definePluginPack`으로 선언됩니다. 팩 수준 필드는 *번들*을 설명하며, `plugins`의 각 항목은 자체 매니페스트와 `run`을 가진 완전한 플러그인 정의입니다.
+팩은 SDK(저장소에 복사해 두는 [`sdk.ts`](../assets/sdk/sdk.ts){ download="sdk.ts" } — [SDK 및 호스트 컨텍스트](sdk.md) 참조)의 `definePluginPack`으로 선언됩니다. 팩 수준 필드는 *번들*을 설명하며, `plugins`의 각 항목은 자체 매니페스트와 `run`을 가진 완전한 플러그인 정의입니다.
 
 ```ts
 import { definePlugin, definePluginPack } from "./sdk";
@@ -65,7 +65,7 @@ Marketplace 레지스트리는 **메타데이터 전용**(코드가 아닌 포�
 - `plugin_count` — 번들된 플러그인 수(Chaos 팩의 경우 6; 일반 단일 플러그인 항목의 경우 생략 또는 `1`). 마켓플레이스는 이를 사용해 카드에 레이블을 지정하고("6 plugins") 한 번 설치하면 모두 함께 추가됨을 알립니다.
 - `scopes_summary` — 포함된 플러그인 권한의 롤업(예: `graph_write: true`). 각 매니페스트를 가져오지 않고도 카드가 전체 팩의 기능을 요약할 수 있습니다.
 
-팩이 제공하는 플러그인은 `repo@ref/path`의 JSON 매니페스트에서 읽습니다(content_type `vineyard:pluginpack`이며 `identifier`, `name`, `version`, `description`, 번들을 가리키는 `platforms.web.entry`, 멤버 매니페스트의 `plugins` 배열을 가짐). 멤버가 실행될 때 클라이언트는 새 워커에서 번들을 가져와 기본 내보내기를 평탄화하고 식별자가 일치하는 멤버를 고릅니다 — 따라서 JSON의 모든 멤버는 같은 식별자로 번들 안에 있어야 합니다. 자체 `platforms.web.entry`가 없는 멤버는 팩의 것을 상속하며, 모듈을 가리키지 않는 `"inline"` entry는 레지스트리 CI가 거부합니다. 정확한 레지스트리 항목 형태 — `plugin_count`, `scopes_summary`, 간소화된 투영 — 는 [Publishing](publishing.md)에 문서화되어 있습니다.
+팩이 제공하는 플러그인은 `repo@ref/path`의 JSON 매니페스트에서 읽습니다(content_type `vineyard:pluginpack`이며 `identifier`, `name`, `version`, `description`, 번들을 가리키는 `platforms.web.entry`, 멤버 매니페스트의 `plugins` 배열을 가짐). 멤버가 실행될 때 클라이언트는 새 워커에서 번들을 가져와 기본 내보내기를 평탄화하고 식별자가 일치하는 멤버를 고릅니다 — 따라서 JSON의 모든 멤버는 같은 식별자로 번들 안에 있어야 합니다. 자체 `platforms.web.entry`가 없는 멤버는 팩의 것을 상속하며, 모듈을 가리키지 않는 `"inline"` entry는 레지스트리 CI가 거부합니다. 정확한 레지스트리 항목 형태 — `plugin_count`, `scopes_summary`, 간소화된 투영 — 는 [레지스트리에 배포하기](publishing.md)에 문서화되어 있습니다.
 
 ## 팩을 사용해야 하는 경우
 
@@ -73,8 +73,8 @@ Marketplace 레지스트리는 **메타데이터 전용**(코드가 아닌 포�
 
 ## 다음 / 참고
 
-- [Plugin manifest](plugin-manifest.md) — 각 팩 항목이 가지는 플러그인별 필드.
-- [Scopes reference](../reference/scopes.md) — 각 포함된 플러그인이 독립적으로 선언하는 권한.
-- [SDK](sdk.md) — `definePlugin`, `definePluginPack`, `run` 계약.
-- [Running plugins](../guide/running-plugins.md) — Chaos 팩 및 기타 최초 구현체.
-- [Registry schema](../reference/registry-schema.md) — `plugin_count`, `scopes_summary`, 간소화된 카탈로그 투영.
+- [플러그인 매니페스트](plugin-manifest.md) — 각 팩 항목이 가지는 플러그인별 필드.
+- [스코프 레퍼런스](../reference/scopes.md) — 각 포함된 플러그인이 독립적으로 선언하는 권한.
+- [SDK 및 호스트 컨텍스트](sdk.md) — `definePlugin`, `definePluginPack`, `run` 계약.
+- [플러그인 실행](../guide/running-plugins.md) — Chaos 팩 및 기타 최초 구현체.
+- [레지스트리 엔트리 스키마](../reference/registry-schema.md) — `plugin_count`, `scopes_summary`, 간소화된 카탈로그 투영.

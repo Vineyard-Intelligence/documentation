@@ -2,9 +2,10 @@
 
 The plugin SDK is the small author-facing TypeScript surface you build a plugin
 against. It gives you two define helpers, the typed `HostContext` (`ctx`) your `run` function
-receives, and an in-process mock for unit tests. The SDK is a single TypeScript file, `sdk.ts`
-(the in-app runtime copy, vendored e.g. as `src/sdk.ts` in the `pluginpack-otx`
-repo). Copy it into your repo and import from `./sdk`.
+receives, and an in-process mock for unit tests. The SDK is a single TypeScript file,
+[`sdk.ts`](../assets/sdk/sdk.ts), which matches the app as of this release. Copy it into your repo
+and import from `./sdk`. Copies vendored in published pack repos can be older and lack newer
+fields such as `SafeRequestInit.timeoutMs`.
 
 ## The two define helpers
 
@@ -48,7 +49,9 @@ human-readable summary surfaced in the [task UI](../guide/tasks.md).
 
 `ctx` is a Comlink proxy to the host. The worker that runs your code has no DOM and no network
 of its own — only the members its scopes granted. Your graph writes are staged: they are applied
-only after the analyst reviews and approves the change set. Network requests are checked by the
+only after the analyst reviews and approves the change set, except for a run the AI agent launched
+under **Apply automatically** (see the [security model](security.md#graph-writes-are-staged-not-applied)).
+Network requests are checked by the
 host against the endpoints your manifest declared. See the [security model](security.md).
 
 !!! warning "A member is absent unless its scope was granted"
@@ -76,7 +79,8 @@ These members exist on every run, regardless of scopes.
     awaits, or register `ctx.onCancel(...)`: after Stop the host waits 3 seconds for `run` to
     return, then terminates the worker. Whatever the run staged before stopping is kept for
     review. Independently, every run has a wall-clock budget (`lifecycle.timeout_ms`, default
-    10 minutes, max 60) after which the worker is terminated and the run fails.
+    10 minutes, max 60) after which the worker is terminated and the run fails. A run that fails,
+    for this or any other reason, discards what it had staged; only Stop keeps partial results.
 
 ### Progress, status, and logging
 
@@ -130,11 +134,14 @@ the 1-hop neighborhood (used by **Black Hole**). `updateNode` and `createEdge` t
 delta/draft and stage it for review rather than returning the resulting record, so both
 resolve `void` — re-read via `get`/`list` if you need the applied state. `updateNode` merges:
 values you pass replace those fields and every other field is kept, including on a node your run
-just created. Empty strings and `null` are ignored, so it cannot clear a field. `createNode`
+just created. Empty strings and `null` are ignored, so it cannot clear a field. It throws on an
+id that is not in the project. `createNode`
 de-duplicates by identity — the canonical type plus that type's `identity_properties` (else its label property, else `value`): if
 a live node (or one this run already created) has the same identity, it is reused and your
 fields are merged in, and that node is returned. It throws if `type` is not defined by an
-installed [Type Pack](typepacks.md) or the data fails the type's property checks.
+installed [Type Pack](typepacks.md). Both `createNode` and `updateNode` throw when the data fails
+the type's property checks; see
+[What the app checks on node data](typepacks.md#what-the-app-checks-on-node-data).
 `EdgeDraft.from`/`to` are node ids — live ids or the ids `createNode` returned. `label` is free
 text describing the relationship; edges have no type.
 
@@ -144,6 +151,12 @@ text describing the relationship; edges have no type.
 `corroborated_by` are host-owned and rejected. There is one edge per ordered node pair, so
 `createEdge` on a pair that is already linked proposes a relabel of that edge instead of adding
 one.
+
+Edges read back through `edges` and `neighbors` carry only `id`, `from_node_id`, `to_node_id` and
+`label`. Their `data` is not returned, although the `GraphEdge` type declares it, so a plugin cannot
+read back the `data` it wrote, nor an edge's `confidence` or `label_source`.
+
+<div id="net-network"></div>
 
 #### `net` (network scope)
 
@@ -159,6 +172,18 @@ The six reference plugins use **no** network.
 ctx.net?.fetch?(input: string, init?: SafeRequestInit): Promise<SafeResponse>
 ```
 
+Each request has a deadline covering the whole response, body included: 60 s by default. Set
+`init.timeoutMs` to change it (at least 1 s, at most 10 minutes); `0`, a negative number or a value
+that is not a number gives the 60 s default. A request that misses it rejects with an `Error` named
+`TimeoutError`, whose message names only the method and origin, e.g.
+`GET https://api.example.com did not answer within 60s`; an `AbortError` means the run was
+stopped. The run's wall-clock budget still applies on top.
+
+The host remembers which origins did not answer in time, so a plugin that catches `TimeoutError`
+can still return normally and the gap is reported for it. If the run succeeds without staging
+anything, its notification turns yellow and ends `(no answer from <origins>)`; for a run the AI
+agent launched, the agent is told which hosts did not answer, whatever the outcome.
+
 There is no built-in retry/backoff helper — handle HTTP `429`/`Retry-After` yourself and
 report the pause with `ctx.progress?.set?.({ message: "waiting for rate limit…" })` while you wait.
 
@@ -171,9 +196,12 @@ in advance: no cookies, no `Origin`, redirects are not followed (the caller sees
 status), and private/loopback hosts are refused. Only the default
 ports (80/443) and methods GET/HEAD/POST are allowed; `cookie`, `authorization`, `host` and
 forwarding headers are dropped; unless you set `User-Agent`, a desktop-browser one is sent.
-`maxBytes` defaults to 512 KiB (max 2 MiB). `timeoutMs` bounds the whole request: 8 s by default,
-at least 1 s and at most 20 s. The shell runs at most 48 probes at once. A refused or failed probe
-resolves with `status: 0` and `error` set rather than throwing.
+`maxBytes` defaults to 512 KiB (max 2 MiB). `timeoutMs` bounds the connection and response: 8 s by
+default, at least 1 s and at most 20 s. The shell runs at most 48 probes at once, and the clock
+starts only once a probe has a slot and its host name has been checked (DNS has its own 3 s
+deadline, tried twice), so a probe can take longer than `timeoutMs`. Up to 2048 probes wait for a
+slot; past that a probe resolves at once with `error: "too many queued probes"`. A refused or
+failed probe resolves with `status: 0` and `error` set rather than throwing.
 
 Two options change what comes back:
 
@@ -199,6 +227,15 @@ attaches the analyst's credential; an `Authorization` header you pass cannot ove
 ctx.service?(name: string, path: string, init?: SafeRequestInit): Promise<SafeResponse>
 ```
 
+`init.timeoutMs` and the request deadline work as for `net.fetch`.
+
+`path` is resolved against the service's root: a leading slash is dropped, so `"/8.8.8.8"` and
+`"8.8.8.8"` reach the same place. A path that would leave the root, through a `..` that climbs out
+or an absolute URL, throws `service path '<path>' escapes the '<name>' service root`. Because a
+service request always carries the analyst's credential, it never follows a redirect: a 3xx answer
+rejects with an `Error` whose message starts with `redirect not followed`. A `401` means the
+analyst's Vineyard session has ended, not that the service is broken.
+
 #### `config` (`scopes.config`)
 
 Present iff `scopes.config` is declared **and** the analyst has set at least one of its keys. Read-only, declared values only.
@@ -210,8 +247,10 @@ ctx.config?: Readonly<Record<string, string | number | boolean>>
 !!! warning "Secrets reach only the plugin that declared them"
     `secret: true` only changes how the value is entered (a masked field) — the value is still
     handed to the plugin that declared it, as `ctx.config.<key>`; only keys your own manifest
-    declares ever reach you. Values are kept per signed-in account — in the OS keychain on
-    desktop, for the tab session in the browser. See
+    declares ever reach you. Members of one pack that declare the same key and call the same
+    network origins share one value, so the analyst enters it once. Values are kept per signed-in
+    account — in the OS keychain on desktop (for that session only on a desktop that cannot
+    encrypt them), in that tab only in the browser. See
     [secrets handling](security.md#secret-handling).
 
 !!! note "There is no `publish` scope"
@@ -233,6 +272,8 @@ change set the analyst reviews.
 For a full worked example (Korean Roulette) and a `createMockContext` unit test, see
 [quickstart](quickstart.md).
 
+<div id="createmockcontext"></div>
+
 ## Testing with `createMockContext`
 
 `createMockContext` lets you unit-test `run(ctx)` with no app, no GitHub, and no server. It
@@ -242,6 +283,30 @@ production also requires `node:read`/`edge:read`); `net.fetch`/`net.probe` exist
 `netHandler`/`probeHandler`; `config` is whatever you pass (default `{}`). `updateEdge` and
 identity de-dup are not mocked. The returned context carries a `mock` record you can assert
 against.
+
+The mock differs from the app in ways a passing test can hide:
+
+- Writes land in the mock's graph at once, so `get`, `list`, `edges` and `neighbors` see what the
+  run created or changed and stop seeing what it deleted. In the app these reads come from the
+  live graph, where staged changes do not show until they are applied; only `get` also finds a
+  node the run created.
+- `list({ type })` ignores `type` and returns every node.
+- `edges` and `neighbors` return the edges you passed in, `data` included; the app returns no edge
+  `data`.
+- `ctx.signal` is `undefined` unless you pass `signal`, so code that reads `ctx.signal.aborted`
+  needs one in tests; `onCancel` handlers are never called.
+- `ctx.config` is `{}` when you pass no `config`; in the app it is absent until the analyst sets one
+  of the declared keys.
+- There is no `ctx.service`. `net.fetch` hands every request to your `netHandler`, with no check
+  against your declared endpoints and methods, no deadline and no redirect rule.
+- `createNode` does not check the type against installed Type Packs, nor the data against the
+  type's property checks.
+- `updateNode` writes `""` and `null` over a field; the app ignores them.
+- `createEdge` stores no `data` on the edge (the draft you passed, `data` included, is recorded in
+  `mock.createdEdges`), does not refuse the host-owned `data` keys, and always adds a new edge
+  instead of relabelling an already-linked pair.
+- `updateNode`, `deleteNode`, `deleteEdge` and the bulk deletes do not refuse unknown ids.
+- `run.platform` is always `"web"`.
 
 `MockContextOptions` accepts `nodes`, `edges`, `params`, `config`, `selection`, `grantedScopes`,
 `projectId`, `pluginId`, `signal`, `netHandler`, and `probeHandler`. The `ctx.mock` record

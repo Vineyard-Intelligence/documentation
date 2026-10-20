@@ -1,13 +1,13 @@
 # Type Pack schema
 
-Exhaustive field reference for `typepack.schema.json` — the meta-schema that every `vineyard:typepack` document is validated against. A Type Pack declares the **node entity types** that extend the graph's vocabulary. For a conceptual walkthrough and authoring guidance, see [Developing Type Packs](../develop/typepacks.md).
+Exhaustive field reference for `typepack.schema.json` — the authoring contract for a `vineyard:typepack` document. Neither registry CI nor the app validates a document against it; run it in your own CI, as the reference pack repos do. A Type Pack declares the **node entity types** that extend the graph's vocabulary. For a conceptual walkthrough and authoring guidance, see [Developing Type Packs](../develop/typepacks.md).
 
 !!! info "Canonical schema"
     `$id`: `https://vineyard.run/schemas/typepack.json` · JSON Schema draft 2020-12. The document is the source of truth; this page enumerates it field-by-field.
 
 ## Top-level object
 
-The root is an object with `additionalProperties: false` — unknown keys are rejected.
+The root is an object with `additionalProperties: false` — unknown keys fail schema validation.
 
 **Required:** `identifier`, `name`, `content_type`, `version`, `types`.
 
@@ -58,7 +58,7 @@ Each item in `types` defines one **node** entity type (`#/$defs/entityType`, `ad
 | `icon` | string | no | polymorphic (see below) | Node icon. When absent, the node renders with `color` only. |
 | `color` | string | no | pattern `^#[0-9a-fA-F]{6}$` | Node color `#rrggbb`. When absent, a stable color is derived from `category.name`. |
 | `properties` | object | yes | `minProperties: 1`; keys are identifierSegment; values are [property](#property-object) | property key → property schema. Must be non-empty. |
-| `identity_properties` | array&lt;string&gt; | no | `minItems: 1`, `uniqueItems`; each item MUST name a key in `properties` | Keys that together identify one entity, for de-duplication. Defaults to `[label_property]`. E.g. a `user_account` is shown as its username but identified by `(username, platform)`. |
+| `identity_properties` | array&lt;string&gt; | no | `minItems: 1`, `uniqueItems`; each item MUST name a key in `properties` | Keys that together identify one entity, for de-duplication. Defaults to `[label_property]`. E.g. `identity.account` has `username` as its `label_property` but is identified by `(username, platform)`. |
 | `label_template` | string | no | referenced keys MUST exist in `properties` | Display label built from several properties, e.g. `"{username} · {platform}"`. Falls back to `label_property` when any referenced field is empty, so a partially-filled node never shows a dangling separator. Display only — de-duplication uses `identity_properties`. |
 
 The fully qualified type reference is `category.name` (e.g. `infrastructure.ip_address`). That qualified form is what `Node.type` stores and what `reference` targets point at.
@@ -74,9 +74,9 @@ The schema for each value in a `properties` map (`#/$defs/property`, `additional
 |-------|------|-----|-----------------------|---------|
 | `type` | string (enum) | yes | see [type enum](#property-type-enum) | Logical property type. |
 | `description` | string | no | — | Human description of the property. |
-| `optional` | boolean | no | `default: false` | `false` (default) ⇒ required key in `Node.data`. |
+| `optional` | boolean | no | `default: false` | `false` ⇒ required key in `Node.data`. Write it on every property: creating a node refuses a missing key only when the property says `"optional": false` explicitly. With `optional` left out, the Properties panel marks the property required (`*`), but a create without it is accepted. |
 | `case_insensitive` | boolean | no | `default: false` | Fold case when this property is part of the de-duplication identity; display and storage keep what was written. Right for handles, domains, hostnames, emails and hex digests; wrong for Base58/EIP-55 crypto addresses, URL paths and case-sensitive file paths. A missing flag produces a visible, mergeable duplicate, while a wrong one silently merges two entities. |
-| `default` | any | no | type must match `type` | Default applied when the key is absent. |
+| `default` | any | no | should match `type` (not checked) | Accepted but not applied: nothing in the app fills an absent key from it. |
 | `validator` | object | no | see [validator](#validator-object) | Structured validation rules. |
 | `enum` | array | conditional | `minItems: 1`; items `string`\|`number`\|`boolean` | **Required when `type = "enum"`.** |
 | `reference` | object | conditional | see [reference](#reference-object) | **Required when `type = "reference"`.** |
@@ -114,12 +114,12 @@ The schema for each value in a `properties` map (`#/$defs/property`, `additional
 
 | Field | Type | Constraints | Meaning |
 |-------|------|-------------|---------|
-| `regex` | string | — | ECMAScript regex the string form must **fully** match. |
+| `regex` | string | — | ECMAScript regex tested against a string value as written, with no implicit anchoring: write `^…$` to require a full match. Skipped for values over 4,096 characters, for a pattern that does not compile, and for a pattern with a backtracking-prone shape. |
 | `min` | number | — | Minimum numeric value. |
 | `max` | number | — | Maximum numeric value. |
-| `min_length` | integer | `minimum: 0` | Minimum string length. |
-| `max_length` | integer | `minimum: 0` | Maximum string length. |
-| `format` | string | — | Named format hint, e.g. `ipv4`, `sha256`, `iso8601`. |
+| `min_length` | integer | `minimum: 0` | Minimum string length. A hint; the app does not check it. |
+| `max_length` | integer | `minimum: 0` | Maximum string length. A hint; the app does not check it. |
+| `format` | string | — | Named format hint, e.g. `ipv4`, `sha256`, `iso8601`. The app does not check it. |
 
 ### reference object
 
@@ -131,7 +131,7 @@ Required when `type = "reference"`. `additionalProperties: false`.
 
 ## Annotated example: Infrastructure Type Pack
 
-A trimmed, fully valid `vineyard:typepack` showing the top-level block, two node types (covering `ip`, `enum`, `string`, `integer`, `reference` property types plus `validator` variants). Comments are annotations only — JSON does not permit them.
+A trimmed, fully valid `vineyard:typepack` showing the top-level block, two node types (covering `ip`, `enum`, `string` and `integer` property types plus `validator` variants). Comments are annotations only — JSON does not permit them.
 
 ```jsonc
 {
@@ -169,7 +169,7 @@ A trimmed, fully valid `vineyard:typepack` showing the top-level block, two node
         "country_code": {
           "type": "string",
           "optional": true,
-          "validator": { "regex": "^[A-Z]{2}$" }       // must fully match
+          "validator": { "regex": "^[A-Z]{2}$" }       // anchored: the whole value must match
         }
       }
     },
@@ -201,6 +201,9 @@ A trimmed, fully valid `vineyard:typepack` showing the top-level block, two node
 - Every top-level, entity, property, and nested block sets `additionalProperties: false` — unknown keys fail validation.
 - `label_property` must name a key that exists in `properties` **and** is non-optional.
 - `enum` is required precisely when `type = "enum"`; `reference` is required precisely when `type = "reference"`.
+- The last two are authoring rules. The schema states them only in descriptions, so even a schema validator does not enforce them, and nothing else does.
+- Registry CI checks a Type Pack document only for this: its `identifier`, `content_type` and `version` match the entry; `type_count`, and `icon` when the entry carries one, match the document; every `identity_properties` key names an existing property that is not `array`, `object` or `json`; and no other published Type Pack defines the same `category.name` (see [Publishing](../develop/publishing.md#what-ci-enforces)).
+- The app checks node data against the declared properties when a node is written; see [What the app checks on node data](../develop/typepacks.md#what-the-app-checks-on-node-data).
 - The registry entry that lists a pack pins it to an immutable commit SHA; registry CI rejects tags and branches (see [registry schema](registry-schema.md)).
 
 ## Next / See also
