@@ -4,7 +4,7 @@ Publishing a Plugin Pack, Type Pack, or Skill Pack to the public Vineyard market
 
 ## The registry repo holds metadata only
 
-Submissions go to **`Vineyard-Intelligence/registry`**. The repo carries *pointers and derived facets*, never code and never copies of your manifest or bundle. Your full manifest/Type Pack JSON, README, screenshots, and bundle all stay in **your** author repo at the pinned `ref`; the marketplace detail page hydrates from there lazily. Plugin Pack code is the exception: the app only runs pack code served from `https://cdn.jsdelivr.net/gh/Vineyard-Intelligence/`. A Plugin Pack hosted in another GitHub owner's repo can pass CI and install, but its `platforms.web.entry` module is refused when a plugin runs. Type Packs and Skill Packs are data and load from any repo.
+Submissions go to **`Vineyard-Intelligence/registry`**. The repo carries *pointers and derived facets*, never code and never copies of your manifest or bundle. Your full manifest/Type Pack JSON, README, screenshots, and bundle all stay in **your** author repo at the pinned `ref`; the marketplace detail page hydrates from there lazily. The app and the marketplace fetch that pinned content through `https://cdn.jsdelivr.net/gh/{repo}@{ref}/{path}`, and any GitHub owner is served: the CSP admits the CDN's `/gh/` path, not one organization, so a Plugin Pack in your own repo runs like any other. What decides whether a pack is loaded is the registry's approved-ref list — the app loads only a `repo@ref/path` on it, and checks the fetched document against the SHA-256 recorded there. The reviewed, immutable commit is the unit of trust.
 
 | Path | Role |
 |---|---|

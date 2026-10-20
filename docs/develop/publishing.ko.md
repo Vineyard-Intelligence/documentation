@@ -4,7 +4,7 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 
 ## 레지스트리 저장소는 메타데이터만 보유합니다
 
-제출은 **`Vineyard-Intelligence/registry`**로 이루어집니다. 저장소는 *포인터와 파생 측면*을 보유하며, 코드나 매니페스트 또는 번들의 복사본을 절대 보유하지 않습니다. 전체 매니페스트/Type Pack JSON, README, 스크린샷, 번들은 모두 **귀하의** 작성자 저장소에 고정된 `ref`에 남아 있습니다. 마켓플레이스 상세 페이지는 거기서 지연 하이드레이션됩니다. Plugin Pack의 코드는 예외입니다: 앱은 `https://cdn.jsdelivr.net/gh/Vineyard-Intelligence/`에서 서빙되는 팩 코드만 실행합니다. 다른 GitHub 소유자의 저장소에 호스팅된 Plugin Pack은 CI를 통과하고 설치될 수는 있지만, 플러그인을 실행할 때 그 `platforms.web.entry` 모듈이 거부됩니다. Type Pack과 Skill Pack은 데이터이므로 어느 저장소에서든 로드됩니다.
+제출은 **`Vineyard-Intelligence/registry`**로 이루어집니다. 저장소는 *포인터와 파생 측면*을 보유하며, 코드나 매니페스트 또는 번들의 복사본을 절대 보유하지 않습니다. 전체 매니페스트/Type Pack JSON, README, 스크린샷, 번들은 모두 **귀하의** 작성자 저장소에 고정된 `ref`에 남아 있습니다. 마켓플레이스 상세 페이지는 거기서 지연 하이드레이션됩니다. 앱과 마켓플레이스는 그 고정된 콘텐츠를 `https://cdn.jsdelivr.net/gh/{repo}@{ref}/{path}`로 가져오며, GitHub 소유자를 가리지 않습니다: CSP가 허용하는 것은 CDN의 `/gh/` 경로이지 특정 조직이 아니므로, 여러분의 저장소에 있는 Plugin Pack도 다른 팩과 똑같이 실행됩니다. 팩의 로드 여부를 결정하는 것은 레지스트리의 승인 ref 목록입니다 — 앱은 그 목록에 있는 `repo@ref/path`만 로드하고, 가져온 문서를 거기 기록된 SHA-256과 대조합니다. 검토된 불변 커밋이 신뢰의 단위입니다.
 
 | 경로 | 역할 |
 |---|---|
