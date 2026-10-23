@@ -151,6 +151,37 @@
   };
   function kindIcon(e) { return icon(e.icon, KIND[e.type].icon); }
 
+  // --- Pinned card thumbnails -------------------------------------------------
+  // The catalog's thumbnail_url is a REPO-RELATIVE path, not a URL. Resolve it only against the
+  // entry's own pinned repo/ref, and only to the two hosts the registry permits — the same rule
+  // the desktop app applies. A card must never be able to point the browser at a third-party
+  // server for tracking or a swapped image.
+  var THUMB_PATH = /^(?!\/)(?!.*(?:^|\/)\.\.?(?:\/|$))[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*$/;
+
+  function thumbUrls(e) {
+    var path = typeof e.thumbnail_url === "string" ? e.thumbnail_url.trim() : "";
+    if (!path || path.length > 512 || !THUMB_PATH.test(path)) return [];
+    var repo = typeof e.repo === "string" ? e.repo.trim() : "";
+    var ref = typeof e.ref === "string" ? e.ref.trim() : "";
+    if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repo) || !/^[0-9a-f]{40,64}$/.test(ref)) return [];
+    return [
+      "https://cdn.jsdelivr.net/gh/" + repo + "@" + ref + "/" + path,
+      "https://raw.githubusercontent.com/" + repo + "/" + ref + "/" + path
+    ];
+  }
+
+  // The kind's lucide icon is the base layer; a thumbnail, when present, covers it. If jsDelivr
+  // fails the error listener below swaps to raw.githubusercontent; if that fails too, the image
+  // hides and the icon is what remains.
+  function tile(e, cls) {
+    var urls = thumbUrls(e);
+    var kind = " vy-tile--" + e.type;
+    if (!urls.length) return '<div class="' + cls + kind + '">' + kindIcon(e) + "</div>";
+    return '<div class="' + cls + kind + ' vy-thumb">' + kindIcon(e) +
+      '<img class="vy-thumb__img" src="' + escapeAttr(urls[0]) + '" data-fallback="' + escapeAttr(urls[1]) +
+      '" alt="" loading="lazy" decoding="async"></div>';
+  }
+
   // GitHub source at the pinned commit — only for an owner/name repo and a non-empty ref.
   function sourceUrl(e) {
     return /^[A-Za-z0-9-]+\/[A-Za-z0-9._-]+$/.test(e.repo || "") && e.ref
@@ -360,7 +391,7 @@
     return (
       '<div class="vy-pcard">' +
         '<div class="vy-pcard__head">' +
-          '<div class="vy-pcard__icon vy-tile--' + e.type + '">' + kindIcon(e) + "</div>" +
+          tile(e, "vy-pcard__icon") +
           '<div class="vy-pcard__title">' +
             '<button class="vy-pcard__name" data-idx="' + i + '" type="button">' + escapeHtml(e.name) + "</button>" +
             (isDeprecated(e)
@@ -555,7 +586,7 @@
     return (
       '<button class="vy-drawer__close" aria-label="Close">' + ICON.x + "</button>" +
       '<div class="vy-drawer__head">' +
-        '<div class="vy-drawer__icon vy-tile--' + e.type + '">' + kindIcon(e) + "</div>" +
+        tile(e, "vy-drawer__icon") +
         "<div>" +
           "<h2>" + escapeHtml(e.name) + "</h2>" +
           '<div class="vy-drawer__author">' + author(e) +
@@ -663,6 +694,20 @@
     for (var i = 0; i < 6; i++) cards += '<div class="vy-skel"></div>';
     mount.innerHTML = '<div class="vy-grid" style="margin-top:3.5rem">' + cards + "</div>";
   }
+
+  // Error events do not bubble; capture them at the document. A failed pinned thumbnail gets one
+  // retry on the other allowed host, then falls back to the icon underneath.
+  document.addEventListener("error", function (ev) {
+    var img = ev.target;
+    if (!img || !img.classList || !img.classList.contains("vy-thumb__img")) return;
+    var fallback = img.getAttribute("data-fallback");
+    if (fallback) {
+      img.removeAttribute("data-fallback");
+      img.src = fallback;
+    } else {
+      img.hidden = true;
+    }
+  }, true);
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
