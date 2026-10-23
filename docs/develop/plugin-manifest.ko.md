@@ -8,7 +8,7 @@
 
 ## 식별 정보
 
-식별 정보 블록은 플러그인의 이름을 지정하고 속성을 부여합니다: `identifier`(마켓플레이스와 업데이트 확인이 키로 사용하는 reverse-DNS `<본인-네임스페이스>.plugins.<slug>` 문자열), 상수 `content_type`인 `vineyard:plugin`, 표시 `name`, **SemVer** `version`, 한두 문장의 `description`, 그리고 선택적 `author`, `license`, `icon`. `icon`은 케밥 케이스의 **lucide** 아이콘 이름(예: `network`)이며, 그 외의 값은 기본 퍼즐 아이콘으로 렌더링됩니다. 선택적 프레젠테이션 포인터 `thumbnail_url`, `marketing_url`, `latest_url`은 [플러그인 매니페스트 스키마](../reference/plugin-schema.md)에 있습니다(업데이트 확인은 `latest_url`을 사용하지 않습니다: 카탈로그의 `version`이 설치된 버전보다 SemVer로 더 새로우면 업데이트가 제공됩니다 — [업데이트](updates.md) 참조).
+식별 정보 블록은 플러그인의 이름을 지정하고 속성을 부여합니다: `identifier`(마켓플레이스와 업데이트 확인이 키로 사용하는 reverse-DNS `<본인-네임스페이스>.plugins.<slug>` 문자열), 상수 `content_type`인 `vineyard:plugin`, 표시 `name`, **SemVer** `version`, 한두 문장의 `description`, 그리고 선택적 `author`, `license`, `icon`. `icon`은 케밥 케이스의 **lucide** 아이콘 이름(예: `network`)이며, 그 외의 값은 기본 퍼즐 아이콘으로 렌더링됩니다. 선택적 `thumbnail_url`은 카드 이미지의 저장소 상대 경로이며 URL이 아닙니다. 앱은 핀된 커밋에서만 `cdn.jsdelivr.net/gh/{repo}@{ref}/{path}`로 해석하고, 실패 시 `raw.githubusercontent.com/{repo}/{ref}/{path}`를 사용합니다. `marketing_url`과 `latest_url`은 [플러그인 매니페스트 스키마](../reference/plugin-schema.md)에 있습니다(업데이트 확인은 `latest_url`을 사용하지 않습니다: 카탈로그의 `version`이 설치된 버전보다 SemVer로 더 새로우면 업데이트가 제공됩니다 — [업데이트](updates.md) 참조).
 
 AI 에이전트는 `description`을 보고 플러그인을 고르므로, 플러그인이 무엇을 받아 무엇을 추가하는지 적으세요. 에이전트는 각 파라미터의 `description`(없으면 `title`)도 읽습니다. 에이전트의 플러그인 목록에서는 300자를 넘는 파라미터 설명이 첫 문장으로 잘리고, 에이전트가 그 플러그인을 따로 요청할 때 전체가 전달되므로, 핵심 규칙을 맨 앞에 두세요.
 

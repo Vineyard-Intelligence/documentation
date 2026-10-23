@@ -24,7 +24,7 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 | `author` | object | no | [author](#author) 참조 | — | 저작자 메타데이터. |
 | `license` | string | no | — | — | SPDX 라이선스 ID, 예: `MIT`. |
 | `icon` | string | no | — | — | Marketplace 팩 상세에서 plugin 옆에 표시되는 아이콘 (lucide 이름). |
-| `thumbnail_url` | string | no | `format: uri` | — | 썸네일 이미지 URL. 허용되지만 앱이 읽지 않습니다. |
+| `thumbnail_url` | string | no | maxLength 512; 저장소 상대 경로, 선행 슬래시와 `.`/`..` 금지 | — | 카드 썸네일, 예: `assets/thumbnail.png`. 핀된 커밋에서만 `https://cdn.jsdelivr.net/gh/{repo}@{ref}/{path}`로 해석하고, 실패 시 `https://raw.githubusercontent.com/{repo}/{ref}/{path}`를 씁니다. 절대 URL은 거부됩니다. 1:1 PNG/WebP, 256×256 권장, ≤256KB, 40–56px로 표시. |
 | `marketing_url` | string | no | `format: uri` | — | 랜딩 / 마케팅 페이지 URL. 허용되지만 앱이 읽지 않습니다. |
 | `latest_url` | string | no | `format: uri` | — | 최신 manifest를 가리키는 저자별 포인터로 설계되었습니다. 허용되지만 읽히지 않습니다: 업데이트 확인은 레지스트리 카탈로그의 `version`을 비교합니다([업데이트](../develop/updates.md) 참조). |
 | `platforms` | object | yes | [platforms](#platforms) 참조 | — | 플랫폼별 실행 플래그. |
