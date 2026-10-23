@@ -24,7 +24,7 @@ The manifest is the single source of truth for a plugin; there is no separate se
 | `author` | object | no | see [author](#author) | — | Authorship metadata. |
 | `license` | string | no | — | — | SPDX license id, e.g. `MIT`. |
 | `icon` | string | no | — | — | Icon (lucide name) shown next to the plugin in the Marketplace pack detail. |
-| `thumbnail_url` | string | no | `format: uri` | — | Thumbnail image URL. Accepted but not read by the app. |
+| `thumbnail_url` | string | no | maxLength 512; repo-relative path, no leading slash or `.`/`..` | — | Card thumbnail, e.g. `assets/thumbnail.png`. Resolved only at the pinned commit: `https://cdn.jsdelivr.net/gh/{repo}@{ref}/{path}`, falling back to `https://raw.githubusercontent.com/{repo}/{ref}/{path}`. Absolute URLs are rejected. 1:1 PNG/WebP, 256×256 recommended, ≤256KB, shown at 40–56px. |
 | `marketing_url` | string | no | `format: uri` | — | Landing / marketing page URL. Accepted but not read by the app. |
 | `latest_url` | string | no | `format: uri` | — | Designed as a per-author pointer to the newest manifest. Accepted but not read: the update check compares the registry catalog's `version` (see [Updates](../develop/updates.md)). |
 | `platforms` | object | yes | see [platforms](#platforms) | — | Per-platform execution flags. |

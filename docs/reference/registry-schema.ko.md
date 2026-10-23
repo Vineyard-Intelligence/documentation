@@ -44,7 +44,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `icon` | string | 아니요 | **파생됨**: manifest의 `icon`이 kebab-case [lucide](https://lucide.dev/icons/) 아이콘 이름일 때 그 값. 아니면 생략됩니다. |
 | `typepacks` | string[] | 아니요 | 작성자가 **선언**하고 CI가 검사: 팩의 플러그인이 소비/생산하는 Type Pack 식별자(`io.consumes`/`io.produces`), 고유값. `io` 항목이 참조하는 모든 type은 여기 나열된 Type Pack에서 와야 하며, 나열된 팩은 모두 카탈로그에 있어야 합니다. skillpack의 `requires`가 pluginpack을 제공하는 것과 같은 방식으로 marketplace가 이들을 함께 설치하도록 제안합니다. 프로젝트가 설치하지 않은 팩의 type을 쓰는 plugin은 노드 생성 시점에 실패합니다. |
 | `services` | string[] | 아니요 | **파생**: 팩의 플러그인이 이름으로 호출하는 Vineyard 서비스(`rdap`, `telegram`). `scopes_summary` 플래그가 아니라 별도 필드입니다. [스코프 레퍼런스](scopes.md#services) 참조. |
-| `thumbnail_url` | string (uri) | 아니요 | 선택적 카드 아이콘. |
+| `thumbnail_url` | string | 아니요 | 저장소 상대 카드 이미지 경로(예: `assets/thumbnail.png`). 핀된 manifest에서 복사되고 CI가 검사합니다. 핀된 커밋에서만 `cdn.jsdelivr.net/gh/{repo}@{ref}/{path}` / `raw.githubusercontent.com/{repo}/{ref}/{path}`로 해석됩니다. 절대 URL은 거부됩니다. |
 | `verified` | boolean | 아니요 | 식별자의 네임스페이스가 `verified-authors.json`에서 `author`의 핸들 소유로 등재되어 있을 때만 `true`. CI에 의해 설정되며, **자체 주장되지 않음**. 기본값 `false`. |
 | `status` | object | 아니요 | **게시가 취소된** 팩에만 존재: `{ state: "deprecated" | "withdrawn", reason, since, replacement? }`. 행은 카탈로그에 남습니다. 항목을 지우면 이미 설치한 프로젝트엔 아무 신호도 가지 않기 때문입니다. `deprecated`는 계속 로드되며 경고만, `withdrawn`은 설치 거부 + 로드 시 제외됩니다. [레지스트리에 배포하기 → 팩 내리기](../develop/publishing.md#taking-a-pack-down) 참조. |
 
