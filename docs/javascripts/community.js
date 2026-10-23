@@ -224,16 +224,8 @@
   function Browser(mount, entries) {
     this.mount = mount;
     this.all = entries;
-    this.state = { q: "", type: "all", category: "all", sort: "name-asc", verifiedOnly: false };
+    this.state = { q: "", type: "all", sort: "name-asc", verifiedOnly: false };
   }
-
-  Browser.prototype.categories = function () {
-    var set = {};
-    this.all.forEach(function (e) {
-      (e.categories || []).forEach(function (c) { set[c] = true; });
-    });
-    return Object.keys(set).sort();
-  };
 
   Browser.prototype.filtered = function () {
     var s = this.state;
@@ -241,7 +233,6 @@
     var list = this.all.filter(function (e) {
       if (s.type !== "all" && e.type !== s.type) return false;
       if (s.verifiedOnly && !e.verified) return false;
-      if (s.category !== "all" && (e.categories || []).indexOf(s.category) === -1) return false;
       if (q) {
         var hay = [e.name, e.author, e.description, e.identifier].concat(e.categories || []).join(" ").toLowerCase();
         if (hay.indexOf(q) === -1) return false;
@@ -261,7 +252,6 @@
 
   Browser.prototype.render = function () {
     var self = this;
-    var cats = this.categories();
     var nPluginpacks = this.all.filter(function (e) { return e.type === "pluginpack"; }).length;
     var nPluginsTotal = this.all.reduce(function (n, e) { return n + (e.type === "pluginpack" ? e.plugin_count || 1 : 0); }, 0);
     var nTypepacks = this.all.filter(function (e) { return e.type === "typepack"; }).length;
@@ -280,11 +270,6 @@
             '<label><input type="radio" name="vy-kind" value="typepack"><span>Type packs</span></label>' +
             '<label><input type="radio" name="vy-kind" value="skillpack"><span>Skill packs</span></label>' +
           "</div>" +
-          (cats.length
-            ? '<select class="vy-select" id="vy-cat" aria-label="Category"><option value="all">All categories</option>' +
-              cats.map(function (c) { return '<option value="' + escapeAttr(c) + '">' + escapeHtml(cap(c)) + "</option>"; }).join("") +
-              "</select>"
-            : "") +
           '<select class="vy-select" id="vy-sort" aria-label="Sort">' +
             '<option value="name-asc">Name A→Z</option>' +
             '<option value="name-desc">Name Z→A</option>' +
@@ -306,8 +291,6 @@
     Array.prototype.forEach.call(this.mount.querySelectorAll(".vy-seg input"), function (r) {
       r.addEventListener("change", function () { self.state.type = r.value; self.paint(); });
     });
-    var cat = document.getElementById("vy-cat");
-    if (cat) cat.addEventListener("change", function () { self.state.category = cat.value; self.paint(); });
     var sort = document.getElementById("vy-sort");
     sort.addEventListener("change", function () { self.state.sort = sort.value; self.paint(); });
     var ver = document.getElementById("vy-verified");
@@ -678,7 +661,6 @@
 
   // --- helpers -------------------------------------------------------------
   function kv(k, v) { return "<dt>" + escapeHtml(k) + "</dt><dd>" + v + "</dd>"; }
-  function cap(s) { s = String(s); return s.charAt(0).toUpperCase() + s.slice(1); }
   function plural(n, word) { return n + " " + word + (n === 1 ? "" : "s"); }
   function uniq(a) { return a.filter(function (v, i) { return a.indexOf(v) === i; }); }
   function short(r) { r = String(r); return /^[0-9a-f]{40}$/i.test(r) ? r.slice(0, 10) + "…" : r; }
