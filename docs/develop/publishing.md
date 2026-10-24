@@ -14,7 +14,7 @@ Submissions go to **`Vineyard-Intelligence/registry`**. The repo carries *pointe
 | `registry/community-skillpacks.json` | Symmetric for Skill Packs; carries `applies_to`/`section_count`/`requires` instead of scopes (text only, no code executes). |
 | `registry/approved-*.json` | **Generated** from the history of `packs/` by `scripts/build_approved.py`. Lists every `repo@ref/path` the registry has ever approved, with a SHA-256 of that document. The app loads only pointers on this list whose bytes match the digest. |
 | `schemas/` | The published meta-schemas CI validates entries against. |
-| `verified-authors.json` | Who may show the verified badge, and the namespaces each owns. **Operator-owned** — a submission never edits it. |
+| `verified-authors.json` | Who may show the verified badge, the namespaces each owns, and the GitHub numeric id their pack repository must be owned by. **Operator-owned** — a submission never edits it. |
 | `SPEC.md` | The registry contract in full — entry format, the pinning rule, what CI enforces. |
 
 !!! warning "Do not edit `registry/community-*.json` or `registry/approved-*.json`"
@@ -44,7 +44,7 @@ Every check below is **blocking** — a pull request cannot merge until they all
 - **Filename matches `identifier`, and `content_type` is one of the four known kinds.** (`build_registry.py`)
 - **Registry-entry schema.** The entry validates against `schemas/registry-plugin-entry`, `registry-typepack-entry`, or `registry-skillpack-entry`. (`validate.py`)
 - **Declared dependencies resolve, and are still live.** A Skill Pack's `requires` and a Plugin Pack's `typepacks` must name packs that are in this catalog — the marketplace builds its co-install offer from those lists. A pack added in the *same* pull request counts, so a Type Pack and the plugin that uses it can land together. A dependency that has been [delisted](#taking-a-pack-down) is also rejected. (`validate.py`)
-- **Namespace and authorship.** A namespace listed in `verified-authors.json` may only be published under by its owner, and an author name listed there may only be worn inside its own namespaces — so neither `run.vineyard.*` nor `author: VINEYARD` can be claimed by anyone else. (`validate.py`) `verified` is derived, not submitted. `build_registry.py` sets it to true when the identifier's namespace is claimed in `verified-authors.json` by the handle in `author`, and discards any value in the submission.
+- **Namespace and authorship.** A namespace listed in `verified-authors.json` may only be published under by its owner, and an author name listed there may only be worn inside its own namespaces — so neither `run.vineyard.*` nor `author: VINEYARD` can be claimed by anyone else. (`validate.py`) `verified` is derived, not submitted. `build_registry.py` sets it to true when the identifier's namespace is claimed in `verified-authors.json` by the handle in `author`, and discards any value in the submission. Each entry also carries `github.id` and `github.handle`: `validate.py` resolves the pack repository's owner and requires `owner.id == github.id`, so an entry cannot borrow VINEYARD's namespace and author while pointing at someone else's repository. The handle is display text; verification never compares it.
 
 ### The pin
 

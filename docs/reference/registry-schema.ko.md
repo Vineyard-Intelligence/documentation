@@ -28,7 +28,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `identifier` | string | 예 | Reverse-DNS 기본 키, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}(?:plugins|pluginpacks)\.[a-z0-9_]+$` (`plugins.*` = 단일 plugin, `pluginpacks.*` = 번들). `manifest.identifier`와 동일. **전체** registry(세 카탈로그 모두)에서 고유합니다. |
 | `content_type` | string | 예 | `vineyard:plugin` (단일 plugin) 또는 `vineyard:pluginpack` (번들: 하나의 파일 → 여러 plugin). |
 | `name` | string | 예 | 표시 이름, 1–128자. |
-| `author` | string | 예 | 저자 핸들, `verified-authors.json`과 대조됨. |
+| `author` | string | 예 | 저자 핸들, `verified-authors.json`과 대조됨. 팩 저장소 owner의 GitHub id가 항목의 `github.id`와 일치해야 합니다. |
 | `description` | string | 예 | ≤250자, 문장형 대소문자, 마침표로 끝남, 이모지 없음. |
 | `repo` | string | 예 | `owner/name` GitHub 경로 (`^[^/]+/[^/]+$`). 코드를 가리키는 **유일한** 포인터. |
 | `ref` | string | 예 | **불변 커밋 SHA** (40자 16진수 SHA-1 또는 64자 16진수 SHA-256), PR 시점에 캡처됨. **태그와 브랜치는 거부됩니다** (둘 다 재지정 가능). `version`은 사람이 읽을 수 있는 릴리스를 전달합니다. |
@@ -45,7 +45,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `typepacks` | string[] | 아니요 | 작성자가 **선언**하고 CI가 검사: 팩의 플러그인이 소비/생산하는 Type Pack 식별자(`io.consumes`/`io.produces`), 고유값. `io` 항목이 참조하는 모든 type은 여기 나열된 Type Pack에서 와야 하며, 나열된 팩은 모두 카탈로그에 있어야 합니다. skillpack의 `requires`가 pluginpack을 제공하는 것과 같은 방식으로 marketplace가 이들을 함께 설치하도록 제안합니다. 프로젝트가 설치하지 않은 팩의 type을 쓰는 plugin은 노드 생성 시점에 실패합니다. |
 | `services` | string[] | 아니요 | **파생**: 팩의 플러그인이 이름으로 호출하는 Vineyard 서비스(`rdap`, `telegram`). `scopes_summary` 플래그가 아니라 별도 필드입니다. [스코프 레퍼런스](scopes.md#services) 참조. |
 | `thumbnail_url` | string | 아니요 | 저장소 상대 카드 이미지 경로(예: `assets/thumbnail.png`). 핀된 manifest에서 복사되고 CI가 검사합니다. 핀된 커밋에서만 `cdn.jsdelivr.net/gh/{repo}@{ref}/{path}` / `raw.githubusercontent.com/{repo}/{ref}/{path}`로 해석됩니다. 절대 URL은 거부됩니다. |
-| `verified` | boolean | 아니요 | 식별자의 네임스페이스가 `verified-authors.json`에서 `author`의 핸들 소유로 등재되어 있을 때만 `true`. CI에 의해 설정되며, **자체 주장되지 않음**. 기본값 `false`. |
+| `verified` | boolean | 아니요 | 식별자의 네임스페이스가 `verified-authors.json`에서 `author`의 핸들 소유로 등재되어 있고, 저장소 owner의 GitHub 숫자 id가 `github.id`와 일치할 때만 `true`. CI에 의해 설정되며, **자체 주장되지 않음**. 기본값 `false`. |
 | `status` | object | 아니요 | **게시가 취소된** 팩에만 존재: `{ state: "deprecated" | "withdrawn", reason, since, replacement? }`. 행은 카탈로그에 남습니다. 항목을 지우면 이미 설치한 프로젝트엔 아무 신호도 가지 않기 때문입니다. `deprecated`는 계속 로드되며 경고만, `withdrawn`은 설치 거부 + 로드 시 제외됩니다. [레지스트리에 배포하기 → 팩 내리기](../develop/publishing.md#taking-a-pack-down) 참조. |
 
 ### 플러그인 행 예시 {#example-plugin-row}
@@ -96,7 +96,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `type_count` | integer | 아니요 | **파생됨**: `types[].length`. 최소 `1`. |
 | `icon` | string | 아니요 | **파생됨**: 첫 번째 type의 `icon`이 kebab-case [lucide](https://lucide.dev/icons/) 아이콘 이름일 때 그 값. 아니면 생략됩니다. |
 | `thumbnail_url` | string (uri) | 아니요 | 선택적 카드 아이콘. |
-| `verified` | boolean | 아니요 | plugin 항목과 동일 — CI 설정 `verified-authors.json`의 미러. 기본값 `false`. |
+| `verified` | boolean | 아니요 | plugin 항목과 동일 — CI 설정 `verified-authors.json`의 미러이며 저장소 owner id 검사를 포함합니다. 기본값 `false`. |
 | `status` | object | 아니요 | **게시가 취소된** 팩에만 존재: `{ state: "deprecated" | "withdrawn", reason, since, replacement? }`. 행은 카탈로그에 남습니다. 항목을 지우면 이미 설치한 프로젝트엔 아무 신호도 가지 않기 때문입니다. `deprecated`는 계속 로드되며 경고만, `withdrawn`은 설치 거부 + 로드 시 제외됩니다. [레지스트리에 배포하기 → 팩 내리기](../develop/publishing.md#taking-a-pack-down) 참조. |
 
 ### Type Pack 행 예시 {#example-type-pack-row}

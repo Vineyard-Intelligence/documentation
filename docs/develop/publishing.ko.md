@@ -14,7 +14,7 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 | `registry/community-skillpacks.json` | Skill Pack용 대칭 항목. 스코프 대신 `applies_to`/`section_count`/`requires`를 가집니다(텍스트만 있으며, 코드가 실행되지 않음). |
 | `registry/approved-*.json` | `scripts/build_approved.py`가 `packs/`의 이력에서 **생성**. 레지스트리가 지금까지 승인한 모든 `repo@ref/path`와 그 문서의 SHA-256을 나열합니다. 앱은 이 목록에 있고 바이트가 다이제스트와 일치하는 포인터만 로드합니다. |
 | `schemas/` | CI가 항목을 검증하는 기준이 되는 게시된 메타 스키마. |
-| `verified-authors.json` | verified 배지를 달 수 있는 저자와 각자가 소유한 네임스페이스. **운영자 소유** — 제출이 편집하지 않습니다. |
+| `verified-authors.json` | verified 배지를 달 수 있는 저자, 각자가 소유한 네임스페이스, 그리고 팩 저장소를 소유해야 하는 GitHub 숫자 계정 id. **운영자 소유** — 제출이 편집하지 않습니다. |
 | `SPEC.md` | 레지스트리 계약 전문 — 항목 형식, 고정 규칙, CI가 강제하는 항목. |
 
 !!! warning "`registry/community-*.json`과 `registry/approved-*.json`을 편집하지 마세요"
@@ -44,7 +44,7 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 - **파일명이 `identifier`와 일치하고, `content_type`이 알려진 네 종류 중 하나여야 합니다.** (`build_registry.py`)
 - **레지스트리 항목 스키마.** 항목이 `schemas/registry-plugin-entry`, `registry-typepack-entry`, `registry-skillpack-entry` 중 하나에 대해 유효성을 검사합니다. (`validate.py`)
 - **선언한 의존성이 해석되고, 아직 살아 있어야 합니다.** Skill Pack의 `requires`와 Plugin Pack의 `typepacks`는 이 카탈로그에 있는 팩을 가리켜야 합니다 — 마켓플레이스가 그 목록으로 동반 설치 제안을 만듭니다. **같은** 풀 리퀘스트에 추가된 팩도 인정되므로, Type Pack과 그것을 쓰는 플러그인을 함께 올릴 수 있습니다. [게시가 취소된](#taking-a-pack-down) 팩을 의존성으로 두는 것도 거부됩니다. (`validate.py`)
-- **네임스페이스와 저자.** `verified-authors.json`에 등재된 네임스페이스는 소유자만 게시할 수 있고, 등재된 저자명은 자기 네임스페이스 안에서만 쓸 수 있습니다 — 따라서 `run.vineyard.*`도 `author: VINEYARD`도 타인이 주장할 수 없습니다. (`validate.py`) `verified`는 제출하는 값이 아니라 파생되는 값입니다. `build_registry.py`는 식별자의 네임스페이스가 `verified-authors.json`에서 `author`의 핸들 소유로 등재되어 있으면 true로 설정하고, 제출에 적힌 값은 버립니다.
+- **네임스페이스와 저자.** `verified-authors.json`에 등재된 네임스페이스는 소유자만 게시할 수 있고, 등재된 저자명은 자기 네임스페이스 안에서만 쓸 수 있습니다 — 따라서 `run.vineyard.*`도 `author: VINEYARD`도 타인이 주장할 수 없습니다. (`validate.py`) `verified`는 제출하는 값이 아니라 파생되는 값입니다. `build_registry.py`는 식별자의 네임스페이스가 `verified-authors.json`에서 `author`의 핸들 소유로 등재되어 있으면 true로 설정하고, 제출에 적힌 값은 버립니다. 각 항목은 `github.id`와 `github.handle`도 가집니다. `validate.py`는 팩 저장소의 owner를 조회해 `owner.id == github.id`를 요구하므로, VINEYARD의 네임스페이스와 author를 빌려 다른 사람의 저장소를 가리킬 수 없습니다. handle은 표시용이며 검증에는 쓰이지 않습니다.
 
 ### 고정(pin) {#the-pin}
 
