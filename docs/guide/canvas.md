@@ -30,7 +30,7 @@ Toolbar toggle buttons appear highlighted when on; menu items are checkmarked wh
 
 ## Other toolbar buttons
 
-Below the view controls, the toolbar repeats the **Edit** menu's selection actions (Select all, connected neighbors, outbound, inbound (1 hop), Invert, Select isolated, Clear). It ends with **Run plugins**, whose tooltip names the scope — "Run plugins on N selected nodes", or "nothing selected" for the whole project — and **Ask the AI agent**; with nodes selected, the AI agent panel opens pre-filled with a question about them.
+Below the view controls, the toolbar repeats the **Edit** menu's selection actions (Select all, connected neighbors, outbound, inbound (1 hop), Invert, Select isolated, Clear). It ends with **Run plugins**, whose tooltip names the scope — "Run plugins on N selected nodes", or "nothing selected" for the whole-graph plugins — and **Ask the AI agent**; with nodes selected, the AI agent panel opens pre-filled with a question about them.
 
 ## Top menu bar
 
@@ -81,7 +81,7 @@ The three 1-hop actions add to the selection, so pressing one again walks one mo
 - **Node** — Run plugins… (on this node), Duplicate, Connect to… (see [Drawing edges](#drawing-edges)), Disconnect all (deletes every edge touching the node), Delete.
 - **Edge** — Reverse direction, Delete.
 - **Selection** — right-click empty canvas with anything selected, or a node or edge inside a multi-item selection; the header shows the count (*Selected: N nodes, M edges*). Run plugins… and Connect to… (when nodes are selected), Delete (N), Select all, Fit view.
-- **Empty canvas** (nothing selected, headed *Nothing selected — whole project*) — Run plugins… on the whole project, Select all, Fit view.
+- **Empty canvas** (nothing selected, headed *Nothing selected — whole project*) — Run plugins… on the whole-graph plugins, Select all, Fit view.
 
 <figure class="vy-shot" markdown="span">
   ![Node right-click menu](../assets/guide/canvas-context-menu.webp){ width="301" loading=lazy }
