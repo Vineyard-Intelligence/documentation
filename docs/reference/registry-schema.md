@@ -28,7 +28,7 @@ A row in `community-pluginpacks.json`. The schema sets `additionalProperties: fa
 | `identifier` | string | yes | Reverse-DNS primary key, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}(?:plugins|pluginpacks)\.[a-z0-9_]+$` (`plugins.*` = single plugin, `pluginpacks.*` = bundle). Equals `manifest.identifier`. Unique across the **whole** registry (all three catalogs). |
 | `content_type` | string | yes | `vineyard:plugin` (a single plugin) or `vineyard:pluginpack` (a bundle: one file → many plugins). |
 | `name` | string | yes | Display name, 1–128 chars. |
-| `author` | string | yes | Author handle, matched against `verified-authors.json`. |
+| `author` | string | yes | Author handle, matched against `verified-authors.json`; the pack repository's owner GitHub id must equal the entry's `github.id`. |
 | `description` | string | yes | ≤250 chars, sentence case, ends with a period, no emoji. |
 | `repo` | string | yes | `owner/name` GitHub path (`^[^/]+/[^/]+$`). The **only** pointer to code. |
 | `ref` | string | yes | **Immutable commit SHA** (40-hex SHA-1 or 64-hex SHA-256), captured at PR time. **Tags and branches are rejected** (both re-pointable). `version` carries the human-readable release. |
@@ -45,7 +45,7 @@ A row in `community-pluginpacks.json`. The schema sets `additionalProperties: fa
 | `typepacks` | string[] | no | **Declared** by you and checked by CI: the Type Pack identifiers the pack's plugins consume/produce (`io.consumes`/`io.produces`), unique. Every type an `io` entry references must come from a Type Pack listed here, and each listed pack must be in the catalog. The marketplace offers these for co-install the same way a skillpack's `requires` offers pluginpacks; a plugin that writes a type from a pack the project never installed fails at node-create time. |
 | `services` | string[] | no | **Derived**: Vineyard services the pack's plugins call by name (`rdap`, `telegram`). Its own field, not a `scopes_summary` flag. See [scopes](scopes.md#services). |
 | `thumbnail_url` | string | no | Repo-relative card-image path (e.g. `assets/thumbnail.png`), mirrored from the pinned manifest and checked by CI. Resolved only at the pinned commit via `cdn.jsdelivr.net/gh/{repo}@{ref}/{path}` / `raw.githubusercontent.com/{repo}/{ref}/{path}`. Absolute URLs are rejected. |
-| `verified` | boolean | no | `true` only when the identifier's namespace is claimed in `verified-authors.json` by the handle in `author`. Set by CI, **not self-asserted**. Default `false`. |
+| `verified` | boolean | no | `true` only when the identifier's namespace is claimed in `verified-authors.json` by the handle in `author` **and** the repository owner's numeric GitHub id matches `github.id`. Set by CI, **not self-asserted**. Default `false`. |
 | `status` | object | no | Present only on a **delisted** pack: `{ state: "deprecated" | "withdrawn", reason, since, replacement? }`. The row stays in the catalog; deleting it would signal nothing to projects that already installed the pack. `deprecated` still loads and warns; `withdrawn` is refused at install and dropped at load. See [Publishing → Taking a pack down](../develop/publishing.md#taking-a-pack-down). |
 
 ### Example plugin row
@@ -96,7 +96,7 @@ A row in `community-typepacks.json`, symmetric with the plugin entry. Type Packs
 | `type_count` | integer | no | **Derived**: `types[].length`. Minimum `1`. |
 | `icon` | string | no | **Derived**: the first type's `icon` when it is a kebab-case [lucide](https://lucide.dev/icons/) icon name. Omitted otherwise. |
 | `thumbnail_url` | string (uri) | no | Optional card icon. |
-| `verified` | boolean | no | Same as the plugin entry — CI-set mirror of `verified-authors.json`. Default `false`. |
+| `verified` | boolean | no | Same as the plugin entry — CI-set mirror of `verified-authors.json`, including the repository-owner id check. Default `false`. |
 | `status` | object | no | Present only on a **delisted** pack: `{ state: "deprecated" | "withdrawn", reason, since, replacement? }`. The row stays in the catalog; deleting it would signal nothing to projects that already installed the pack. `deprecated` still loads and warns; `withdrawn` is refused at install and dropped at load. See [Publishing → Taking a pack down](../develop/publishing.md#taking-a-pack-down). |
 
 ### Example Type Pack row
