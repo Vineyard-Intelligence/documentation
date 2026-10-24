@@ -30,7 +30,7 @@
 
 ## 기타 툴바 버튼
 
-툴바는 보기 컨트롤 아래에 **Edit** 메뉴의 선택 작업(Select all, connected neighbors, outbound, inbound (1 hop), Invert, Select isolated, Clear)을 반복합니다. 마지막에는 **Run plugins**와 **Ask the AI agent**가 있습니다. **Run plugins**의 툴팁은 범위를 알려 줍니다 — "Run plugins on N selected nodes", 아무것도 선택하지 않았으면 전체 프로젝트를 뜻하는 "nothing selected". 노드가 선택된 상태에서 **Ask the AI agent**를 누르면 그 노드에 대한 질문이 미리 채워진 채로 AI 에이전트 패널이 열립니다.
+툴바는 보기 컨트롤 아래에 **Edit** 메뉴의 선택 작업(Select all, connected neighbors, outbound, inbound (1 hop), Invert, Select isolated, Clear)을 반복합니다. 마지막에는 **Run plugins**와 **Ask the AI agent**가 있습니다. **Run plugins**의 툴팁은 범위를 알려 줍니다 — "Run plugins on N selected nodes", 아무것도 선택하지 않았으면 whole-graph 플러그인을 뜻하는 "nothing selected". 노드가 선택된 상태에서 **Ask the AI agent**를 누르면 그 노드에 대한 질문이 미리 채워진 채로 AI 에이전트 패널이 열립니다.
 
 ## 상단 메뉴 바
 
@@ -81,7 +81,7 @@
 - **노드** — **Run plugins…**(이 노드에 대해), **Duplicate**(복제), **Connect to…**([엣지 그리기](#엣지-그리기) 참조), **Disconnect all**(노드에 닿는 모든 엣지 삭제), **Delete**.
 - **엣지** — **Reverse direction**(방향 반전), **Delete**.
 - **선택** — 무언가 선택된 상태에서 빈 캔버스를 우클릭하거나, 여러 항목 선택에 포함된 노드나 엣지를 우클릭하면 열립니다. 머리글에 개수가 표시됩니다(*Selected: N nodes, M edges*). **Run plugins…**와 **Connect to…**(노드가 선택된 경우), **Delete (N)**, **Select all**, **Fit view**.
-- **빈 캔버스** (선택 없음, 머리글 *Nothing selected — whole project*) — 전체 프로젝트에 대한 **Run plugins…**, **Select all**, **Fit view**.
+- **빈 캔버스** (선택 없음, 머리글 *Nothing selected — whole project*) — whole-graph 플러그인에 대한 **Run plugins…**, **Select all**, **Fit view**.
 
 <figure class="vy-shot" markdown="span">
   ![노드 우클릭 메뉴](../assets/guide/canvas-context-menu.webp){ width="301" loading=lazy }

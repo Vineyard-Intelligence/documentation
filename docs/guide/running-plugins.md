@@ -7,14 +7,18 @@ a node, a selection or empty canvas, from the ▶ button on the canvas toolbar, 
 ## Where a plugin shows up
 
 Every installed plugin is listed in one panel, **Run plugins**. At the top, a scope switch picks
-**Selected (N)** — only the selected nodes, each plugin seeing only nodes of the type it accepts —
-or **Whole project (N)** — bulk: every node of each plugin's input type in the project. Every
-plugin declares its inputs (`consumes`), and that declaration decides which group it appears in:
+**Selected (N)** — the plugins that read nodes, each seeing only the selected ones of the type it
+accepts — or **Whole graph (N)** — the plugins that take no node input at all. A plugin that
+declares an input type (`consumes`) runs only on nodes you picked; there is no "run it over every
+node of that type" shortcut, the same way the agent's `invoke_plugin` refuses a call without
+`node_ids`. Every plugin declares its inputs, and that declaration decides which group it appears
+in:
 
-- **Matches selection** / **Matches project data** → plugins whose `consumes` types are in scope,
-  with an "N targets" badge.
-- **Whole-graph / input via form** → plugins that consume nothing (e.g. the Chaos pack). They still
-  receive your current selection, so for one like Black Hole select a node first.
+- **Matches selection** → plugins whose `consumes` types are in the selection, with an
+  "N targets" badge.
+- **Whole-graph / input via form** → plugins that consume nothing (e.g. the Chaos pack, or a query
+  plugin that reads its form). They still receive your current selection, so for one like Black
+  Hole select a node first.
 - **Not applicable here** → installed, but none of their input types are in scope (greyed out).
 - **Desktop only** → installed, but not runnable in a browser.
 
