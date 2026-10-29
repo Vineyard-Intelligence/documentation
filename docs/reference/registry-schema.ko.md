@@ -28,10 +28,10 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `identifier` | string | 예 | Reverse-DNS 기본 키, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}(?:plugins|pluginpacks)\.[a-z0-9_]+$` (`plugins.*` = 단일 plugin, `pluginpacks.*` = 번들). `manifest.identifier`와 동일. **전체** registry(세 카탈로그 모두)에서 고유합니다. |
 | `content_type` | string | 예 | `vineyard:plugin` (단일 plugin) 또는 `vineyard:pluginpack` (번들: 하나의 파일 → 여러 plugin). |
 | `name` | string | 예 | 표시 이름, 1–128자. |
-| `author` | string | 예 | 저자 핸들, `verified-authors.json`과 대조됨. 팩 저장소 owner의 GitHub id가 항목의 `github.id`와 일치해야 합니다. |
+| `author` | string | 예 | 저자 핸들, `verified-authors.json`과 대조됨. 그곳에 등재된 저자라면 팩 저장소 owner의 GitHub id가 그 저자의 `github.id`와 일치해야 합니다. |
 | `description` | string | 예 | ≤250자, 문장형 대소문자, 마침표로 끝남, 이모지 없음. |
 | `repo` | string | 예 | `owner/name` GitHub 경로 (`^[^/]+/[^/]+$`). 코드를 가리키는 **유일한** 포인터. |
-| `ref` | string | 예 | **불변 커밋 SHA** (40자 16진수 SHA-1 또는 64자 16진수 SHA-256), PR 시점에 캡처됨. **태그와 브랜치는 거부됩니다** (둘 다 재지정 가능). `version`은 사람이 읽을 수 있는 릴리스를 전달합니다. |
+| `ref` | string | 예 | **불변 커밋 SHA** (40자 16진수 SHA-1 또는 64자 16진수 SHA-256), PR 시점에 캡처됨. **태그와 브랜치는 거부됩니다** (둘 다 재지정 가능). 커밋은 `repo` 자신의 브랜치나 태그에 있어야 하며, 포크에만 있는 커밋은 거부됩니다. `version`은 사람이 읽을 수 있는 릴리스를 전달합니다. |
 | `path` | string | 예 | `repo@ref` 내 `manifest.json`까지의 경로. |
 | `version` | string | 아니요 | 이 `ref`에서 `manifest.version`의 SemVer 미러 (`^\d+\.\d+\.\d+(?:[-+].+)?$`). |
 | `platforms` | string[] | 아니요 | **파생됨**: 팩의 plugin들이 `platforms` 아래에 선언한 플랫폼 키(`web`, `desktop`)에서 `primary`를 뺀 것, 고유값. 스키마의 enum은 `web-proxy`도 허용하지만 CI가 이를 파생하는 일은 없으므로, 이 값을 적은 항목은 실패합니다. |
@@ -89,7 +89,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `author` | string | 예 | 저자 핸들. |
 | `description` | string | 예 | ≤250자 (plugin 항목과 동일한 산문 규칙). |
 | `repo` | string | 예 | `owner/name` GitHub 경로. |
-| `ref` | string | 예 | **불변 커밋 SHA** (40자 16진수 SHA-1 또는 64자 16진수 SHA-256), PR 시점에 캡처됨. 태그와 브랜치는 거부됩니다(둘 다 재지정 가능). `version`은 사람이 읽을 수 있는 릴리스를 전달합니다. |
+| `ref` | string | 예 | **불변 커밋 SHA** (40자 16진수 SHA-1 또는 64자 16진수 SHA-256), PR 시점에 캡처됨. 태그와 브랜치는 거부됩니다(둘 다 재지정 가능). 커밋은 `repo` 자신의 브랜치나 태그에 있어야 하며, 포크에만 있는 커밋은 거부됩니다. `version`은 사람이 읽을 수 있는 릴리스를 전달합니다. |
 | `path` | string | 예 | `repo@ref` 내 Type Pack JSON 경로. |
 | `version` | string | 아니요 | SemVer (`^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$`). |
 | `categories` | string[] | 아니요 | **파생됨**: 고유한 `types[].category` 값 (각각 `^[a-z][a-z0-9_]*$`, 고유). 카테고리 패싯을 구동합니다. |
@@ -146,7 +146,7 @@ Account & identity pivoting의 실제 행은 [Skill Pack](../develop/skillpacks.
 
 ## 항목의 검증과 병합 {#how-entries-are-validated-and-merged}
 
-제출은 `packs/<identifier>.json` 파일 하나를 추가하는 포크 앤 PR이며(카탈로그는 여기서 생성됩니다), 차단 CI 검사와 사람 병합에 의해 게이트됩니다. CI는 항목이 스키마에 맞는지, `ref`가 불변 커밋 SHA인지, 고정된 문서가 항목과 일치하는지(`identifier`, `content_type`, `version`, 파생 필드), Plugin Pack의 번들이 manifest와 같은 버전과 라이선스를 선언하는지, 선언한 의존성과 typeRef가 해석되는지를 검사합니다. 고정된 문서 자체를 그 문서의 스키마로 검증하지는 않습니다. 전체 목록은 [CI가 강제하는 것](../develop/publishing.md#what-ci-enforces)을, 제출 과정은 [레지스트리에 배포하기](../develop/publishing.md)를 참조하세요.
+제출은 `packs/<identifier>.json` 파일 하나를 추가하는 포크 앤 PR이며(카탈로그는 여기서 생성됩니다), 차단 CI 검사와 사람 병합에 의해 게이트됩니다. CI는 항목이 스키마에 맞는지, `ref`가 `repo`의 브랜치나 태그에 있는 불변 커밋 SHA인지, 고정된 문서가 항목과 일치하는지(`identifier`, `content_type`, `version`, 파생 필드), Plugin Pack의 번들이 manifest와 같은 버전과 라이선스를 선언하는지, 선언한 의존성과 typeRef가 해석되는지를 검사합니다. 고정된 문서 자체를 그 문서의 스키마로 검증하지는 않습니다. 전체 목록은 [CI가 강제하는 것](../develop/publishing.md#what-ci-enforces)을, 제출 과정은 [레지스트리에 배포하기](../develop/publishing.md)를 참조하세요.
 
 ## 다음 / 참고 {#next-see-also}
 

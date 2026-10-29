@@ -28,10 +28,10 @@ A row in `community-pluginpacks.json`. The schema sets `additionalProperties: fa
 | `identifier` | string | yes | Reverse-DNS primary key, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}(?:plugins|pluginpacks)\.[a-z0-9_]+$` (`plugins.*` = single plugin, `pluginpacks.*` = bundle). Equals `manifest.identifier`. Unique across the **whole** registry (all three catalogs). |
 | `content_type` | string | yes | `vineyard:plugin` (a single plugin) or `vineyard:pluginpack` (a bundle: one file → many plugins). |
 | `name` | string | yes | Display name, 1–128 chars. |
-| `author` | string | yes | Author handle, matched against `verified-authors.json`; the pack repository's owner GitHub id must equal the entry's `github.id`. |
+| `author` | string | yes | Author handle, matched against `verified-authors.json`; for an author listed there, the pack repository's owner GitHub id must equal that author's `github.id`. |
 | `description` | string | yes | ≤250 chars, sentence case, ends with a period, no emoji. |
 | `repo` | string | yes | `owner/name` GitHub path (`^[^/]+/[^/]+$`). The **only** pointer to code. |
-| `ref` | string | yes | **Immutable commit SHA** (40-hex SHA-1 or 64-hex SHA-256), captured at PR time. **Tags and branches are rejected** (both re-pointable). `version` carries the human-readable release. |
+| `ref` | string | yes | **Immutable commit SHA** (40-hex SHA-1 or 64-hex SHA-256), captured at PR time. **Tags and branches are rejected** (both re-pointable). The commit must be on a branch or tag of `repo` itself; a commit that exists only in a fork is refused. `version` carries the human-readable release. |
 | `path` | string | yes | Path to `manifest.json` within `repo@ref`. |
 | `version` | string | no | SemVer mirror of `manifest.version` at this `ref` (`^\d+\.\d+\.\d+(?:[-+].+)?$`). |
 | `platforms` | string[] | no | **Derived**: the platform keys the pack's plugins declare under `platforms` (`web`, `desktop`), without `primary`; unique. The schema's enum also allows `web-proxy`, but CI never derives it, so an entry that lists it fails. |
@@ -89,7 +89,7 @@ A row in `community-typepacks.json`, symmetric with the plugin entry. Type Packs
 | `author` | string | yes | Author handle. |
 | `description` | string | yes | ≤250 chars (same prose rules as the plugin entry). |
 | `repo` | string | yes | `owner/name` GitHub path. |
-| `ref` | string | yes | **Immutable commit SHA** (40-hex SHA-1 or 64-hex SHA-256), captured at PR time. Tags and branches are rejected (both re-pointable). `version` carries the human-readable release. |
+| `ref` | string | yes | **Immutable commit SHA** (40-hex SHA-1 or 64-hex SHA-256), captured at PR time. Tags and branches are rejected (both re-pointable). The commit must be on a branch or tag of `repo` itself; a commit that exists only in a fork is refused. `version` carries the human-readable release. |
 | `path` | string | yes | Path to the Type Pack JSON within `repo@ref`. |
 | `version` | string | no | SemVer (`^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$`). |
 | `categories` | string[] | no | **Derived**: distinct `types[].category` values (each `^[a-z][a-z0-9_]*$`, unique). Drives the category facet. |
@@ -146,7 +146,7 @@ The real row for Account & identity pivoting is shown on [Skill Packs](../develo
 
 ## How entries are validated and merged
 
-Submission is a fork-and-PR that adds one `packs/<identifier>.json` file — the catalogs are generated from it — gated by blocking CI checks plus a human merge. CI checks the entry against its schema, that `ref` is an immutable commit SHA, that the pinned document matches the entry (`identifier`, `content_type`, `version` and the derived fields), that a Plugin Pack's bundle declares the manifest's version and licence, and that declared dependencies and typeRefs resolve. It does not validate the pinned document against its own schema. See [What CI enforces](../develop/publishing.md#what-ci-enforces) for the full list, and [Publishing](../develop/publishing.md) for the walkthrough.
+Submission is a fork-and-PR that adds one `packs/<identifier>.json` file — the catalogs are generated from it — gated by blocking CI checks plus a human merge. CI checks the entry against its schema, that `ref` is an immutable commit SHA on a branch or tag of `repo`, that the pinned document matches the entry (`identifier`, `content_type`, `version` and the derived fields), that a Plugin Pack's bundle declares the manifest's version and licence, and that declared dependencies and typeRefs resolve. It does not validate the pinned document against its own schema. See [What CI enforces](../develop/publishing.md#what-ci-enforces) for the full list, and [Publishing](../develop/publishing.md) for the walkthrough.
 
 ## Next / See also
 
