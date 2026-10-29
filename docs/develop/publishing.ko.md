@@ -23,7 +23,7 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 ## 제출 워크플로
 
 1. `Vineyard-Intelligence/registry`를 **포크**합니다.
-2. **불변 `ref` 고정** — 작성자 저장소의 릴리스 **커밋 SHA**. 태그와 브랜치는 가변이며 거부됩니다. `python scripts/resolve_ref.py owner/repo <태그-또는-브랜치>`로 커밋 SHA를 확인하세요.
+2. **불변 `ref` 고정** — 작성자 저장소의 릴리스 **커밋 SHA**. 태그와 브랜치는 가변이며 거부됩니다. `python scripts/resolve_ref.py owner/repo <태그-또는-브랜치>`로 커밋 SHA를 확인하세요. 커밋은 `repo`에 적은 저장소의 브랜치나 태그에 있어야 합니다 — 고정하기 전에 릴리스를 그 저장소에 푸시하거나 병합하고, 그대로 유지하세요.
 3. **파일 하나** `packs/<identifier>.json`을 추가합니다. 파일명은 항목의 `identifier`와 정확히 일치해야 합니다.
 4. **PR을 엽니다.** `validate` 워크플로가 검증 결과를 상태 확인으로 게시합니다.
 5. **실패를 수정**한 다음, 사람의 병합을 기다립니다.
@@ -44,11 +44,12 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 - **파일명이 `identifier`와 일치하고, `content_type`이 알려진 네 종류 중 하나여야 합니다.** (`build_registry.py`)
 - **레지스트리 항목 스키마.** 항목이 `schemas/registry-plugin-entry`, `registry-typepack-entry`, `registry-skillpack-entry` 중 하나에 대해 유효성을 검사합니다. (`validate.py`)
 - **선언한 의존성이 해석되고, 아직 살아 있어야 합니다.** Skill Pack의 `requires`와 Plugin Pack의 `typepacks`는 이 카탈로그에 있는 팩을 가리켜야 합니다 — 마켓플레이스가 그 목록으로 동반 설치 제안을 만듭니다. **같은** 풀 리퀘스트에 추가된 팩도 인정되므로, Type Pack과 그것을 쓰는 플러그인을 함께 올릴 수 있습니다. [게시가 취소된](#taking-a-pack-down) 팩을 의존성으로 두는 것도 거부됩니다. (`validate.py`)
-- **네임스페이스와 저자.** `verified-authors.json`에 등재된 네임스페이스는 소유자만 게시할 수 있고, 등재된 저자명은 자기 네임스페이스 안에서만 쓸 수 있습니다 — 따라서 `run.vineyard.*`도 `author: VINEYARD`도 타인이 주장할 수 없습니다. (`validate.py`) `verified`는 제출하는 값이 아니라 파생되는 값입니다. `build_registry.py`는 식별자의 네임스페이스가 `verified-authors.json`에서 `author`의 핸들 소유로 등재되어 있으면 true로 설정하고, 제출에 적힌 값은 버립니다. 각 항목은 `github.id`와 `github.handle`도 가집니다. `validate.py`는 팩 저장소의 owner를 조회해 `owner.id == github.id`를 요구하므로, VINEYARD의 네임스페이스와 author를 빌려 다른 사람의 저장소를 가리킬 수 없습니다. handle은 표시용이며 검증에는 쓰이지 않습니다.
+- **네임스페이스와 저자.** `verified-authors.json`에 등재된 네임스페이스는 소유자만 게시할 수 있고, 등재된 저자명은 자기 네임스페이스 안에서만 쓸 수 있습니다 — 따라서 `run.vineyard.*`도 `author: VINEYARD`도 타인이 주장할 수 없습니다. (`validate.py`) `verified`는 제출하는 값이 아니라 파생되는 값입니다. `build_registry.py`는 식별자의 네임스페이스가 `verified-authors.json`에서 `author`의 핸들 소유로 등재되어 있으면 true로 설정하고, 제출에 적힌 값은 버립니다. 그곳에 등재된 각 저자는 `github.id`와 `github.handle`도 가집니다. `validate.py`는 팩 저장소의 owner를 조회해 `owner.id == github.id`를 요구하므로, VINEYARD의 네임스페이스와 author를 빌려 다른 사람의 저장소를 가리킬 수 없습니다. handle은 표시용이며 검증에는 쓰이지 않습니다.
 
 ### 고정(pin) {#the-pin}
 
 - **불변 `ref`.** 반드시 **커밋 SHA**(40-16진수 또는 64-16진수)여야 합니다. 태그와 브랜치는 옮겨질 수 있으므로 **거부**됩니다. (`verify_pinned.py`)
+- **커밋이 `repo`에 속해야 합니다.** `repo`에 적은 저장소의 브랜치나 태그 중 하나가 고정한 커밋을 포함해야 합니다. 어떤 브랜치나 태그에도 포함되지 않은 커밋은 **거부**됩니다 — 예를 들어 포크에만 있는 커밋, 또는 스쿼시 병합된 풀 리퀘스트 자체의 커밋이 그렇습니다(이 경우 병합으로 만들어진 커밋을 고정하세요). 그 커밋을 `repo`에 푸시하거나 병합하고(또는 그곳에 태그를 달고) 그것을 고정하세요. 브랜치나 태그가 가리키는 커밋은 `resolve_ref.py`로 확인할 수 있습니다. 기본 브랜치에 있는 커밋, 또는 태그나 브랜치가 가리키는 커밋은 찾아집니다. verified 여부와 관계없이 모든 항목에 적용되며, 풀 리퀘스트가 항목을 추가하거나 그 `repo`나 `ref`를 바꿀 때 검사합니다. 항목이 등재되어 있는 동안 그 브랜치나 태그를 유지하고(릴리스마다 태그를 다는 것이 가장 간단합니다) 그 히스토리를 다시 쓰지 마세요 — `repo`의 어디에도 남아 있지 않은 커밋은 계속 제공된다는 보장이 없습니다. (`validate.py`)
 - **고정된 문서가 항목과 일치해야 합니다.** `repo@ref/path`의 문서를 가져와 그 `identifier`, `content_type`, `version`이 항목이 광고하는 값과 같아야 합니다. `ref`를 다시 고정하지 않고 메타데이터만 올린 항목은 여기서 실패합니다.
 - **요약 필드는 신뢰하지 않고 다시 계산합니다.** `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count`, `type_count`를 고정된 문서에서 유도해 작성값과 대조합니다. `scopes_summary.network`는 멤버가 `network` **또는** `web_probe`를 선언하면 true입니다.
 - **번들이 매니페스트와 일치해야 합니다.** Plugin Pack의 경우 `platforms.web.entry`가 가리키는 모듈을 고정된 커밋에서 가져옵니다. 그 모듈이 팩과 각 멤버에 대해 선언하는 `version`과 `license`는 매니페스트의 값과 같아야 합니다. `dist/`를 다시 빌드하지 않고 매니페스트만 수정했거나, entry가 404이면 여기서 실패합니다. (`verify_pinned.py`)
