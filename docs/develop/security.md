@@ -71,7 +71,14 @@ A `sandbox-js` plugin may declare several `network` endpoints; each is checked t
 
 ### Desktop
 
-On desktop, declared endpoints are reachable even if they send no CORS headers. An endpoint addressed as `localhost` or by a loopback or private-network IP address (e.g. `http://127.0.0.1:9200`) is left out and still needs the server's own CORS headers.
+On desktop, declared endpoints are reachable even if they send no CORS headers. That stops at the analyst's own network:
+
+- An endpoint addressed as `localhost` or by a loopback or private-network IP address (e.g. `http://127.0.0.1:9200`) is left out and still needs the server's own CORS headers.
+- A name that resolves to such an address is judged on each response, by the address the connection reached. The response is refused unless the server itself allows `app://vineyard` or `*`. The request carries no `Origin` here, so a server that only answers CORS when it sees one does not qualify. The analyst can add the endpoint's origin, as the manifest wrote it, under **Additional trusted origins** in Desktop Settings.
+
+Judging a response takes one from the network, so a plugin's requests to an endpoint that gets this treatment skip the HTTP cache, whatever `Cache-Control` the plugin sets, and a plugin that repeats a request pays for it each time, rate limits included. An origin that is also a built-in AI provider or on the analyst's list keeps the cache.
+
+This limits what a plugin can read, not what it can send: a request may already have reached the server by the time its response is judged. Behind a proxy the app sees the proxy's address and not the target's, so names are not judged there. IPv6 unique-local addresses (`fc00::/7`) do not count for a name, because some proxy tools answer every name from that range.
 
 `ctx.net.probe` (the `web_probe` scope) exists only on desktop: an anonymous cross-origin request made by the desktop app itself, for reading sites that decline CORS. It follows no redirects and is capped in size and time. In the web build `ctx.net.probe` is absent, so the plugin must fall back.
 
