@@ -58,7 +58,7 @@ plugin이 `manifest.scopes`에서 선언할 수 있는 모든 scope 문자열, �
 `ctx.net.fetch`는 이 엔드포인트로 제한됩니다. URL은 문자열 접두사가 아니라 **파싱된 origin**(프로토콜, 호스트, 포트)과 경로 세그먼트 경계로 매칭되고 — `https://h/v1`은 `/v1/search`를 포함하지만 `/v1beta`는 포함하지 않습니다 — 선언된 `methods`로도 매칭됩니다. 요청마다 응답 본문까지 포함하는 기한도 따로 있습니다: 요청의 `init.timeoutMs`로 바꾸지 않으면 60초이며, 1초–10분 범위로 제한됩니다. 기한을 넘기면 이름이 `TimeoutError`인 `Error`로 거부됩니다. SDK의 [`net`](../develop/sdk.md#net-network)을 참조하세요.
 
 !!! warning "호스트 브리지가 유일한 출구입니다"
-    plugin 코드에는 자체 네트워크가 없습니다: plugin이 직접 여는 `fetch`, XHR, WebSocket, 중첩 worker는 web과 데스크톱 앱 모두에서 거부됩니다. `ctx.net.fetch`(이 엔드포인트들로 검사됨), [`ctx.net.probe`](#web_probe), [`ctx.service`](#services)를 사용하세요. 개발 서버는 이를 강제하지 않으므로, `fetch`를 직접 호출하는 팩은 개발 중에는 동작하고 프로덕션에서는 실패합니다. sandbox-js plugin은 여러 엔드포인트를 선언할 수 있습니다. 쿠키는 전송되지 않으며, 요청 헤더는 `Authorization`을 포함해 작성한 그대로 전달됩니다([자격증명 보내기](plugin-schema.md#sending-a-credential) 참조). 데스크톱에서는 CORS 헤더가 없는 선언된 엔드포인트에도 접근할 수 있습니다. 단, `localhost`나 루프백·사설 네트워크 IP 주소에 있는 엔드포인트와 앱이 연결된 Vineyard 백엔드는 여전히 CORS 헤더가 필요합니다([샌드박스 및 보안](../develop/security.md) 참조).
+    plugin 코드에는 자체 네트워크가 없습니다: plugin이 직접 여는 `fetch`, XHR, WebSocket, 중첩 worker는 web과 데스크톱 앱 모두에서 거부됩니다. `ctx.net.fetch`(이 엔드포인트들로 검사됨), [`ctx.net.probe`](#web_probe), [`ctx.service`](#services)를 사용하세요. 개발 서버는 이를 강제하지 않으므로, `fetch`를 직접 호출하는 팩은 개발 중에는 동작하고 프로덕션에서는 실패합니다. sandbox-js plugin은 여러 엔드포인트를 선언할 수 있습니다. 쿠키는 전송되지 않으며, 요청 헤더는 `Authorization`을 포함해 작성한 그대로 전달됩니다([자격증명 보내기](plugin-schema.md#sending-a-credential) 참조). 데스크톱에서는 CORS 헤더가 없는 선언된 엔드포인트에도 접근할 수 있습니다. 단, `localhost`나 루프백·사설 네트워크 IP 주소에 있는 엔드포인트는 여전히 CORS 헤더가 필요합니다. 앱이 연결된 Vineyard 백엔드 오리진의 URL은 매니페스트에 무엇을 선언하든 거부됩니다([샌드박스 및 보안](../develop/security.md) 참조).
 
 ## web_probe
 

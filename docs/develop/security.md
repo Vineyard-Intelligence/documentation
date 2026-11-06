@@ -63,6 +63,7 @@ Every `ctx.net.fetch` is checked on the host against the manifest's declared `ne
 | A path prefix matches on a **segment boundary** | a scope of `https://h/v1` covers `/v1/search`, and does not cover `/v1beta` |
 | The method must be in the scope's `methods` list | a `GET`-only endpoint cannot be `POST`ed to; an empty `methods` list allows every method |
 | A URL that will not parse **denies** | — |
+| A URL on the **Vineyard backend's origin** is refused | whatever the manifest declares, and on any path of that origin. Graph writes reach the backend only through [staging](#graph-writes-are-staged-not-applied). A redirect to that origin or a `ctx.net.probe` of it is not refused, and carries none of the analyst's credentials |
 
 Requests are sent without the analyst's cookies, and cancelling the run aborts anything still in flight. Headers you set, including `Authorization`, reach the endpoint as written.
 
@@ -70,7 +71,7 @@ A `sandbox-js` plugin may declare several `network` endpoints; each is checked t
 
 ### Desktop
 
-On desktop, declared endpoints are reachable even if they send no CORS headers. Two kinds of endpoint are left out and still need the server's own CORS headers: one addressed as `localhost` or by a loopback or private-network IP address (e.g. `http://127.0.0.1:9200`), and the Vineyard backend the app is connected to.
+On desktop, declared endpoints are reachable even if they send no CORS headers. An endpoint addressed as `localhost` or by a loopback or private-network IP address (e.g. `http://127.0.0.1:9200`) is left out and still needs the server's own CORS headers.
 
 `ctx.net.probe` (the `web_probe` scope) exists only on desktop: an anonymous cross-origin request made by the desktop app itself, for reading sites that decline CORS. It follows no redirects and is capped in size and time. In the web build `ctx.net.probe` is absent, so the plugin must fall back.
 
