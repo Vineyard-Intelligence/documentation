@@ -662,7 +662,7 @@
   // --- helpers -------------------------------------------------------------
   function kv(k, v) { return "<dt>" + escapeHtml(k) + "</dt><dd>" + v + "</dd>"; }
   // Capitalizes a catalog value for display ("typepack" → "Typepack", "ip_address" → "Ip_address").
-  // c3940b8 removed it with the category filter but left its two call sites in drawerHtml, so
+  // 8f7de42 removed it with the category filter but left its two call sites in drawerHtml, so
   // opening ANY type pack (categories) or plugin pack (platforms) threw a ReferenceError before
   // the drawer was rendered — the card simply did nothing.
   function cap(s) { s = String(s); return s.charAt(0).toUpperCase() + s.slice(1); }
