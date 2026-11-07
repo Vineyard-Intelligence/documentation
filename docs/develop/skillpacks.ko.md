@@ -106,7 +106,7 @@ Skill Pack은 Plugin Pack 및 Type Pack과 정확히 같은 방식으로 배포�
   "author": "VINEYARD",
   "description": "Turn one account or handle into the person's other accounts, and know when a shared username is NOT the same person.",
   "repo": "Vineyard-Intelligence/skillpack-account-identity-pivoting",
-  "ref": "0ea57eaa9f00c0fe9c8a0393b158cdb85354c480",
+  "ref": "77e1444b3422cb41c2a1d382730489b745ade5a6",
   "path": "skillpacks/account-pivot.skill.json",
   "version": "3.1.2",
   "applies_to": ["identity.handle", "identity.account", "identity.email_address", "identity.person"],
