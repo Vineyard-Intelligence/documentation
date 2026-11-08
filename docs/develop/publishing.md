@@ -49,7 +49,7 @@ Every check below is **blocking** — a pull request cannot merge until they all
 ### The pin
 
 - **Immutable `ref`.** Must be a **commit SHA** (40-hex or 64-hex). Tags and branches can be moved and are **rejected**. (`verify_pinned.py`)
-- **The commit belongs to `repo`.** Some branch or tag of the repository named in `repo` must contain the pinned commit. A commit that no branch or tag contains is **refused** — one that exists only in a fork, for example, or a pull request's own commit after a squash merge (pin the commit the merge created instead). Push or merge it into `repo` (or tag it there) and pin that; `resolve_ref.py` gives you the commit a branch or tag points at. A commit on the default branch, or the one a tag or branch points at, is found. This applies to every entry, verified or not, and is checked when your pull request adds the entry or changes its `repo` or `ref`. Keep that branch or tag for as long as the entry is listed — tagging each release is the simplest way — and do not rewrite its history: a commit nothing in `repo` holds any more is not guaranteed to stay available. (`validate.py`) The November 2026 rewrite of the `Vineyard-Intelligence` pack repositories broke this rule on purpose: each moved ref has a twin row in `approved-baseline.json` (the frozen input to `registry/approved-*.json`) with the same tree and digest, and the old row stays approved, so a project pinned to the old commit keeps loading it and the new commit is approved for the same content.
+- **The commit belongs to `repo`.** Some branch or tag of the repository named in `repo` must contain the pinned commit. A commit that no branch or tag contains is **refused** — one that exists only in a fork, for example, or a pull request's own commit after a squash merge (pin the commit the merge created instead). Push or merge it into `repo` (or tag it there) and pin that; `resolve_ref.py` gives you the commit a branch or tag points at. A commit on the default branch, or the one a tag or branch points at, is found. This applies to every entry, verified or not, and is checked when your pull request adds the entry or changes its `repo` or `ref`. Keep that branch or tag for as long as the entry is listed — tagging each release is the simplest way — and do not rewrite its history: a commit nothing in `repo` holds any more is not guaranteed to stay available. (`validate.py`) The November 2026 rewrites of the `Vineyard-Intelligence` pack repositories broke this rule on purpose, once to remove machine hostnames from commit identities and once to remove Claude co-author trailers and Claude identities: each moved ref has a twin row in `approved-baseline.json` (the frozen input to `registry/approved-*.json`) with the same tree and digest, and the old row stays approved, so a project pinned to the old commit keeps loading it and the new commit is approved for the same content.
 - **The pinned document matches the entry.** The document at `repo@ref/path` is fetched and its `identifier`, `content_type`, and `version` must equal what your entry advertises. An entry whose metadata was bumped without re-pinning the `ref` fails here.
 - **Every summary field is recomputed, not trusted.** `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count` and `type_count` are derived from the pinned document and compared to what you wrote. `scopes_summary.network` is true when a member declares `network` **or** `web_probe`.
 - **The bundle matches the manifest.** For Plugin Packs, the module named by `platforms.web.entry` is fetched at the pinned commit. The `version` and `license` it declares for the pack and for each member must equal the manifest's. A manifest edited without rebuilding `dist/` fails here, and so does an entry that 404s. (`verify_pinned.py`)
@@ -92,7 +92,7 @@ A **Plugin Pack**, filed as `packs/run.vineyard.pluginpacks.chaos.json`. Note `p
   "author": "VINEYARD",
   "description": "Six graph-manipulation plugins for demos and validation.",
   "repo": "Vineyard-Intelligence/pluginpack-chaos",
-  "ref": "5f7fdbfe70b16f34a42908602ecb856d742ac86d",
+  "ref": "024c36cf17011abb4a7fc6004ced208751c13473",
   "path": "plugins/chaos-pack.manifest.json",
   "version": "1.0.3",
   "platforms": ["web"],
@@ -113,7 +113,7 @@ A **Type Pack**, filed as `packs/run.vineyard.typepacks.infrastructure.json` (no
   "author": "VINEYARD",
   "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
-  "ref": "d7c00ac7a16491ab64fc0732c98ef3ca6454ee84",
+  "ref": "721e3fdab2bdcace019cd9329b47b1014d8acdbb",
   "path": "typepacks/infrastructure.json",
   "version": "4.0.0",
   "categories": ["infrastructure", "web"],

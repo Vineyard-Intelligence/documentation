@@ -49,7 +49,7 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 ### 고정(pin) {#the-pin}
 
 - **불변 `ref`.** 반드시 **커밋 SHA**(40-16진수 또는 64-16진수)여야 합니다. 태그와 브랜치는 옮겨질 수 있으므로 **거부**됩니다. (`verify_pinned.py`)
-- **커밋이 `repo`에 속해야 합니다.** `repo`에 적은 저장소의 브랜치나 태그 중 하나가 고정한 커밋을 포함해야 합니다. 어떤 브랜치나 태그에도 포함되지 않은 커밋은 **거부**됩니다 — 예를 들어 포크에만 있는 커밋, 또는 스쿼시 병합된 풀 리퀘스트 자체의 커밋이 그렇습니다(이 경우 병합으로 만들어진 커밋을 고정하세요). 그 커밋을 `repo`에 푸시하거나 병합하고(또는 그곳에 태그를 달고) 그것을 고정하세요. 브랜치나 태그가 가리키는 커밋은 `resolve_ref.py`로 확인할 수 있습니다. 기본 브랜치에 있는 커밋, 또는 태그나 브랜치가 가리키는 커밋은 찾아집니다. verified 여부와 관계없이 모든 항목에 적용되며, 풀 리퀘스트가 항목을 추가하거나 그 `repo`나 `ref`를 바꿀 때 검사합니다. 항목이 등재되어 있는 동안 그 브랜치나 태그를 유지하고(릴리스마다 태그를 다는 것이 가장 간단합니다) 그 히스토리를 다시 쓰지 마세요 — `repo`의 어디에도 남아 있지 않은 커밋은 계속 제공된다는 보장이 없습니다. (`validate.py`) 2026년 11월의 `Vineyard-Intelligence` 팩 저장소 히스토리 재작성은 이 규칙을 의도적으로 어겼습니다. 옮겨진 ref마다 트리와 다이제스트가 같은 쌍둥이 행이 `approved-baseline.json`(`registry/approved-*.json`의 동결된 입력)에 있고 옛 행도 승인된 채로 남으므로, 옛 커밋에 고정된 프로젝트는 그 커밋을 계속 로드하고 새 커밋도 같은 내용으로 승인됩니다.
+- **커밋이 `repo`에 속해야 합니다.** `repo`에 적은 저장소의 브랜치나 태그 중 하나가 고정한 커밋을 포함해야 합니다. 어떤 브랜치나 태그에도 포함되지 않은 커밋은 **거부**됩니다 — 예를 들어 포크에만 있는 커밋, 또는 스쿼시 병합된 풀 리퀘스트 자체의 커밋이 그렇습니다(이 경우 병합으로 만들어진 커밋을 고정하세요). 그 커밋을 `repo`에 푸시하거나 병합하고(또는 그곳에 태그를 달고) 그것을 고정하세요. 브랜치나 태그가 가리키는 커밋은 `resolve_ref.py`로 확인할 수 있습니다. 기본 브랜치에 있는 커밋, 또는 태그나 브랜치가 가리키는 커밋은 찾아집니다. verified 여부와 관계없이 모든 항목에 적용되며, 풀 리퀘스트가 항목을 추가하거나 그 `repo`나 `ref`를 바꿀 때 검사합니다. 항목이 등재되어 있는 동안 그 브랜치나 태그를 유지하고(릴리스마다 태그를 다는 것이 가장 간단합니다) 그 히스토리를 다시 쓰지 마세요 — `repo`의 어디에도 남아 있지 않은 커밋은 계속 제공된다는 보장이 없습니다. (`validate.py`) 2026년 11월의 `Vineyard-Intelligence` 팩 저장소 히스토리 재작성은 이 규칙을 의도적으로 어겼습니다. 한 번은 커밋 신원의 기기 호스트명을, 한 번은 Claude 공동 작성자 트레일러와 Claude 신원을 지우기 위해서였습니다. 옮겨진 ref마다 트리와 다이제스트가 같은 쌍둥이 행이 `approved-baseline.json`(`registry/approved-*.json`의 동결된 입력)에 있고 옛 행도 승인된 채로 남으므로, 옛 커밋에 고정된 프로젝트는 그 커밋을 계속 로드하고 새 커밋도 같은 내용으로 승인됩니다.
 - **고정된 문서가 항목과 일치해야 합니다.** `repo@ref/path`의 문서를 가져와 그 `identifier`, `content_type`, `version`이 항목이 광고하는 값과 같아야 합니다. `ref`를 다시 고정하지 않고 메타데이터만 올린 항목은 여기서 실패합니다.
 - **요약 필드는 신뢰하지 않고 다시 계산합니다.** `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count`, `type_count`를 고정된 문서에서 유도해 작성값과 대조합니다. `scopes_summary.network`는 멤버가 `network` **또는** `web_probe`를 선언하면 true입니다.
 - **번들이 매니페스트와 일치해야 합니다.** Plugin Pack의 경우 `platforms.web.entry`가 가리키는 모듈을 고정된 커밋에서 가져옵니다. 그 모듈이 팩과 각 멤버에 대해 선언하는 `version`과 `license`는 매니페스트의 값과 같아야 합니다. `dist/`를 다시 빌드하지 않고 매니페스트만 수정했거나, entry가 404이면 여기서 실패합니다. (`verify_pinned.py`)
@@ -92,7 +92,7 @@ Type Pack에는 여기서 자체 검사 두 가지가 더 있습니다. 하나�
   "author": "VINEYARD",
   "description": "Six graph-manipulation plugins for demos and validation.",
   "repo": "Vineyard-Intelligence/pluginpack-chaos",
-  "ref": "5f7fdbfe70b16f34a42908602ecb856d742ac86d",
+  "ref": "024c36cf17011abb4a7fc6004ced208751c13473",
   "path": "plugins/chaos-pack.manifest.json",
   "version": "1.0.3",
   "platforms": ["web"],
@@ -113,7 +113,7 @@ Type Pack에는 여기서 자체 검사 두 가지가 더 있습니다. 하나�
   "author": "VINEYARD",
   "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
-  "ref": "d7c00ac7a16491ab64fc0732c98ef3ca6454ee84",
+  "ref": "721e3fdab2bdcace019cd9329b47b1014d8acdbb",
   "path": "typepacks/infrastructure.json",
   "version": "4.0.0",
   "categories": ["infrastructure", "web"],
