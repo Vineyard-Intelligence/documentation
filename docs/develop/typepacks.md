@@ -14,7 +14,8 @@ Plugins do not invent their own data shapes. They `consume` and `produce` node t
   "content_type": "vineyard:typepack",           // const
   "version": "1.0.0",                             // SemVer of the PACK CONTENT
   "name": "Infrastructure",
-  "description": "Network infrastructure entities.",
+  "summary": "Network infrastructure entities.",     // the card's one line
+  "description": "## What it models\n\n…",       // the pack's page, Markdown — see publishing.md#pack-page
   "authors": [{ "name": "Vineyard", "url": "https://vineyard.run" }],
   "license": "Apache-2.0",                        // SPDX expression
   "marketing_url": "https://vineyard.run/packs/infrastructure",

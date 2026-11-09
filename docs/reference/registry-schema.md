@@ -21,7 +21,7 @@ A registry entry is therefore a **catalog projection**: enough fields to search,
 
 A row in `community-pluginpacks.json`. The schema sets `additionalProperties: false`, so unknown keys are rejected by registry CI.
 
-**Required:** `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`.
+**Required:** `identifier`, `content_type`, `name`, `author`, `summary`, `repo`, `ref`, `path`.
 
 | Field | Type | Required | Meaning |
 |---|---|---|---|
@@ -29,7 +29,7 @@ A row in `community-pluginpacks.json`. The schema sets `additionalProperties: fa
 | `content_type` | string | yes | `vineyard:plugin` (a single plugin) or `vineyard:pluginpack` (a bundle: one file → many plugins). |
 | `name` | string | yes | Display name, 1–128 chars. |
 | `author` | string | yes | Author handle, matched against `verified-authors.json`; for an author listed there, the pack repository's owner GitHub id must equal that author's `github.id`. |
-| `description` | string | yes | ≤250 chars, sentence case, ends with a period, no emoji. |
+| `summary` | string | yes | The card's one line: ≤250 chars, sentence case, ends with a period, no emoji. It must equal the pinned document's `summary`. The pack's page is not in the catalog ([A pack's line and its page](../develop/publishing.md#pack-page)). |
 | `repo` | string | yes | `owner/name` GitHub path (`^[^/]+/[^/]+$`). The **only** pointer to code. |
 | `ref` | string | yes | **Immutable commit SHA** (40-hex SHA-1 or 64-hex SHA-256), captured at PR time. **Tags and branches are rejected** (both re-pointable). The commit must be on a branch or tag of `repo` itself; a commit that exists only in a fork is refused. `version` carries the human-readable release. |
 | `path` | string | yes | Path to `manifest.json` within `repo@ref`. |
@@ -58,7 +58,7 @@ This is the real Chaos reference pack — a single `identifier` that bundles six
   "content_type": "vineyard:pluginpack",
   "name": "Chaos Reference Pack",
   "author": "VINEYARD",
-  "description": "Six graph-manipulation plugins for demos and validation.",
+  "summary": "Six graph-manipulation plugins for demos and validation.",
   "repo": "Vineyard-Intelligence/pluginpack-chaos",
   "ref": "024c36cf17011abb4a7fc6004ced208751c13473",
   "path": "plugins/chaos-pack.manifest.json",
@@ -79,7 +79,7 @@ This is the real Chaos reference pack — a single `identifier` that bundles six
 
 A row in `community-typepacks.json`, symmetric with the plugin entry. Type Packs carry **no scopes** — no code executes — so the `scopes_summary` facet is replaced by `categories`, which drives the category filter. Again `additionalProperties: false`.
 
-**Required:** `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`.
+**Required:** `identifier`, `content_type`, `name`, `author`, `summary`, `repo`, `ref`, `path`.
 
 | Field | Type | Required | Meaning |
 |---|---|---|---|
@@ -87,7 +87,7 @@ A row in `community-typepacks.json`, symmetric with the plugin entry. Type Packs
 | `content_type` | string | yes | Constant `vineyard:typepack`. |
 | `name` | string | yes | Display name, 1–128 chars. |
 | `author` | string | yes | Author handle. |
-| `description` | string | yes | ≤250 chars (same prose rules as the plugin entry). |
+| `summary` | string | yes | ≤250 chars (same rules as the plugin entry). |
 | `repo` | string | yes | `owner/name` GitHub path. |
 | `ref` | string | yes | **Immutable commit SHA** (40-hex SHA-1 or 64-hex SHA-256), captured at PR time. Tags and branches are rejected (both re-pointable). The commit must be on a branch or tag of `repo` itself; a commit that exists only in a fork is refused. `version` carries the human-readable release. |
 | `path` | string | yes | Path to the Type Pack JSON within `repo@ref`. |
@@ -109,7 +109,7 @@ The real Infrastructure base pack, defining fifteen infrastructure and web entit
   "content_type": "vineyard:typepack",
   "name": "Infrastructure",
   "author": "VINEYARD",
-  "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
+  "summary": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
   "ref": "721e3fdab2bdcace019cd9329b47b1014d8acdbb",
   "path": "typepacks/infrastructure.json",
@@ -127,13 +127,13 @@ The companion Threat pack is the same shape with `categories: ["threat"]` and `t
 
 A row in `community-skillpacks.json`, the same pointer shape as the two above. A Skill Pack is text, so it carries no scopes; its only dependencies are the Plugin Packs in `requires`. Again `additionalProperties: false`.
 
-**Required:** `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`.
+**Required:** `identifier`, `content_type`, `name`, `author`, `summary`, `repo`, `ref`, `path`.
 
 | Field | Type | Required | Meaning |
 |---|---|---|---|
 | `identifier` | string | yes | Reverse-DNS primary key, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}skillpacks\.[a-z0-9_]+$`. Equals the skill document's `identifier`. |
 | `content_type` | string | yes | Constant `vineyard:skillpack`. |
-| `name`, `author`, `description`, `repo`, `ref`, `path` | string | yes | Same rules as the plugin entry; `path` is the skill JSON within `repo@ref`. |
+| `name`, `author`, `summary`, `repo`, `ref`, `path` | string | yes | Same rules as the plugin entry; `path` is the skill JSON within `repo@ref`. |
 | `version` | string | no | SemVer mirror of the document's `version` at this `ref`. |
 | `applies_to` | string[] | no | **Derived**: node types (`category.name`) the playbook is about, shown in the detail view. Not recomputed by CI — copy it from your document. |
 | `section_count` | integer | no | **Derived**: number of `sections` in the document. Recomputed by CI. Minimum `0`. |

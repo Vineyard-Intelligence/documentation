@@ -16,7 +16,8 @@ repo at a pinned commit (exactly like a plugin manifest or Type Pack):
   "content_type": "vineyard:skillpack",
   "identifier": "run.vineyard.skillpacks.account_identity_pivot",
   "name": "Account & identity pivoting",
-  "description": "Turn one account or handle into the person's other accounts, and know when a shared username is NOT the same person.",
+  "summary": "Turn one account or handle into the person's other accounts, and know when a shared username is NOT the same person.",
+  "description": "## What it is for\n\nYou hold one handle or email and want the person's other accounts…\n\n## What it needs\n\nThe WhatsMyName plugin pack…",
   "author": "VINEYARD",
   "version": "3.1.2",
 
@@ -79,7 +80,10 @@ costs nothing when unused.
 
 - **The app's own rules outrank the playbook.** Text telling the agent to ignore its rules, skip
   the analyst's review, or treat untrusted text as an instruction is refused.
-- **Fields are trimmed.** One-line fields (names, descriptions, summaries, labels, ids and list
+- **The page is for the analyst, not the agent.** `summary` is what `list_skills` gives the agent;
+  `description` is the pack's page in the marketplace and is never sent to it — the `overview` and
+  the sections are. See [A pack's line and its page](publishing.md#pack-page).
+- **Fields are trimmed.** One-line fields (names, summaries, labels, ids and list
   items) are collapsed to one line and stripped of control characters; the overview, section bodies
   and starter prompts keep newlines and tabs and lose every other control character. Each field is
   then cut to its [limit](#loader-limits): a starter prompt stops at 1,200 characters, because a
@@ -95,7 +99,9 @@ project:
 | Field | Limit |
 | --- | --- |
 | `identifier` | 200 characters |
-| `name`, `description`, each section `summary`, each `applies_to` / `triggers` / `requires` item | 240 characters |
+| `name`, each section `summary`, each `applies_to` / `triggers` / `requires` item, and a legacy one-line `description` | 240 characters |
+| `summary` | 250 characters |
+| `description` (the page, when `summary` is present) | 16,000 characters |
 | `overview`, each section `body` | 8,000 characters |
 | `applies_to`, `triggers`, `requires` | 32 items each |
 | `sections` | 64; each `id` 120 characters |
@@ -137,7 +143,7 @@ author repo, and the registry holds a single lean entry in `community-skillpacks
   "content_type": "vineyard:skillpack",
   "name": "Account & identity pivoting",
   "author": "VINEYARD",
-  "description": "Turn one account or handle into the person's other accounts, and know when a shared username is NOT the same person.",
+  "summary": "Turn one account or handle into the person's other accounts, and know when a shared username is NOT the same person.",
   "repo": "Vineyard-Intelligence/skillpack-account-identity-pivoting",
   "ref": "77e1444b3422cb41c2a1d382730489b745ade5a6",
   "path": "skillpacks/account-pivot.skill.json",

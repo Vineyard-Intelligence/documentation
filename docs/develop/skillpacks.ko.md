@@ -13,7 +13,8 @@ Skill Pack은 단일 JSON 문서로, `content_type: "vineyard:skillpack"`이며,
   "content_type": "vineyard:skillpack",
   "identifier": "run.vineyard.skillpacks.account_identity_pivot",
   "name": "Account & identity pivoting",
-  "description": "Turn one account or handle into the person's other accounts, and know when a shared username is NOT the same person.",
+  "summary": "Turn one account or handle into the person's other accounts, and know when a shared username is NOT the same person.",
+  "description": "## What it is for\n\nYou hold one handle or email and want the person's other accounts…\n\n## What it needs\n\nThe WhatsMyName plugin pack…",
   "author": "VINEYARD",
   "version": "3.1.2",
 
@@ -69,7 +70,8 @@ Skill Pack은 단일 JSON 문서로, `content_type: "vineyard:skillpack"`이며,
 스킬 텍스트는 프롬프트에 주입되지 않고 에이전트가 필요할 때 툴 결과로 읽으므로, 사용하지 않을 때는 비용이 들지 않습니다.
 
 - **앱 자체 규칙이 플레이북보다 우선합니다.** 규칙을 무시하거나, 분석가의 검토를 건너뛰거나, 신뢰할 수 없는 텍스트를 명령처럼 다루라는 텍스트는 거부됩니다.
-- **필드는 다듬어집니다.** 한 줄 필드(이름, 설명, 요약, 라벨, id, 목록 항목)는 한 줄로 접히고 제어 문자가 제거됩니다. overview, 섹션 본문, starter 프롬프트는 개행과 탭은 유지하고 그 밖의 제어 문자는 모두 제거됩니다. 그다음 각 필드는 [한도](#loader-limits)에 맞춰 잘립니다: starter 프롬프트는 1,200자에서 끊깁니다. starter는 문단이지 문서가 아니기 때문입니다.
+- **페이지는 에이전트가 아니라 분석가를 위한 글입니다.** `list_skills`가 에이전트에게 주는 것은 `summary`입니다. `description`은 마켓플레이스에 보이는 팩의 페이지이고 에이전트에게는 보내지 않습니다. 에이전트가 읽는 글은 `overview`와 섹션입니다. [팩의 한 줄과 페이지](publishing.md#pack-page)를 참고하세요.
+- **필드는 다듬어집니다.** 한 줄 필드(이름, 요약, 라벨, id, 목록 항목)는 한 줄로 접히고 제어 문자가 제거됩니다. overview, 섹션 본문, starter 프롬프트는 개행과 탭은 유지하고 그 밖의 제어 문자는 모두 제거됩니다. 그다음 각 필드는 [한도](#loader-limits)에 맞춰 잘립니다: starter 프롬프트는 1,200자에서 끊깁니다. starter는 문단이지 문서가 아니기 때문입니다.
 - **턴당 로드 예산이 컨텍스트를 제한합니다.** 각 턴은 최대 12개의 (스킬, 섹션) 문서와 총 ~40,000자를 읽을 수 있으며, 재읽기도 다른 읽기와 똑같이 예산에 계상됩니다.
 
 ### 로더 한도 {#loader-limits}
@@ -79,7 +81,9 @@ Skill Pack은 단일 JSON 문서로, `content_type: "vineyard:skillpack"`이며,
 | 필드 | 한도 |
 | --- | --- |
 | `identifier` | 200자 |
-| `name`, `description`, 각 섹션 `summary`, 각 `applies_to` / `triggers` / `requires` 항목 | 240자 |
+| `name`, 각 섹션 `summary`, 각 `applies_to` / `triggers` / `requires` 항목, 예전 형태의 한 줄 `description` | 240자 |
+| `summary` | 250자 |
+| `description` (`summary`가 있을 때의 페이지) | 16,000자 |
 | `overview`, 각 섹션 `body` | 8,000자 |
 | `applies_to`, `triggers`, `requires` | 각각 32개 항목 |
 | `sections` | 64개, 각 `id` 120자 |
@@ -104,7 +108,7 @@ Skill Pack은 Plugin Pack 및 Type Pack과 정확히 같은 방식으로 배포�
   "content_type": "vineyard:skillpack",
   "name": "Account & identity pivoting",
   "author": "VINEYARD",
-  "description": "Turn one account or handle into the person's other accounts, and know when a shared username is NOT the same person.",
+  "summary": "Turn one account or handle into the person's other accounts, and know when a shared username is NOT the same person.",
   "repo": "Vineyard-Intelligence/skillpack-account-identity-pivoting",
   "ref": "77e1444b3422cb41c2a1d382730489b745ade5a6",
   "path": "skillpacks/account-pivot.skill.json",

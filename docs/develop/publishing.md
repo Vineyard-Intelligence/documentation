@@ -9,7 +9,7 @@ Submissions go to **`Vineyard-Intelligence/registry`**. The repo carries *pointe
 | Path | Role |
 |---|---|
 | `packs/<identifier>.json` | **The source, and the only thing a submission adds.** One file per pack, named for its `identifier`. |
-| `registry/community-pluginpacks.json` | Published index of Plugin Packs — **generated**, one lean entry per pack: identifier, name, author, description, repo, ref, path, version, platforms, `scopes_summary`, `verified`. |
+| `registry/community-pluginpacks.json` | Published index of Plugin Packs — **generated**, one lean entry per pack: identifier, name, author, summary, repo, ref, path, version, platforms, `scopes_summary`, `verified`. |
 | `registry/community-typepacks.json` | Symmetric for Type Packs; carries `categories`/`type_count` instead of scopes (no code executes). |
 | `registry/community-skillpacks.json` | Symmetric for Skill Packs; carries `applies_to`/`section_count`/`requires` instead of scopes (text only, no code executes). |
 | `registry/approved-*.json` | **Generated** from the history of `packs/` by `scripts/build_approved.py`. Lists every `repo@ref/path` the registry has ever approved, with a SHA-256 of that document. The app loads only pointers on this list whose bytes match the digest. |
@@ -35,6 +35,33 @@ A few things worth knowing going in:
 - `ref` is the only thing pinning your code. To ship a new version, edit your pack's file in place with the new `ref` and a higher `version` — see [Updates](updates.md).
 - Derived fields (`platforms`, `scopes_summary`, `categories`, `type_count`, …) are projections of the full manifest/Type Pack so the browse page renders without fetching every manifest. CI recomputes `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count` and `type_count` from the pinned document and rejects the entry if any it carries disagree. `categories` and a Skill Pack's `applies_to`/`requires` are not recomputed, so keep them accurate yourself.
 
+## A pack's line and its page {#pack-page}
+
+A Plugin Pack, a Type Pack and a Skill Pack each carry two texts at pack level, the way a browser
+extension store shows a short line under the name and an About section below. **Both are required.**
+
+| Field | What it is | Limit | Who reads it |
+| --- | --- | --- | --- |
+| `summary` | The line under the name: what the pack does, standing on its own. | 250 characters, one line | Every card, picker and the agent's lists |
+| `description` | The pack's page, its About section, in Markdown: what it is for, what each plugin adds, what it costs, what it needs, what it exposes. | 16,000 characters | The marketplace drawer when a pack is opened, and the agent only when it asks for that one pack by id |
+
+The page is rendered as Markdown with its headings, lists, tables and code, and with nothing that
+acts: **an image is never loaded** (its address is shown instead, so opening a pack never tells its
+author who looked at it), **a link is not clickable** (its text is shown with the full address beside
+it), and raw HTML is dropped.
+
+Write the page for the analyst deciding whether to install the pack. The agent does not read it when
+it lists plugins or skill packs; it gets a pack's page from `list_plugins` with `pack_id` only when a
+plugin's own entry does not say enough, and it treats the page as data, never as instructions. A
+Skill Pack's page is never sent to the agent at all: the `overview` and the sections are the text
+written for it. Individual plugins keep their own `description` unchanged.
+
+**Documents from before the page.** A document without `summary` was written before the page existed,
+and there `description` is the one line. The app still reads one, so every project pinned to such a
+commit keeps loading it, but the registry lists none: move the old line into `summary`, write the
+page into `description`, and re-pin. A lone `vineyard:plugin` document cannot carry both, because its
+`description` is the plugin's own; list it as a Plugin Pack of one.
+
 ## What CI enforces
 
 Every check below is **blocking** — a pull request cannot merge until they all pass. They run in `.github/workflows/validate.yml`.
@@ -51,6 +78,8 @@ Every check below is **blocking** — a pull request cannot merge until they all
 - **Immutable `ref`.** Must be a **commit SHA** (40-hex or 64-hex). Tags and branches can be moved and are **rejected**. (`verify_pinned.py`)
 - **The commit belongs to `repo`.** Some branch or tag of the repository named in `repo` must contain the pinned commit. A commit that no branch or tag contains is **refused** — one that exists only in a fork, for example, or a pull request's own commit after a squash merge (pin the commit the merge created instead). Push or merge it into `repo` (or tag it there) and pin that; `resolve_ref.py` gives you the commit a branch or tag points at. A commit on the default branch, or the one a tag or branch points at, is found. This applies to every entry, verified or not, and is checked when your pull request adds the entry or changes its `repo` or `ref`. Keep that branch or tag for as long as the entry is listed — tagging each release is the simplest way — and do not rewrite its history: a commit nothing in `repo` holds any more is not guaranteed to stay available. (`validate.py`) The November 2026 rewrites of the `Vineyard-Intelligence` pack repositories broke this rule on purpose, once to remove machine hostnames from commit identities and once to remove Claude co-author trailers and Claude identities: each moved ref has a twin row in `approved-baseline.json` (the frozen input to `registry/approved-*.json`) with the same tree and digest, and the old row stays approved, so a project pinned to the old commit keeps loading it and the new commit is approved for the same content.
 - **The pinned document matches the entry.** The document at `repo@ref/path` is fetched and its `identifier`, `content_type`, and `version` must equal what your entry advertises. An entry whose metadata was bumped without re-pinning the `ref` fails here.
+- **The pack states both texts, and the card line is the document's own.** The pinned document must have `summary` and a non-empty `description`, and your entry's `summary` must equal the document's exactly — the entry mirrors the line the document states. The page stays in the document; the marketplace reads it from the pinned commit when the pack is opened. (`verify_pinned.py`)
+- **The line and the page are well formed.** `summary` is one line of at most 250 characters; the page is text of at most 16,000 characters with no control characters but newlines and tabs; a lone `vineyard:plugin` document is refused. See [A pack's line and its page](#pack-page). (`verify_pinned.py`)
 - **Every summary field is recomputed, not trusted.** `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count` and `type_count` are derived from the pinned document and compared to what you wrote. `scopes_summary.network` is true when a member declares `network` **or** `web_probe`.
 - **The bundle matches the manifest.** For Plugin Packs, the module named by `platforms.web.entry` is fetched at the pinned commit. The `version` and `license` it declares for the pack and for each member must equal the manifest's. A manifest edited without rebuilding `dist/` fails here, and so does an entry that 404s. (`verify_pinned.py`)
 
@@ -90,7 +119,7 @@ A **Plugin Pack**, filed as `packs/run.vineyard.pluginpacks.chaos.json`. Note `p
   "content_type": "vineyard:pluginpack",
   "name": "Chaos Reference Pack",
   "author": "VINEYARD",
-  "description": "Six graph-manipulation plugins for demos and validation.",
+  "summary": "Six graph-manipulation plugins for demos and validation.",
   "repo": "Vineyard-Intelligence/pluginpack-chaos",
   "ref": "024c36cf17011abb4a7fc6004ced208751c13473",
   "path": "plugins/chaos-pack.manifest.json",
@@ -111,7 +140,7 @@ A **Type Pack**, filed as `packs/run.vineyard.typepacks.infrastructure.json` (no
   "content_type": "vineyard:typepack",
   "name": "Infrastructure",
   "author": "VINEYARD",
-  "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
+  "summary": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
   "ref": "721e3fdab2bdcace019cd9329b47b1014d8acdbb",
   "path": "typepacks/infrastructure.json",
@@ -123,7 +152,7 @@ A **Type Pack**, filed as `packs/run.vineyard.typepacks.infrastructure.json` (no
 ```
 
 !!! note "Field reference"
-    The required fields are `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`. `content_type` is the literal `vineyard:plugin`, `vineyard:pluginpack`, `vineyard:typepack`, or `vineyard:skillpack`. The full field list and constraints live in [registry-schema](../reference/registry-schema.md).
+    The required fields are `identifier`, `content_type`, `name`, `author`, `summary`, `repo`, `ref`, `path`. `content_type` is the literal `vineyard:plugin`, `vineyard:pluginpack`, `vineyard:typepack`, or `vineyard:skillpack`. The full field list and constraints live in [registry-schema](../reference/registry-schema.md).
 
 ## After merge
 

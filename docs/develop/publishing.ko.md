@@ -9,7 +9,7 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 | 경로 | 역할 |
 |---|---|
 | `packs/<identifier>.json` | **소스이자, 제출이 추가하는 유일한 파일.** 팩 하나당 파일 하나이며, 파일명은 해당 `identifier`입니다. |
-| `registry/community-pluginpacks.json` | 게시되는 Plugin Pack 인덱스 — **생성물**. 팩당 하나의 간소화된 항목: identifier, name, author, description, repo, ref, path, version, platforms, `scopes_summary`, `verified`. |
+| `registry/community-pluginpacks.json` | 게시되는 Plugin Pack 인덱스 — **생성물**. 팩당 하나의 간소화된 항목: identifier, name, author, summary, repo, ref, path, version, platforms, `scopes_summary`, `verified`. |
 | `registry/community-typepacks.json` | Type Pack용 대칭 항목. 스코프 대신 `categories`/`type_count`를 가집니다(코드가 실행되지 않음). |
 | `registry/community-skillpacks.json` | Skill Pack용 대칭 항목. 스코프 대신 `applies_to`/`section_count`/`requires`를 가집니다(텍스트만 있으며, 코드가 실행되지 않음). |
 | `registry/approved-*.json` | `scripts/build_approved.py`가 `packs/`의 이력에서 **생성**. 레지스트리가 지금까지 승인한 모든 `repo@ref/path`와 그 문서의 SHA-256을 나열합니다. 앱은 이 목록에 있고 바이트가 다이제스트와 일치하는 포인터만 로드합니다. |
@@ -35,6 +35,31 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 - `ref`가 코드를 고정하는 유일한 요소입니다. 새 버전을 배포하려면 해당 팩의 파일을 그 자리에서 새 `ref`와 더 높은 `version`으로 수정하세요 — [업데이트](updates.md)를 참조하세요.
 - 파생 필드(`platforms`, `scopes_summary`, `categories`, `type_count`, …)는 전체 매니페스트/Type Pack의 투영이므로, 찾아보기 페이지가 모든 매니페스트를 가져오지 않고도 렌더링됩니다. CI가 고정된 문서에서 `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count`, `type_count`를 다시 계산해, 항목에 적힌 값 중 하나라도 불일치하면 거부합니다. `categories`와 Skill Pack의 `applies_to`/`requires`는 다시 계산하지 않으므로 직접 정확하게 유지하세요.
 
+## 팩의 한 줄과 페이지 {#pack-page}
+
+Plugin Pack, Type Pack, Skill Pack은 모두 팩 수준에 글 두 개를 둡니다. 브라우저 확장 스토어가 이름 아래에 짧은 설명을,
+그 아래 '정보' 란에 긴 설명을 보여 주는 것과 같습니다. **둘 다 필수입니다.**
+
+| 필드 | 무엇인가 | 한도 | 누가 읽는가 |
+| --- | --- | --- | --- |
+| `summary` | 이름 아래의 한 줄. 이것만 읽어도 팩이 무엇을 하는지 알 수 있어야 합니다. | 250자, 한 줄 | 모든 카드와 선택 목록, 에이전트의 목록 |
+| `description` | 팩의 페이지, 곧 '정보' 란(Markdown). 무엇을 위한 팩인지, 플러그인마다 무엇을 더하는지, 비용, 필요한 것, 외부에 드러나는 것. | 16,000자 | 팩을 열었을 때의 마켓플레이스 drawer, 그리고 에이전트가 그 팩 하나를 id로 요청했을 때만 |
+
+페이지는 제목, 목록, 표, 코드를 갖춘 Markdown으로 렌더링되고, 동작하는 요소는 렌더링되지 않습니다. **이미지는 불러오지
+않고** 주소만 보여 줍니다. 팩을 열었다는 사실이 팩 작성자에게 전달되지 않게 하기 위해서입니다. **링크는 클릭되지 않고**
+링크 글 옆에 전체 주소를 보여 줍니다. raw HTML은 버립니다.
+
+페이지는 팩을 설치할지 정하는 분석가를 위해 쓰세요. 에이전트는 플러그인이나 스킬팩 목록을 볼 때 이 글을 읽지 않습니다.
+플러그인 항목만으로 부족할 때에만 `list_plugins`에 `pack_id`를 주어 팩의 페이지를 받고, 그 글은 지시가 아니라
+데이터로 다룹니다. Skill Pack의 페이지는 에이전트에게 아예 보내지 않습니다. 에이전트를 위한 글은 `overview`와
+섹션입니다. 개별 플러그인의 `description`은 그대로입니다.
+
+**페이지가 생기기 전의 문서.** `summary`가 없는 문서는 페이지가 생기기 전에 쓴 것이고, 그때 `description`은 한
+줄입니다. 앱은 이런 문서도 읽으므로 그 커밋에 고정된 프로젝트는 계속 로드하지만, 레지스트리는 이런 문서를 등재하지
+않습니다. 기존 한 줄을 `summary`로 옮기고 `description`에 페이지를 쓴 다음 다시 고정하세요. 단독
+`vineyard:plugin` 문서는 `description`이 플러그인 자신의 설명이라 두 글을 함께 가질 수 없습니다. 플러그인 하나짜리
+Plugin Pack으로 등재하세요.
+
 ## CI가 강제하는 것 {#what-ci-enforces}
 
 아래는 모두 **차단** 검사입니다 — 전부 통과해야 풀 리퀘스트를 병합할 수 있습니다. `.github/workflows/validate.yml`에서 실행됩니다.
@@ -51,6 +76,8 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 - **불변 `ref`.** 반드시 **커밋 SHA**(40-16진수 또는 64-16진수)여야 합니다. 태그와 브랜치는 옮겨질 수 있으므로 **거부**됩니다. (`verify_pinned.py`)
 - **커밋이 `repo`에 속해야 합니다.** `repo`에 적은 저장소의 브랜치나 태그 중 하나가 고정한 커밋을 포함해야 합니다. 어떤 브랜치나 태그에도 포함되지 않은 커밋은 **거부**됩니다 — 예를 들어 포크에만 있는 커밋, 또는 스쿼시 병합된 풀 리퀘스트 자체의 커밋이 그렇습니다(이 경우 병합으로 만들어진 커밋을 고정하세요). 그 커밋을 `repo`에 푸시하거나 병합하고(또는 그곳에 태그를 달고) 그것을 고정하세요. 브랜치나 태그가 가리키는 커밋은 `resolve_ref.py`로 확인할 수 있습니다. 기본 브랜치에 있는 커밋, 또는 태그나 브랜치가 가리키는 커밋은 찾아집니다. verified 여부와 관계없이 모든 항목에 적용되며, 풀 리퀘스트가 항목을 추가하거나 그 `repo`나 `ref`를 바꿀 때 검사합니다. 항목이 등재되어 있는 동안 그 브랜치나 태그를 유지하고(릴리스마다 태그를 다는 것이 가장 간단합니다) 그 히스토리를 다시 쓰지 마세요 — `repo`의 어디에도 남아 있지 않은 커밋은 계속 제공된다는 보장이 없습니다. (`validate.py`) 2026년 11월의 `Vineyard-Intelligence` 팩 저장소 히스토리 재작성은 이 규칙을 의도적으로 어겼습니다. 한 번은 커밋 신원의 기기 호스트명을, 한 번은 Claude 공동 작성자 트레일러와 Claude 신원을 지우기 위해서였습니다. 옮겨진 ref마다 트리와 다이제스트가 같은 쌍둥이 행이 `approved-baseline.json`(`registry/approved-*.json`의 동결된 입력)에 있고 옛 행도 승인된 채로 남으므로, 옛 커밋에 고정된 프로젝트는 그 커밋을 계속 로드하고 새 커밋도 같은 내용으로 승인됩니다.
 - **고정된 문서가 항목과 일치해야 합니다.** `repo@ref/path`의 문서를 가져와 그 `identifier`, `content_type`, `version`이 항목이 광고하는 값과 같아야 합니다. `ref`를 다시 고정하지 않고 메타데이터만 올린 항목은 여기서 실패합니다.
+- **팩이 두 글을 모두 갖고, 카드의 한 줄은 문서가 정합니다.** 고정된 문서에 `summary`와 비어 있지 않은 `description`이 있어야 하고, 항목의 `summary`는 문서의 `summary`와 정확히 같아야 합니다. 항목은 문서가 적은 한 줄을 그대로 옮겨 적는 것입니다. 페이지는 문서에만 있고, 마켓플레이스는 팩을 열 때 고정된 커밋에서 읽어 옵니다. (`verify_pinned.py`)
+- **한 줄과 페이지의 형식이 맞아야 합니다.** `summary`는 250자 이하의 한 줄이고, 페이지는 16,000자 이하이며 개행과 탭 외의 제어 문자가 없어야 합니다. 단독 `vineyard:plugin` 문서는 거부됩니다. [팩의 한 줄과 페이지](#pack-page)를 참고하세요. (`verify_pinned.py`)
 - **요약 필드는 신뢰하지 않고 다시 계산합니다.** `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count`, `type_count`를 고정된 문서에서 유도해 작성값과 대조합니다. `scopes_summary.network`는 멤버가 `network` **또는** `web_probe`를 선언하면 true입니다.
 - **번들이 매니페스트와 일치해야 합니다.** Plugin Pack의 경우 `platforms.web.entry`가 가리키는 모듈을 고정된 커밋에서 가져옵니다. 그 모듈이 팩과 각 멤버에 대해 선언하는 `version`과 `license`는 매니페스트의 값과 같아야 합니다. `dist/`를 다시 빌드하지 않고 매니페스트만 수정했거나, entry가 404이면 여기서 실패합니다. (`verify_pinned.py`)
 
@@ -90,7 +117,7 @@ Type Pack에는 여기서 자체 검사 두 가지가 더 있습니다. 하나�
   "content_type": "vineyard:pluginpack",
   "name": "Chaos Reference Pack",
   "author": "VINEYARD",
-  "description": "Six graph-manipulation plugins for demos and validation.",
+  "summary": "Six graph-manipulation plugins for demos and validation.",
   "repo": "Vineyard-Intelligence/pluginpack-chaos",
   "ref": "024c36cf17011abb4a7fc6004ced208751c13473",
   "path": "plugins/chaos-pack.manifest.json",
@@ -111,7 +138,7 @@ Type Pack에는 여기서 자체 검사 두 가지가 더 있습니다. 하나�
   "content_type": "vineyard:typepack",
   "name": "Infrastructure",
   "author": "VINEYARD",
-  "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
+  "summary": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
   "ref": "721e3fdab2bdcace019cd9329b47b1014d8acdbb",
   "path": "typepacks/infrastructure.json",
@@ -123,7 +150,7 @@ Type Pack에는 여기서 자체 검사 두 가지가 더 있습니다. 하나�
 ```
 
 !!! note "필드 참조"
-    필수 필드는 `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`입니다. `content_type`은 리터럴 `vineyard:plugin`, `vineyard:pluginpack`, `vineyard:typepack`, `vineyard:skillpack`입니다. 전체 필드 목록과 제약 조건은 [레지스트리 엔트리 스키마](../reference/registry-schema.md)에 있습니다.
+    필수 필드는 `identifier`, `content_type`, `name`, `author`, `summary`, `repo`, `ref`, `path`입니다. `content_type`은 리터럴 `vineyard:plugin`, `vineyard:pluginpack`, `vineyard:typepack`, `vineyard:skillpack`입니다. 전체 필드 목록과 제약 조건은 [레지스트리 엔트리 스키마](../reference/registry-schema.md)에 있습니다.
 
 ## 병합 후
 

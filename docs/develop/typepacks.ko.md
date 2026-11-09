@@ -14,7 +14,8 @@ Type Pack은 그래프와 플러그인이 사용할 **노드 엔티티 타입**�
   "content_type": "vineyard:typepack",           // 상수
   "version": "1.0.0",                             // 팩 콘텐츠의 SemVer
   "name": "Infrastructure",
-  "description": "Network infrastructure entities.",
+  "summary": "Network infrastructure entities.",     // 카드의 한 줄
+  "description": "## What it models\n\n…",       // 팩의 페이지(Markdown) — publishing.md#pack-page 참고
   "authors": [{ "name": "Vineyard", "url": "https://vineyard.run" }],
   "license": "Apache-2.0",                        // SPDX 표현식
   "marketing_url": "https://vineyard.run/packs/infrastructure",

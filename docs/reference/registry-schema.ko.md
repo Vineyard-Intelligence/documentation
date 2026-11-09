@@ -21,7 +21,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 
 `community-pluginpacks.json`의 한 행. 스키마는 `additionalProperties: false`를 설정하므로, 알 수 없는 키는 레지스트리 CI가 거부합니다.
 
-**필수:** `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`.
+**필수:** `identifier`, `content_type`, `name`, `author`, `summary`, `repo`, `ref`, `path`.
 
 | 필드 | 유형 | 필수 | 의미 |
 |---|---|---|---|
@@ -29,7 +29,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `content_type` | string | 예 | `vineyard:plugin` (단일 plugin) 또는 `vineyard:pluginpack` (번들: 하나의 파일 → 여러 plugin). |
 | `name` | string | 예 | 표시 이름, 1–128자. |
 | `author` | string | 예 | 저자 핸들, `verified-authors.json`과 대조됨. 그곳에 등재된 저자라면 팩 저장소 owner의 GitHub id가 그 저자의 `github.id`와 일치해야 합니다. |
-| `description` | string | 예 | ≤250자, 문장형 대소문자, 마침표로 끝남, 이모지 없음. |
+| `summary` | string | 예 | 카드의 한 줄. ≤250자, 문장형 대소문자, 마침표로 끝남, 이모지 없음. 고정된 문서의 `summary`와 같아야 합니다. 팩의 페이지는 카탈로그에 없습니다([팩의 한 줄과 페이지](../develop/publishing.md#pack-page)). |
 | `repo` | string | 예 | `owner/name` GitHub 경로 (`^[^/]+/[^/]+$`). 코드를 가리키는 **유일한** 포인터. |
 | `ref` | string | 예 | **불변 커밋 SHA** (40자 16진수 SHA-1 또는 64자 16진수 SHA-256), PR 시점에 캡처됨. **태그와 브랜치는 거부됩니다** (둘 다 재지정 가능). 커밋은 `repo` 자신의 브랜치나 태그에 있어야 하며, 포크에만 있는 커밋은 거부됩니다. `version`은 사람이 읽을 수 있는 릴리스를 전달합니다. |
 | `path` | string | 예 | `repo@ref` 내 `manifest.json`까지의 경로. |
@@ -58,7 +58,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
   "content_type": "vineyard:pluginpack",
   "name": "Chaos Reference Pack",
   "author": "VINEYARD",
-  "description": "Six graph-manipulation plugins for demos and validation.",
+  "summary": "Six graph-manipulation plugins for demos and validation.",
   "repo": "Vineyard-Intelligence/pluginpack-chaos",
   "ref": "024c36cf17011abb4a7fc6004ced208751c13473",
   "path": "plugins/chaos-pack.manifest.json",
@@ -79,7 +79,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 
 `community-typepacks.json`의 한 행으로, plugin 항목과 대칭적입니다. Type Pack은 **scope를 가지지 않으며** — 코드가 실행되지 않으므로 — `scopes_summary` 패싯은 카테고리 필터를 구동하는 `categories`로 대체됩니다. 역시 `additionalProperties: false`.
 
-**필수:** `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`.
+**필수:** `identifier`, `content_type`, `name`, `author`, `summary`, `repo`, `ref`, `path`.
 
 | 필드 | 유형 | 필수 | 의미 |
 |---|---|---|---|
@@ -87,7 +87,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `content_type` | string | 예 | 상수 `vineyard:typepack`. |
 | `name` | string | 예 | 표시 이름, 1–128자. |
 | `author` | string | 예 | 저자 핸들. |
-| `description` | string | 예 | ≤250자 (plugin 항목과 동일한 산문 규칙). |
+| `summary` | string | 예 | ≤250자 (plugin 항목과 동일한 규칙). |
 | `repo` | string | 예 | `owner/name` GitHub 경로. |
 | `ref` | string | 예 | **불변 커밋 SHA** (40자 16진수 SHA-1 또는 64자 16진수 SHA-256), PR 시점에 캡처됨. 태그와 브랜치는 거부됩니다(둘 다 재지정 가능). 커밋은 `repo` 자신의 브랜치나 태그에 있어야 하며, 포크에만 있는 커밋은 거부됩니다. `version`은 사람이 읽을 수 있는 릴리스를 전달합니다. |
 | `path` | string | 예 | `repo@ref` 내 Type Pack JSON 경로. |
@@ -109,7 +109,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
   "content_type": "vineyard:typepack",
   "name": "Infrastructure",
   "author": "VINEYARD",
-  "description": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
+  "summary": "Network-infrastructure and web OSINT entities (IPs, domains, URLs, hosts, ASNs, netblocks, DNS/WHOIS records, TLS certificates, SSH host keys, technologies, web fingerprints and tracking/ad-account identifiers) and their relationships.",
   "repo": "Vineyard-Intelligence/typepack-basic",
   "ref": "721e3fdab2bdcace019cd9329b47b1014d8acdbb",
   "path": "typepacks/infrastructure.json",
@@ -127,13 +127,13 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 
 `community-skillpacks.json`의 한 행으로, 위 두 항목과 같은 포인터 형태입니다. Skill Pack은 텍스트이므로 scope를 가지지 않으며, 유일한 의존성은 `requires`의 Plugin Pack입니다. 역시 `additionalProperties: false`.
 
-**필수:** `identifier`, `content_type`, `name`, `author`, `description`, `repo`, `ref`, `path`.
+**필수:** `identifier`, `content_type`, `name`, `author`, `summary`, `repo`, `ref`, `path`.
 
 | 필드 | 유형 | 필수 | 의미 |
 |---|---|---|---|
 | `identifier` | string | 예 | Reverse-DNS 기본 키, `^(?:[a-z0-9]+(?:-[a-z0-9]+)*\.){2,}skillpacks\.[a-z0-9_]+$`. 스킬 문서의 `identifier`와 동일. |
 | `content_type` | string | 예 | 상수 `vineyard:skillpack`. |
-| `name`, `author`, `description`, `repo`, `ref`, `path` | string | 예 | plugin 항목과 같은 규칙. `path`는 `repo@ref` 내 스킬 JSON 경로. |
+| `name`, `author`, `summary`, `repo`, `ref`, `path` | string | 예 | plugin 항목과 같은 규칙. `path`는 `repo@ref` 내 스킬 JSON 경로. |
 | `version` | string | 아니요 | 이 `ref`에서 문서 `version`의 SemVer 미러. |
 | `applies_to` | string[] | 아니요 | **파생됨**: 플레이북이 다루는 노드 유형(`category.name`)으로, 상세 보기에 표시됩니다. CI가 다시 계산하지 않으므로 문서에서 그대로 옮겨 적으세요. |
 | `section_count` | integer | 아니요 | **파생됨**: 문서의 `sections` 개수. CI가 다시 계산합니다. 최소 `0`. |

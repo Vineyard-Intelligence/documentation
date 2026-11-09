@@ -9,7 +9,7 @@ Exhaustive field reference for `typepack.schema.json` — the authoring contract
 
 The root is an object with `additionalProperties: false` — unknown keys fail schema validation.
 
-**Required:** `identifier`, `name`, `content_type`, `version`, `types`.
+**Required:** `identifier`, `name`, `content_type`, `version`, `summary`, `description`, `types`.
 
 | Field | Type | Req | Constraints / default | Meaning |
 |-------|------|-----|-----------------------|---------|
@@ -17,7 +17,8 @@ The root is an object with `additionalProperties: false` — unknown keys fail s
 | `content_type` | string | yes | `const: "vineyard:typepack"` | Discriminator marking the document as a Type Pack. |
 | `name` | string | yes | `minLength: 1`, `maxLength: 128` | Human-readable pack name. |
 | `version` | string | yes | SemVer pattern `^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$` | SemVer of the pack **content**. MAJOR = breaking type change; nodes that use the changed type may need updating. |
-| `description` | string | no | `maxLength: 1024` | Short summary of what the pack models. |
+| `summary` | string | yes | 1–250 chars, one line | The line under the pack's name. See [A pack's line and its page](../develop/publishing.md#pack-page). |
+| `description` | string | yes | 1–16,000 chars | The pack's page, in Markdown. A document without `summary` predates the page and has this as its one line; the app still reads one, the registry lists none. |
 | `authors` | array&lt;object&gt; | no | see [Authors](#authors) | Attribution list. |
 | `license` | string | no | — | SPDX expression, e.g. `MIT`, `Apache-2.0`, `CC-BY-4.0`. |
 | `marketing_url` | string | no | `format: uri` | Landing page for the pack. |

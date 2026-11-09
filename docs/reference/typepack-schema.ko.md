@@ -9,7 +9,7 @@
 
 루트는 `additionalProperties: false`인 객체입니다 — 알 수 없는 키는 스키마 검증에 실패합니다.
 
-**필수:** `identifier`, `name`, `content_type`, `version`, `types`.
+**필수:** `identifier`, `name`, `content_type`, `version`, `summary`, `description`, `types`.
 
 | 필드 | 유형 | 필수 | 제약 / 기본값 | 의미 |
 |-------|------|-----|-----------------------|---------|
@@ -17,7 +17,8 @@
 | `content_type` | string | 예 | `const: "vineyard:typepack"` | 문서가 Type Pack임을 표시하는 판별자. |
 | `name` | string | 예 | `minLength: 1`, `maxLength: 128` | 사람이 읽을 수 있는 팩 이름. |
 | `version` | string | 예 | SemVer pattern `^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$` | 팩 **내용**의 SemVer. MAJOR = 파괴적 type 변경. 변경된 type을 쓰는 노드는 수정이 필요할 수 있습니다. |
-| `description` | string | 아니요 | `maxLength: 1024` | 팩이 모델링하는 내용에 대한 간략한 요약. |
+| `summary` | string | 예 | 1–250자, 한 줄 | 팩 이름 아래의 한 줄. [팩의 한 줄과 페이지](../develop/publishing.md#pack-page)를 참고하세요. |
+| `description` | string | 예 | 1–16,000자 | 팩의 페이지(Markdown). `summary`가 없는 문서는 페이지가 생기기 전의 것으로 이 값이 한 줄입니다. 앱은 읽지만 레지스트리는 등재하지 않습니다. |
 | `authors` | array&lt;object&gt; | 아니요 | [저자](#authors) 참조 | 기여자 목록. |
 | `license` | string | 아니요 | — | SPDX 표현식, 예: `MIT`, `Apache-2.0`, `CC-BY-4.0`. |
 | `marketing_url` | string | 아니요 | `format: uri` | 팩의 랜딩 페이지. |
