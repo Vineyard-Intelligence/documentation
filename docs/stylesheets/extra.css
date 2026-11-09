@@ -525,6 +525,13 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
 .vy-drawer h2 { margin: 0; font-size: 1.15rem; line-height: 1.2; }
 .vy-drawer__author { font-size: .8rem; color: var(--vy-text-muted); margin-top: .15rem; }
 .vy-drawer__desc { font-size: .85rem; line-height: 1.55; margin: 0 0 1.1rem; max-width: 70ch; }
+/* A pack's page (its `description`): the author's Markdown, kept to the drawer's prose width. */
+.vy-page { font-size: .82rem; line-height: 1.55; max-width: 70ch; }
+.vy-page p { margin: 0 0 .65rem; }
+.vy-page ul { margin: 0 0 .65rem; padding-left: 1.2rem; }
+.vy-page li { margin: .15rem 0; }
+.vy-page code { font-size: .74rem; }
+.vy-page__addr { word-break: break-all; user-select: all; }
 .vy-drawer h4 {
   font-size: .68rem; text-transform: uppercase; letter-spacing: .1em;
   color: var(--vy-text-muted); margin: 1.2rem 0 .5rem; font-weight: 700;

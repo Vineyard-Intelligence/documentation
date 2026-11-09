@@ -573,11 +573,13 @@
         "<div>" +
           "<h2>" + escapeHtml(e.name) + "</h2>" +
           '<div class="vy-drawer__author">' + author(e) +
-            " &middot; " + KIND[e.type].label + "</div>" +
+            " &middot; " + KIND[e.type].label + (kindCount(e) ? " &middot; " + kindCount(e) : "") +
+            (e.version ? " &middot; v" + escapeHtml(e.version) : "") + "</div>" +
         "</div>" +
       "</div>" +
       notice +
       '<p class="vy-drawer__desc">' + escapeHtml(e.summary || "") + "</p>" +
+      (e.page ? '<h4>Description</h4><div class="vy-page">' + renderPage(e.page) + "</div>" : "") +
       body +
       "<h4>Details</h4><dl class=\"vy-kv\">" + rows.join("") + "</dl>"
     );
@@ -644,6 +646,9 @@
   // drawer can show the type palette / bundled plugins / io the lean index omits.
   function mergeDetail(e, doc) {
     if (!doc) return;
+    // The pack's page: `description` when the document also has `summary`. In a document without
+    // `summary` the description is its one line (already shown as the card line), not a page.
+    e.page = typeof doc.summary === "string" && typeof doc.description === "string" ? doc.description : "";
     if (e.type === "typepack") {
       e.types = doc.types || [];
     } else if (e.type === "skillpack") {
@@ -658,6 +663,66 @@
     }
     if (!e.license && doc.license) e.license = doc.license;
   }
+
+  // A pack's page is Markdown written by the pack's author, read here the way the app's drawer reads
+  // it (frontend PackPage.tsx): structure is kept, and nothing on it acts. An image is never loaded
+  // (its alt text and address are shown), a link is not clickable (its words, then the address; a bare
+  // URL, the address once), and raw HTML is escaped and shown as text. Only what the pages use is
+  // understood — paragraphs, "-" lists, **bold**, *emphasis* and `code` — and everything else stays
+  // literal text, which is the safe direction to be wrong in.
+  function renderPage(md) {
+    var blocks = String(md).replace(/\r\n?/g, "\n").split(/\n\s*\n/);
+    return blocks.map(function (block) {
+      // Within a block, a "-" line starts a list item and any other line continues the item or the
+      // paragraph before it — the pages write a bold lead-in line directly above its list.
+      var out = "", para = [], items = null;
+      function flushPara() {
+        if (!para.length) return;
+        var heading = para.length === 1 && /^\s*#{1,6}\s+(.*)$/.exec(para[0]);
+        out += heading ? "<p><strong>" + inline(heading[1]) + "</strong></p>" : "<p>" + inline(para.join(" ")) + "</p>";
+        para = [];
+      }
+      function flushList() {
+        if (!items) return;
+        out += "<ul>" + items.map(function (t) { return "<li>" + inline(t) + "</li>"; }).join("") + "</ul>";
+        items = null;
+      }
+      block.split("\n").forEach(function (l) {
+        if (l.trim() === "") return;
+        var m = /^\s*[-*+]\s+(.*)$/.exec(l);
+        if (m) { flushPara(); (items = items || []).push(m[1]); }
+        else if (items && /^\s/.test(l)) items[items.length - 1] += " " + l.trim();
+        else { flushList(); para.push(l.trim()); }
+      });
+      flushPara(); flushList();
+      return out;
+    }).join("");
+  }
+  function inline(text) {
+    // Code spans first, so nothing inside one is read as markup.
+    var parts = String(text).split(/(`[^`]+`)/);
+    return parts.map(function (part) {
+      if (/^`[^`]+`$/.test(part)) return "<code>" + escapeHtml(part.slice(1, -1)) + "</code>";
+      var out = "", re = /(!?)\[([^\]]*)\]\(([^)\s]+)\)|(https?:\/\/[^\s<>()]+[^\s<>().,;:!?'"])|<([^>\s]+@[^>\s]+)>/g, last = 0, m;
+      while ((m = re.exec(part))) {
+        out += emphasis(escapeHtml(part.slice(last, m.index)));
+        if (m[3]) {
+          var words = m[2], url = m[3], bare = function (u) { return u.replace(/^(?:https?:\/\/|mailto:)/i, ""); };
+          out += words && bare(words) !== bare(url) ? emphasis(escapeHtml(words)) + " " + addr(url) : addr(url);
+        } else {
+          out += addr(m[4] || m[5]);
+        }
+        last = re.lastIndex;
+      }
+      return out + emphasis(escapeHtml(part.slice(last)));
+    }).join("");
+  }
+  function emphasis(html) {
+    return html
+      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+      .replace(/(^|[\s(])\*([^*\s][^*]*)\*(?=[\s).,;:!?]|$)/g, "$1<em>$2</em>");
+  }
+  function addr(url) { return '<code class="vy-page__addr">' + escapeHtml(url) + "</code>"; }
 
   // --- helpers -------------------------------------------------------------
   function kv(k, v) { return "<dt>" + escapeHtml(k) + "</dt><dd>" + v + "</dd>"; }
