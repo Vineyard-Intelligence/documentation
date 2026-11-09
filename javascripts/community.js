@@ -234,7 +234,7 @@
       if (s.type !== "all" && e.type !== s.type) return false;
       if (s.verifiedOnly && !e.verified) return false;
       if (q) {
-        var hay = [e.name, e.author, e.description, e.identifier].concat(e.categories || []).join(" ").toLowerCase();
+        var hay = [e.name, e.author, e.summary, e.identifier].concat(e.categories || []).join(" ").toLowerCase();
         if (hay.indexOf(q) === -1) return false;
       }
       return true;
@@ -385,7 +385,7 @@
               (e.version ? " &middot; v" + escapeHtml(e.version) : "") + "</div>" +
           "</div>" +
         "</div>" +
-        '<p class="vy-pcard__desc">' + escapeHtml(e.description || "") + "</p>" +
+        '<p class="vy-pcard__desc">' + escapeHtml(e.summary || "") + "</p>" +
         '<div class="vy-pcard__foot">' + chips(e) + "</div>" +
       "</div>"
     );
@@ -577,7 +577,7 @@
         "</div>" +
       "</div>" +
       notice +
-      '<p class="vy-drawer__desc">' + escapeHtml(e.description || "") + "</p>" +
+      '<p class="vy-drawer__desc">' + escapeHtml(e.summary || "") + "</p>" +
       body +
       "<h4>Details</h4><dl class=\"vy-kv\">" + rows.join("") + "</dl>"
     );
