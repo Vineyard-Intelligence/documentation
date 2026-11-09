@@ -529,7 +529,7 @@ body:has(#vy-skyline) .vy-card a { color: var(--vy-300, #c4b5fd); }
 /* Framed, as in the app: the author's text in a bordered, faintly tinted box, so it does not run into
    the drawer's own sections around it. */
 .vy-page {
-  font-size: .82rem; line-height: 1.55; max-width: 70ch;
+  font-size: .82rem; line-height: 1.55;
   padding: .75rem .95rem; border: 1px solid var(--vy-border); border-radius: .4rem;
   background: var(--vy-surface);
 }
