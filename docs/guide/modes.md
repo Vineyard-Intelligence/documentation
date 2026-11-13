@@ -17,6 +17,7 @@ Vineyard runs signed in to a Vineyard server, in the web app or the desktop app,
 | **Project settings** | **General**, **Access** and **People**. | **General** only. |
 | **Dashboard** | **Continue**, **Since your last visit** and **Activity**, a search box that finds entities across your projects, and any invitations waiting for you. | **Continue** only. |
 | **Messages pane** | The project's chat, shared by the people who can edit the project. Anyone else sees *Chat is visible to people who can edit this project.* | No Messages pane. |
+| **Properties panel** | People who can edit the project edit the selected node or edge here. Anyone else sees its values read-only, under *View only*. | Always editable. |
 | **Activity log** | **Project ▸ Activity log…** opens the project's activity log, for project members only. | No activity log is kept, and the menu item is not shown. |
 | **Announcements** | The top bar shows the service's pinned announcements. | None. |
 | **Marketplace installs** | A pack that calls a Vineyard-operated service carries a **Vineyard service** chip and installs like any other pack. | Such a pack (Telegram, for example) carries **Account required** instead, and its **Install** is disabled: *Needs a Vineyard account — sign in to use this pack*. Every other pack installs as usual. |

@@ -17,6 +17,7 @@ Vineyard는 Vineyard 서버에 로그인해 브라우저의 웹 앱이나 데스
 | **프로젝트 설정** | **General**, **Access**, **People**. | **General**만 있습니다. |
 | **대시보드** | **Continue**, **Since your last visit**, **Activity**, 모든 프로젝트에서 엔티티를 찾는 검색창, 그리고 기다리는 초대. | **Continue**만 있습니다. |
 | **Messages 패널** | 프로젝트를 편집할 수 있는 사람들이 함께 쓰는 프로젝트 채팅입니다. 그 밖의 사람에게는 *Chat is visible to people who can edit this project.*가 표시됩니다. | Messages 패널이 없습니다. |
+| **Properties 패널** | 프로젝트를 편집할 수 있는 사람은 선택한 노드나 엣지를 여기서 편집합니다. 그 밖의 사람에게는 값이 *View only* 아래에 읽기 전용으로 표시됩니다. | 언제나 편집할 수 있습니다. |
 | **활동 로그** | **Project ▸ Activity log…**가 프로젝트의 활동 로그를 엽니다(프로젝트 멤버 전용). | 활동 로그를 남기지 않으며, 메뉴 항목도 표시되지 않습니다. |
 | **공지사항** | 상단 바에 서비스의 상단 고정 공지가 표시됩니다. | 없습니다. |
 | **마켓플레이스 설치** | Vineyard가 운영하는 서비스를 호출하는 팩에는 **Vineyard service** 칩이 붙으며, 다른 팩과 똑같이 설치됩니다. | 그런 팩(예: Telegram)에는 대신 **Account required** 칩이 붙고, **Install**은 비활성화되어 *Needs a Vineyard account — sign in to use this pack*이 표시됩니다. 나머지 팩은 평소처럼 설치됩니다. |
