@@ -36,6 +36,8 @@ AI 에이전트가 시작한 플러그인 실행에는 따로 **Tasks** 행이 �
 
 플러그인 실행이나 AI 턴이 아직 작업 중일 때 프로젝트를 떠나려 하면 먼저 묻습니다: *Stop the running plugin and leave this project?* 또는 *Stop the agent and leave this project?* **Stay in this project**를 누르면 그대로 머물고, **Stop and leave**를 누르면 작업을 중지하고 떠납니다.
 
+데스크탑 앱에서는 플러그인 실행이나 AI 턴이 아직 작업 중일 때 창을 닫거나, 앱을 종료하거나, 새로 고침해도 먼저 묻습니다: *Leave while an AI turn or plugin run is still in progress?* **Stay**를 누르면 그대로 남습니다. **Leave anyway**를 누르면 닫기·종료·새로 고침이 진행되고, 턴의 나머지와 플러그인 실행이 모은 내용, 검토를 기다리던 스테이징된 변경 사항이 사라집니다. 브라우저 탭에서는 브라우저가 자체 대화상자로 묻습니다.
+
 작업 행과 대화 내용은 Vineyard 서버로 전송되지 않으며, 적용된 변경 사항만 프로젝트에 기록됩니다 — 검토에서 직접 적용한 것과, **Apply automatically**에서 에이전트가 적용한 것입니다. 에이전트의 모델 호출은 앱에서 AI 프로바이더로 바로 갑니다. 웹 검색어와 에이전트가 읽는 페이지가 어디로 가는지는 설정에 따라 달라집니다. 기본 설정에서 로그인한 상태라면, 에이전트가 프로젝트 내용으로 작성한 검색어가 Vineyard 서버를 거쳐 Serper와 Google로 갑니다. 브라우저 탭에서는 기본 페이지 읽기 방식이 에이전트가 여는 모든 URL을 리더 서비스 r.jina.ai로 보내며, 데스크탑 앱은 직접 가져오기가 실패할 때만 그렇게 합니다. [웹 검색과 페이지 읽기](#web-search-and-page-reading)를 참고하세요.
 
 !!! tip "AI 대화는 이 기기에, 계정별로 남습니다"

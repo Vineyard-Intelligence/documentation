@@ -36,6 +36,8 @@ Plugin-run tasks live only in your browser tab's memory; close the tab and they 
 
 Leaving a project while a plugin run or an AI turn is still working asks first: *Stop the running plugin and leave this project?* or *Stop the agent and leave this project?* **Stay in this project** keeps you there; **Stop and leave** stops the work and leaves.
 
+In the desktop app, closing the window, quitting or reloading while a plugin run or an AI turn is still working asks too: *Leave while an AI turn or plugin run is still in progress?* **Stay** keeps everything as it is. **Leave anyway** closes, quits or reloads, and the rest of the turn, what the plugin run has collected and any staged changes still waiting for review are lost. In a browser tab, the browser asks with its own dialog.
+
 Neither task rows nor conversation content are sent to the Vineyard server; only applied changes are written to the project — the ones you apply in a review, and the ones the agent applies under **Apply automatically**. The agent's model calls go from the app straight to your AI provider. Where its web searches and the pages it reads go depends on your settings. With the defaults, when you are signed in, the queries the agent writes from the project pass through the Vineyard server on their way to Serper and Google. In a browser tab, the default page-reading mode sends each URL the agent opens to the reader service r.jina.ai; the desktop app does so only when its own fetch fails. See [Web search and page reading](#web-search-and-page-reading).
 
 !!! tip "AI conversations stay on this device, under your account"

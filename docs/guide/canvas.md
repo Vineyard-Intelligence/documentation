@@ -83,6 +83,8 @@ The three 1-hop actions add to the selection, so pressing one again walks one mo
 - **Selection** — right-click empty canvas with anything selected, or a node or edge inside a multi-item selection; the header shows the count (*Selected: N nodes, M edges*). Run plugins… and Connect to… (when nodes are selected), Delete (N), Select all, Fit view.
 - **Empty canvas** (nothing selected, headed *Nothing selected — whole project*) — Run plugins… on the whole-graph plugins, Select all, Fit view.
 
+**Delete**, **Delete (N)** and **Disconnect all** ask first, every time. The confirmation says what will go, for example *Delete 3 nodes and 17 connected edges? This cannot be undone.* Deleting a node also deletes every edge connected to it, and the count includes those edges. **Cancel** has the focus, so pressing Enter by reflex does not delete; Esc cancels too. A delete cannot be undone. While the project is still loading, deleting a node and **Disconnect all** are refused, because the edges they would count have not all arrived yet: *The project is still loading — delete again once it has finished.* When you are signed in to a server, the activity log keeps a line for each deleted node with its type, and for each deleted edge with its label.
+
 <figure class="vy-shot" markdown="span">
   ![Node right-click menu](../assets/guide/canvas-context-menu.webp){ width="301" loading=lazy }
   <figcaption>The node menu.</figcaption>

@@ -83,6 +83,8 @@
 - **선택** — 무언가 선택된 상태에서 빈 캔버스를 우클릭하거나, 여러 항목 선택에 포함된 노드나 엣지를 우클릭하면 열립니다. 머리글에 개수가 표시됩니다(*Selected: N nodes, M edges*). **Run plugins…**와 **Connect to…**(노드가 선택된 경우), **Delete (N)**, **Select all**, **Fit view**.
 - **빈 캔버스** (선택 없음, 머리글 *Nothing selected — whole project*) — whole-graph 플러그인에 대한 **Run plugins…**, **Select all**, **Fit view**.
 
+**Delete**, **Delete (N)**, **Disconnect all**은 매번 먼저 확인을 묻습니다. 확인 창은 무엇이 지워지는지 알려 줍니다. 예: *Delete 3 nodes and 17 connected edges? This cannot be undone.* 노드를 지우면 그 노드에 연결된 엣지도 모두 함께 지워지며, 그 엣지도 개수에 포함됩니다. **Cancel**에 포커스가 있어서 습관적으로 Enter를 눌러도 삭제되지 않고, Esc로도 취소됩니다. 삭제는 되돌릴 수 없습니다. 프로젝트를 아직 불러오는 중이면 노드 삭제와 **Disconnect all**이 거부되고 *The project is still loading — delete again once it has finished.*라는 알림이 표시됩니다. 함께 셀 엣지가 아직 다 도착하지 않았기 때문입니다. 서버에 로그인한 상태라면 활동 로그에 지운 노드마다 타입이, 지운 엣지마다 라벨이 한 줄씩 남습니다.
+
 <figure class="vy-shot" markdown="span">
   ![노드 우클릭 메뉴](../assets/guide/canvas-context-menu.webp){ width="301" loading=lazy }
   <figcaption>노드 메뉴.</figcaption>
