@@ -89,6 +89,12 @@ run that is still waiting for review, the footer says so: apply that review firs
 are skipped. The optional **Why reject?** field beside **Discard all** gives your reason to the AI
 agent when the changes came from one of its conversations.
 
+Closing the dialog with the X or **Esc** keeps the run waiting for review, and keeps your choices
+with it: what you unticked or ticked back on, and what you typed in **Why reject?**, are still there
+when you reopen the review, even after opening another project and coming back. **Esc** closes the
+dialog from anywhere in it, except in the **Filter by keyword** field while it holds text, where it
+clears the filter first.
+
 If some changes cannot be written, a **Partly applied** toast says how many. Those stay staged with
 the reason on each row and the run is still waiting for review: reopen it to try them again. Once a
 run is applied or discarded, clicking its row opens a read-only record of what was applied or
