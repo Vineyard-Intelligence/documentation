@@ -85,9 +85,11 @@ with a toast showing its summary (or "No changes").
 
 Unticking a node also leaves out the edges that need it, and the footer says how many (*N edges
 excluded — their endpoint nodes are not being created*). If some links point at nodes from another
-run that is still waiting for review, the footer says so: apply that review first, or those links
-are skipped. The optional **Why reject?** field beside **Discard all** gives your reason to the AI
-agent when the changes came from one of its conversations.
+run that is still waiting for review, the footer says so: apply that review first. Applied before it,
+those links stay staged in this run with the reason on each row, and they land when you apply this
+run again after the other one. If the other run is discarded instead, they are skipped. The
+optional **Why reject?** field beside **Discard all** gives your reason to the AI agent when the
+changes came from one of its conversations.
 
 Closing the dialog with the X or **Esc** keeps the run waiting for review, and keeps your choices
 with it: what you unticked or ticked back on, and what you typed in **Why reject?**, are still there
