@@ -105,11 +105,11 @@ A `regex` is tested as written, so a match anywhere in the value passes: `[A-Z]{
 
 ### What the app checks on node data
 
-A Type Pack's property declarations are checked when a plugin or the AI agent calls `createNode` or `updateNode`, and when an analyst saves an edit in the Properties panel. A write that fails is refused with a message naming each problem (a plugin's call throws). Only the keys being written are checked, plus, on create, the required keys:
+A Type Pack's property declarations are checked when a plugin or the AI agent calls `createNode` or `updateNode`, and when an analyst saves an edit in the Properties panel. A write that fails is refused with a message naming each problem (a plugin's call throws). Only the keys being written are checked, plus, on create, the required keys. The agent's `updateNode` hands over the whole node, so for it only the values that differ from the node as it stands are checked: a value written before a pack release added a pattern does not block an edit to another field. The checks are:
 
 - **`type`**: a `string`, `text`, `hash`, `url`, `email`, `ip`, `date` or `datetime` value must be a string; `integer` a whole number; `number` a finite number; `boolean` a boolean; `array` an array; `object` an object that is not an array. A `reference` value is not checked.
 - **`enum`**: the value must be one of the listed values.
-- **`validator.regex`**: applied to string values as written (see above). It is skipped for values longer than 4,096 characters, for a pattern that does not compile, and for a pattern with a backtracking-prone shape such as `(a+)+`.
+- **`validator.regex`**: applied to string values as written (see above). It is skipped for values longer than 4,096 characters, for a pattern that does not compile, and for a pattern with a backtracking-prone shape such as `(a+)+`. A refused value's message quotes the property's `description` (up to 280 characters), because the message never shows the pattern and the agent sees field names only. Write that description as what to enter, for example "Account number without spaces or hyphens".
 - **`validator.min` / `validator.max`**: applied to number values.
 - **`"optional": false`**: on create only, the key must be present and not blank.
 
