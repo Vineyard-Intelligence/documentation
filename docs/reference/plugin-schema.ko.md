@@ -63,7 +63,7 @@ manifest는 plugin에 대한 단일 진실 공급원입니다. 별도의 서버 
 | 속성 | 타입 | 필수 | 허용 값 | 기본값 | 의미 |
 |---|---|---|---|---|---|
 | `runtime` | string | yes | `sandbox-js`, `web-proxy` | — | `sandbox-js` = 브라우저 worker에서 저자 JS 실행; `web-proxy` = 하나의 저자 엔드포인트를 호출하는 씬 클라이언트 (연기됨). |
-| `entry` | string | yes | 저장소 상대 경로. 앞의 `/`, `.`/`..` 세그먼트, 백슬래시, `%` 불가 | — | plugin 워커가 임포트하는 모듈: 고정된 커밋의 저장소 안 파일을 저장소 루트 기준 상대 경로로 적은 것(예: `dist/pack.mjs`). URL은 쓸 수 없습니다. entry가 고정 커밋 밖으로 해석되는 게시된 팩은 앱이 로드하지 않습니다. 모듈을 가리키지 않는 `inline`은 레지스트리 CI가 거부합니다. |
+| `entry` | string | yes | 저장소 상대 경로. ASCII 영문자, 숫자, `.`, `_`, `-`로 된 세그먼트를 `/`로 이은 것이며, `.`이나 `..`인 세그먼트 불가(따라서 URL, 앞의 `/`, 백슬래시, `%`도 불가) | — | plugin 워커가 임포트하는 모듈: 고정된 커밋의 저장소 안 파일을 저장소 루트 기준 상대 경로로 적은 것(예: `dist/pack.mjs`). URL은 쓸 수 없습니다. entry가 고정 커밋 안의 이런 경로로 해석되지 않는 게시된 팩은 앱이 로드하지 않습니다. 모듈을 가리키지 않는 `inline`은 레지스트리 CI가 거부합니다. |
 | `proxy_endpoint` | string | conditional | `format: uri` | — | **`runtime: web-proxy`일 때 필수.** 단일 엔드포인트. 반드시 하나의 `scopes.network` 항목과 동일해야 합니다. |
 | `fallback` | string | no | `desktop`, `none` | `none` | web이 plugin을 실행할 수 없을 때 폴백할 곳. |
 
