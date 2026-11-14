@@ -102,7 +102,7 @@ AI 에이전트 패널 머리글에는 **AI Agent**, 대화 제목, 사용 중�
 
 | 할 수 있는 일 | 도구 | 제한 |
 | --- | --- | --- |
-| 프로젝트 읽기 | `list_node_types`, `graph_stats`, `read_nodes`, `find_nodes`, `get_node`, `read_edges`, `node_neighbors`, `get_selection` | 읽기 전용. |
+| 프로젝트 읽기 | `list_node_types`, `graph_stats`, `read_nodes`, `find_nodes`, `get_node`, `read_edges`, `node_neighbors`, `similar_hashes`, `get_selection` | 읽기 전용. `similar_hashes`는 파비콘의 `phash`·`dhash` 같은 지각 해시를 64비트 중 몇 비트가 다른지로 비교합니다. 기본은 10비트, 최대 16비트이고, 빈 아이콘이나 한 가지 색 아이콘의 해시는 비교하지 않습니다. |
 | 두 노드가 이어지는 경로 찾기 | `find_paths` | 읽기 전용. 다른 읽기 도구처럼 이미 그래프에 들어간 것만 보고, 스테이징된 것은 보지 않습니다. 경로를 짧은 것부터 최대 10개, 경로마다 링크 최대 6개까지 돌려줍니다. 기본으로 링크가 50개를 넘는 노드는 거쳐 가지 않습니다. 공유 네임서버, 등록기관, 호스팅 업체처럼 무관한 것들을 잇는 노드입니다. 건너뛴 노드가 무엇인지, 두 노드가 그런 노드를 거치거나 더 긴 경로로 이어지는지를 에이전트에게 알려 줍니다. 두 노드가 이어지지 않는다고 알려 주는 것은 필터로 범위를 좁히지 않았는데도 길이에 상관없이 어떤 링크 사슬로도 이어지지 않을 때뿐입니다. 프로젝트를 아직 불러오는 중이면(예: 재연결 후 다시 동기화하는 동안) 그래프의 나머지가 들어올 때까지 기다리고, 그래도 다 들어오지 않았으면 지금까지 들어온 부분만 보고 답했다고 알려 줍니다. |
 | 텍스트에서 지표 추출 | `extract_indicators` | 넘겨받은 텍스트와 지정한 노드만 읽습니다. 앱 밖으로 아무것도 보내지 않고 아무것도 스테이징하지 않습니다. 찾은 값은 후보이며, 에이전트가 다른 노드와 똑같이 `create_node`로 스테이징합니다. |
 | 그래프 변경 | `create_node`, `update_node`, `delete_node`, `create_edge`, `update_edge`, `delete_edge`, 그리고 스테이징한 내용을 다루는 `read_staged`, `drop_staged` | 적용 방식(첫 번째 칩, 또는 Settings의 **Apply the agent's changes automatically**)과, 그 위에 더해지는 **Stop and ask before anything is removed or overwritten** 및 독립 검증. |

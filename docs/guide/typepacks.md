@@ -99,7 +99,11 @@ The same pack also ships five types in a separate `web` category:
 `web.favicon_hash` holds one favicon in every form the search services index it under: `hash_value`
 for Shodan, FOFA, Censys and ZoomEye, `mmh3_hex` for Criminal IP, `md5` for Censys, ZoomEye,
 360 Quake, Hunter.how, ONYPHE and VirusTotal, `sha256` for Censys, Netlas and urlscan.io, and the
-perceptual `phash` and `dhash`, which are compared by how many of their bits differ.
+perceptual `phash` and `dhash`, which are compared by how many of their bits differ. The AI agent
+compares them with `similar_hashes`, and the **Shared-Attribute Clustering** pack links favicons
+whose `phash` or `dhash` differ in at most 10 of 64 bits (adjustable per run) with a
+`similar favicon` edge. A blank or single-colour icon hashes the same whatever its colour, so
+neither compares it.
 
 Each type ships its own icon and color.
 

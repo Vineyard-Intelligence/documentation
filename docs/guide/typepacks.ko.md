@@ -96,7 +96,10 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 `web.favicon_hash`는 파비콘 하나를 검색 서비스들이 색인하는 형식별로 모두 담습니다. Shodan·FOFA·
 Censys·ZoomEye는 `hash_value`, Criminal IP는 `mmh3_hex`, Censys·ZoomEye·360 Quake·Hunter.how·
 ONYPHE·VirusTotal은 `md5`, Censys·Netlas·urlscan.io는 `sha256`으로 찾고, `phash`와 `dhash`는
-비트가 몇 개 다른지로 비교하는 지각 해시입니다.
+비트가 몇 개 다른지로 비교하는 지각 해시입니다. AI 에이전트는 `similar_hashes`로 이 값을 비교하고,
+**Shared-Attribute Clustering** 팩은 `phash`나 `dhash`가 64비트 중 10비트 이하로 다른 파비콘을
+`similar favicon` 엣지로 잇습니다(실행할 때 바꿀 수 있음). 빈 아이콘이나 한 가지 색 아이콘은 색과
+관계없이 해시가 같으므로 둘 다 비교하지 않습니다.
 
 각 유형은 자체 아이콘과 색상을 제공합니다.
 
