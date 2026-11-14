@@ -119,7 +119,7 @@ reconnaissance, in the `infrastructure` category:
 | `infrastructure.netblock` | the CIDR | `network_name`, `asn` |
 | `infrastructure.dns_record` | name, type and value (e.g. `www.example.com A 93.184.216.34`); the record name until type and value are filled | `record_type`, `record_value`, `ttl` |
 | `infrastructure.whois_record` | the subject (domain/IP) | `registrant`, `registrar`, `created_at` |
-| `infrastructure.certificate` | the SHA-256 fingerprint | `subject_common_name`, `issuer`, `not_after` |
+| `infrastructure.certificate` | the SHA-256 fingerprint | `fingerprint_sha1`, `subject_common_name`, `issuer`, `not_after` |
 | `infrastructure.ssh_host_key` | the SHA-256 of the key (hex) | `key_type` |
 | `infrastructure.technologies` | the technology name | `kind`, `vendor`, `version`, `cpe` |
 
@@ -142,6 +142,10 @@ whose `phash` or `dhash` differ in at most 10 of 64 bits (adjustable per run) wi
 `similar favicon` edge. A blank or single-colour icon hashes the same whatever its colour, and a
 symmetric logo's `phash` lies within a few bits of that value, so neither compares a hash at or
 near it; the favicon's other hash is still compared.
+
+`infrastructure.certificate` is identified by its SHA-256. When the source reports the SHA-1 too
+(Shodan, Censys and VirusTotal do), it goes in `fingerprint_sha1`: blocklists such as abuse.ch SSLBL
+list certificates by SHA-1 alone, and a SHA-1 cannot be computed from the SHA-256.
 
 Each type ships its own icon and color.
 

@@ -114,7 +114,7 @@ Financial 2.0.0 이전에 만든 은행 계좌에는 은행 코드가 없어서,
 | `infrastructure.netblock` | CIDR | `network_name`, `asn` |
 | `infrastructure.dns_record` | 이름, 유형, 값 (예: `www.example.com A 93.184.216.34`). 유형과 값이 채워지기 전에는 레코드 이름 | `record_type`, `record_value`, `ttl` |
 | `infrastructure.whois_record` | 주체 (도메인/IP) | `registrant`, `registrar`, `created_at` |
-| `infrastructure.certificate` | SHA-256 지문 | `subject_common_name`, `issuer`, `not_after` |
+| `infrastructure.certificate` | SHA-256 지문 | `fingerprint_sha1`, `subject_common_name`, `issuer`, `not_after` |
 | `infrastructure.ssh_host_key` | 키의 SHA-256 (16진수) | `key_type` |
 | `infrastructure.technologies` | 기술 이름 | `kind`, `vendor`, `version`, `cpe` |
 
@@ -136,6 +136,10 @@ ONYPHE·VirusTotal은 `md5`, Censys·Netlas·urlscan.io는 `sha256`으로 찾고
 `similar favicon` 엣지로 잇습니다(실행할 때 바꿀 수 있음). 빈 아이콘이나 한 가지 색 아이콘은 색과
 관계없이 해시가 같고, 대칭인 로고의 `phash`는 그 값과 몇 비트밖에 다르지 않으므로, 둘 다 그 값과
 같거나 가까운 해시는 비교하지 않습니다. 그 파비콘의 다른 해시는 그대로 비교합니다.
+
+`infrastructure.certificate`는 SHA-256으로 식별합니다. 출처가 SHA-1도 알려 주면(Shodan, Censys,
+VirusTotal) `fingerprint_sha1`에 함께 담습니다. abuse.ch SSLBL 같은 차단 목록은 인증서를 SHA-1로만
+적고, SHA-1은 SHA-256에서 계산할 수 없기 때문입니다.
 
 각 유형은 자체 아이콘과 색상을 제공합니다.
 
