@@ -42,7 +42,7 @@ Below the view controls, the toolbar repeats the **Edit** menu's selection actio
 | **Project settings…** | Opens the project settings dialog. **General** holds the project's name, **Leave** (collaborators only) and deleting the project (owner only). **Access** holds the project link, the organization the project belongs to, and who can view it, see it in their project lists and edit it; only the project owner or an owner/admin of its organization can change these, and others see them read-only. **People** lists the owner and the collaborators; the project owner or an organization owner/admin can invite collaborators by username (View only / Can edit), change their permission and remove them. An invitee gets access only after accepting the invitation, which appears on their dashboard and Projects page; until then they show as "Invitation pending" and the invite can be cancelled. In local mode the dialog has **General** only. |
 | **Export graph (JSON)** | Downloads the current graph as a JSON file (see [Export graph](#export-graph-json)). |
 | **Import graph (JSON)…** | Opens a dialog to load an exported JSON file into the project. Every node is created fresh, so importing the same file twice adds every node again. |
-| **Activity log…** | Opens the project's activity log. |
+| **Activity log…** | Opens the project's activity log, which you can filter and export (see [Activity log](#activity-log)). |
 | **Add from Marketplace…** | Opens the [Marketplace](../marketplace.md) scoped to this project so you can add plugins, Type Packs and Skill Packs. |
 
 If you opened the project only through its public link, **Activity log…** is disabled — it is for project members only — and **Project settings…** shows only the project link; if you are not signed in either, **Add from Marketplace…** is not shown. In local mode **Activity log…** is not shown.
@@ -227,6 +227,39 @@ shows the same list for an edge that is waiting to be applied.
 ```
 
 While the project is still loading (for example while it re-syncs after a reconnect), export is refused with *The project is still loading — export again once it has finished.* When the export succeeds, a toast reports how many nodes and edges were written.
+
+## Activity log {#activity-log}
+
+`Project ▸ Activity log…` opens the project's activity log, newest first: who created, changed or deleted which node or edge, and who changed the project and its members. It is for project members, and only when you are signed in to a server; a local project keeps no activity log.
+
+The drawer reads the log from the server a page at a time. **Load older** at the bottom reads the next page, and the count beside the title is how many rows match. What happens while the drawer is open appears at the top as it happens.
+
+Each row shows the action, the account and a summary, then the time in UTC to the second (for example `2026-11-14 09:02:33Z`) and how long ago that was. Hover the time to see it with every digit the server stored. Click a row's target, such as `node 033rOr…eClw`, to see only the rows about it. **Show on the canvas**, the button after a node's target, selects that node if it is still on the canvas.
+
+### Filters
+
+| Filter | What it matches |
+| --- | --- |
+| **Actor** | One account, by its whole name: `kim` does not match `kimberly`. Writes made by the AI agent or by a plugin are recorded under the account of the analyst who applied them, so this filter cannot tell them apart from that analyst's own edits. |
+| **Action** | Any of the chosen actions, for example *Node deleted* and *Edge deleted*. |
+| **Target** | Nodes, edges, members or the project, or one node or edge. The crosshair button next to it picks the node or edge selected on the canvas. |
+| **Period (UTC days)** | Rows from the start of the first day to the end of the last, in UTC. Both days are included. |
+
+The filters combine, and **Clear filters** removes them all.
+
+### Export the activity log {#export-activity-log}
+
+**Export ▸ CSV (spreadsheet)** or **Export ▸ JSON** downloads every row the filters match, not only the rows loaded in the drawer, as `activity-<project>-<UTC time>.csv` or `.json`. While it reads, the drawer shows how many rows it has read; **Cancel** stops it and writes no file. One export reads at most 50,000 rows. For a longer log, export a period at a time.
+
+The top of each file says which project it is, when and by whom it was exported, which filters were used, and what the log does not hold:
+
+- A summary is stored up to 256 characters.
+- An edit row keeps what it overwrote for at most 20 fields, each cut to 200 characters, and does not keep the new value. If your account cannot edit the graph, the overwritten values are left out of every row.
+- Writes made by the AI agent or by a plugin are recorded under the account of the analyst who applied them.
+- The `session` column names the app session the write came from, as the app stated it. The server checks only that it was an open session of the same account.
+- Rows about invitations not yet accepted are included only for the project owner and organization managers.
+
+Times are written in UTC. In the CSV file the top lines begin with `#`, and a cell that would begin with `=`, `+`, `-` or `@` begins with `'` so that a spreadsheet does not run it as a formula. The JSON file keeps those values unchanged.
 
 ## Add from Marketplace
 
