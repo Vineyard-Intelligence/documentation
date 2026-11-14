@@ -93,7 +93,7 @@ Plugin Pack으로 등재하세요.
 
 레지스트리에 없는 Type Pack은 **허용되지 않습니다**. Type Pack을 먼저 게시하고, 그 다음 그것을 쓰는 플러그인을 게시하세요.
 
-Type Pack에는 여기서 자체 검사 세 가지가 더 있습니다. 하나의 `category.name`은 게시된 Type Pack 하나만 정의할 수 있습니다. 모든 `identity_properties` 키는 그 타입에 실제로 존재하며 `array`, `object`, `json`이 아닌 프로퍼티를 가리켜야 합니다. 모든 `normalize`는 `crypto_address` 또는 `hex`여야 하고, `"case_insensitive": true`와 함께 쓰일 수 없으며, `array`, `object`, `json`이 아닌 프로퍼티에 있어야 합니다. 앱은 모르는 규칙을 아무 말 없이 그대로 비교하기 때문입니다.
+Type Pack에는 여기서 자체 검사 네 가지가 더 있습니다. 하나의 `category.name`은 게시된 Type Pack 하나만 정의할 수 있습니다. 모든 `identity_properties` 키는 그 타입에 실제로 존재하며 `array`, `object`, `json`이 아닌 프로퍼티를 가리켜야 합니다. 모든 `normalize`는 `crypto_address`, `hex`, `hostname`, `ip`, `cidr`, `url` 가운데 하나여야 하고, `"case_insensitive": true`와는 `hostname`, `ip`, `cidr`일 때만 함께 쓰일 수 있으며, `array`, `object`, `json`이 아닌 프로퍼티에 있어야 합니다. 앱은 모르는 규칙을 만나면 아무 말 없이 플래그를 따르기 때문입니다. 모든 `duplicate_key`는 그런 프로퍼티 가운데 식별에 들지 않는 프로퍼티의 boolean이어야 합니다.
 
 ### 사람이 판단하는 것
 

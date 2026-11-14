@@ -147,7 +147,13 @@ Type Pack의 프로퍼티 선언은 플러그인이나 AI 에이전트가 `creat
 주소의 대소문자는 체크섬일 뿐입니다. 그래서 `"normalize": "crypto_address"`는 hex와 bech32 표기를
 접고 Base58은 그대로 두며, `"hex"`는 `0x` 유무와 관계없이 hex 64자 해시를 같은 값으로 봅니다
 ([스키마 참조](../reference/typepack-schema.md#property-object)). 둘 다 값을 다시 인코딩하지 않으므로,
-값을 쓰는 쪽이 하나의 정규형으로 써야 합니다. 유형은 정확한 정규화 키로만 해석되며, 설치된 팩에 정의되지 않은 유형의
+값을 쓰는 쪽이 하나의 정규형으로 써야 합니다. `normalize`로 DNS·IP·URL 규칙도 지정합니다.
+도메인·호스트·레코드 이름에는 `"hostname"`(끝의 점과 국제화 표기를 퓨니코드 이름으로 접음),
+주소와 대역에는 `"ip"`와 `"cidr"`, URL에는 `"url"`(경로의 대소문자는 유지)을 씁니다. `hostname`,
+`ip`, `cidr` 옆에는 `"case_insensitive": true`를 함께 두어 규칙을 모르는 앱도 대소문자를 접게 하고,
+나머지 세 규칙 옆에는 두지 않습니다. `"duplicate_key": true`를 붙인 프로퍼티는 전화번호의 `e164`처럼
+노드를 만든 뒤 채우는 정규형을 담습니다. 이 값이 같은 두 노드는 중복으로 보고되지만, 쓰는 시점에
+저절로 합쳐지지는 않습니다. 유형은 정확한 정규화 키로만 해석되며, 설치된 팩에 정의되지 않은 유형의
 노드는 원래 유형 문자열을 유지합니다 — 따라서 팩이 유형을 다른 카테고리로 이동시켜도
 (예: `url`이 `infrastructure`에서 `web`으로) 기존 노드가 새 유형의 생성물과 병합되지 않습니다.
 설치된 팩에 정의되지 않은 유형으로 노드를 생성하는 것은 거부됩니다. (각 `io.consumes`/`io.produces`
@@ -167,7 +173,7 @@ typeRef는 그 타입을 정의하는 Type Pack으로 해석됩니다. 플러그
 
 ## 유효성 검사 체크리스트
 
-설치 시점에 이 체크리스트로 Type Pack을 검증하는 것은 없습니다: 앱은 `content_type: vineyard:typepack`인 문서라면 무엇이든 로드합니다. 작성용 체크리스트로 활용하고, 참조 팩 저장소들처럼 자체 CI에서 문서를 [`typepack.schema.json`](https://registry.vineyard.run/schemas/typepack.schema.json)으로 검증하세요. 레지스트리 CI가 강제하는 것은 다음뿐입니다: 고정된 문서의 `identifier`, `content_type`, `version`이 항목과 일치할 것, `type_count`가 일치할 것, 항목에 `icon`이 있으면 첫 번째 타입의 lucide 아이콘과 같을 것, 모든 `identity_properties` 키가 실제로 존재하는 스칼라(`array`/`object`/`json`이 아닌) 프로퍼티를 가리킬 것, 모든 `normalize`가 `crypto_address` 또는 `hex`이고 `case_insensitive: true` 없이 스칼라 프로퍼티에 있을 것, 그리고 다른 게시된 Type Pack이 이미 정의한 `category.name`이 없을 것.
+설치 시점에 이 체크리스트로 Type Pack을 검증하는 것은 없습니다: 앱은 `content_type: vineyard:typepack`인 문서라면 무엇이든 로드합니다. 작성용 체크리스트로 활용하고, 참조 팩 저장소들처럼 자체 CI에서 문서를 [`typepack.schema.json`](https://registry.vineyard.run/schemas/typepack.schema.json)으로 검증하세요. 레지스트리 CI가 강제하는 것은 다음뿐입니다: 고정된 문서의 `identifier`, `content_type`, `version`이 항목과 일치할 것, `type_count`가 일치할 것, 항목에 `icon`이 있으면 첫 번째 타입의 lucide 아이콘과 같을 것, 모든 `identity_properties` 키가 실제로 존재하는 스칼라(`array`/`object`/`json`이 아닌) 프로퍼티를 가리킬 것, 모든 `normalize`가 여섯 규칙 가운데 하나이고 `case_insensitive: true`와는 `hostname`, `ip`, `cidr`일 때만 함께 쓰이며 스칼라 프로퍼티에 있을 것, 모든 `duplicate_key`가 식별에 들지 않는 스칼라 프로퍼티의 boolean일 것, 그리고 다른 게시된 Type Pack이 이미 정의한 `category.name`이 없을 것.
 
 - [ ] `content_type`이 `vineyard:typepack`입니다.
 - [ ] `identifier`가 유효한 `<본인-네임스페이스>.typepacks.*` reverse-DNS 문자열입니다.
@@ -178,7 +184,8 @@ typeRef는 그 타입을 정의하는 Type Pack으로 해석됩니다. 플러그
 - [ ] 모든 프로퍼티가 `optional`을 명시합니다. 필수 프로퍼티는 `"optional": false`라고 적습니다.
 - [ ] 값 전체가 일치해야 하는 `validator.regex`는 모두 `^…$`로 앵커가 걸려 있습니다.
 - [ ] `enum` 프로퍼티는 `enum`을 제공합니다. `reference` 프로퍼티는 `reference.target`을 제공합니다. 모든 `default`는 `type`과 일치합니다.
-- [ ] `normalize`를 설정한 프로퍼티는 `"case_insensitive": true`를 함께 설정하지 않습니다.
+- [ ] `normalize`를 `crypto_address`, `hex`, `url`로 설정한 프로퍼티는 `"case_insensitive": true`를 함께 설정하지 않고, `hostname`, `ip`, `cidr`로 설정한 프로퍼티는 함께 설정합니다.
+- [ ] `duplicate_key` 프로퍼티는 식별 필드가 아닙니다.
 
 ## 다음 / 참고
 

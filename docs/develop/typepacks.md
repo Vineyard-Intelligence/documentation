@@ -147,7 +147,14 @@ a rule that decides per value: a crypto address is Base58 on some chains and hex
 and an EIP-55 address's mixed case is only a checksum, so `"normalize": "crypto_address"` folds the
 hex and bech32 spellings and leaves Base58 exact, and `"hex"` does the same for a 64-hex hash with or
 without `0x` (see the [schema reference](../reference/typepack-schema.md#property-object)). Neither
-re-encodes a value, so whatever writes one must write it in a single canonical form. The type is resolved by its exact qualified key only — a node whose type
+re-encodes a value, so whatever writes one must write it in a single canonical form. `normalize` also
+names the DNS, IP and URL rules: `"hostname"` for a domain, host or record name (a trailing dot and an
+internationalised spelling fold into the plain punycode name), `"ip"` and `"cidr"` for addresses and
+ranges, and `"url"` for a URL, whose path keeps its case. Set `"case_insensitive": true` beside
+`hostname`, `ip` and `cidr`, so an app that predates the rule still folds case, and never beside the
+other three. A property marked `"duplicate_key": true` holds a canonical form filled after the node
+was made, such as a phone number's `e164`: two nodes sharing it are reported as duplicates, and
+nothing merges them on write. The type is resolved by its exact qualified key only — a node whose type
 is not defined by an installed pack keeps its raw type string, so a pack that moves a type to
 another category (e.g. `url` from `infrastructure` to `web`) never merges old nodes with the new
 type's creates. Creating a node with a type no installed pack defines is refused outright.
@@ -167,7 +174,7 @@ packs in that list alongside the plugin.)
 
 ## Validation checklist
 
-Nothing validates a Type Pack against this checklist at install time: the app loads any document with `content_type: vineyard:typepack`. Treat it as an authoring checklist, and validate your document against [`typepack.schema.json`](https://registry.vineyard.run/schemas/typepack.schema.json) in your own CI, as the reference pack repos do. Registry CI enforces only these: the pinned document's `identifier`, `content_type` and `version` match the entry; `type_count` matches; `icon`, when the entry carries one, equals the first type's lucide icon; every `identity_properties` key names an existing, scalar (not `array`/`object`/`json`) property; every `normalize` is `crypto_address` or `hex`, without `case_insensitive: true`, on a scalar property; and no `category.name` is already defined by another published Type Pack.
+Nothing validates a Type Pack against this checklist at install time: the app loads any document with `content_type: vineyard:typepack`. Treat it as an authoring checklist, and validate your document against [`typepack.schema.json`](https://registry.vineyard.run/schemas/typepack.schema.json) in your own CI, as the reference pack repos do. Registry CI enforces only these: the pinned document's `identifier`, `content_type` and `version` match the entry; `type_count` matches; `icon`, when the entry carries one, equals the first type's lucide icon; every `identity_properties` key names an existing, scalar (not `array`/`object`/`json`) property; every `normalize` is one of the six rules, beside `case_insensitive: true` only for `hostname`, `ip` and `cidr`, on a scalar property; every `duplicate_key` is a boolean on a scalar property outside the identity; and no `category.name` is already defined by another published Type Pack.
 
 - [ ] `content_type` is `vineyard:typepack`.
 - [ ] `identifier` is a valid `<your-namespace>.typepacks.*` reverse-DNS string.
@@ -178,7 +185,8 @@ Nothing validates a Type Pack against this checklist at install time: the app lo
 - [ ] Every property writes `optional` explicitly; each required one says `"optional": false`.
 - [ ] Every `validator.regex` that must match the whole value is anchored with `^…$`.
 - [ ] `enum` properties supply `enum`; `reference` properties supply `reference.target`; any `default` matches `type`.
-- [ ] A property that sets `normalize` does not also set `"case_insensitive": true`.
+- [ ] A property that sets `normalize` to `crypto_address`, `hex` or `url` does not also set `"case_insensitive": true`; one that sets `hostname`, `ip` or `cidr` does.
+- [ ] A `duplicate_key` property is not one of the identity fields.
 
 ## Next / See also
 
