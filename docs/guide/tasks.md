@@ -32,7 +32,7 @@ A running plugin task has a **Stop** button (stop an AI turn from the AI agent p
 
 ## Ephemeral by default
 
-Plugin-run tasks live only in your browser tab's memory; close the tab and they are gone. Opening another project drops the previous project's plugin rows; when you come back to it in the same tab, only the plugin runs still waiting for review return. AI conversations are saved on this device (per project) and come back as Tasks rows after a reload, so you can reopen them. Conversations are saved as they happen, so a turn cut short by closing the app is kept and can be continued. Staged changes that were still waiting for review do not survive a reload.
+Plugin-run tasks live only in your browser tab's memory; close the tab and they are gone. Opening another project drops the previous project's plugin rows; when you come back to it in the same tab, only the plugin runs still waiting for review return. AI conversations are saved on this device (per project) and come back as Tasks rows after a reload, so you can reopen them. Conversations are saved as they happen, so a turn cut short by closing the app is kept and can be continued. Staged changes that were still waiting for review do not survive a reload. If an apply had already written part of a change set, that part stays in the graph: the conversation shows the set as *N applied · M not applied*, and the agent is told that only the rest was lost.
 
 Leaving a project while a plugin run or an AI turn is still working asks first: *Stop the running plugin and leave this project?* or *Stop the agent and leave this project?* **Stay in this project** keeps you there; **Stop and leave** stops the work and leaves.
 
@@ -71,7 +71,7 @@ A row of chips above the message box shows what your next message will run under
 
 Other things to know:
 
-- While changes wait for review you cannot send. The line above the message box says *N change(s) across M change sets need review*, with **Review** and **Discard all**.
+- While changes wait for review you cannot send. The line above the message box says *N change(s) across M change sets need review*, with **Review** and **Discard all**. This **Discard all** works like the Review dialog's: a change set part of which was already applied is recorded as applied, with the rest rejected.
 - When the agent works from a plan, a **Plan** strip sits above the conversation. Add a lead, raise or lower a lead's priority, or drop it; the agent is told at its next plan update, or when the next turn starts.
 - A turn with several tool calls is folded into one line. It counts the calls, names the skill pack the agent read behind a book icon (the first by name, **+N** for more), and flags notes, errors and staged changes; click it to unfold.
 - An image in an answer is shown as its description and address, and is never loaded.

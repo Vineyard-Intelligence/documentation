@@ -108,6 +108,11 @@ X나 **Esc**로 대화상자를 닫아도 실행은 계속 검토를 기다리�
 됩니다. 적용하거나 폐기한 실행의 행을 클릭하면, 적용하거나 폐기한 내용이 읽기 전용 기록으로
 열립니다.
 
+실행의 일부가 이미 적용된 뒤 **Discard all**을 누르면 아직 스테이징된 변경만 버려지고, 적용된 내용은
+그래프에 남습니다. 이때 실행은 폐기가 아니라 적용으로 기록됩니다. 배지는 **applied**로 표시되고,
+기록에는 적용된 내용과 함께 버린 행이 *excluded*로 표시되며, 실행이 AI 에이전트 대화에서 나온
+경우 에이전트에게는 무엇이 반영되었고 나머지는 거부되었다고 전달됩니다.
+
 <figure class="vy-shot" markdown="span">
   ![Review 대화상자](../assets/guide/review-changes.webp){ width="800" loading=lazy }
   <figcaption>실행 하나의 Review 대화상자: 스테이징된 노드와 엣지, 선택한 행의 속성, Apply (4) / Discard all.</figcaption>

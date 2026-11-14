@@ -112,6 +112,12 @@ the reason on each row and the run is still waiting for review: reopen it to try
 run is applied or discarded, clicking its row opens a read-only record of what was applied or
 discarded.
 
+If you press **Discard all** after part of a run has been applied, only the changes still staged are
+thrown away; what was applied stays in the graph. The run is then recorded as applied, not
+discarded: its badge reads **applied**, its record lists what was applied and marks the discarded
+rows *excluded*, and when the run came from an AI agent conversation, the agent is told what landed
+and that you rejected the rest.
+
 <figure class="vy-shot" markdown="span">
   ![Review dialog](../assets/guide/review-changes.webp){ width="800" loading=lazy }
   <figcaption>The Review dialog for one run: the staged nodes and edges, the selected row's properties, and Apply (4) / Discard all.</figcaption>
