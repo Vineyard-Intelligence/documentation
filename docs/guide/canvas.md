@@ -163,6 +163,21 @@ Select the node(s) you want to link from, then **⌘-click** (Mac) or **Ctrl-cli
   <figcaption>Click one IP, Shift-click another, ⌘-click the AS node, type the relation and press Enter: one edge from each selected node.</figcaption>
 </figure>
 
+## Inspecting an edge {#inspecting-an-edge}
+
+Click an edge to show it in the Properties panel. The top names its two ends, who wrote its label
+(*Edited here*, *Written by …* or *Original label*), and its evidence grade with who set it and what
+the grade means, followed by **Re-verify**. Below that, **relation** (the edge's label) and
+**confidence** are the two values you can change, if you can edit the project.
+
+Under **Recorded with this link** is everything else the edge stores, read-only for everyone. It is
+what the plugin or the agent that drew the edge recorded with it, such as where and when the link
+was observed: OTX Passive DNS, for example, stores `source`, `record_type`, `first_seen` and
+`last_seen`. The list also holds `corroborated_by`, the other writers that drew the same link, which
+the evidence grade counts. An edge that stores nothing more, such as one you drew yourself, shows
+*Nothing else is stored with this link.* The [Review dialog](running-plugins.md#reviewing-a-runs-changes)
+shows the same list for an edge that is waiting to be applied.
+
 ## Export graph (JSON) {#export-graph-json}
 
 `Project ▸ Export graph (JSON)` downloads the project's current nodes and edges as a JSON file named after the project. The export captures a snapshot of the graph data:

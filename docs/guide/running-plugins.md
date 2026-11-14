@@ -74,7 +74,7 @@ stored secret (**Show**), set or replace the value (**Set**, **Replace**) and re
   <figcaption>Ticking OTX Passive DNS shows its field and its collapsed Settings (1/1 set) block.</figcaption>
 </figure>
 
-## Reviewing a run's changes
+## Reviewing a run's changes {#reviewing-a-runs-changes}
 
 A plugin never writes to the project directly. What it would add, change or delete is staged, and when
 the run ends you get a toast ("N change(s) staged — review to apply") and a **needs review** badge
@@ -82,6 +82,13 @@ on its Tasks row. Click the row to open the Review dialog, untick anything you d
 press **Apply (N)** — or **Discard all**. Nothing is written to the project until you apply; while the
 Review dialog is open, the changes are only previewed on the canvas. A run that stages nothing ends
 with a toast showing its summary (or "No changes").
+
+The right side of the dialog shows the selected row's properties. For an edge, **Recorded with this
+link** below them lists what the edge will store besides its label and grade once the row is
+applied: for a new edge, what the plugin recorded with it, such as where and when the link was
+observed; for a change, the edge's stored values with the proposed ones in their place; for a
+delete, what goes with the edge. The edge's Properties panel shows the same list
+(see [Inspecting an edge](canvas.md#inspecting-an-edge)).
 
 Unticking a node also leaves out the edges that need it, and the footer says how many (*N edges
 excluded — their endpoint nodes are not being created*). If some links point at nodes from another

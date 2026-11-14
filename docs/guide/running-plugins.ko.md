@@ -72,7 +72,7 @@ shared with N other plugins in this pack*). **Run (N)**을 누르면 체크한 �
   <figcaption>OTX Passive DNS를 체크하면 입력 필드와 접힌 Settings (1/1 set) 블록이 나타납니다.</figcaption>
 </figure>
 
-## 실행 변경 사항 검토
+## 실행 변경 사항 검토 {#reviewing-a-runs-changes}
 
 플러그인은 프로젝트에 직접 쓰지 않습니다. 추가·변경·삭제하려는 내용은 스테이징되며, 실행이
 끝나면 토스트("N change(s) staged — review to apply")와 **Tasks** 행의 **needs review** 배지가
@@ -80,6 +80,12 @@ shared with N other plugins in this pack*). **Run (N)**을 누르면 체크한 �
 **Apply (N)**을 누르거나 — **Discard all**을 누르세요. 적용하기 전에는 프로젝트에 아무것도
 기록되지 않으며, **Review** 대화상자가 열려 있는 동안 변경 사항은 캔버스에 미리보기로만 표시됩니다.
 아무것도 스테이징하지 않은 실행은 요약(없으면 "No changes")을 보여 주는 토스트로 끝납니다.
+
+대화상자 오른쪽에는 선택한 행의 속성이 나옵니다. 엣지라면 그 아래 **Recorded with this link**에
+행을 적용한 뒤 엣지에 레이블과 등급 말고 저장될 값이 나옵니다. 새 엣지는 플러그인이 함께 기록한
+값(링크를 어디서 언제 관측했는지 등), 변경은 엣지에 저장된 값에 제안한 값을 덮어쓴 결과, 삭제는
+엣지와 함께 사라지는 값입니다. 엣지의 Properties 패널에도 같은 목록이 있습니다
+([엣지 살펴보기](canvas.md#inspecting-an-edge) 참고).
 
 노드의 체크를 해제하면 그 노드가 있어야 하는 엣지도 함께 빠지며, 하단에 그 개수가
 표시됩니다(*N edges excluded — their endpoint nodes are not being created*). 아직 검토를 기다리는

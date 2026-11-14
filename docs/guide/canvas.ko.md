@@ -163,6 +163,21 @@
   <figcaption>IP 하나를 클릭하고 다른 하나를 Shift-클릭한 뒤 AS 노드를 ⌘-클릭, 관계를 입력하고 Enter: 선택한 노드마다 엣지가 하나씩 생깁니다.</figcaption>
 </figure>
 
+## 엣지 살펴보기 {#inspecting-an-edge}
+
+엣지를 클릭하면 Properties 패널에 표시됩니다. 위쪽에는 양 끝 노드, 레이블을 쓴 쪽(*Edited here*,
+*Written by …*, *Original label*), 증거 등급과 그 등급을 매긴 쪽, 등급의 뜻이 나오고, 이어서
+**Re-verify**가 있습니다. 그 아래의 **relation**(엣지의 레이블)과 **confidence**는 프로젝트를 편집할
+수 있으면 바꿀 수 있는 두 값입니다.
+
+**Recorded with this link** 아래에는 엣지에 저장된 나머지 값이 모두 나오며, 누구에게나 읽기
+전용입니다. 엣지를 그린 플러그인이나 에이전트가 함께 기록한 값으로, 링크를 어디서 언제
+관측했는지 같은 것입니다. 예를 들어 OTX Passive DNS는 `source`, `record_type`, `first_seen`,
+`last_seen`을 저장합니다. 같은 링크를 함께 그린 다른 작성자를 담은 `corroborated_by`도 이 목록에
+나오며, 증거 등급은 이것을 셉니다. 직접 그린 엣지처럼 더 저장된 값이 없으면 *Nothing else is
+stored with this link.*가 표시됩니다. 적용을 기다리는 엣지에는
+[Review 대화상자](running-plugins.md#reviewing-a-runs-changes)가 같은 목록을 보여 줍니다.
+
 ## JSON 그래프 내보내기 {#json-그래프-내보내기}
 
 `Project ▸ Export graph (JSON)`은 프로젝트의 현재 노드와 엣지를 프로젝트 이름을 딴 JSON 파일로 다운로드합니다. 내보내기는 그래프 데이터의 스냅샷을 캡처합니다:
