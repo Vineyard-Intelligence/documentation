@@ -88,7 +88,10 @@ link** below them lists what the edge will store besides its label and grade onc
 applied: for a new edge, what the plugin recorded with it, such as where and when the link was
 observed; for a change, the edge's stored values with the proposed ones in their place; for a
 delete, what goes with the edge. The edge's Properties panel shows the same list
-(see [Inspecting an edge](canvas.md#inspecting-an-edge)).
+(see [Inspecting an edge](canvas.md#inspecting-an-edge)). Once the apply has finished, or when you
+reopen the run from Tasks as history, the list is headed **Proposed by this change** and shows only
+what the row itself proposed, since the edge may have changed since. The **Status** column says
+whether it landed, and the edge's Properties panel shows what it stores now.
 
 Unticking a node also leaves out the edges that need it, and the footer says how many (*N edges
 excluded — their endpoint nodes are not being created*). If some links point at nodes from another

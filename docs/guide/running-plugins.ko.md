@@ -85,7 +85,10 @@ shared with N other plugins in this pack*). **Run (N)**을 누르면 체크한 �
 행을 적용한 뒤 엣지에 레이블과 등급 말고 저장될 값이 나옵니다. 새 엣지는 플러그인이 함께 기록한
 값(링크를 어디서 언제 관측했는지 등), 변경은 엣지에 저장된 값에 제안한 값을 덮어쓴 결과, 삭제는
 엣지와 함께 사라지는 값입니다. 엣지의 Properties 패널에도 같은 목록이 있습니다
-([엣지 살펴보기](canvas.md#inspecting-an-edge) 참고).
+([엣지 살펴보기](canvas.md#inspecting-an-edge) 참고). 적용이 끝난 뒤나 Tasks에서 기록으로 다시 연
+실행에서는 그 사이 엣지가 바뀌었을 수 있으므로, 목록 제목이 **Proposed by this change**로 바뀌고 그
+행이 제안한 값만 나옵니다. 반영되었는지는 **Status** 열에, 엣지에 지금 저장된 값은 엣지의
+Properties 패널에 나옵니다.
 
 노드의 체크를 해제하면 그 노드가 있어야 하는 엣지도 함께 빠지며, 하단에 그 개수가
 표시됩니다(*N edges excluded — their endpoint nodes are not being created*). 아직 검토를 기다리는
