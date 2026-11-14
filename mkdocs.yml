@@ -131,6 +131,7 @@ plugins:
             "Working with Type Packs": Type Pack 사용하기
             "The canvas": 캔버스
             "Tasks & runs": 작업 및 실행
+            "Keyboard shortcuts": 단축키
             "Working with Skill Packs": Skill Pack 사용하기
             "Developer Guide": 개발자 가이드
             "Architecture & principles": 아키텍처 및 원칙
@@ -167,6 +168,7 @@ nav:
       - Working with Skill Packs: guide/skillpacks.md
       - The canvas: guide/canvas.md
       - Tasks & runs: guide/tasks.md
+      - Keyboard shortcuts: guide/shortcuts.md
   - Developer Guide:
       - develop/index.md
       - Architecture & principles: develop/architecture.md

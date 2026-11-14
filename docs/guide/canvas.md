@@ -1,6 +1,6 @@
 # The canvas
 
-The canvas is where a Vineyard project lives: nodes and edges laid out on a graph you can pan, zoom, re-layout, and annotate. This page documents every control available in the on-canvas toolbar and in the top menu bar (**Project / Edit / View / Run**).
+The canvas is where a Vineyard project lives: nodes and edges laid out on a graph you can pan, zoom, re-layout, and annotate. This page documents every control available in the on-canvas toolbar and in the top menu bar (**Project / Edit / View / Run**). Most of them also have a key: see [Keyboard shortcuts](shortcuts.md).
 
 ## Two ways to reach the same actions
 
@@ -90,7 +90,7 @@ The three 1-hop actions add to the selection, so pressing one again walks one mo
 
 **Esc** closes the menu and nothing under it. Each press of Esc puts away one thing, the front one first: a **Connect to…** waiting for its target, an open menu or the toolbar's **Filter** panel, then the panel drawn in front, and last the selection. With the Run plugins panel open over a Skill pack panel, the first Esc closes Run plugins, the next one closes the Skill pack panel, and once nothing is left open Esc clears the selection, like **Clear selection**. An Esc pressed inside a panel, or right after you clicked in it, goes to that panel rather than to one drawn over it. An Esc typed in a field, or pressed after a click in the Properties panel, leaves the selection alone, and the Esc that finishes a Korean syllable only finishes the syllable. Holding Shift (or another modifier) while you press Esc makes no difference.
 
-**Delete**, **Delete (N)** and **Disconnect all** ask first, every time. The confirmation says what will go, for example *Delete 3 nodes and 17 connected edges? This cannot be undone.* Deleting a node also deletes every edge connected to it, and the count includes those edges. **Cancel** has the focus, so pressing Enter by reflex does not delete; Esc cancels too. A delete cannot be undone. While the project is still loading, deleting a node and **Disconnect all** are refused, because the edges they would count have not all arrived yet: *The project is still loading — delete again once it has finished.* When you are signed in to a server, the activity log keeps a line for each deleted node with its type, and for each deleted edge with its label.
+**Delete**, **Delete (N)** and **Disconnect all** ask first, every time, and so does the **Delete** or **⌫** key on the canvas. The confirmation says what will go, for example *Delete 3 nodes and 17 connected edges? This cannot be undone.* Deleting a node also deletes every edge connected to it, and the count includes those edges. **Cancel** has the focus, so pressing Enter by reflex does not delete; Esc cancels too. A delete cannot be undone. While the project is still loading, deleting a node and **Disconnect all** are refused, because the edges they would count have not all arrived yet: *The project is still loading — delete again once it has finished.* When you are signed in to a server, the activity log keeps a line for each deleted node with its type, and for each deleted edge with its label.
 
 <figure class="vy-shot" markdown="span">
   ![Node right-click menu](../assets/guide/canvas-context-menu.webp){ width="301" loading=lazy }
@@ -129,7 +129,7 @@ Applying a layout re-computes node positions and then fits the view.
 
 ### Search
 
-The **Search entities…** field at the top-right of the canvas finds nodes by type or by any of their property values; typing an AS number such as `AS64496` also finds nodes whose ASN is 64496. **⌘F** (Mac) or **Ctrl+F** jumps to the field; **↑**/**↓** and **Enter** pick a result, and **Esc** closes the list. Picking a result selects that node and centers it; a node the canvas [hides](#hiding) is shown first. While the project is still loading, an empty result means the node has not arrived yet, not that it doesn't exist.
+The **Search entities…** field at the top-right of the canvas finds nodes by type or by any of their property values; typing an AS number such as `AS64496` also finds nodes whose ASN is 64496. **⌘F** (Mac) or **Ctrl+F**, or **/**, jumps to the field; **↑**/**↓** and **Enter** pick a result, and **Esc** closes the list. **⌘G** / **⇧⌘G** (Ctrl+G / Ctrl+Shift+G) jump to the next and previous result without opening the list. Picking a result selects that node and centers it; a node the canvas [hides](#hiding) is shown first. While the project is still loading, an empty result means the node has not arrived yet, not that it doesn't exist.
 
 ### Grid
 
@@ -235,7 +235,7 @@ The table only changes the selection, so a participant who can only view the pro
 
 ## Drawing edges
 
-Select the node(s) you want to link from, then **⌘-click** (Mac) or **Ctrl-click** (Windows/Linux) the node to link them to. A small box opens at the click; type the relation (free text, e.g. `resolves to`) and press **Enter**. One edge is created from every selected node to the clicked node. Hold **Shift** while clicking, or press **Reverse** in the box, to link the other way (clicked node → selection). You can also right-click a node or a selection and choose **Connect to…**, then plain-click the target. **Esc** cancels at either step, and nothing is written until you press Enter. An edge is unique per ordered pair of nodes, so pairs that are already connected are skipped and counted as "already connected"; the reverse direction is a separate edge. If nothing is selected, the click only shows a hint to select the nodes first.
+Select the node(s) you want to link from, then **⌘-click** (Mac) or **Ctrl-click** (Windows/Linux) the node to link them to. A small box opens at the click; type the relation (free text, e.g. `resolves to`) and press **Enter**. One edge is created from every selected node to the clicked node. Hold **Shift** while clicking, or press **Reverse** in the box, to link the other way (clicked node → selection). You can also right-click a node or a selection and choose **Connect to…**, or press **C** on the canvas, then plain-click the target. **Esc** cancels at either step, and nothing is written until you press Enter. An edge is unique per ordered pair of nodes, so pairs that are already connected are skipped and counted as "already connected"; the reverse direction is a separate edge. If nothing is selected, the click only shows a hint to select the nodes first.
 
 <figure class="vy-shot">
   <video src="../../assets/guide/draw-edge.mp4" poster="../../assets/guide/draw-edge.webp" width="960" height="638" muted loop playsinline controls preload="none" aria-label="Click one IP, Shift-click another, ⌘-click the AS node, type the relation and press Enter: one edge from each selected node."></video>

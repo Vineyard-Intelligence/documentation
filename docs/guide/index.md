@@ -74,6 +74,12 @@ Track in-progress runs, cancel them, and review what they staged before it is ap
 → [Tasks &amp; runs](tasks.md)
 </div>
 
+<div class="vy-card" markdown>
+### :material-keyboard: Keyboard shortcuts
+Select, widen by a hop, run plugins and review without leaving the keyboard.
+→ [Keyboard shortcuts](shortcuts.md)
+</div>
+
 </div>
 
 ## Next / See also

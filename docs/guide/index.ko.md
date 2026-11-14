@@ -74,6 +74,12 @@ AI 에이전트에게 프로젝트를 다룰 조사 플레이북을 제공하세
 → [작업 및 실행](tasks.md)
 </div>
 
+<div class="vy-card" markdown>
+### :material-keyboard: 단축키
+키보드에서 손을 떼지 않고 선택하고, 한 홉 넓히고, 플러그인을 실행하고, 리뷰하세요.
+→ [단축키](shortcuts.md)
+</div>
+
 </div>
 
 ## 다음 / 함께 보기

@@ -90,7 +90,7 @@ stored secret (**Show**), set or replace the value (**Set**, **Replace**) and re
 A plugin never writes to the project directly. What it would add, change or delete is staged, and when
 the run ends you get a toast ("N change(s) staged — review to apply") and a **needs review** badge
 on its Tasks row. Click the row to open the Review dialog, untick anything you do not want, then
-press **Apply (N)** — or **Discard all**. Nothing is written to the project until you apply; while the
+press **Apply (N)** (or **⌘Enter** / **Ctrl+Enter**) — or **Discard all**. **/** jumps to **Filter by keyword**. Nothing is written to the project until you apply; while the
 Review dialog is open, the changes are only previewed on the canvas. A run that stages nothing ends
 with a toast showing its summary (or "No changes"). A change that would leave an edge as it is, with
 its label and the fields it already stores, is not staged, so running a plugin again over the same

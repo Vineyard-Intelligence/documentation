@@ -85,6 +85,8 @@ Other things to know:
 
 ## Closing and deleting a conversation
 
+In an empty message box, **↑** brings back your last question, to edit and send again. **G** then **A** puts the cursor in the message box from anywhere outside a text field, and opens a new conversation when the panel is closed (see [Keyboard shortcuts](shortcuts.md)).
+
 **Closing** the panel — the close button, or **Esc** — never stops the agent: a running turn keeps working and its row stays in Tasks, so you can reopen it from there. If the **Setup** drawer is open, Esc or a click outside it closes the drawer first; press Esc again to close the panel. Esc closes the panel when it is meant for it: pressed while you are typing or working inside the panel, or right after you last clicked in it (for example while a turn is running and the message box is locked). An Esc that closes a dropdown or a dialog inside the panel closes only that, and an Esc pressed on the canvas or in another panel leaves the AI agent panel alone.
 
 **Deleting** a conversation (**⋯ → Delete conversation…**) asks for confirmation first; **Cancel** has the focus, so pressing Enter by reflex does not delete. Once you confirm:
