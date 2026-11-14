@@ -167,7 +167,7 @@ When one type is picked in the type filter, **Fields** is replaced by a column p
 
 ### Sorting
 
-Click a column header to sort by it, click again to reverse, and a third time to stop sorting by it. **Links**, **Added** and **Updated** start with the largest or newest. Shift-click another header to sort by it as well, after the first. Text sorts as numbers where it has digits, so `10.0.0.9` comes before `10.0.0.10`; empty values go last.
+Click a column header to sort by it, click again to reverse, and a third time to stop sorting by it. **Type**, **Label** and the field columns start from A (or the smallest number); **Links**, **Added** and **Updated** start with the largest or newest. Shift-click another header to sort by it as well, after the first: rows the first column leaves equal or empty are ordered by the next. Text sorts as numbers where it has digits, so `10.0.0.9` comes before `10.0.0.10`; empty values go last whichever way a column is sorted.
 
 ### Filters
 
@@ -184,6 +184,7 @@ The checkboxes are the canvas selection: a box is ticked exactly when its node i
 - Tick a box to add its node to the selection; untick it to take the node out. Other selected nodes and edges stay selected. **Shift**-click a box to do the same to every row from the last one you clicked.
 - The header box adds every row shown, on every page, to the selection, or takes them all out when they are all selected.
 - Click a row to select only that node and center it on the canvas, as picking a search result does. **⌘-click** (Mac) or **Ctrl-click** adds or removes the row, and **Shift-click** adds the rows from the last one clicked.
+- To copy a value without changing the selection, drag across its text: a click that ends with text selected leaves the selection as it is. A double-click selects the row with its first click, as a plain click does.
 - **Select N on canvas** makes exactly the rows shown, on every page, the selection. **Run plugins**, **Delete (N)**, **Connect to…** and the AI agent then act on them.
 
 The table only changes the selection, so a participant who can only view the project can use it too.
