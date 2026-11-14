@@ -175,7 +175,7 @@ GitHub and the registry are a **distribution** layer; during development the app
 }
 ```
 
-Open **Settings → Plugins → Development → Load a pack from a URL**, choose **Plugin Pack**, and enter the absolute URL of your plugin's manifest document (a JSON file with `content_type: "vineyard:plugin"`, or a `vineyard:pluginpack` document, whose `platforms.web.entry` points at your bundle, e.g. `dist/main.js`, relative to the manifest's folder). The frontend's own `npm run dev` (web) build serves no CSP, so a dev-server URL (`esbuild --watch --servedir` or `vite`) works there; the desktop dev build uses the packaged policy. In the released app the policy admits only `https://cdn.jsdelivr.net/gh/`, so point the dev loader at a pinned commit there instead; a `localhost` URL loads the manifest but its code import is refused (see §6). The URL is kept on this device per signed-in account and loads into every project you open — reopen the project after adding it. The `identifier` in the JSON manifest must match the one in `definePlugin`, or the run fails with `plugin not loadable: <identifier>`.
+Open **Settings → Plugins → Development → Load a pack from a URL**, choose **Plugin Pack**, and enter the absolute URL of your plugin's manifest document (a JSON file with `content_type: "vineyard:plugin"`, or a `vineyard:pluginpack` document, whose `platforms.web.entry` points at your bundle, e.g. `dist/main.js`, relative to the manifest's folder). The frontend's own `npm run dev` (web) build takes plugin code from any http(s) URL, so a dev-server URL (`esbuild --watch --servedir` or `vite`) works there, as long as the server sends CORS headers and serves the bundle as JavaScript; the desktop dev build follows the packaged rule. The released app runs plugin code only from `https://cdn.jsdelivr.net/gh/`, so point the dev loader at a pinned commit there instead; a `localhost` URL loads the manifest, but the run fails with "plugin code is loaded only from https://cdn.jsdelivr.net/gh/" (see §6). The bundle must be [one self-contained file](distribution.md#one-file). The URL is kept on this device per signed-in account and loads into every project you open — reopen the project after adding it. The `identifier` in the JSON manifest must match the one in `definePlugin`, or the run fails with `plugin not loadable: <identifier>`.
 
 !!! example "Try Korean Roulette on a throwaway project"
     Because it deletes nearly everything, run it against a scratch project first. Watch the [task](../guide/tasks.md) panel show the run, review and apply the staged deletions, then see the survivor node standing alone in the canvas.
@@ -188,8 +188,9 @@ only from `https://cdn.jsdelivr.net/gh/` — any GitHub repo, at a pinned commit
 the dev loop does not need a local app build: push your manifest and bundle to your repo, add
 `https://cdn.jsdelivr.net/gh/<you>/<repo>@<commit>/<manifest>` in the dev loader, trigger a run on a
 throwaway project, watch it in the Tasks panel, then open its staged change set and apply it. A
-`localhost` URL is not in that policy: the manifest is fetched, but the code import is refused. The
-frontend's own `npm run dev` (web) build serves no CSP, so a dev-server URL does work there — that
+`localhost` URL is refused: the manifest is fetched, but the run fails before any code loads. The
+frontend's own `npm run dev` (web) build takes code from any http(s) URL, so a dev-server URL does
+work there — that
 build needs the frontend repository, which is not public, and the packaged desktop app is not that
 build. Wherever it runs, the packaged app also blocks a plugin's own `fetch`/XHR: go through
 `ctx.net`/`ctx.service` only.

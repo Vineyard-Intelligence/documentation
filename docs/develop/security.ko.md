@@ -32,14 +32,17 @@ Vineyard가 플러그인 JavaScript를 격리하는 방법: 바로 적용되지 
 - `localStorage` / `sessionStorage` 없음,
 - IndexedDB, Cache Storage, `BroadcastChannel`, `navigator.storage`(오리진 전용 파일 시스템 포함), Web Locks, 서비스 워커 등록 없음,
 - 어떤 종류의 계정 토큰, 쿠키, 세션도 없음,
-- 자체 네트워크 없음: `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource`, 중첩된 `new Worker`가 모두 거부됩니다.
+- 자체 네트워크 없음: `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource`, 중첩된 `new Worker`가 모두 거부됩니다,
+- 자기 모듈 외의 코드 없음: 다른 모듈의 `import()`, `eval`, `new Function`, WebAssembly 컴파일, `URL.createObjectURL`이 모두 거부됩니다.
 
-저장소 차단은 팩 코드를 가져오기 전에 적용되며, 네트워크 차단과 달리 `vite dev`에서도 유지됩니다: `indexedDB`, `caches`, `BroadcastChannel`은 `undefined`이고, `navigator.storage`와 `navigator.locks`의 메서드와 서비스 워커 등록은 `SecurityError`(`not available to plugins`)를 던집니다. 이 차단을 적용할 수 없는 브라우저에서는 플러그인이 로드되지 않고, 실행은 "the plugin sandbox could not block site storage in this browser"로 실패합니다. 실행 중 상태는 메모리에 두세요.
+워커는 레지스트리가 검토한 코드만 실행합니다. 플러그인을 실행하기 전에 앱은 플러그인의 코드 모듈을 가져와, 그 바이트를 레지스트리가 그 모듈에 기록한 SHA-256과 대조하고, 그 바이트만 워커에 넘깁니다. 바이트가 일치하지 않는 코드는 실행되지 않으며, 실행은 `<plugin> was not run: its code does not match the registry's digest`로 실패합니다. 다이제스트는 고정 커밋에서 GitHub이 가진 바이트의 것이라, CDN이 스스로를 보증할 수 없습니다. 레지스트리가 코드 다이제스트를 기록하기 전에 승인된 팩은 문서와 마찬가지로 목록에 있는지로 확인합니다. 레지스트리에 닿을 수 없는 동안에는 레지스트리가 마지막으로 그 팩을 목록에 올렸을 때 이 기기가 보관한 다이제스트로 확인합니다([배포](distribution.md#verification) 참조).
+
+저장소 차단은 팩 코드를 가져오기 전에 적용되며, 네트워크 차단과 달리 `vite dev`에서도 유지됩니다: `indexedDB`, `caches`, `BroadcastChannel`은 `undefined`이고, `navigator.storage`와 `navigator.locks`의 메서드와 서비스 워커 등록은 `SecurityError`(`not available to plugins`)를 던집니다. 이 차단을 적용할 수 없는 브라우저에서는 플러그인이 로드되지 않고, 실행은 "the plugin sandbox could not block site storage in this browser"로 실패합니다. `URL.createObjectURL`도 같은 방식으로, `vite dev`에서도 거부됩니다. `Blob` 자체는 동작합니다. 실행 중 상태는 메모리에 두세요.
 
 스테이징, 이그레스, 진행률, 알림은 메인 스레드의 **HostBridge**에 있습니다. 워커는 형태가 정확히 부여된 스코프인 [Comlink](sdk.md) 프록시를 통해 이에 접근하므로, 모든 요청은 `ctx.net.fetch`, `ctx.service`, 또는 데스크톱의 `ctx.net.probe`를 거칩니다. 데스크톱도 동일한 워커로 같은 플러그인을 실행합니다.
 
-!!! warning "`fetch` 직접 호출은 개발 환경에서만 동작합니다"
-    개발 서버(`vite dev`)는 워커의 네트워크 차단을 강제하지 않으므로, `fetch`를 직접 호출하는 팩은 개발 환경에서는 동작하고 프로덕션에서는 실패합니다. `ctx.net.fetch`를 사용하세요.
+!!! warning "`fetch`와 `import()` 직접 호출은 개발 환경에서만 동작합니다"
+    개발 서버(`vite dev`)는 워커의 네트워크 차단과 코드 차단을 강제하지 않으므로, `fetch`나 `import()`를 직접 호출하는 팩은 개발 환경에서는 동작하고 프로덕션에서는 실패합니다. `ctx.net.fetch`를 사용하고, 팩에 필요한 것은 모두 하나의 모듈에 번들하세요.
 
 ```ts
 // 워커 내부에서, ctx는 메인 스레드 HostBridge의 Comlink 프록시입니다.

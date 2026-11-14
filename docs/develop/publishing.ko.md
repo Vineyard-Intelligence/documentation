@@ -4,7 +4,7 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 
 ## 레지스트리 저장소는 메타데이터만 보유합니다
 
-제출은 **`Vineyard-Intelligence/registry`**로 이루어집니다. 저장소는 *포인터와 파생 측면*을 보유하며, 코드나 매니페스트 또는 번들의 복사본을 절대 보유하지 않습니다. 전체 매니페스트/Type Pack JSON, README, 스크린샷, 번들은 모두 **귀하의** 작성자 저장소에 고정된 `ref`에 남아 있습니다. 마켓플레이스 상세 페이지는 거기서 지연 하이드레이션됩니다. 앱과 마켓플레이스는 그 고정된 콘텐츠를 `https://cdn.jsdelivr.net/gh/{repo}@{ref}/{path}`로 가져오며, GitHub 소유자를 가리지 않습니다: CSP가 허용하는 것은 CDN의 `/gh/` 경로이지 특정 조직이 아니므로, 여러분의 저장소에 있는 Plugin Pack도 다른 팩과 똑같이 실행됩니다. 팩의 로드 여부를 결정하는 것은 레지스트리의 승인 ref 목록입니다 — 앱은 그 목록에 있는 `repo@ref/path`만 로드하고, 가져온 문서를 거기 기록된 SHA-256과 대조합니다. 검토된 불변 커밋이 신뢰의 단위입니다.
+제출은 **`Vineyard-Intelligence/registry`**로 이루어집니다. 저장소는 *포인터와 파생 측면*을 보유하며, 코드나 매니페스트 또는 번들의 복사본을 절대 보유하지 않습니다. 전체 매니페스트/Type Pack JSON, README, 스크린샷, 번들은 모두 **귀하의** 작성자 저장소에 고정된 `ref`에 남아 있습니다. 마켓플레이스 상세 페이지는 거기서 지연 하이드레이션됩니다. 앱과 마켓플레이스는 그 고정된 콘텐츠를 `https://cdn.jsdelivr.net/gh/{repo}@{ref}/{path}`로 가져오며, GitHub 소유자를 가리지 않습니다: 앱이 플러그인 코드를 실행하는 곳은 CDN의 `/gh/` 경로이지 특정 조직이 아니므로, 여러분의 저장소에 있는 Plugin Pack도 다른 팩과 똑같이 실행됩니다. 팩의 로드 여부를 결정하는 것은 레지스트리의 승인 ref 목록입니다 — 앱은 그 목록에 있는 `repo@ref/path`만 로드하고, 가져온 문서를 거기 기록된 SHA-256과 대조하며, 플러그인의 코드 모듈도 실행하기 전에 그 모듈에 기록된 SHA-256과 대조합니다. 검토된 불변 커밋이 신뢰의 단위입니다.
 
 | 경로 | 역할 |
 |---|---|
@@ -12,7 +12,7 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 | `registry/community-pluginpacks.json` | 게시되는 Plugin Pack 인덱스 — **생성물**. 팩당 하나의 간소화된 항목: identifier, name, author, summary, repo, ref, path, version, platforms, `scopes_summary`, `verified`. |
 | `registry/community-typepacks.json` | Type Pack용 대칭 항목. 스코프 대신 `categories`/`type_count`를 가집니다(코드가 실행되지 않음). |
 | `registry/community-skillpacks.json` | Skill Pack용 대칭 항목. 스코프 대신 `applies_to`/`section_count`/`requires`를 가집니다(텍스트만 있으며, 코드가 실행되지 않음). |
-| `registry/approved-*.json` | `scripts/build_approved.py`가 `packs/`의 이력에서 **생성**. 레지스트리가 지금까지 승인한 모든 `repo@ref/path`와 그 문서의 SHA-256을 나열합니다. 앱은 이 목록에 있고 바이트가 다이제스트와 일치하는 포인터만 로드합니다. |
+| `registry/approved-*.json` | `scripts/build_approved.py`가 `packs/`의 이력에서 **생성**. 레지스트리가 지금까지 승인한 모든 `repo@ref/path`와 그 문서의 SHA-256, Plugin Pack이면 팩이 실행하는 각 코드 모듈의 SHA-256(`bundle_sha256`)을 나열합니다. 앱은 이 목록에 있고 바이트가 다이제스트와 일치하는 포인터만 로드하고, 바이트가 자기 다이제스트와 일치하는 코드만 실행합니다. |
 | `schemas/` | CI가 항목을 검증하는 기준이 되는 게시된 메타 스키마. |
 | `verified-authors.json` | verified 배지를 달 수 있는 저자, 각자가 소유한 네임스페이스, 그리고 팩 저장소를 소유해야 하는 GitHub 숫자 계정 id. **운영자 소유** — 제출이 편집하지 않습니다. |
 | `SPEC.md` | 레지스트리 계약 전문 — 항목 형식, 고정 규칙, CI가 강제하는 항목. |
@@ -80,6 +80,7 @@ Plugin Pack으로 등재하세요.
 - **한 줄과 페이지의 형식이 맞아야 합니다.** `summary`는 250자 이하의 한 줄이고, 페이지는 16,000자 이하이며 개행과 탭 외의 제어 문자가 없어야 합니다. 단독 `vineyard:plugin` 문서는 거부됩니다. [팩의 한 줄과 페이지](#pack-page)를 참고하세요. (`verify_pinned.py`)
 - **요약 필드는 신뢰하지 않고 다시 계산합니다.** `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count`, `type_count`를 고정된 문서에서 유도해 작성값과 대조합니다. `scopes_summary.network`는 멤버가 `network` **또는** `web_probe`를 선언하면 true입니다.
 - **번들이 고정된 커밋 안에 있고 매니페스트와 일치해야 합니다.** Plugin Pack의 경우 팩과 각 멤버의 `platforms.web.entry`는 저장소 안의 파일을 저장소 루트 기준 상대 경로로 적은 것(`dist/pack.mjs`)이어야 합니다. 경로의 각 세그먼트에는 ASCII 영문자, 숫자, `.`, `_`, `-`만 쓸 수 있고, 세그먼트가 `.`이나 `..`이면 안 됩니다. 절대 URL, 앞의 `/`, 백슬래시, `%`처럼 그 밖의 형태는 아무것도 가져오기 전에 여기서 실패합니다. 그 entry가 가리키는 모듈을 고정된 커밋에서 가져오며, 모듈이 팩과 각 멤버에 대해 선언하는 `version`과 `license`는 매니페스트의 값과 같아야 합니다. `dist/`를 다시 빌드하지 않고 매니페스트만 수정했거나, entry가 404이면 여기서 실패합니다. (`verify_pinned.py`)
+- **승인 목록이 코드의 다이제스트를 기록합니다.** 병합 후, 팩이 실행하는 각 모듈의 SHA-256이 고정된 매니페스트에서 읽혀 그 승인 행에 기록되며, 앱은 바이트가 이와 일치하지 않는 모듈을 거부합니다. 다이제스트는 고정 커밋에서 GitHub의 파일로 계산하고, 빌드는 같은 파일을 jsDelivr로도 가져와 바이트가 다르면 실패합니다. 카탈로그에 등재된 모든 팩에 이 값이 있어야 합니다. 등재된 팩의 문서나 모듈을 해시할 수 없으면 빌드가 실패하고 아무것도 게시되지 않으므로, 항목이 병합될 때 고정 커밋이 GitHub에 있어야 합니다. 모듈은 [자체 완결된 파일 하나](distribution.md#one-file)여야 합니다. (`build_approved.py`, `test_approved.py`)
 
 ### 타입 그래프
 

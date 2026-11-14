@@ -32,14 +32,17 @@ Plugin `main.js` runs in a **dedicated module Web Worker**, not on the page. Ins
 - no `localStorage` / `sessionStorage`,
 - no IndexedDB, Cache Storage, `BroadcastChannel`, `navigator.storage` (including the origin-private file system), Web Locks or service-worker registration,
 - no account token, cookie, or session of any kind,
-- no network of its own: `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource` and a nested `new Worker` are all refused.
+- no network of its own: `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource` and a nested `new Worker` are all refused,
+- no code but its own module: an `import()` of any other module, `eval`, `new Function`, compiling WebAssembly and `URL.createObjectURL` are all refused.
 
-The storage block is applied before the pack's code is imported and, unlike the network block, holds under `vite dev` too: `indexedDB`, `caches` and `BroadcastChannel` are `undefined`, and the methods of `navigator.storage` and `navigator.locks`, and service-worker registration, throw a `SecurityError` (`not available to plugins`). In a browser where it cannot be applied the plugin does not load, and the run fails with "the plugin sandbox could not block site storage in this browser". Keep a run's state in memory.
+The worker runs exactly the code the registry reviewed. Before a plugin runs, the app fetches the plugin's code module, checks its bytes against the SHA-256 the registry recorded for that module, and hands the worker those bytes and nothing else. Code whose bytes do not match is not run, and the run fails with `<plugin> was not run: its code does not match the registry's digest`. The digest is of the bytes GitHub holds at the pinned commit, so the CDN cannot vouch for itself. A pack approved before the registry recorded code digests is checked by its listing, as its document is. While the registry is unreachable, the app checks against the digests this device kept from the last time the registry listed the pack (see [distribution](distribution.md#verification)).
+
+The storage block is applied before the pack's code is imported and, unlike the network block, holds under `vite dev` too: `indexedDB`, `caches` and `BroadcastChannel` are `undefined`, and the methods of `navigator.storage` and `navigator.locks`, and service-worker registration, throw a `SecurityError` (`not available to plugins`). In a browser where it cannot be applied the plugin does not load, and the run fails with "the plugin sandbox could not block site storage in this browser". `URL.createObjectURL` is refused the same way, in `vite dev` too; `Blob` itself works. Keep a run's state in memory.
 
 Staging, egress, progress and notifications live on the main thread, in the **HostBridge**. The worker reaches it through a [Comlink](sdk.md) proxy shaped exactly like the granted scopes, so every request goes through `ctx.net.fetch`, `ctx.service`, or `ctx.net.probe` on desktop. Desktop runs the same plugin in the same worker.
 
-!!! warning "Direct `fetch` works in dev only"
-    The dev server (`vite dev`) does not enforce the worker's network block, so a pack that calls `fetch` directly works in dev and fails in production. Use `ctx.net.fetch`.
+!!! warning "Direct `fetch` and `import()` work in dev only"
+    The dev server (`vite dev`) does not enforce the worker's network block or its code block, so a pack that calls `fetch` or `import()` directly works in dev and fails in production. Use `ctx.net.fetch`, and bundle everything the pack needs into its one module.
 
 ```ts
 // Inside the worker, ctx is a Comlink proxy of the main-thread HostBridge.
