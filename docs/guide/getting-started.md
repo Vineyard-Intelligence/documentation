@@ -4,7 +4,7 @@ A first-run walkthrough: open the Vineyard app, create a project, install a **Ty
 
 ## 1. Open the app
 
-Vineyard runs in your browser at [app.vineyard.run](https://app.vineyard.run), or as the Vineyard desktop app. Sign in, and you land on your dashboard (reopening the app while still signed in goes to the last project you opened instead, if you chose that under **Settings → General → Start view**). The desktop app can also run in local mode with no account; it opens on the dashboard as well.
+Vineyard runs in your browser at [app.vineyard.run](https://app.vineyard.run), or as the Vineyard desktop app. Sign in, and you land on your dashboard (reopening the app while still signed in goes to the last project you opened instead, if you chose that under **Settings → General → Start view**). The desktop app can also run in local mode with no account; it opens on the dashboard as well. Its menus, its own Desktop Settings window and its keys are in [The desktop app](desktop.md).
 
 The dashboard is your home page. **Continue** lists the project you opened last and your most recently active ones, **Since your last visit** shows what others changed in your projects while you were away, and **Activity** follows changes across all your projects. Signed in to a server, a search box above them finds entities across your projects.
 

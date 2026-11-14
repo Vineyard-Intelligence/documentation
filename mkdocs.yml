@@ -126,6 +126,7 @@ plugins:
             "User Guide": 사용자 가이드
             "Getting started": 시작하기
             "Signed in or local": 로그인 모드와 로컬 모드
+            "The desktop app": 데스크탑 앱
             "Browse & install": 둘러보기 및 설치
             "Running plugins": 플러그인 실행
             "Working with Type Packs": Type Pack 사용하기
@@ -162,6 +163,7 @@ nav:
       - guide/index.md
       - Getting started: guide/getting-started.md
       - Signed in or local: guide/modes.md
+      - The desktop app: guide/desktop.md
       - Browse & install: guide/installing.md
       - Running plugins: guide/running-plugins.md
       - Working with Type Packs: guide/typepacks.md

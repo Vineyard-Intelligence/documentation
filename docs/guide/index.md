@@ -39,6 +39,12 @@ See what changes between working signed in and local mode in the desktop app, an
 </div>
 
 <div class="vy-card" markdown>
+### :material-monitor: The desktop app
+Its two settings windows, its menus and its keyboard shortcuts.
+→ [The desktop app](desktop.md)
+</div>
+
+<div class="vy-card" markdown>
 ### :material-download: Browse & install
 Find packs, review what they can access, and install them.
 → [Browse & install](installing.md)

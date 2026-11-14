@@ -8,7 +8,7 @@
 Vineyard는 브라우저([app.vineyard.run](https://app.vineyard.run))에서, 또는 Vineyard 데스크탑 앱으로 실행됩니다. 로그인하면 대시보드에
 도착합니다(**Settings → General → Start view**에서 마지막으로 연 프로젝트를 선택했다면, 로그인된
 상태로 앱을 다시 열 때 그 프로젝트로 갑니다). 데스크탑 앱은 계정 없이 로컬 모드로도 실행할 수 있으며, 이때도 대시보드에서
-시작합니다.
+시작합니다. 데스크탑 앱의 메뉴와 자체 Desktop Settings 창, 키는 [데스크탑 앱](desktop.md)에 있습니다.
 
 대시보드는 홈 페이지입니다. **Continue**에는 마지막으로 연 프로젝트와 최근 활동한
 프로젝트가, **Since your last visit**에는 자리를 비운 사이 다른 사람이 프로젝트에서 바꾼

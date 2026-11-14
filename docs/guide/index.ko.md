@@ -39,6 +39,12 @@ VINEYARD는 CTI·OSINT를 위한 오픈 조사 워크벤치입니다. 엔티티�
 </div>
 
 <div class="vy-card" markdown>
+### :material-monitor: 데스크탑 앱
+두 설정 창과 메뉴, 단축키를 확인하세요.
+→ [데스크탑 앱](desktop.md)
+</div>
+
+<div class="vy-card" markdown>
 ### :material-download: 둘러보기 및 설치
 팩을 찾고, 접근 가능한 항목을 검토하고, 설치하세요.
 → [둘러보기 및 설치](installing.md)
