@@ -79,7 +79,7 @@ Plugin Pack으로 등재하세요.
 - **팩이 두 글을 모두 갖고, 카드의 한 줄은 문서가 정합니다.** 고정된 문서에 `summary`와 비어 있지 않은 `description`이 있어야 하고, 항목의 `summary`는 문서의 `summary`와 정확히 같아야 합니다. 항목은 문서가 적은 한 줄을 그대로 옮겨 적는 것입니다. 페이지는 문서에만 있고, 마켓플레이스는 팩을 열 때 고정된 커밋에서 읽어 옵니다. (`verify_pinned.py`)
 - **한 줄과 페이지의 형식이 맞아야 합니다.** `summary`는 250자 이하의 한 줄이고, 페이지는 16,000자 이하이며 개행과 탭 외의 제어 문자가 없어야 합니다. 단독 `vineyard:plugin` 문서는 거부됩니다. [팩의 한 줄과 페이지](#pack-page)를 참고하세요. (`verify_pinned.py`)
 - **요약 필드는 신뢰하지 않고 다시 계산합니다.** `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count`, `type_count`를 고정된 문서에서 유도해 작성값과 대조합니다. `scopes_summary.network`는 멤버가 `network` **또는** `web_probe`를 선언하면 true입니다.
-- **번들이 매니페스트와 일치해야 합니다.** Plugin Pack의 경우 `platforms.web.entry`가 가리키는 모듈을 고정된 커밋에서 가져옵니다. 그 모듈이 팩과 각 멤버에 대해 선언하는 `version`과 `license`는 매니페스트의 값과 같아야 합니다. `dist/`를 다시 빌드하지 않고 매니페스트만 수정했거나, entry가 404이면 여기서 실패합니다. (`verify_pinned.py`)
+- **번들이 고정된 커밋 안에 있고 매니페스트와 일치해야 합니다.** Plugin Pack의 경우 팩과 각 멤버의 `platforms.web.entry`는 저장소 안의 파일을 저장소 루트 기준 상대 경로로 적은 것(`dist/pack.mjs`)이어야 합니다. 절대 URL, 앞의 `/`, `.`이나 `..` 세그먼트, 백슬래시, `%`가 있으면 아무것도 가져오기 전에 여기서 실패합니다. 그 entry가 가리키는 모듈을 고정된 커밋에서 가져오며, 모듈이 팩과 각 멤버에 대해 선언하는 `version`과 `license`는 매니페스트의 값과 같아야 합니다. `dist/`를 다시 빌드하지 않고 매니페스트만 수정했거나, entry가 404이면 여기서 실패합니다. (`verify_pinned.py`)
 
 ### 타입 그래프
 

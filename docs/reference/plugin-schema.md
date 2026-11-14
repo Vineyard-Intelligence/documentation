@@ -63,7 +63,7 @@ Per-platform execution flags. `type: object`, `additionalProperties: false`, `mi
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
 | `runtime` | string | yes | `sandbox-js`, `web-proxy` | — | `sandbox-js` = author JS in the browser worker; `web-proxy` = thin client calling ONE author endpoint (deferred). |
-| `entry` | string | yes | — | — | The module the plugin worker imports: a path relative to the repo root, e.g. `dist/pack.mjs`, or an absolute URL. Registry CI refuses `inline`, which names no module. |
+| `entry` | string | yes | repo-relative path, no leading slash, `.`/`..` segment, backslash or `%` | — | The module the plugin worker imports: a path inside the repository at the pinned commit, relative to the repo root, e.g. `dist/pack.mjs`. Not a URL: the app does not load a published pack whose entry resolves outside the pinned commit. Registry CI refuses `inline`, which names no module. |
 | `proxy_endpoint` | string | conditional | `format: uri` | — | **Required when `runtime: web-proxy`.** The single endpoint; MUST equal the one `scopes.network` entry. |
 | `fallback` | string | no | `desktop`, `none` | `none` | Where to fall back if web cannot run the plugin. |
 
@@ -74,7 +74,7 @@ Per-platform execution flags. `type: object`, `additionalProperties: false`, `mi
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|
 | `runtime` | string | yes | `sandbox-js`, `native`, `subprocess` | — | Desktop execution mode. |
-| `entry` | string | yes | — | — | Entry path within the bundle. |
+| `entry` | string | yes | repo-relative path, as `platforms.web.entry` | — | Entry path within the bundle. |
 | `fallback` | string | no | `web`, `none` | `none` | Where to fall back if desktop cannot run the plugin. |
 
 ## io

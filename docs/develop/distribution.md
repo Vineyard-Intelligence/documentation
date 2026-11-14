@@ -9,9 +9,14 @@ A registry entry (`packs/<identifier>.json`) names the content repo (`repo`, as 
 !!! warning "`ref` must be immutable — branches and tags are rejected"
     The registry entry's `ref` must be a commit SHA, 40-hex or 64-hex. Branches and tags are **rejected** by the entry schema and by `verify_pinned.py`, because they can be moved after review. See [updates](updates.md) for how a new version becomes an offered update.
 
-## The code module: `platforms.web.entry`
+## The code module: `platforms.web.entry` {#entry}
 
-A plugin's `platforms.web.entry` names the module the plugin worker imports: a path relative to the repo root (for example `dist/pack.mjs`), resolved against the same pinned commit, or an absolute URL. A pack member without its own `platforms.web` block runs the pack's module. A plugin with no entry to run is not listed as runnable, and registry CI refuses an entry of `inline`, which names no module.
+A plugin's `platforms.web.entry` names the module the plugin worker imports: a path inside the repository, relative to the repo root (for example `dist/pack.mjs`), resolved against the same pinned commit as the manifest. A pack member without its own `platforms.web` block runs the pack's module. A plugin with no entry to run is not listed as runnable, and registry CI refuses an entry of `inline`, which names no module.
+
+The entry cannot name code outside that commit, because the commit is what was reviewed. Registry CI refuses an absolute URL, a leading `/`, a `.` or `..` segment, a backslash and a percent-escape. When a project opens, the app does not load a published pack whose entry, the pack's own or a member's, resolves anywhere outside the pinned commit: none of its plugins load, and the project shows a notice naming the pack.
+
+!!! note "Packs loaded for development"
+    A pack loaded from **Settings → Plugins → Development → Load a pack from a URL** is not held to this rule, since it reaches only this device: its entry may be an absolute URL, such as your dev server's. See [quickstart](quickstart.md).
 
 ## Storage: metadata only
 
@@ -20,7 +25,7 @@ A plugin's `platforms.web.entry` names the module the plugin worker imports: a p
 
 ### Verification
 
-The client loads a pack only if its `repo@ref/path` is listed in `registry/approved-{plugin,type,skill}packs.json` and the fetched document matches the SHA-256 recorded there. If the registry is unreachable, a pointer this device has verified before still loads, and any other is held. CI checks that the plugin code module (`platforms.web.entry`) declares the same version and licence as the manifest (see [publishing](publishing.md#the-pin)).
+The client loads a pack only if its `repo@ref/path` is listed in `registry/approved-{plugin,type,skill}packs.json` and the fetched document matches the SHA-256 recorded there. If the registry is unreachable, a pointer this device has verified before still loads, and any other is held. CI checks that the plugin code module (`platforms.web.entry`) is inside the pinned commit and declares the same version and licence as the manifest (see [publishing](publishing.md#the-pin)).
 
 ## Where it fits in the install flow
 
