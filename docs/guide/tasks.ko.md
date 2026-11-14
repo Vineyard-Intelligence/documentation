@@ -103,6 +103,7 @@ AI 에이전트 패널 머리글에는 **AI Agent**, 대화 제목, 사용 중�
 | 할 수 있는 일 | 도구 | 제한 |
 | --- | --- | --- |
 | 프로젝트 읽기 | `list_node_types`, `graph_stats`, `read_nodes`, `find_nodes`, `get_node`, `read_edges`, `node_neighbors`, `get_selection` | 읽기 전용. |
+| 두 노드가 이어지는 경로 찾기 | `find_paths` | 읽기 전용. 다른 읽기 도구처럼 이미 그래프에 들어간 것만 보고, 스테이징된 것은 보지 않습니다. 경로를 짧은 것부터 최대 10개, 경로마다 링크 최대 6개까지 돌려줍니다. 기본으로 링크가 50개를 넘는 노드는 거쳐 가지 않습니다. 공유 네임서버, 등록기관, 호스팅 업체처럼 무관한 것들을 잇는 노드입니다. 건너뛴 노드가 무엇인지, 두 노드가 그런 노드를 거쳐서라도 이어지는지 아니면 전혀 이어지지 않는지를 에이전트에게 알려 줍니다. |
 | 텍스트에서 지표 추출 | `extract_indicators` | 넘겨받은 텍스트와 지정한 노드만 읽습니다. 앱 밖으로 아무것도 보내지 않고 아무것도 스테이징하지 않습니다. 찾은 값은 후보이며, 에이전트가 다른 노드와 똑같이 `create_node`로 스테이징합니다. |
 | 그래프 변경 | `create_node`, `update_node`, `delete_node`, `create_edge`, `update_edge`, `delete_edge`, 그리고 스테이징한 내용을 다루는 `read_staged`, `drop_staged` | 적용 방식(첫 번째 칩, 또는 Settings의 **Apply the agent's changes automatically**)과, 그 위에 더해지는 **Stop and ask before anything is removed or overwritten** 및 독립 검증. |
 | 설치된 플러그인 실행 | `list_plugins`, `invoke_plugin` | 실행을 시작할 때 승인을 받지 않으며, 플러그인은 평소처럼 네트워크 요청을 보냅니다. 수집한 내용은 에이전트 자신의 변경과 똑같이 처리됩니다. 이 빌드에서 실행할 수 없는 플러그인(예: 브라우저에서의 데스크탑 전용 플러그인)은 시작할 수 없습니다. 대상이 **Hosts nothing may collect from**의 호스트를 가리키거나 `invoke_plugin`이 **Tools ruled out**에 있으면 실행이 거부됩니다. |
