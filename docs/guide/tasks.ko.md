@@ -116,7 +116,7 @@ AI 에이전트 패널 머리글에는 **AI Agent**, 대화 제목, 사용 중�
 | 명령 실행 (데스크탑 앱) | `run_command` | **Commands** 칩, 또는 Settings의 **Run commands on this machine**. 사용자 권한으로 프로젝트의 작업 폴더에서 실행되며, 기본 2분(최대 10분)까지 실행됩니다. 제외된 호스트를 가리키는 명령줄은 거부됩니다. |
 | 파일 작업 (데스크탑 앱) | `list_files`, `read_file`, `write_file`, `edit_file`, `delete_file` | Commands 설정과 관계없이, 프로젝트의 작업 폴더(**⋯ → Open the agent's working folder**) 안에서만. 파일을 덮어쓰면 이전 내용의 사본이 남고, 삭제하면 파일이 `.vineyard-trash/`로 옮겨집니다. 명령으로 지운 파일은 남지 않습니다. |
 
-`extract_indicators`는 IPv4·IPv6 주소와 대역, 도메인, URL, 이메일 주소, 전화번호, MD5·SHA-1·SHA-256 해시, CVE 번호, 비트코인·이더리움 형식·TRON 주소, Telegram 핸들을 찾으며, `hxxp`나 `[.]` 같은 디팡 표기도 읽습니다. 도메인은 실제 최상위 도메인으로 끝나야 하므로 `invoice.pdf` 같은 파일 이름은 빠집니다. Telegram을 언급하지 않는 줄의 @핸들도 빠집니다. 결과마다 몇 번 나왔는지와 어떻게 적혀 있었는지를 알려 주고, 사설·문서용 주소, 이미 노드에 있는 값, **Hosts nothing may collect from**에 속한 호스트를 표시합니다.
+`extract_indicators`는 IPv4·IPv6 주소와 대역, 도메인, URL, 이메일 주소, 전화번호, MD5·SHA-1·SHA-256 해시, CVE 번호, 비트코인·이더리움 형식·TRON 주소, Telegram 핸들을 찾으며, `hxxp`나 `[.]` 같은 디팡 표기도 읽습니다. 도메인은 실제 최상위 도메인으로 끝나야 하므로 `invoice.pdf` 같은 파일 이름은 빠지고, 마침표 뒤 띄어쓰기가 빠진 두 문장인 `sentence.It`도 빠집니다. @핸들은 텍스트가 Telegram에 있다고 밝힌 경우에만 Telegram 핸들로 봅니다. `Telegram: @a | X: @b`에서는 `@a`만 해당합니다. 결과마다 몇 번 나왔는지와 어떻게 적혀 있었는지를 알려 주고, 사설·문서용 주소, **Hosts nothing may collect from**에 속한 호스트, 같은 값을 가진 같은 유형의 노드를 표시합니다. 같은 값이라도 유형이 다른 노드(예: 도메인을 담은 `threat.indicator`)는 같은 노드로 보지 않으므로, 에이전트는 도메인 노드를 따로 만들 수 있습니다.
 
 모든 턴은 **Step budget**으로 제한됩니다. 턴이 병렬 워커와 `challenge_claim`에 넘기는 모델 호출은 step budget의 다섯 배인 별도 한도에서 차감됩니다. `web_search`, `fetch_page`, `invoke_plugin`, `run_command`, `investigate_in_parallel`은 대화별로 **Tools ruled out**에 넣을 수 있으며, 병렬 워커에도 같은 세션 스코프가 적용됩니다.
 
