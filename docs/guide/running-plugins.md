@@ -83,7 +83,11 @@ press **Apply (N)** — or **Discard all**. Nothing is written to the project un
 Review dialog is open, the changes are only previewed on the canvas. A run that stages nothing ends
 with a toast showing its summary (or "No changes").
 
-The right side of the dialog shows the selected row's properties. For an edge, **Recorded with this
+The right side of the dialog shows the selected row's properties. For a node, they are what the
+node will hold once the row is applied: for a change, its stored values with the proposed ones merged
+in. A new node that is in the project by now, because a review you applied since this run staged
+added it, is merged into that node instead of being added twice; the pane then says *This node is
+already in the project* and shows the merged values. For an edge, **Recorded with this
 link** below them lists what the edge will store besides its label and grade once the row is
 applied: for a new edge, what the plugin recorded with it, such as where and when the link was
 observed; for a change, the edge's stored values with the proposed ones in their place; for a
@@ -174,13 +178,19 @@ What lands on the graph:
   stricter one wins. A node the files leave unmarked gets no `tlp`, and the run's summary counts
   those nodes. A MISP `attributes/restSearch` export carries its events' TLP only when it was made
   with `includeEventTags=1`; the summary says so when it was not.
+- Each new edge gets a `tlp` field too: the one the files give the relationship, or else the
+  stricter of its two nodes'. Its other fields, such as a relationship's `description` or a
+  sighting's `first_seen` and `last_seen`, are under **Recorded with this link** in its
+  Properties panel.
 - An import does not lower the TLP of a node already in the project, or drop its
-  `source_report`. This is checked against the project as it is when the run stages, so two
-  imports waiting for review at once are not checked against each other: apply one, then discard
-  the other and run it again.
-- A new edge is stored with its label only. The TLP the files give a relationship is not on the
-  graph, so check the file's marking before you share what an edge says.
-- An edge already in the project keeps its label.
+  `source_report`, `created_by`, `tags`, `markings` or `references`: the new values are added.
+  This is checked again when you apply the review, against the project as it is then, so imports
+  waiting for review at once can be applied in any order. A TLP typed on a node counts as the
+  strictest label in it, so `TLP:RED (Case 7 only)` or `RED - do not share` is held as RED. A
+  value with no label in it, such as `see note`, is not.
+- An edge already in the project when you apply the review keeps its label and fields, including
+  one another import added after this one was staged. It does not take the file's TLP, so check
+  the file's marking before you share what such an edge says.
 - A run stops at 1,500 nodes, 3,000 edges or 3 MB. The summary says how many were left out; split a
   larger file. It also tells new nodes, updated nodes and nodes already in the project apart, so a
   file you imported before reports nothing new to stage.

@@ -103,6 +103,11 @@ ctx.graph?.deleteEdges?(ids: string[]): Promise<{ deleted: number }>
 
 `list({ type })`는 노드 타입으로 필터링된 전체 그래프 열거를 한 번의 호출로 반환합니다 — 커서 페이지네이션이 아닙니다(**Thanos Snap**과 같은 전체 그래프 플러그인이 사용). `neighbors`는 1-홉 근방을 반환합니다(**Black Hole**이 사용). `updateNode`와 `createEdge`는 델타/초안을 받아 검토용으로 스테이징할 뿐 결과 레코드를 반환하지 않으므로 둘 다 `void`로 리졸브됩니다 — 적용된 상태가 필요하면 `get`/`list`로 다시 읽으세요. `updateNode`는 병합합니다: 전달한 값은 해당 필드를 대체하고 나머지 필드는 모두 유지되며, 이 실행이 방금 만든 노드에서도 마찬가지입니다. 빈 문자열과 `null`은 무시되므로 필드를 지울 수는 없습니다. 프로젝트에 없는 ID를 주면 예외를 던집니다. `createNode`는 동일성으로 중복을 제거합니다 — 정규 타입과 그 타입의 `identity_properties`(없으면 레이블 속성, 그다음 `value`): 라이브 노드(또는 이 실행이 이미 만든 노드)가 같은 동일성을 가지면 그 노드를 재사용해 필드를 병합하고 그 노드를 반환합니다. `type`이 설치된 [Type Pack](typepacks.md)에 정의되어 있지 않으면 예외를 던집니다. 데이터가 타입의 속성 검사를 통과하지 못하면 `createNode`와 `updateNode` 모두 예외를 던집니다. [앱이 노드 데이터에서 검사하는 것](typepacks.md#what-the-app-checks-on-node-data)을 참조하세요. `EdgeDraft.from`/`to`는 노드 ID입니다 — 라이브 ID 또는 `createNode`가 반환한 ID. `label`은 관계를 설명하는 자유 텍스트이며, 엣지에는 타입이 없습니다.
 
+`updateNode`에서, 그리고 `createNode`가 노드를 재사용할 때, 다음 여섯 필드는 다르게 병합됩니다. 검토를 적용할 때 그 시점의 노드를 기준으로 한 번 더 적용됩니다.
+
+- `tlp`는 낮아지지 않습니다. 노드에 이미 있는 TLP 레이블은 더 엄격한 레이블로만 바뀝니다. 순서는 `TLP:CLEAR`(TLP 1.0의 `WHITE`), `TLP:GREEN`, `TLP:AMBER`, `TLP:AMBER+STRICT`, `TLP:RED`이며, 대소문자와 `TLP:` 접두사 유무(`TLP-`, `TLP_`, `TLP `도 접두사로 읽음)는 가리지 않고, `AMBER+STRICT`는 `AMBER STRICT`나 `AMBER_STRICT`로 써도 됩니다. `TLP:RED (Case 7 only)`나 `RED - do not share`처럼 레이블에 다른 글이 붙은 값은 그 안의 가장 엄격한 레이블로 읽으므로, 같은 등급의 레이블이 와도 글이 그대로 남습니다. 레이블이 없는 값은 레이블을 바꾸지 못합니다.
+- `source_report`, `created_by`, `markings`(`; `로 구분), `tags`(`, `로 구분), `references`(한 줄에 하나)는 목록입니다. 전달한 항목은 이미 있는 항목 뒤에 한 번씩만 덧붙으므로, 두 번째 출처가 첫 번째 출처를 대체하지 않습니다. 배열은 그 요소들의 목록이며, 문자열과 배열이 만나도 같은 방식으로 합치고, 결과는 노드에 이미 있던 형태를 따릅니다.
+
 `updateEdge`는 `edge:create`로 게이트됩니다(`edge:update` 스코프는 현재 아무것도 부여하지 않음). `label`을 생략하면 문구와 그 등급이 그대로 유지됩니다. `EdgeDraft`/`updateEdge`는 엣지에 병합되는 선택적 `data` 객체를 받으며, `confidence`, `confidence_source`, `label_source`, `corroborated_by`는 호스트 소유이므로 거부됩니다. 순서가 있는 노드 쌍마다 엣지는 하나이므로, 이미 연결된 쌍에 대한 `createEdge`는 엣지를 추가하는 대신 그 엣지의 레이블 변경을 제안합니다. 분석가는 엣지의 `data`를 적용 전에는 Review 대화상자에서, 적용 후에는 엣지의 Properties 패널 **Recorded with this link** 아래에서 읽기 전용으로 봅니다. 그러므로 소스가 링크를 어디서 언제 관측했는지(`source`, `first_seen`, `last_seen` 등)는 여기에 담습니다.
 
 `edges`와 `neighbors`로 읽어 온 엣지에는 `id`, `from_node_id`, `to_node_id`, `label`만 담깁니다. `GraphEdge` 타입에는 `data`가 선언되어 있지만 반환되지 않으므로, 플러그인은 자신이 쓴 `data`도, 엣지의 `confidence`나 `label_source`도 다시 읽을 수 없습니다.
@@ -185,7 +190,7 @@ mock은 다음 점에서 앱과 달라서, 테스트가 통과해도 이 차이�
 - `config`를 전달하지 않으면 `ctx.config`는 `{}`입니다. 앱에서는 분석가가 선언된 키 중 하나를 설정하기 전까지 존재하지 않습니다.
 - `ctx.service`가 없습니다. `net.fetch`는 모든 요청을 `netHandler`에 그대로 넘기며, 선언된 엔드포인트와 메서드 검사, 제한 시간, 리다이렉트 규칙이 모두 없습니다.
 - `createNode`는 타입이 설치된 Type Pack에 있는지도, 데이터가 타입의 속성 검사를 통과하는지도 확인하지 않습니다.
-- `updateNode`는 `""`와 `null`도 필드에 그대로 씁니다. 앱은 이 값들을 무시합니다.
+- `updateNode`는 `""`와 `null`도 필드에 그대로 씁니다. 앱은 이 값들을 무시합니다. `tlp`와 목록 필드도 다른 필드처럼 덮어쓰지만, 앱은 더 엄격한 `tlp`를 남기고 목록에 덧붙입니다.
 - `createEdge`는 엣지에 `data`를 저장하지 않고(전달한 초안은 `data`까지 `mock.createdEdges`에 기록됩니다), 호스트 소유 `data` 키를 거부하지 않으며, 이미 연결된 쌍이어도 레이블을 바꾸는 대신 항상 새 엣지를 추가합니다.
 - `updateNode`, `deleteNode`, `deleteEdge`와 벌크 삭제는 알 수 없는 ID를 거부하지 않습니다.
 - `run.platform`은 항상 `"web"`입니다.

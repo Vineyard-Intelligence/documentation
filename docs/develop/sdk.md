@@ -145,6 +145,22 @@ the type's property checks; see
 `EdgeDraft.from`/`to` are node ids — live ids or the ids `createNode` returned. `label` is free
 text describing the relationship; edges have no type.
 
+Six fields merge differently, in `updateNode` and when `createNode` reuses a node, and again when
+the review is applied, against the node as it is then:
+
+- `tlp` is never lowered. A TLP label already on the node is replaced only by a stricter one, in
+  the order `TLP:CLEAR` (TLP 1.0 `WHITE`), `TLP:GREEN`, `TLP:AMBER`, `TLP:AMBER+STRICT`,
+  `TLP:RED`, read in any case, with or without a `TLP:` prefix (also `TLP-`, `TLP_` or `TLP `),
+  and with `AMBER+STRICT` also written `AMBER STRICT` or `AMBER_STRICT`. A value with a label
+  and other text, such as `TLP:RED (Case 7 only)` or `RED - do not share`, counts as the
+  strictest label in it, so it keeps its text against a label of the same rank. A value with no
+  label in it does not replace one that is.
+- `source_report`, `created_by` and `markings` (separated by `; `), `tags` (by `, `) and
+  `references` (one per line) are lists. The parts you pass are added after the ones already
+  there, each once, so a second source does not replace the first. An array is a list of its
+  elements, and a string and an array meet the same way: the result keeps the shape already on
+  the node.
+
 `updateEdge` is gated by `edge:create` (the `edge:update` scope currently grants nothing). Omit
 `label` to leave the wording and its grade alone. `EdgeDraft`/`updateEdge` accept an optional
 `data` object that is merged into the edge; `confidence`, `confidence_source`, `label_source` and
@@ -303,7 +319,9 @@ The mock differs from the app in ways a passing test can hide:
   against your declared endpoints and methods, no deadline and no redirect rule.
 - `createNode` does not check the type against installed Type Packs, nor the data against the
   type's property checks.
-- `updateNode` writes `""` and `null` over a field; the app ignores them.
+- `updateNode` writes `""` and `null` over a field; the app ignores them. It also replaces `tlp`
+  and the list fields like any other, where the app keeps the stricter `tlp` and adds to the
+  lists.
 - `createEdge` stores no `data` on the edge (the draft you passed, `data` included, is recorded in
   `mock.createdEdges`), does not refuse the host-owned `data` keys, and always adds a new edge
   instead of relabelling an already-linked pair.
