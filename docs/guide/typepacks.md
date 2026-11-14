@@ -149,6 +149,41 @@ list certificates by SHA-1 alone, and a SHA-1 cannot be computed from the SHA-25
 
 Each type ships its own icon and color.
 
+### Endpoint — host artifacts
+
+`run.vineyard.typepacks.endpoint` holds what an incident responder finds on a machine. The
+**Host Artifacts** plugin pack fills it from exports you already have: its **Process Activity
+Import** plugin reads Sysmon events 1, 3 and 22, or ECS process, network and DNS events, from files
+you pick in the **Run plugins** panel (JSON, JSON lines, CSV or Windows event XML, parsed on your
+device) and draws these links:
+
+| From → to | Label | Edge data |
+|---|---|---|
+| `endpoint.process` → `endpoint.process` | `spawned` | none |
+| `endpoint.process` → `endpoint.file` | `executed from` | none |
+| `endpoint.process` → `infrastructure.ip_address` | `connected to`, or `accepted connection from` when every connection was inbound | `source`, `events`, `direction`, `first_seen`, `last_seen`, `ports`, `port_count`, `protocols`, `remote_hostnames` |
+| `endpoint.process` → `infrastructure.domain` | `queried` | `source`, `events`, `first_seen`, `last_seen`, `answers`, `failed_events`, `statuses` |
+
+A process is identified by its process GUID, image name and PID, so a record without a Sysmon
+`ProcessGuid` or an ECS `process.entity_id` is skipped: without it, the same name and PID on two
+hosts would become one node. The process type has no host field, so the plugin writes the computer
+name to an extra `hostname` field, which the Properties panel shows. All events between one process
+and one destination are one link, and its `events` counts connections or lookups rather than
+records: Elastic Defend logs a connection when it opens and again when it closes, and that is one
+event. Importing a later export replaces that link's summary rather than adding to it, and a key
+the later export has no value for becomes empty; the review lists every such link again, even when
+nothing in it changed. A link that is already in the project keeps its label, including one you
+renamed, and only its summary is written: a `spawned` or `executed from` link you renamed is left
+as it is. A command line too long for one node (Linux allows megabytes of arguments) is cut,
+keeping its start, and the node says so in `command_line_truncated` and `command_line_length`.
+Loopback and link-local traffic never comes in, and private-network addresses and internal names
+only when you turn that on.
+
+!!! warning "Host data on a server"
+    Host names, user names and command lines become node fields. In a project on a Vineyard server
+    they are stored on that server. For a case whose host data must stay on your computer, use the
+    desktop app in local mode ([Signed in or local](modes.md)).
+
 The other packs follow the same shape — for example the **Threat** pack adds
 `threat.malware`, `threat.threat_actor`, `threat.indicator`, and `threat.operation` (a bounded
 operation within a campaign — one campaign can contain several operations), while **Identity**

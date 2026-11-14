@@ -143,6 +143,40 @@ VirusTotal) `fingerprint_sha1`에 함께 담습니다. abuse.ch SSLBL 같은 차
 
 각 유형은 자체 아이콘과 색상을 제공합니다.
 
+### Endpoint — 호스트 아티팩트
+
+`run.vineyard.typepacks.endpoint`는 침해 사고 대응자가 단말에서 찾은 것을 담습니다. 이 팩은
+**Host Artifacts** 플러그인 팩이 이미 가진 내보내기로 채웁니다. 그 팩의 **Process Activity
+Import** 플러그인은 **Run plugins** 패널에서 고른 파일(JSON, JSON lines, CSV, Windows 이벤트
+XML. 기기 안에서 파싱)에서 Sysmon 이벤트 1·3·22나 ECS 프로세스·네트워크·DNS 이벤트를 읽고,
+다음 링크를 그립니다:
+
+| From → to | 라벨 | 엣지 데이터 |
+|---|---|---|
+| `endpoint.process` → `endpoint.process` | `spawned` | 없음 |
+| `endpoint.process` → `endpoint.file` | `executed from` | 없음 |
+| `endpoint.process` → `infrastructure.ip_address` | `connected to`. 모든 연결이 인바운드였으면 `accepted connection from` | `source`, `events`, `direction`, `first_seen`, `last_seen`, `ports`, `port_count`, `protocols`, `remote_hostnames` |
+| `endpoint.process` → `infrastructure.domain` | `queried` | `source`, `events`, `first_seen`, `last_seen`, `answers`, `failed_events`, `statuses` |
+
+프로세스는 프로세스 GUID, 이미지 이름, PID로 식별되므로 Sysmon `ProcessGuid`나 ECS
+`process.entity_id`가 없는 레코드는 건너뜁니다. 이것이 없으면 두 호스트의 같은 이름·PID가 노드
+하나가 됩니다. 프로세스 유형에는 호스트 필드가 없어서, 플러그인은 컴퓨터 이름을 별도 필드
+`hostname`에 적고 **Properties** 패널이 이를 보여 줍니다. 한 프로세스와 한 목적지 사이의 이벤트는
+모두 링크 하나가 되고, 그 `events`는 레코드 수가 아니라 연결이나 질의의 수입니다. Elastic
+Defend는 연결이 열릴 때와 닫힐 때 한 번씩 기록하지만 이벤트는 하나입니다. 나중의 내보내기를
+가져오면 그 링크의 요약은 더해지지 않고 바뀝니다. 나중의 내보내기에 값이 없는 키는 비워지고,
+바뀐 것이 없어도 이런 링크는 모두 검토 목록에 다시 나옵니다. 프로젝트에 이미 있는 링크는 직접
+바꾼 라벨을 포함해 라벨을 그대로 두고 요약만 씁니다. 라벨을 바꾼 `spawned`나 `executed from`
+링크는 건드리지 않습니다. 노드 하나에 담을 수 없을 만큼 긴 명령줄(Linux는 수 MB의 인자를
+허용)은 앞부분만 남기고 자르며, 노드의 `command_line_truncated`와 `command_line_length`에 그
+사실을 적습니다. 루프백과 링크 로컬 트래픽은 가져오지 않고, 사설망 주소와 내부 이름은 그
+옵션을 켰을 때만 가져옵니다.
+
+!!! warning "서버에 남는 호스트 데이터"
+    호스트 이름, 사용자 이름, 명령줄은 노드 필드가 됩니다. Vineyard 서버의 프로젝트에서는 그
+    서버에 저장됩니다. 호스트 데이터가 이 컴퓨터 밖으로 나가면 안 되는 사건이라면 데스크탑 앱의
+    로컬 모드를 쓰세요([로그인 모드와 로컬 모드](modes.md)).
+
 다른 팩도 같은 형태를 따릅니다 — 예를 들어 **Threat** 팩은 `threat.malware`,
 `threat.threat_actor`, `threat.indicator`, `threat.operation`(캠페인 내의 경계된 작업 —
 하나의 캠페인은 여러 개의 operation을 포함할 수 있음)을, **Identity** 팩은 활동 뒤의
