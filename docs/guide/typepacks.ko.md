@@ -220,21 +220,23 @@ Defend는 연결이 열릴 때와 닫힐 때 한 번씩 기록하지만 이벤�
   "(legacy)"로 표시됩니다. 새 유형과 병합되지 않습니다. 두 팩을 함께 설치하면 짧은 이름
   `crypto_address`는 Cryptocurrency 팩의 유형을 가리킵니다.
 
-각 `network`에는 다른 도구와 주고받는 CAIP-2 체인 ID가 있습니다. 이 ID는 식별 값에 들어가지 않으므로,
-나중에 고쳐도 노드가 갈라지지 않습니다.
+`network` 값 대부분에는 다른 도구와 주고받는 CAIP-2 체인 ID가 있습니다. 초안이나 제안 단계인 것도
+있고, 등재된 ID가 없는 것도 몇 있습니다. 이 ID는 식별 값에 들어가지 않으므로, 나중에 고쳐도 노드가
+갈라지지 않습니다.
+{#crypto-networks}
 
 | `network` | CAIP-2 |
 |---|---|
 | `bitcoin` | `bip122:000000000019d6689c085ae165831e93` |
 | `bitcoin_cash` | `bip122:000000000000000000651ef99cb9fcbe` |
 | `bitcoin_sv` | `bsv:mainnet` (초안) |
-| `bitcoin_gold` | — |
+| `bitcoin_gold` | 미등재 |
 | `litecoin` | `bip122:12a765e31ffd4059bada1e25190f6e98` |
 | `dogecoin` | `bip122:1a91e3dace36e2be3bf030a65679fe82` |
-| `dash` | — |
-| `zcash` | — |
+| `dash` | 미등재 |
+| `zcash` | 미등재 |
 | `monero` | `monero:418015bb9ae982a1975da7d79277c270` (초안) |
-| `verge` | — |
+| `verge` | 미등재 |
 | `ethereum` | `eip155:1` |
 | `ethereum_classic` | `eip155:61` |
 | `bsc` | `eip155:56` |
@@ -250,7 +252,7 @@ Defend는 연결이 열릴 때와 닫힐 때 한 번씩 기록하지만 이벤�
 | `ton` | `tvm:-239` |
 | `cardano` | 제안: `cardano:1-764824073` |
 | `bnb_beacon` | `cosmos:Binance-Chain-Tigris` (초안) |
-| `unknown` | 없음 |
+| `unknown` | 없음 (네트워크 미정) |
 
 엣지에는 유형이 없으므로, Cryptocurrency 팩은 수집기가 쓸 라벨과 데이터 키를 정해 둡니다. 두 노드
 사이의 링크는 하나뿐입니다. 수집기는 이미 있는 링크의 라벨을 바꾸지 않고 데이터 키를 더하며, 출처가

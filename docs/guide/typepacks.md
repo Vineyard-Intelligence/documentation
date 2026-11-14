@@ -229,21 +229,23 @@ Ethereum and on BSC — so `network` is part of the identity, and two such nodes
   shown as "(legacy)". They do not merge with the new types. With both packs installed, the short
   name `crypto_address` means the Cryptocurrency pack's type.
 
-Each `network` has a CAIP-2 chain id, the form other tools exchange; the ids are not part of the
-identity, so a correction to one never splits a node.
+Most `network` values have a CAIP-2 chain id, the form other tools exchange: some only as a draft
+or a proposal, and a few have none registered. The ids are not part of the identity, so a
+correction to one never splits a node.
+{#crypto-networks}
 
 | `network` | CAIP-2 |
 |---|---|
 | `bitcoin` | `bip122:000000000019d6689c085ae165831e93` |
 | `bitcoin_cash` | `bip122:000000000000000000651ef99cb9fcbe` |
 | `bitcoin_sv` | `bsv:mainnet` (draft) |
-| `bitcoin_gold` | — |
+| `bitcoin_gold` | none registered |
 | `litecoin` | `bip122:12a765e31ffd4059bada1e25190f6e98` |
 | `dogecoin` | `bip122:1a91e3dace36e2be3bf030a65679fe82` |
-| `dash` | — |
-| `zcash` | — |
+| `dash` | none registered |
+| `zcash` | none registered |
 | `monero` | `monero:418015bb9ae982a1975da7d79277c270` (draft) |
-| `verge` | — |
+| `verge` | none registered |
 | `ethereum` | `eip155:1` |
 | `ethereum_classic` | `eip155:61` |
 | `bsc` | `eip155:56` |
@@ -259,7 +261,7 @@ identity, so a correction to one never splits a node.
 | `ton` | `tvm:-239` |
 | `cardano` | proposed: `cardano:1-764824073` |
 | `bnb_beacon` | `cosmos:Binance-Chain-Tigris` (draft) |
-| `unknown` | none |
+| `unknown` | none: the network is not established |
 
 Edges carry no type, so the Cryptocurrency pack fixes the labels and data keys that collectors use.
 A pair of nodes has one link: a collector adds its data keys to a link that is already there rather
