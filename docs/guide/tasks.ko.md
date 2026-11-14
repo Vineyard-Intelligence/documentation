@@ -103,6 +103,7 @@ AI 에이전트 패널 머리글에는 **AI Agent**, 대화 제목, 사용 중�
 | 할 수 있는 일 | 도구 | 제한 |
 | --- | --- | --- |
 | 프로젝트 읽기 | `list_node_types`, `graph_stats`, `read_nodes`, `find_nodes`, `get_node`, `read_edges`, `node_neighbors`, `get_selection` | 읽기 전용. |
+| 텍스트에서 지표 추출 | `extract_indicators` | 넘겨받은 텍스트와 지정한 노드만 읽습니다. 앱 밖으로 아무것도 보내지 않고 아무것도 스테이징하지 않습니다. 찾은 값은 후보이며, 에이전트가 다른 노드와 똑같이 `create_node`로 스테이징합니다. |
 | 그래프 변경 | `create_node`, `update_node`, `delete_node`, `create_edge`, `update_edge`, `delete_edge`, 그리고 스테이징한 내용을 다루는 `read_staged`, `drop_staged` | 적용 방식(첫 번째 칩, 또는 Settings의 **Apply the agent's changes automatically**)과, 그 위에 더해지는 **Stop and ask before anything is removed or overwritten** 및 독립 검증. |
 | 설치된 플러그인 실행 | `list_plugins`, `invoke_plugin` | 실행을 시작할 때 승인을 받지 않으며, 플러그인은 평소처럼 네트워크 요청을 보냅니다. 수집한 내용은 에이전트 자신의 변경과 똑같이 처리됩니다. 이 빌드에서 실행할 수 없는 플러그인(예: 브라우저에서의 데스크탑 전용 플러그인)은 시작할 수 없습니다. 대상이 **Hosts nothing may collect from**의 호스트를 가리키거나 `invoke_plugin`이 **Tools ruled out**에 있으면 실행이 거부됩니다. |
 | 웹 검색과 페이지 읽기 | `web_search`, `fetch_page` | **Allow web search**, **Search provider**, **Reading a page**([웹 검색과 페이지 읽기](#web-search-and-page-reading) 참고). 제외된 호스트를 가리키는 검색어나 URL은 거부됩니다. |
@@ -114,6 +115,8 @@ AI 에이전트 패널 머리글에는 **AI Agent**, 대화 제목, 사용 중�
 | 노드 보여 주기 | `select_node` | 보기 전용이며 데이터를 바꾸지 않습니다. |
 | 명령 실행 (데스크탑 앱) | `run_command` | **Commands** 칩, 또는 Settings의 **Run commands on this machine**. 사용자 권한으로 프로젝트의 작업 폴더에서 실행되며, 기본 2분(최대 10분)까지 실행됩니다. 제외된 호스트를 가리키는 명령줄은 거부됩니다. |
 | 파일 작업 (데스크탑 앱) | `list_files`, `read_file`, `write_file`, `edit_file`, `delete_file` | Commands 설정과 관계없이, 프로젝트의 작업 폴더(**⋯ → Open the agent's working folder**) 안에서만. 파일을 덮어쓰면 이전 내용의 사본이 남고, 삭제하면 파일이 `.vineyard-trash/`로 옮겨집니다. 명령으로 지운 파일은 남지 않습니다. |
+
+`extract_indicators`는 IPv4·IPv6 주소와 대역, 도메인, URL, 이메일 주소, 전화번호, MD5·SHA-1·SHA-256 해시, CVE 번호, 비트코인·이더리움 형식·TRON 주소, Telegram 핸들을 찾으며, `hxxp`나 `[.]` 같은 디팡 표기도 읽습니다. 도메인은 실제 최상위 도메인으로 끝나야 하므로 `invoice.pdf` 같은 파일 이름은 빠집니다. Telegram을 언급하지 않는 줄의 @핸들도 빠집니다. 결과마다 몇 번 나왔는지와 어떻게 적혀 있었는지를 알려 주고, 사설·문서용 주소, 이미 노드에 있는 값, **Hosts nothing may collect from**에 속한 호스트를 표시합니다.
 
 모든 턴은 **Step budget**으로 제한됩니다. 턴이 병렬 워커와 `challenge_claim`에 넘기는 모델 호출은 step budget의 다섯 배인 별도 한도에서 차감됩니다. `web_search`, `fetch_page`, `invoke_plugin`, `run_command`, `investigate_in_parallel`은 대화별로 **Tools ruled out**에 넣을 수 있으며, 병렬 워커에도 같은 세션 스코프가 적용됩니다.
 
