@@ -102,8 +102,9 @@ for Shodan, FOFA, Censys and ZoomEye, `mmh3_hex` for Criminal IP, `md5` for Cens
 perceptual `phash` and `dhash`, which are compared by how many of their bits differ. The AI agent
 compares them with `similar_hashes`, and the **Shared-Attribute Clustering** pack links favicons
 whose `phash` or `dhash` differ in at most 10 of 64 bits (adjustable per run) with a
-`similar favicon` edge. A blank or single-colour icon hashes the same whatever its colour, so
-neither compares it.
+`similar favicon` edge. A blank or single-colour icon hashes the same whatever its colour, and a
+symmetric logo's `phash` lies within a few bits of that value, so neither compares a hash at or
+near it; the favicon's other hash is still compared.
 
 Each type ships its own icon and color.
 
