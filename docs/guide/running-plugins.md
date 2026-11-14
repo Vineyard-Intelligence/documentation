@@ -145,6 +145,49 @@ appears as a change set in that conversation and is reviewed there, or applied a
 turn under **Apply automatically**. Stopping the turn, or deleting the conversation, stops them. See
 [What the agent can do](tasks.md#what-the-agent-can-do).
 
+## Importing STIX and MISP files {#stix-misp}
+
+**Project ▸ Import graph (JSON)…** reads only a graph exported from Vineyard. STIX 2.1 bundles and
+MISP events, the files a TIP or a sharing channel sends, come in through the **STIX & MISP Import**
+plugin pack from the [Marketplace](../marketplace.md):
+
+1. Install the pack in the project. It writes types from the Infrastructure, Identity, Endpoint,
+   Financial, Geo and Threat type packs; a node whose type pack is missing is left out, and the
+   run's summary names the type pack to install.
+2. Open **Run plugins** on **Whole graph**, tick **Import STIX or MISP Files** and drop the files on
+   its field. The files are read together, so a relationship in one file reaches the objects in
+   another. They are read on this device and are not uploaded.
+3. Review the run as usual. What the files hold reaches the project only when you apply it.
+
+What lands on the graph:
+
+- Observables become their own types (IP address, domain, URL, file hash, certificate and so on),
+  so they meet the nodes other plugins wrote. A STIX indicator whose pattern only names values
+  becomes those values' nodes; any other pattern stays one Indicator. A value with no matching type
+  becomes an Indicator with an `observable_type` field.
+- STIX relationships and sightings and MISP object references become edges labelled with the
+  relation in words (`attributed-to` → `attributed to`). When the files state two relations between
+  the same two nodes, one edge names both. A STIX report or a MISP event is not a node: its name is
+  in the `source_report` field of each node it held.
+- A node the files mark gets a `tlp` field: `TLP:CLEAR`, `TLP:GREEN`, `TLP:AMBER`,
+  `TLP:AMBER+STRICT` or `TLP:RED`, with TLP 1.0 WHITE written as CLEAR. Where two labels meet, the
+  stricter one wins. A node the files leave unmarked gets no `tlp`, and the run's summary counts
+  those nodes. A MISP `attributes/restSearch` export carries its events' TLP only when it was made
+  with `includeEventTags=1`; the summary says so when it was not.
+- An import does not lower the TLP of a node already in the project, or drop its
+  `source_report`. This is checked against the project as it is when the run stages, so two
+  imports waiting for review at once are not checked against each other: apply one, then discard
+  the other and run it again.
+- A new edge is stored with its label only. The TLP the files give a relationship is not on the
+  graph, so check the file's marking before you share what an edge says.
+- An edge already in the project keeps its label.
+- A run stops at 1,500 nodes, 3,000 edges or 3 MB. The summary says how many were left out; split a
+  larger file. It also tells new nodes, updated nodes and nodes already in the project apart, so a
+  file you imported before reports nothing new to stage.
+
+What you import is stored in the project like any other node, so in a shared project its
+collaborators see it, whatever its TLP.
+
 ## The Chaos reference pack
 
 The Chaos pack is a single bundle (`run.vineyard.pluginpacks.chaos`) of six small plugins that
