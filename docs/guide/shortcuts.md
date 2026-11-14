@@ -1,111 +1,259 @@
 # Keyboard shortcuts
 
-A pivot is the same few steps again and again: select a node, widen the selection by a hop, run plugins on it, review what they found. Each of those steps has a key, so you can keep both hands on the keyboard while you work.
+A pivot is the same few steps again and again: select a node, widen the selection by a hop, run
+plugins on it, review what they found. Each of those steps has a key, so you can keep both hands on
+the keyboard while you work.
 
-The keys are written as on a Mac. On Windows and Linux, press **Ctrl** where this page shows **Cmd** (⌘).
+Press **?** or **⌘/** (**Ctrl+/** on Windows and Linux) anywhere you are not typing in a field, or
+choose **Keyboard shortcuts** at the foot of the sidebar, to see Vineyard's shortcuts. The list shows
+the keys of the computer you are on: ⌘ on a Mac, Ctrl on Windows and Linux. Type in its search field
+to narrow it, by what you want to do (`connect`), by where (`review`) or by a key (`esc`, `cmd`,
+`shift`). **Esc** empties the search field first, and closes the list once the field is empty.
+
+The list has the keys Vineyard gives you, on the canvas, in its panels and dialogs, and in its
+fields. It leaves out what every app shares: Tab between controls, Enter in a one-field form such as
+a project's name or an invitation, Enter and Space on a button, and the arrows in an open menu or
+drop-down.
 
 ## Where the keys are shown {#shown-keys}
 
-You do not have to learn the keys from this page. A menu item that a key also does shows the key on its right, and a toolbar button names its key at the end of its tooltip, for example *Fit view · F*. The keys are written for your computer: **⌘A** on a Mac, **Ctrl+A** on Windows and Linux. In the **Layout** menus, ++shift+l++ is shown next to the layout in use, because picking it again is what ++shift+l++ does.
+You do not have to learn the keys from this page. A menu item that a key also does shows the key on
+its right, and a toolbar button names its key at the end of its tooltip, for example *Fit view · F*.
+The keys are written for your computer: **⌘A** on a Mac, **Ctrl+A** on Windows and Linux. In the
+**Layout** menus, **⇧L** (**Shift+L**) is shown next to the layout in use, because picking that
+layout again is what the key does.
 
-- In the right-click menu, **Connect to…** shows its key and the click that links in one step (**⌘-click**, or **Ctrl-click** on Windows and Linux).
-- The edge menu shows no keys: a right-click on an edge does not select it, and the keys act on the selection.
-- While an AI agent conversation is open, **Ask the AI agent** on the toolbar and in the **Run** menu shows no key. Clicking it starts a new conversation, while ++a++ and ++g++ then ++a++ go into the open conversation's message box.
-- With the single keys turned off (see below), the menus and tooltips stop showing them, and show only the keys that still work.
+- In the right-click menu, **Connect to…** shows its key and the click that links in one step
+  (**⌘-click**, or **Ctrl-click** on Windows and Linux).
+- The edge menu shows no keys: a right-click on an edge does not select it, and the keys act on the
+  selection.
+- While an AI agent conversation is open, **Ask the AI agent** on the toolbar and in the **Run** menu
+  shows no key. Clicking it starts a new conversation, while **A** and **G** then **A** go into the
+  open conversation's message box.
+- With the single keys turned off (see below), the menus and tooltips stop showing them, and show
+  only the keys that still work.
 
-## Where the keys work
+## How shortcuts behave
 
-- **Not while you type.** In a text field, a single key types itself. Besides the field's own keys, only **Esc**, ++cmd+g++ in the search field, ++arrow-up++ in the AI agent's message box and ++cmd+enter++ in the Review dialog work there.
-- **The canvas keys need the canvas.** Click the canvas, or press ++g++ then ++c++, and the canvas keys act on it; a thin blue outline shows when the canvas has keyboard focus. They also work before you have clicked anywhere. A key pressed in the Properties panel, the menu bar, a floating panel or a dialog, or right after you clicked in one of them, leaves the graph alone: ++backspace++ after you edit a value in the Properties panel never deletes the selection.
-- **Korean input.** With a Korean input source, the keys still work by their place on the keyboard: the key that types ㄹ is ++f++, and ++g++ then ++a++ is the key that types ㅎ, then the one that types ㅁ. A key that finishes a Hangul syllable only finishes the syllable.
-- **While the agent works.** The AI agent's message box locks while the agent works. Keys you type then are not taken as shortcuts, however long you wait, until you click somewhere or move with ++tab++; **Esc** and the **Cmd/Ctrl** shortcuts still work. When the agent is done, the caret goes back into the message box, unless you have clicked somewhere else in the meantime.
-- **Turn the single keys off.** **Settings → General → Keyboard → Single-key shortcuts** turns off every shortcut that is a single character (F, N, /, [ and the rest) and the **G then a letter** keys, for example if you use dictation. **Esc**, **Enter**, the arrow keys, **Delete** and the **Cmd/Ctrl** shortcuts stay on. The setting is **This device only**.
+- A key on its own, such as **?**, works only when you are not typing in a field; in a field it types
+  the character. The AI agent's message box locks while the agent works, so the keys you go on typing
+  right after sending a question are still typing: they run no shortcut until you pause for a moment
+  or click somewhere. **Esc** and the shortcuts with ⌘ or Ctrl still work.
+- When the agent is done, the caret goes back into its message box, unless you have clicked
+  somewhere else in the meantime.
+- In a field, besides the field's own keys, only **Esc**, **⌘G** (**Ctrl+G**) in the search field,
+  **↑** in the AI agent's message box and **⌘↵** (**Ctrl+Enter**) in the Review dialog work.
+- The canvas keys need the canvas. Click the canvas, or press **G** then **C**, and the canvas keys
+  act on it; a thin blue outline shows when the canvas has keyboard focus. They also work before you
+  have clicked anywhere. A key pressed in the Properties panel, the menu bar, a floating panel or a
+  dialog, or right after you clicked in one of them, leaves the graph alone: **⌫** (**Backspace**)
+  after you edit a value in the Properties panel never deletes the selection.
+- **Esc** closes one thing per press, the one in front first, and once nothing is left open it
+  clears the selection. [Right-click menus](canvas.md#right-click-menus) gives the order.
+- With a Korean input source, the keys still work by their place on the keyboard: the key that types
+  ㄹ is **F**, and **G** then **A** is the key that types ㅎ, then the one that types ㅁ.
+- Keys that switch the input source are never shortcuts, so typing Korean never runs one: 한/영,
+  한자, Caps Lock, Shift+Space, and Ctrl or ⌘ with Space. The key that finishes a Korean syllable
+  only finishes the syllable.
+- **Settings → General → Keyboard → Single-key shortcuts** turns off every shortcut that is a single
+  character (F, N, /, [ and the rest) and the **G** then a letter keys, for example if you use
+  dictation. **Esc**, **Enter**, the arrow keys, **Delete** and the shortcuts with ⌘ or Ctrl stay on.
+  The setting is **This device only**.
+- In a browser tab, the browser keeps some keys for itself before Vineyard sees them, such as
+  **⌘N**, **⌘T**, **⌘W** and **⌘Q** on a Mac (**Ctrl+N**, **Ctrl+T**, **Ctrl+W** and **Ctrl+Q**
+  elsewhere), so none of them is a shortcut here. The same goes for reload, the address bar, page
+  zoom (**⌘+**, **⌘-** and **⌘0** on a Mac) and the developer tools. On a Mac, **⌘,** may open the
+  browser's own settings instead of Vineyard's; **Settings** is also in the sidebar.
 
-## Everywhere
+## What the default keys do
 
-| Key | Action |
-| --- | --- |
-| ++cmd+f++ or ++slash++ | Go to **Search entities…**. |
-| ++cmd+g++ / ++shift+cmd+g++ | Jump to the next / previous search result, selected and centred. Works while something is typed in the search field: in the field itself, and anywhere outside another text field. |
-| ++cmd+comma++ | Open Settings. |
-| ++esc++ | Close what is in front, one thing per press; with nothing left, clear the selection (see [The canvas](canvas.md#right-click-menus)). |
+- **Searching.** **⌘F** (**Ctrl+F**) or **/** goes to **Search entities…**. **⌘G** / **⇧⌘G**
+  (**Ctrl+G** / **Ctrl+Shift+G**) jump to the next / previous search result, selected and centred.
+  They work while something is typed in the search field: in the field itself, and anywhere outside
+  another text field.
+- **Going places.** Press **G**, then the second key within a second. **G** then **A** goes to the AI
+  agent's message box, and opens a new conversation if the panel is closed. **G** then **P** goes to
+  the first field of the Properties panel, and **G** then **T** to the Types panel's search field, or
+  to its first type when the panel is collapsed to icons. **G** then **M** opens the Marketplace when
+  the **Project** menu offers it.
+- **The view.** **F** fits the whole graph in view, like **Fit view**, and **⇧F** (**Shift+F**) fits
+  the selection, centring a single node at 150%. **=** or **+** and **-** zoom like the toolbar
+  buttons; hold one to keep zooming. **0** zooms to 100%. The arrow keys move the view, a longer step
+  with **Shift**. **L** opens the **Layout** menu, where **↓** reaches the first layout and **Enter**
+  picks one. **⇧L** (**Shift+L**) lays the graph out again with the current layout, letting go of
+  where nodes were left.
+- **The selection.** **⌘A** (**Ctrl+A**) selects all nodes. **N** extends the selection to connected
+  neighbors, and **[** / **]** inbound / outbound, one hop per press. **Invert selection**, **Select
+  isolated nodes** and **Clear selection** have no key of their own; **Esc** clears the selection.
+- **What is selected.** **R** opens **Run plugins** on the selection, or on the whole project with
+  nothing selected. **A** asks the AI agent about the selection: a new conversation opens with the
+  question filled in, not sent. With a conversation already open, the key goes to its message box
+  instead and fills in the question only if the box is empty, so a question you have started stays
+  as it is. **C** is **Connect to…**: click the node to connect the selection to. **Enter** or **F2**
+  edits the selected node's value in the Properties panel, in the field its label shows; for an edge,
+  its relation. **⌫** or **⌦** (**Delete** or **Backspace** on Windows and Linux) deletes the
+  selection: the same confirmation as **Delete (N)** opens, with **Cancel** focused. **Duplicate**
+  and stopping an agent turn have no key, so neither can happen by a stray keystroke.
+- **The AI agent panel.** **↑** in an empty message box brings back your last question to edit and
+  send again. **Esc** closes the Setup drawer, then the panel; a running turn keeps going (see
+  [Tasks & runs](tasks.md#closing-and-deleting-a-conversation)).
+- **The Review dialog.** **/** goes to **Filter by keyword**. **⌘↵** (**Ctrl+Enter**) applies the
+  ticked changes, also from the **Why reject?** field, but only while **Apply** is shown and has
+  something to apply. **Esc** closes the dialog; the run and your ticks stay (see
+  [Running plugins](running-plugins.md#reviewing-a-runs-changes)).
+- **The Properties panel.** **Tab** and **Shift+Tab** move to the next and previous field.
 
-## Moving around
+## All shortcuts
 
-Press ++g++, then the second key within a second.
+The list is generated from the same table as the list in the app, and names each action as the app
+does.
 
-| Keys | Goes to |
-| --- | --- |
-| ++g++ then ++a++ | The AI agent's message box. Opens a new conversation if the panel is closed. |
-| ++g++ then ++c++ | The canvas. |
-| ++g++ then ++p++ | The first field of the Properties panel. |
-| ++g++ then ++t++ | The Types panel's search field; the first type when the panel is collapsed to icons. |
-| ++g++ then ++k++ | The Tasks panel. |
-| ++g++ then ++s++ | Project settings. |
-| ++g++ then ++m++ | The Marketplace, when the **Project** menu offers it. |
+<!-- shortcuts:start -->
+<!-- Generated from lib/keymap.ts in the frontend repository by `npm run docs:shortcuts`. Change the keymap, not this list. -->
 
-## Canvas
+### Everywhere
 
-| Key | Action |
-| --- | --- |
-| ++f++ | Fit the whole graph in view, like **Fit view**. |
-| ++shift+f++ | Fit the selection in view. A single node is centred at 150%. |
-| ++equal++ or ++plus++, ++minus++ | Zoom in, zoom out, like the toolbar buttons. Hold to keep zooming. |
-| ++0++ | Zoom to 100%. |
-| Arrow keys | Move the view. With ++shift++, a longer step. |
-| ++l++ | Open the **Layout** menu; ++arrow-down++ reaches the first layout and ++enter++ picks one. |
-| ++shift+l++ | Lay the graph out again with the current layout, letting go of where nodes were left. The **Layout** menus show it next to the layout in use. |
+| Action | Mac | Windows and Linux |
+| --- | --- | --- |
+| Close what is in front<br><small>One thing per press: a menu, a waiting Connect to…, the panel in front, and last the selection.</small> | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
+| Open settings<br><small>A Mac browser may keep this key for its own settings; Settings is also in the sidebar.</small> | <kbd>⌘</kbd><kbd>,</kbd> | <kbd>Ctrl</kbd>+<kbd>,</kbd> |
+| Search the graph<br><small>In a text field the key is the browser’s own find.</small> | <kbd>⌘</kbd><kbd>F</kbd> / <kbd>/</kbd> | <kbd>Ctrl</kbd>+<kbd>F</kbd> / <kbd>/</kbd> |
+| Next search result | <kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>G</kbd> |
+| Previous search result | <kbd>⇧</kbd><kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd> |
+| Show keyboard shortcuts<br><small>Not while you are typing in a field.</small> | <kbd>?</kbd> / <kbd>⌘</kbd><kbd>/</kbd> | <kbd>?</kbd> / <kbd>Ctrl</kbd>+<kbd>/</kbd> |
+| Go to the AI agent | <kbd>G</kbd> then <kbd>A</kbd> | <kbd>G</kbd> then <kbd>A</kbd> |
+| Go to the canvas | <kbd>G</kbd> then <kbd>C</kbd> | <kbd>G</kbd> then <kbd>C</kbd> |
+| Go to Properties | <kbd>G</kbd> then <kbd>P</kbd> | <kbd>G</kbd> then <kbd>P</kbd> |
+| Go to Types | <kbd>G</kbd> then <kbd>T</kbd> | <kbd>G</kbd> then <kbd>T</kbd> |
+| Go to Tasks | <kbd>G</kbd> then <kbd>K</kbd> | <kbd>G</kbd> then <kbd>K</kbd> |
+| Project settings… | <kbd>G</kbd> then <kbd>S</kbd> | <kbd>G</kbd> then <kbd>S</kbd> |
+| Add from Marketplace… | <kbd>G</kbd> then <kbd>M</kbd> | <kbd>G</kbd> then <kbd>M</kbd> |
 
-## Selection
+### Canvas
 
-| Key | Action |
-| --- | --- |
-| ++cmd+a++ | Select all nodes. |
-| ++n++ | Extend the selection to connected neighbors, one hop per press. |
-| ++bracket-left++ / ++bracket-right++ | Extend the selection inbound / outbound, one hop per press. |
+| Action | Mac | Windows and Linux |
+| --- | --- | --- |
+| Fit view | <kbd>F</kbd> | <kbd>F</kbd> |
+| Fit the selection to the view | <kbd>⇧</kbd><kbd>F</kbd> | <kbd>Shift</kbd>+<kbd>F</kbd> |
+| Zoom in | <kbd>=</kbd> / <kbd>+</kbd> | <kbd>=</kbd> / <kbd>+</kbd> |
+| Zoom out | <kbd>-</kbd> | <kbd>-</kbd> |
+| Zoom to 100% | <kbd>0</kbd> | <kbd>0</kbd> |
+| Pan left | <kbd>←</kbd> / <kbd>⇧</kbd><kbd>←</kbd> | <kbd>←</kbd> / <kbd>Shift</kbd>+<kbd>←</kbd> |
+| Pan right | <kbd>→</kbd> / <kbd>⇧</kbd><kbd>→</kbd> | <kbd>→</kbd> / <kbd>Shift</kbd>+<kbd>→</kbd> |
+| Pan up | <kbd>↑</kbd> / <kbd>⇧</kbd><kbd>↑</kbd> | <kbd>↑</kbd> / <kbd>Shift</kbd>+<kbd>↑</kbd> |
+| Pan down | <kbd>↓</kbd> / <kbd>⇧</kbd><kbd>↓</kbd> | <kbd>↓</kbd> / <kbd>Shift</kbd>+<kbd>↓</kbd> |
+| Choose a layout | <kbd>L</kbd> | <kbd>L</kbd> |
+| Lay the graph out again | <kbd>⇧</kbd><kbd>L</kbd> | <kbd>Shift</kbd>+<kbd>L</kbd> |
+| Select all | <kbd>⌘</kbd><kbd>A</kbd> | <kbd>Ctrl</kbd>+<kbd>A</kbd> |
+| Select connected neighbors (1 hop) | <kbd>N</kbd> | <kbd>N</kbd> |
+| Select inbound 1-hop nodes | <kbd>[</kbd> | <kbd>[</kbd> |
+| Select outbound 1-hop nodes | <kbd>]</kbd> | <kbd>]</kbd> |
+| Run plugins… | <kbd>R</kbd> | <kbd>R</kbd> |
+| Ask the AI agent about the selection | <kbd>A</kbd> | <kbd>A</kbd> |
+| Connect to… | <kbd>C</kbd> | <kbd>C</kbd> |
+| Edit the selection’s value | <kbd>↵</kbd> / <kbd>F2</kbd> | <kbd>Enter</kbd> / <kbd>F2</kbd> |
+| Delete | <kbd>⌫</kbd> / <kbd>⌦</kbd> | <kbd>Delete</kbd> / <kbd>Backspace</kbd> |
+| Add a node to the selection | <kbd>⇧</kbd>-click | <kbd>Shift</kbd>-click |
+| Select the nodes in an area | <kbd>⇧</kbd>-drag | <kbd>Shift</kbd>-drag |
+| Add every node of a type to the selection<br><small>On a row of the legend; a plain click selects only that type.</small> | <kbd>⇧</kbd>-click | <kbd>Shift</kbd>-click |
 
-**Invert selection**, **Select isolated nodes** and **Clear selection** have no key of their own; **Esc** clears the selection.
+### Connecting nodes
 
-## What is selected
+| Action | Mac | Windows and Linux |
+| --- | --- | --- |
+| Connect the selected nodes to the node you click | <kbd>⌘</kbd>-click | <kbd>Ctrl</kbd>-click |
+| Connect the other way, from the node you click to the selection | <kbd>⇧</kbd><kbd>⌘</kbd>-click | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>-click |
+| After Connect to…, connect the other way | <kbd>⇧</kbd>-click | <kbd>Shift</kbd>-click |
+| Create the links, named as you typed | <kbd>↵</kbd> | <kbd>Enter</kbd> |
+| Stop connecting<br><small>While Connect to… waits for its target, or in the box that names the link.</small> | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
 
-| Key | Action |
-| --- | --- |
-| ++r++ | Open **Run plugins** on the selection; with nothing selected, on the whole project. |
-| ++a++ | Ask the AI agent about the selection: a new conversation opens with the question filled in, not sent. With a conversation already open, the key goes to its message box instead and fills in the question only if the box is empty, so a question you have started stays as it is. |
-| ++c++ | **Connect to…**: click the node to connect the selection to. |
-| ++enter++ or ++f2++ | Edit the selected node's value in the Properties panel: the field its label shows. For an edge, its relation. |
-| ++backspace++ or ++del++ | Delete the selection. The same confirmation as **Delete (N)** opens, with **Cancel** focused. |
+### Graph search
 
-**Duplicate** and stopping an agent turn have no key, so neither can happen by a stray keystroke.
+| Action | Mac | Windows and Linux |
+| --- | --- | --- |
+| Move through the results | <kbd>↓</kbd> / <kbd>↑</kbd> | <kbd>↓</kbd> / <kbd>↑</kbd> |
+| Select the highlighted node and center it | <kbd>↵</kbd> | <kbd>Enter</kbd> |
+| Close the results | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
 
-## AI agent panel
+### Review
 
-| Key | Action |
-| --- | --- |
-| ++enter++ / ++shift+enter++ | Send / new line. |
-| ++arrow-up++ | In an empty message box, bring back your last question to edit and send again. |
-| ++cmd+enter++ / ++esc++ | While you edit a note under **Setup → Project memory**: save it / cancel the edit. |
-| ++esc++ | Close the panel. A running turn keeps going (see [Tasks & runs](tasks.md#closing-and-deleting-a-conversation)). |
+| Action | Mac | Windows and Linux |
+| --- | --- | --- |
+| Filter the changes by keyword | <kbd>/</kbd> | <kbd>/</kbd> |
+| Apply the checked changes | <kbd>⌘</kbd><kbd>↵</kbd> | <kbd>Ctrl</kbd>+<kbd>Enter</kbd> |
+| Move to the next or previous change | <kbd>↓</kbd> / <kbd>↑</kbd> | <kbd>↓</kbd> / <kbd>↑</kbd> |
+| Turn to the next or previous page | <kbd>→</kbd> / <kbd>←</kbd> | <kbd>→</kbd> / <kbd>←</kbd> |
+| Tick or untick the change in focus | <kbd>Space</kbd> | <kbd>Space</kbd> |
+| Close, keeping what you ticked and wrote<br><small>In the keyword filter while it holds text, the first Esc empties it.</small> | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
 
-## Review dialog
+### AI agent
 
-| Key | Action |
-| --- | --- |
-| ++arrow-up++ ++arrow-down++, ++arrow-left++ ++arrow-right++ | Move between rows, turn pages. |
-| ++space++ | Tick or untick the focused row. |
-| ++slash++ | Go to **Filter by keyword**. |
-| ++cmd+enter++ | **Apply** the ticked changes, also from the **Why reject?** field. Only while **Apply** is shown and has something to apply. |
-| ++esc++ | Close the dialog; the run and your ticks stay (see [Running plugins](running-plugins.md#reviewing-a-runs-changes)). |
+| Action | Mac | Windows and Linux |
+| --- | --- | --- |
+| Bring back your last question | <kbd>↑</kbd> | <kbd>↑</kbd> |
+| Send your message | <kbd>↵</kbd> | <kbd>Enter</kbd> |
+| Start a new line | <kbd>⇧</kbd><kbd>↵</kbd> | <kbd>Shift</kbd>+<kbd>Enter</kbd> |
+| Close the Setup drawer, then the panel<br><small>A running turn goes on.</small> | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
+| Save the memory note you are editing | <kbd>⌘</kbd><kbd>↵</kbd> | <kbd>Ctrl</kbd>+<kbd>Enter</kbd> |
+| Stop editing the note | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
+| Close the new lead without adding it<br><small>In the plan’s Add a lead box.</small> | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
 
-## Properties panel
+### Team chat
 
-| Key | Action |
-| --- | --- |
-| ++tab++ / ++shift+tab++ | Next / previous field. |
-| ++enter++ | Save a one-line field. |
-| ++cmd+enter++ | Save a multi-line field. |
-| ++esc++ | Put the field back as stored. |
+| Action | Mac | Windows and Linux |
+| --- | --- | --- |
+| Complete the highlighted / command<br><small>Tab completes it too. A command already typed out in full is sent instead.</small> | <kbd>↵</kbd> | <kbd>Enter</kbd> |
+| Move through the / commands | <kbd>↓</kbd> / <kbd>↑</kbd> | <kbd>↓</kbd> / <kbd>↑</kbd> |
+| Hide the / command list | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
 
-## In a web browser
+### Properties
 
-The browser keeps some keys for itself, and Vineyard does not take them: new tab and window, close, reload, the address bar, page zoom (++cmd+plus++, ++cmd+minus++, ++cmd+0++) and the developer tools. On a Mac, ++cmd+comma++ may open the browser's own settings instead; the Settings item in the avatar menu always works. The keys that switch between Korean and English input are never used as shortcuts.
+| Action | Mac | Windows and Linux |
+| --- | --- | --- |
+| Save a one-line value | <kbd>↵</kbd> | <kbd>Enter</kbd> |
+| Save long text or code | <kbd>⌘</kbd><kbd>↵</kbd> | <kbd>Ctrl</kbd>+<kbd>Enter</kbd> |
+| Put the value back as stored | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
+
+### Node table
+
+| Action | Mac | Windows and Linux |
+| --- | --- | --- |
+| Add a row to the selection, or take it out | <kbd>⌘</kbd>-click | <kbd>Ctrl</kbd>-click |
+| Add the rows from the last one you clicked | <kbd>⇧</kbd>-click | <kbd>Shift</kbd>-click |
+| Sort by another column as well<br><small>On a column header, after the first column.</small> | <kbd>⇧</kbd>-click | <kbd>Shift</kbd>-click |
+| Empty the keyword filter | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
+
+### Resizable panes
+
+| Action | Mac | Windows and Linux |
+| --- | --- | --- |
+| Put a resized pane back to its default height<br><small>With the bar between two panes focused: the AI agent’s plan, the Review dialog’s independent check. A double-click does it too.</small> | <kbd>↵</kbd> | <kbd>Enter</kbd> |
+| Move the bar up or down | <kbd>↑</kbd> / <kbd>↓</kbd> | <kbd>↑</kbd> / <kbd>↓</kbd> |
+| Make the pane its smallest or largest | <kbd>↖</kbd> / <kbd>↘</kbd> | <kbd>Home</kbd> / <kbd>End</kbd> |
+
+### Skill packs
+
+| Action | Mac | Windows and Linux |
+| --- | --- | --- |
+| Save the skill pack you are editing | <kbd>⌘</kbd><kbd>↵</kbd> | <kbd>Ctrl</kbd>+<kbd>Enter</kbd> |
+
+### Settings
+
+| Action | Mac | Windows and Linux |
+| --- | --- | --- |
+| Save the key or secret you are editing<br><small>In Keys &amp; Secrets.</small> | <kbd>↵</kbd> | <kbd>Enter</kbd> |
+| Stop editing it, keeping what was stored | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
+
+### Projects
+
+| Action | Mac | Windows and Linux |
+| --- | --- | --- |
+| Close the search results<br><small>In Search entities across your projects.</small> | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
+
+<!-- shortcuts:end -->
+
+## Next / See also
+
+- [The canvas](canvas.md) — searching, selecting, connecting nodes, and the node table
+- [Running plugins](running-plugins.md) — the review dialog and its keys
+- [Tasks & runs](tasks.md) — the AI agent panel

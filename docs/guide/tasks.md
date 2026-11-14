@@ -212,7 +212,7 @@ Off by default, under **Desktop app**. A direct fetch in the desktop app uses on
 
 ## AI agent settings {#ai-agent-settings}
 
-**Settings → AI agent** (Cmd/Ctrl+, opens Settings) holds the agent's defaults. They are stored with your account when you are signed in, and on this device in local mode; rows marked **This device only** stay in this browser. Changes apply from your next question. A conversation can override the apply mode and the Commands setting from its chips.
+**Settings → AI agent** (**⌘,** on a Mac or **Ctrl+,** opens Settings) holds the agent's defaults. They are stored with your account when you are signed in, and on this device in local mode; rows marked **This device only** stay in this browser. Changes apply from your next question. A conversation can override the apply mode and the Commands setting from its chips.
 
 **Provider** and **Model** are shown here read-only: you choose them in the AI agent panel under **Setup → Settings**, and they are kept on this device only.
 

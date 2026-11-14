@@ -82,10 +82,9 @@ Track in-progress runs, cancel them, and review what they staged before it is ap
 
 <div class="vy-card" markdown>
 ### :material-keyboard: Keyboard shortcuts
-Select, widen by a hop, run plugins and review without leaving the keyboard.
+Select, widen by a hop, run plugins and review without leaving the keyboard, and how the keys behave while you type Korean.
 → [Keyboard shortcuts](shortcuts.md)
 </div>
-
 </div>
 
 ## Next / See also
