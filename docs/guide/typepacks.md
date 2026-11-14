@@ -70,6 +70,41 @@ different packs (a `threat.malware` that **communicates with** an
 | **Social Media** (`…typepacks.social`) | `social` | 5 | Platform-agnostic accounts, posts, hashtags, groups, and media |
 | **Telegram** (`…typepacks.telegram`) | `telegram` | 4 | Accounts, channels, supergroups, and posts, collected without joining |
 
+### Financial — bank accounts
+
+An account number is unique only within its bank, so `financial.bank_account` is identified by
+`bank_code` and `account_identifier` together: the same number at two banks is two nodes, and the
+label names the bank (`123456789012 · KB Kookmin`). Write both without spaces or hyphens. A value
+such as `123-456-789012` is refused, and the message says what form to write. `bank_code` is the
+country's own bank code where it has one (Korea's three digits, such as `004`, `088` or `090`),
+otherwise the SWIFT/BIC, never the bank's name: `KB` or `SHINHAN` is refused. Leave it empty for
+an IBAN, which already names its bank.
+
+The AI agent is told which fields identify a bank account and how to write the bank code. An
+account written without one still shares a node with any other account of the same number and no
+code, whichever bank holds it, so check that the agent's bank accounts carry a bank code when you
+review them.
+
+The status of a reported account has its own fields:
+
+| Property | What it records |
+|---|---|
+| `fraud_registration` | `registered` as a fraud-use account (in Korea, 사기이용계좌), `not_registered` when checked and not found, or `released` after a registration was lifted |
+| `payment_suspended_at` | When payments from the account were suspended (in Korea, 지급정지) |
+| `report_channels` | Where the account was reported, one per line (112, 1332, the holding bank…) |
+| `status_checked_at`, `status_source` | When the status was last confirmed, and by whom |
+
+`account_holder` is the holder of record, who is often not the person who used the account. Record
+whoever operated it as an `identity.person` linked by an edge. The AI agent reads a bank account's
+properties like any other node's, so its number and holder name go to your AI provider when the
+agent reads the node. Leave `account_holder` empty when the case does not need the name.
+
+Bank accounts created before Financial 2.0.0 have no bank code, so a new write of the same account
+becomes a separate node. Give an old node its bank code and remove any hyphens from its number,
+and later writes of that account land on it; a duplicate already written stays separate. The agent
+can still record the status of an old account whose number has hyphens: an edit is checked only on
+the values it changes.
+
 ### Infrastructure — a closer look
 
 `run.vineyard.typepacks.infrastructure` models the network-side entities you map during
@@ -203,7 +238,8 @@ than relabelling it, and figures from different sources go under keys of their o
     When a plugin or AI task adds a node, Vineyard de-duplicates by **type + the type's
     identity fields** — its `identity_properties` when it declares them (e.g. `identity.account`
     → username + platform; `endpoint.file` → SHA-256, file name, path, host; `endpoint.process`
-    → process GUID, name, PID), otherwise its `label_property` value. Two nodes with the same
+    → process GUID, name, PID; `financial.bank_account` → bank code + account number), otherwise
+    its `label_property` value. Two nodes with the same
     type and identity are merged and their properties combined. Fields the pack marks
     case-insensitive (domains, hostnames, emails, handles…) match regardless of case. A crypto
     address or transaction hash matches whatever the case of its hex or bech32 form, while a

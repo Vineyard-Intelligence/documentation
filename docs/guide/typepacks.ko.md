@@ -67,6 +67,39 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 | **Social Media** (`…typepacks.social`) | `social` | 5 | 플랫폼에 무관한 계정, 게시물, 해시태그, 그룹, 미디어 |
 | **Telegram** (`…typepacks.telegram`) | `telegram` | 4 | 가입 없이 수집한 계정, 채널, 슈퍼그룹, 게시물 |
 
+### Financial — 은행 계좌
+
+계좌번호는 은행 안에서만 유일하므로 `financial.bank_account`는 `bank_code`와
+`account_identifier`를 함께 써서 식별합니다. 두 은행의 같은 번호는 두 노드이고, 라벨에 은행
+이름이 붙습니다(`123456789012 · KB Kookmin`). 두 값 모두 공백과 하이픈 없이 씁니다.
+`123-456-789012` 같은 값은 거부되고, 메시지가 어떤 형식으로 써야 하는지 알려 줍니다.
+`bank_code`는 그 나라의 은행 코드가 있으면 그것(한국은 세 자리, 예: `004`, `088`, `090`),
+없으면 SWIFT/BIC입니다. 은행 이름은 쓰지 않습니다. `KB`나 `SHINHAN` 같은 값은 거부됩니다. IBAN은
+은행을 이미 담고 있으므로 비워 둡니다.
+
+AI 에이전트는 은행 계좌를 식별하는 필드가 무엇인지와 은행 코드를 쓰는 형식을 안내받습니다.
+그래도 은행 코드 없이 쓴 계좌는, 어느 은행의 계좌이든 은행 코드 없는 같은 번호의 다른 계좌와
+한 노드가 됩니다. 에이전트가 만든 은행 계좌를 검토할 때 은행 코드가 들어 있는지 확인하세요.
+
+신고된 계좌의 상태는 따로 적는 필드가 있습니다.
+
+| 속성 | 기록하는 것 |
+|---|---|
+| `fraud_registration` | 사기이용계좌로 등록됨(`registered`), 확인했으나 등록되지 않음(`not_registered`), 등록 후 해제됨(`released`) |
+| `payment_suspended_at` | 계좌의 지급정지 시각 |
+| `report_channels` | 신고한 곳, 한 줄에 하나(112, 1332, 계좌 개설 은행…) |
+| `status_checked_at`, `status_source` | 상태를 마지막으로 확인한 시각과 확인해 준 곳 |
+
+`account_holder`는 명의인입니다. 명의인은 계좌를 실제로 쓴 사람이 아닌 경우가 많습니다.
+계좌를 운용한 사람은 `identity.person`으로 만들고 엣지로 잇습니다. AI 에이전트는 은행 계좌의
+속성도 다른 노드와 똑같이 읽으므로, 에이전트가 노드를 읽으면 계좌번호와 명의인 이름이 AI
+제공자로 갑니다. 사건에 이름이 필요하지 않으면 `account_holder`를 비워 두세요.
+
+Financial 2.0.0 이전에 만든 은행 계좌에는 은행 코드가 없어서, 같은 계좌를 새로 쓰면 다른 노드가
+됩니다. 옛 노드에 은행 코드를 넣고 번호의 하이픈을 지우면 그 계좌의 이후 쓰기는 그 노드로
+들어옵니다. 이미 따로 생긴 노드는 그대로 남습니다. 번호에 하이픈이 있는 옛 계좌에도 에이전트는
+상태를 적을 수 있습니다. 편집은 바꾸는 값만 검사하기 때문입니다.
+
 ### Infrastructure — 자세히 보기
 
 `run.vineyard.typepacks.infrastructure`는 정찰 중 매핑하는 네트워크 측 엔티티를
@@ -199,7 +232,8 @@ ONYPHE·VirusTotal은 `md5`, Censys·Netlas·urlscan.io는 `sha256`으로 찾고
     플러그인이나 AI 작업이 노드를 추가할 때, Vineyard는 **유형 + 유형의 식별 필드**로
     중복을 제거합니다 — 유형이 `identity_properties`를 선언하면 그 필드들(예:
     `identity.account` → username + platform, `endpoint.file` → SHA-256·파일 이름·경로·호스트,
-    `endpoint.process` → 프로세스 GUID·이름·PID), 아니면 `label_property` 값입니다. 같은
+    `endpoint.process` → 프로세스 GUID·이름·PID, `financial.bank_account` → 은행 코드·계좌번호),
+    아니면 `label_property` 값입니다. 같은
     유형과 같은 식별 값의 두 노드는 병합되고 속성이 결합됩니다. 팩이 대소문자 무시로 표시한
     필드(도메인, 호스트 이름, 이메일, 핸들 등)는 대소문자와 관계없이 일치합니다. 암호화폐
     주소와 거래 해시는 hex·bech32 표기의 대소문자와 관계없이 일치하지만, Base58 주소는 적힌
