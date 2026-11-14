@@ -23,10 +23,11 @@ Toolbar toggle buttons appear highlighted when on; menu items are checkmarked wh
 | **Minimap** | Toggles the minimap overview panel (bottom-right). | Toolbar, View |
 | **Legend** | Toggles the node-type legend (bottom-left). | Toolbar, View |
 | **Snapline** | Toggles alignment guides shown while dragging nodes. | Toolbar, View |
+| **Node table** | Opens or closes the [node table](#node-table) below the canvas; checkmarked while it is open. | View |
 | **Reset panel layout** | Restores the project workspace's panel arrangement to its default. | View |
 
 !!! note "Reset panel layout resets panels, not the graph"
-    *Reset panel layout* restores the surrounding workspace panels (the canvas, side panels, etc.) to their initial split. It does **not** re-run a graph layout or move your nodes. To re-arrange nodes, pick a **Layout** instead.
+    *Reset panel layout* restores the surrounding workspace panels (the canvas, side panels, etc.) to their initial split, which closes the node table. It does **not** re-run a graph layout or move your nodes. To re-arrange nodes, pick a **Layout** instead.
 
 ## Other toolbar buttons
 
@@ -80,7 +81,7 @@ The three 1-hop actions add to the selection, so pressing one again walks one mo
 
 - **Node** — Run plugins… (on this node), Duplicate, Connect to… (see [Drawing edges](#drawing-edges)), Disconnect all (deletes every edge touching the node), Delete.
 - **Edge** — Reverse direction, Delete.
-- **Selection** — right-click empty canvas with anything selected, or a node or edge inside a multi-item selection; the header shows the count (*Selected: N nodes, M edges*). Run plugins… and Connect to… (when nodes are selected), Delete (N), Select all, Fit view.
+- **Selection** — right-click empty canvas with anything selected, or a node or edge inside a multi-item selection; the header shows the count (*Selected: N nodes, M edges*). Run plugins…, Connect to… and Show in node table (when nodes are selected), Delete (N), Select all, Fit view.
 - **Empty canvas** (nothing selected, headed *Nothing selected — whole project*) — Run plugins… on the whole-graph plugins, Select all, Fit view.
 
 **Esc** closes the menu and nothing under it. Each press of Esc puts away one thing, the front one first: a **Connect to…** waiting for its target, an open menu, then the panel drawn in front, and last the selection. With the Run plugins panel open over a Skill pack panel, the first Esc closes Run plugins, the next one closes the Skill pack panel, and once nothing is left open Esc clears the selection, like **Clear selection**. An Esc pressed inside a panel, or right after you clicked in it, goes to that panel rather than to one drawn over it. An Esc typed in a field, or pressed after a click in the Properties panel, leaves the selection alone, and the Esc that finishes a Korean syllable only finishes the syllable. Holding Shift (or another modifier) while you press Esc makes no difference.
@@ -153,6 +154,39 @@ When enabled, dragging a node near another node's edges or center shows alignmen
 When two or more edges connect the same pair of nodes — in either direction — the canvas bends
 them apart into arcs instead of drawing one on top of the other, so each edge stays visible and
 individually clickable.
+
+## Node table {#node-table}
+
+`View ▸ Node table` opens a table of the project's nodes in a pane below the canvas, to sort, filter and pick nodes in bulk. Choose the menu item again, or press **×** in the pane's title bar, to close it. With several nodes selected, **Show in node table** opens it on those nodes: the button under *N nodes selected* in the Properties panel, or the item in the canvas's right-click menu for a selection. The pane can be dragged elsewhere like any other; **Reset panel layout** closes it.
+
+### Columns
+
+**Type**, **Label**, **Fields** (the node's other values), **Links** (the number of edges touching the node; 0 means it is isolated), **Added** and **Updated**. The label is the one the canvas shows.
+
+When one type is picked in the type filter, **Fields** is replaced by a column per field of that type: the fields its Type Pack declares first, in the pack's order, then any other fields the nodes carry, most common first. A field no node fills gets no column, nor does the field the label already shows. Up to 12 field columns are shown; the line above the table says how many more there are, and the keyword filter still searches them.
+
+### Sorting
+
+Click a column header to sort by it, click again to reverse, and a third time to stop sorting by it. **Links**, **Added** and **Updated** start with the largest or newest. Shift-click another header to sort by it as well, after the first. Text sorts as numbers where it has digits, so `10.0.0.9` comes before `10.0.0.10`; empty values go last.
+
+### Filters
+
+- **All nodes** / **From selection** — *From selection* lists the nodes that were selected when the table was opened on them. It does not follow the canvas: clicking through the rows changes the selection but not which rows are listed. When the canvas selection is something else, a refresh button beside it takes the current selection instead.
+- **All types** — one type only, with the number of nodes of each.
+- **Filter by keyword** — matches what [Search](#search) matches (the type or any property value, never a field name, and `AS64496` for an ASN of 64496, also inside a list of ASNs), and the label and type name as the table shows them. **Esc** empties the field.
+
+The line above the table counts the rows shown and the nodes selected on the canvas. 100 rows are shown per page. While the project is still loading, rows appear as nodes arrive.
+
+### Selecting from the table
+
+The checkboxes are the canvas selection: a box is ticked exactly when its node is selected on the canvas.
+
+- Tick a box to add its node to the selection; untick it to take the node out. Other selected nodes and edges stay selected. **Shift**-click a box to do the same to every row from the last one you clicked.
+- The header box adds every row shown, on every page, to the selection, or takes them all out when they are all selected.
+- Click a row to select only that node and center it on the canvas, as picking a search result does. **⌘-click** (Mac) or **Ctrl-click** adds or removes the row, and **Shift-click** adds the rows from the last one clicked.
+- **Select N on canvas** makes exactly the rows shown, on every page, the selection. **Run plugins**, **Delete (N)**, **Connect to…** and the AI agent then act on them.
+
+The table only changes the selection, so a participant who can only view the project can use it too.
 
 ## Drawing edges
 
