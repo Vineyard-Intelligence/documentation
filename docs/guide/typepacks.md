@@ -16,7 +16,8 @@ the link. Each entity type carries:
   [`label_template`](../develop/typepacks.md#entity-types)), and fall back to the
   `label_property` until all of them are filled.
 - A set of **properties** — the named fields you can fill in (e.g. `country_code`, `asn`,
-  `registrar`). These appear in the Properties panel when a node is selected. When you edit one,
+  `registrar`). These appear in the Properties panel when a node is selected, each shown by the
+  kind of value it holds ([Reading values in the Properties panel](#reading-values-in-the-properties-panel)). When you edit one,
   the value is checked against what the type declares: its kind, its allowed values, and any
   pattern or range (for example, `country_code` must be two capital letters and `asn` a whole
   number from 1 to 4294967295). A value that fails is not saved, and a message says why.
@@ -133,6 +134,49 @@ adds the people and personas behind the activity.
     These two types are identified by the label alone, so filling another property, such as a
     date of birth or a registration number, does not keep them apart. Nodes you add
     **manually** are never auto-merged.
+
+## Reading values in the Properties panel
+
+The Properties panel shows each value by what it is, not only by the type that declares it: a URL
+with its host picked out, a hash shortened with its algorithm beside it, a list written into one
+text field as separate entries. What changes is how the value is shown. The stored value stays as
+it is until you edit it.
+
+A chevron (**›**) at the end of a value opens a view of the whole value under its row.
+
+| Value | In the grid | Under the row |
+|---|---|---|
+| Long text (`description`, `bio`, a post) | The first line, and how many lines follow (`+3 lines`). | The whole text with its line breaks, **Find** and **Copy**. |
+| A list written into one text field (`name_servers`, `open_ports`, `user_ids`, `tags`) | The first entries as chips, and how many there are. | One entry per row, with the host of each URL. **Copy, one per line** and **Copy defanged**. |
+| URL | The URL as stored, its host highlighted. A badge marks a URL the browser cannot read (`unreadable`) and one with a user name or password before the host (`credentials`). | Scheme, host (and its Unicode form when it is punycode), port, path, each query parameter decoded, fragment. **Defanged** shows it as `hxxps://example[.]com`, in the grid too. The other nodes with the same host. |
+| Hash | The first and last eight characters, and the algorithm read from the property name or the length (`MD5`, `SHA-1`, `SHA-256`, `mmh3`, `ssdeep`, `TLSH`…). The algorithm is a label; nothing is computed. | The whole hash, **Copy**, **Lower case** for a hex hash written in capitals, and the other nodes with the same value. |
+| IP address or CIDR block | The value, `v4` or `v6`, and a special-purpose range such as `private`, `loopback` or `documentation`. A block written from a host address is marked `host bits set`. | The canonical form of an address, or a block's network, netmask, first and last address and size. The other nodes in the same /24 (IPv6: /64), or with an address in the block. |
+| E-mail address | The domain highlighted. | The local part, the tag after a `+`, and the domain (and its Unicode form). |
+| Size, count or amount (`size_bytes`, `*_count`, `followers`, `balance`) | Digits grouped in thousands, a size also in KiB, MiB or GiB, an amount with the node's currency. | — |
+| Code: a detection rule, an armored key, a raw record, a command line | Monospace, the first line. | Line numbers, highlighting for YARA, Sigma, PGP armor and WHOIS (up to 8,000 characters), **Find**, **Wrap**, **Copy**, **Download**, and **Edit**, a code editor that saves when you press **Save**. |
+| Cryptocurrency address | The chain its format belongs to, and whether its checksum holds (EIP-55, Base58Check, Bech32 and Bech32m). Solana addresses and all-lowercase EVM addresses carry no checksum, and Monero's is not checked. | The format, the chain, what the node's own currency or network field says, and a link to a block explorer. The link asks before it opens, because the explorer sees your IP address, the time and the address you looked up. |
+| JSON | One line, as before, with **{ }** to edit it. | A tree: fold and unfold, click a key to copy its path (`rdap.events[0].action`), **Find**, and **Raw** for the indented JSON. |
+
+Dates, times, choices, true/false values and colors are shown as before. A date and time that names
+no time zone, an EXIF time (`2021:12:14 11:58:18`) and an epoch number are shown as stored, without
+being read as a moment in time.
+
+Which kind a value is, is read from its declared type, the property name and the value itself, so
+it can be wrong for an unusual value; a wrong reading changes only how the value is shown. The list
+of other nodes appears in the node panel, not in the Review dialog.
+
+### Editing a value
+
+- Click a value, or move to it with **Tab**, to edit it. Long text and code grow in place.
+- **Esc** puts the value back as stored and leaves the field. In a one-line field **Enter** saves;
+  in long text and code **Enter** adds a line and **⌘Enter** (Mac) or **Ctrl+Enter** saves. A
+  value is also saved when you leave the field.
+- A list written into one text field is edited as entries: type one and press **Enter**, or remove
+  one with its **×**. It is saved with the separator the value already used, one per line or `, `.
+- While you edit a URL, an e-mail or IP address, a hash or a cryptocurrency address, a line under
+  the field says what is wrong with it: a rule of its type, or a checksum that fails. The type's
+  rules decide what is saved.
+- In a panel marked *View only*, values are shown and opened the same way and cannot be edited.
 
 ## Versions
 
