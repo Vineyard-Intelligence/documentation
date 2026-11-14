@@ -232,7 +232,7 @@ While the project is still loading (for example while it re-syncs after a reconn
 
 `Project ▸ Activity log…` opens the project's activity log, newest first: who created, changed or deleted which node or edge, and who changed the project and its members. It is for project members, and only when you are signed in to a server; a local project keeps no activity log.
 
-The drawer reads the log from the server a page at a time. **Load older** at the bottom reads the next page, and the count beside the title is how many rows match. What happens while the drawer is open appears at the top as it happens.
+The drawer reads the log from the server a page at a time. **Load older** at the bottom reads the next page, as the log stood when the drawer opened or the filters last changed. What happens after that appears at the top as it happens, and the count beside the title is how many rows match, those included.
 
 Each row shows the action, the account and a summary, then the time in UTC to the second (for example `2026-11-14 09:02:33Z`) and how long ago that was. Hover the time to see it with every digit the server stored. Click a row's target, such as `node 033rOr…eClw`, to see only the rows about it. **Show on the canvas**, the button after a node's target, selects that node if it is still on the canvas.
 
@@ -240,22 +240,25 @@ Each row shows the action, the account and a summary, then the time in UTC to th
 
 | Filter | What it matches |
 | --- | --- |
-| **Actor** | One account, by its whole name: `kim` does not match `kimberly`. Writes made by the AI agent or by a plugin are recorded under the account of the analyst who applied them, so this filter cannot tell them apart from that analyst's own edits. |
+| **Actor** | One account, by its whole name: `kim` does not match `kimberly`. A row keeps the name the account had when it was written, so an account renamed since has its earlier rows under the old name. Writes made by the AI agent or by a plugin are recorded under the account of the analyst who applied them, so this filter cannot tell them apart from that analyst's own edits. |
 | **Action** | Any of the chosen actions, for example *Node deleted* and *Edge deleted*. |
 | **Target** | Nodes, edges, members or the project, or one node or edge. The crosshair button next to it picks the node or edge selected on the canvas. |
 | **Period (UTC days)** | Rows from the start of the first day to the end of the last, in UTC. Both days are included. |
 
 The filters combine, and **Clear filters** removes them all.
 
+If the server does not apply a filter you set, the drawer says so and shows no rows rather than rows the filter did not choose, and an export writes no file. This happens with a server older than these filters, which applies only a single **Action**. Clear the filters to read the whole log.
+
 ### Export the activity log {#export-activity-log}
 
-**Export ▸ CSV (spreadsheet)** or **Export ▸ JSON** downloads every row the filters match, not only the rows loaded in the drawer, as `activity-<project>-<UTC time>.csv` or `.json`. While it reads, the drawer shows how many rows it has read; **Cancel** stops it and writes no file. One export reads at most 50,000 rows. For a longer log, export a period at a time.
+**Export ▸ CSV (spreadsheet)** or **Export ▸ JSON** downloads every row the filters match, not only the rows loaded in the drawer, as `activity-<project>-<UTC time>.csv` or `.json`. The file holds the log as it stood when the export began, newest first. Rows written while it reads are left out, and the top of the file gives the time of its newest row (`as of`). While it reads, the drawer shows how many rows it has read; **Cancel** stops it and writes no file. One export reads at most 50,000 rows. For a longer log, export a period at a time.
 
-The top of each file says which project it is, when and by whom it was exported, which filters were used, and what the log does not hold:
+Each row carries the account's name (`actor_name`) and its id (`actor_id` in the CSV, `actor` in the JSON). The top of each file says which project it is, when and by whom it was exported, up to which row it reads, which filters were used, and what the log does not hold:
 
 - A summary is stored up to 256 characters.
 - An edit row keeps what it overwrote for at most 20 fields, each cut to 200 characters, and does not keep the new value. If your account cannot edit the graph, the overwritten values are left out of every row.
 - Writes made by the AI agent or by a plugin are recorded under the account of the analyst who applied them.
+- `actor_name` is the name the account had when the row was written. A renamed account's earlier rows keep the old name, and the name of a deleted account can be registered again, so rows with one name and different ids were written by different accounts. The id is empty for an account deleted since.
 - The `session` column names the app session the write came from, as the app stated it. The server checks only that it was an open session of the same account.
 - Rows about invitations not yet accepted are included only for the project owner and organization managers.
 
