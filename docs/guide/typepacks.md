@@ -421,6 +421,57 @@ other nodes appears in the node panel, not in the Review dialog.
   rules decide what is saved.
 - In a panel marked *View only*, values are shown and opened the same way and cannot be edited.
 
+### Document and JSON views {#document-and-json-views}
+
+Under a node's name, **Table**, **Document** and **JSON** change how the panel shows it. The choice
+is remembered on this device. **Table** is the grid described above.
+
+**Document** shows the node as one page to read:
+
+- Its title, its type, and the fields that identify it, then its one-line values, then each longer
+  value under its field name: long text as paragraphs with its line breaks, a rule or a raw record
+  as code, a list as entries, JSON folded to one line until you open it. Declared fields with
+  nothing in them are named under *Not collected*. A value over 40 lines shows its start and
+  **Show all**.
+- **Source** gives when the node was created and last changed (UTC). **Who created and changed it**
+  reads the account that did each from the activity log. It is read when you click, not each time
+  a node is selected. Agent and plugin writes are recorded under the account that applied them. In
+  local mode, and for an account that opened the project through its public link, only the times
+  are shown: the activity log is for project members. If the activity log cannot be read, the page
+  says so and offers **Try again**, and the last writer seen since the tab opened is shown under
+  *In this session*.
+- **Links** lists the node's outgoing and incoming links grouped by label, with how many carry each
+  evidence grade. Click a node in the list to select it and centre it on the canvas.
+- **Copy as Markdown** copies the page for a report. Every value, and every name that comes from
+  the data (the title, field names, link labels, account names), is written as code, so nothing in
+  it turns into a link, an image or formatting where you paste it, and line breaks are kept. Times
+  are in UTC, without "3h ago". Copied before **Who created and changed it** has answered, the
+  Markdown says the names were not read from the activity log.
+
+**JSON** shows the node's whole data as indented JSON; **Tree** folds it, finds in it and copies a
+key's path (`whois.events[0]`). **Edit** opens the data in the JSON editor, where a field can be
+changed, added or removed.
+
+- Saving writes only the fields you changed, added or removed. A field you left as it was keeps
+  whatever the node holds when you save, so a change someone else made to it while the editor was
+  open is kept. A line above the editor names the fields that changed since you opened it. If
+  someone else already made every change you made, saving writes nothing.
+- Before a save removes a field, or replaces a field someone else changed since you opened the
+  editor, Vineyard asks. A save that removes a field writes the node's whole data, so a change
+  someone else saves at the same moment can be lost.
+- A field the type marks required (`*`) cannot be removed; give it another value instead. Changed
+  values are checked against the type as in the table, and a number too large to store exactly has
+  to be written in quotes.
+- **Esc** and a click outside close the editor only while you have typed nothing. **Cancel**
+  discards your edit. Nothing closes the editor while a save is on its way. A save that is
+  refused (you have no write access) or fails leaves the editor open with the reason, so your edit
+  can be fixed or copied.
+- If the panel moves off the node while the editor holds an edit you have not saved (the agent
+  selected another node, or someone deleted this one), the editor closes without saving and a
+  notice offers **Copy your JSON**. A save that fails after the editor has closed is reported the
+  same way.
+- In a panel marked *View only*, **Edit** is disabled.
+
 ## Versions
 
 Type Packs use semantic versioning. A **MAJOR-version bump signals a breaking change** to the
