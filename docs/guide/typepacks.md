@@ -291,7 +291,12 @@ than relabelling it, and figures from different sources go under keys of their o
     type and identity are merged and their properties combined. Fields the pack marks
     case-insensitive (domains, hostnames, emails, handles…) match regardless of case. A crypto
     address or transaction hash matches whatever the case of its hex or bech32 form, while a
-    Base58 address is compared exactly and the network is part of its identity. The most
+    Base58 address is compared exactly and the network is part of its identity. From
+    Infrastructure 4.3.0 a domain, host or DNS record name matches without its trailing dot and
+    in its punycode form, an IP address in its standard form (IPv6 as RFC 5952 writes it), and a
+    URL however its scheme, host, default port or percent-encoding is written; a URL path keeps
+    its case. The node keeps the spelling it already has: a matching write in another spelling
+    adds its other fields and leaves the identity as it was. The most
     useful label is therefore one that is both readable *and* identifying. Most types key on a naturally-unique field (an IP, a CVE id, a tx
     hash, a WHOIS subject). Where a type's label is inherently non-unique — a
     `identity.person`'s name, an `identity.organization`'s name — distinct entities sharing
@@ -301,8 +306,11 @@ than relabelling it, and figures from different sources go under keys of their o
     identified as written, so `+82 10-1234-5678` and `010-1234-5678` are two
     `identity.phone_number` nodes; the **Phone Numbers** plugin pack writes the E.164 form they
     share as `e164` (Identity 2.4.0 and later), with `region` and a `line_type` estimated from
-    the number's range, and leaves the label as it is. Nodes you add **manually** are never
-    auto-merged.
+    the number's range, and leaves the label as it is; nodes that share an `e164` are found as
+    duplicates (Identity 2.5.0 and later). Nodes you add **manually** are never auto-merged. Nodes
+    that are one entity but are already two in the project are found and merged by the AI agent's
+    `find_duplicates` and `merge_nodes`, through your review (see
+    [Duplicates and merging](tasks.md#duplicates-and-merging)).
 
 ## Reading values in the Properties panel
 
