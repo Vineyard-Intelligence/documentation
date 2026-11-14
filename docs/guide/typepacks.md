@@ -253,8 +253,12 @@ than relabelling it, and figures from different sources go under keys of their o
     `identity.person`'s name, an `identity.organization`'s name — distinct entities sharing
     that label will merge, so give them a distinguishing label (e.g. `John Smith (DOB 1990)`).
     These two types are identified by the label alone, so filling another property, such as a
-    date of birth or a registration number, does not keep them apart. Nodes you add
-    **manually** are never auto-merged.
+    date of birth or a registration number, does not keep them apart. Phone numbers are
+    identified as written, so `+82 10-1234-5678` and `010-1234-5678` are two
+    `identity.phone_number` nodes; the **Phone Numbers** plugin pack writes the E.164 form they
+    share as `e164` (Identity 2.4.0 and later), with `region` and a `line_type` estimated from
+    the number's range, and leaves the label as it is. Nodes you add **manually** are never
+    auto-merged.
 
 ## Reading values in the Properties panel
 

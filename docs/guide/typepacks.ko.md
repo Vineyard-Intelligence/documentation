@@ -247,8 +247,11 @@ VirusTotal) `fingerprint_sha1`에 함께 담습니다. abuse.ch SSLBL 같은 차
     본질적으로 고유하지 않은 유형(`identity.person`의 이름, `identity.organization`의
     이름)은 같은 라벨을 공유하는 서로 다른 엔티티가 병합되므로, 구분되는 라벨
     (예: `John Smith (DOB 1990)`)을 주세요. 이 두 유형은 라벨만으로 식별되므로 생년월일이나
-    등록번호 같은 다른 속성을 채워도 서로 구분되지 않습니다. **수동으로** 추가한 노드는
-    절대 자동 병합되지 않습니다.
+    등록번호 같은 다른 속성을 채워도 서로 구분되지 않습니다. 전화번호는 적힌 그대로
+    식별하므로 `+82 10-1234-5678`과 `010-1234-5678`은 서로 다른 `identity.phone_number`
+    노드입니다. **Phone Numbers** 플러그인팩이 둘이 공유하는 E.164 표기를
+    `e164`에 쓰고(Identity 2.4.0 이상), `region`과 번호 대역으로 추정한 `line_type`도
+    채웁니다. 라벨은 바꾸지 않습니다. **수동으로** 추가한 노드는 절대 자동 병합되지 않습니다.
 
 ## Properties 패널에서 값 읽기 {#reading-values-in-the-properties-panel}
 
