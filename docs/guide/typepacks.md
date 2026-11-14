@@ -55,7 +55,7 @@ produce.
 Vineyard ships several official Type Packs. Each is self-contained — install the ones your
 investigation needs — and they are designed to be used together: an edge can join nodes from
 different packs (a `threat.malware` that **communicates with** an
-`infrastructure.ip_address`, a `financial.crypto_address` **controlled by** an
+`infrastructure.ip_address`, a `cryptocurrency.crypto_address` **controlled by** an
 `identity.person`, and so on).
 
 | Pack (`identifier`) | Category | Types | Models |
@@ -63,7 +63,8 @@ different packs (a `threat.malware` that **communicates with** an
 | **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 15 | The network you map during recon, plus the web resource (URL), web-fingerprint (header, favicon, DOM hash) and tracking-ID entities observed on it |
 | **Threat** (`…typepacks.threat`) | `threat` | 10 | Threat-intelligence (STIX-aligned) |
 | **Identity** (`…typepacks.identity`) | `identity` | 7 | People, orgs, and online personas |
-| **Financial** (`…typepacks.financial`) | `financial` | 4 | The money trail |
+| **Financial** (`…typepacks.financial`) | `financial` | 4 | Exchanges and other virtual-asset service providers, bank accounts, and two legacy crypto types |
+| **Cryptocurrency** (`…typepacks.cryptocurrency`) | `cryptocurrency` | 4 | Addresses, transactions, tokens and non-custodial services on every chain, identified by network |
 | **Endpoint** (`…typepacks.endpoint`) | `endpoint` | 6 | Host / DFIR artifacts |
 | **Geospatial** (`…typepacks.geo`) | `geo` | 3 | Places and physical context |
 | **Social Media** (`…typepacks.social`) | `social` | 5 | Platform-agnostic accounts, posts, hashtags, groups, and media |
@@ -114,11 +115,89 @@ The other packs follow the same shape — for example the **Threat** pack adds
 operation within a campaign — one campaign can contain several operations), while **Identity**
 adds the people and personas behind the activity.
 
+### Cryptocurrency — a closer look
+
+`run.vineyard.typepacks.cryptocurrency` covers every chain with one set of types, in the
+`cryptocurrency` category, and says which chain with `network`. The same string is a different
+account on another network — a `1…` address on Bitcoin and on Bitcoin Cash, one `0x…` address on
+Ethereum and on BSC — so `network` is part of the identity, and two such nodes never merge.
+
+| Type (`category.name`) | Label shown | Identity | Notable properties |
+|---|---|---|---|
+| `cryptocurrency.crypto_address` | the address and its network | `network` + `address` + `memo` | `address_kind`, `balance`, `first_funder`, `public_label`, `sanctioned` |
+| `cryptocurrency.crypto_transaction` | the hash and its network | `network` + `tx_hash` | `block_height`, `block_time`, `status`, `fee` |
+| `cryptocurrency.crypto_token` | the symbol and its network | `network` + `contract_address` | `standard`, `decimals`, `issuer` |
+| `cryptocurrency.crypto_service` | the name | `name` | `service_type` (mixer, bridge, gambling, merchant, defi) |
+
+- **Letter case.** Hex, bech32, CashAddr and TON raw values match whatever their case, so an EIP-55
+  checksummed address and its lower-case form are one node, and a 64-hex hash matches with or
+  without `0x`. Base58 values (legacy Bitcoin, TRON, Solana, Monero, XRPL) are compared exactly.
+- **`evm` and `unknown`** are networks not established yet: a `0x…` address whose chain the source
+  did not give, and any other address whose network neither the source nor its format settles.
+  They stay separate nodes: once the network is established, the `evm` or `unknown` node links to
+  the node on that network with `same address on`.
+- **Exchanges** and anything else that holds customers' funds (OTC desks, custodial wallets,
+  payment processors) are `financial.exchange`; `crypto_service` is for services that do not.
+- **Amounts** (`balance`, `fee`) are decimal strings in the network's native unit: full precision,
+  but they do not sort as numbers.
+- **The Financial pack's** `crypto_address` and `crypto_transaction` remain for older nodes and are
+  shown as "(legacy)". They do not merge with the new types. With both packs installed, the short
+  name `crypto_address` means the Cryptocurrency pack's type.
+
+Each `network` has a CAIP-2 chain id, the form other tools exchange; the ids are not part of the
+identity, so a correction to one never splits a node.
+
+| `network` | CAIP-2 |
+|---|---|
+| `bitcoin` | `bip122:000000000019d6689c085ae165831e93` |
+| `bitcoin_cash` | `bip122:000000000000000000651ef99cb9fcbe` |
+| `bitcoin_sv` | `bsv:mainnet` (draft) |
+| `bitcoin_gold` | — |
+| `litecoin` | `bip122:12a765e31ffd4059bada1e25190f6e98` |
+| `dogecoin` | `bip122:1a91e3dace36e2be3bf030a65679fe82` |
+| `dash` | — |
+| `zcash` | — |
+| `monero` | `monero:418015bb9ae982a1975da7d79277c270` (draft) |
+| `verge` | — |
+| `ethereum` | `eip155:1` |
+| `ethereum_classic` | `eip155:61` |
+| `bsc` | `eip155:56` |
+| `polygon` | `eip155:137` |
+| `arbitrum` | `eip155:42161` |
+| `optimism` | `eip155:10` |
+| `base` | `eip155:8453` |
+| `avalanche_c` | `eip155:43114` |
+| `evm` | none: the chain is not established |
+| `tron` | `tron:728126428` |
+| `solana` | `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp` |
+| `xrpl` | `xrpl:0` |
+| `ton` | `tvm:-239` |
+| `cardano` | proposed: `cardano:1-764824073` |
+| `bnb_beacon` | `cosmos:Binance-Chain-Tigris` (draft) |
+| `unknown` | none |
+
+Edges carry no type, so the Cryptocurrency pack fixes the labels and data keys that collectors use.
+A pair of nodes has one link: a collector adds its data keys to a link that is already there rather
+than relabelling it, and figures from different sources go under keys of their own.
+
+| From → to | Label | Data |
+|---|---|---|
+| address → address | `sent to` | `network`; per source `summary_<source>` (`asset`, `symbol`, `count`, `total`, `first`, `last`, `window_from`, `window_to`, `complete`); `recent`, the latest 20 (`tx_hash`, `asset`, `amount`, `time`); `first_funding`; `deployment` |
+| address → address | `deployed` | `deployment` (`tx_hash`), when the pair has no link yet |
+| address → transaction | `input to` | `amount`, `inputs` (`index`, `amount`, `prev_txid`, `prev_vout`) |
+| transaction → address | `output to` | `amount`, `outputs` (`index`, `amount`) |
+| contract address → token | `token contract` | — |
+| address → exchange, service or organization | `attributed to` | per source `attribution_<source>` (`label`, `label_kind`: verified, prediction or public_tag, `as_of`) |
+| `evm` or `unknown` address → address | `same address on` | how the network was decided. For a contract it does not mean the same owner |
+| person or organization → address | `listed address` | `list` (e.g. OFAC SDN), `uid`, `program`, `as_of` |
+| URL or domain → address | `accepts payment to` | where the payment address was found |
+| legacy `financial.crypto_address`, or a payment `web.tracking_id` → address | `same as` | why they are the same |
+
 !!! tip "Mixing Type Packs"
     Install as many Type Packs as you need — they share one qualified-type namespace and
     interlink by design. You might link a `threat.malware` to the `infrastructure.ip_address`
     it beacons to, attribute a `threat.campaign` to an `identity.organization`, and trace a
-    ransom `financial.crypto_transaction`.
+    ransom `cryptocurrency.crypto_transaction`.
 
 !!! note "Identity & de-duplication"
     When a plugin or AI task adds a node, Vineyard de-duplicates by **type + the type's
@@ -126,7 +205,9 @@ adds the people and personas behind the activity.
     → username + platform; `endpoint.file` → SHA-256, file name, path, host; `endpoint.process`
     → process GUID, name, PID), otherwise its `label_property` value. Two nodes with the same
     type and identity are merged and their properties combined. Fields the pack marks
-    case-insensitive (domains, hostnames, emails, handles…) match regardless of case. The most
+    case-insensitive (domains, hostnames, emails, handles…) match regardless of case. A crypto
+    address or transaction hash matches whatever the case of its hex or bech32 form, while a
+    Base58 address is compared exactly and the network is part of its identity. The most
     useful label is therefore one that is both readable *and* identifying. Most types key on a naturally-unique field (an IP, a CVE id, a tx
     hash, a WHOIS subject). Where a type's label is inherently non-unique — a
     `identity.person`'s name, an `identity.organization`'s name — distinct entities sharing

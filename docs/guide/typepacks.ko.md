@@ -53,14 +53,15 @@ Type Pack은 **엔티티(노드) 유형**을 선언합니다. 엣지에는 유�
 Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입니다 — 조사에 필요한
 것만 설치하세요 — 그리고 함께 사용하도록 설계되어 있습니다: 엣지 하나가 서로 다른
 팩의 노드를 연결할 수 있습니다(`threat.malware`가 `infrastructure.ip_address`와
-**통신하는**, `financial.crypto_address`가 `identity.person`에 의해 **제어되는** 등).
+**통신하는**, `cryptocurrency.crypto_address`가 `identity.person`에 의해 **제어되는** 등).
 
 | 팩 (`identifier`) | 카테고리 | 유형 | 모델링 대상 |
 |---|---|---|---|
 | **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 15 | 정찰 중 매핑하는 네트워크, 그리고 그 위에서 관측되는 웹 리소스(URL), 웹 지문(헤더, 파비콘, DOM 해시), 트래킹 ID 엔티티 |
 | **Threat** (`…typepacks.threat`) | `threat` | 10 | 위협 인텔리전스 (STIX 정렬) |
 | **Identity** (`…typepacks.identity`) | `identity` | 7 | 사람, 조직, 온라인 페르소나 |
-| **Financial** (`…typepacks.financial`) | `financial` | 4 | 자금 흐름 |
+| **Financial** (`…typepacks.financial`) | `financial` | 4 | 거래소와 그 밖의 가상자산사업자, 은행 계좌, 옛 암호화폐 유형 두 개 |
+| **Cryptocurrency** (`…typepacks.cryptocurrency`) | `cryptocurrency` | 4 | 모든 체인의 주소, 거래, 토큰, 자금을 맡지 않는 서비스. 네트워크로 식별 |
 | **Endpoint** (`…typepacks.endpoint`) | `endpoint` | 6 | 호스트 / DFIR 아티팩트 |
 | **Geospatial** (`…typepacks.geo`) | `geo` | 3 | 장소와 물리적 맥락 |
 | **Social Media** (`…typepacks.social`) | `social` | 5 | 플랫폼에 무관한 계정, 게시물, 해시태그, 그룹, 미디어 |
@@ -110,11 +111,88 @@ ONYPHE·VirusTotal은 `md5`, Censys·Netlas·urlscan.io는 `sha256`으로 찾고
 하나의 캠페인은 여러 개의 operation을 포함할 수 있음)을, **Identity** 팩은 활동 뒤의
 사람과 페르소나를 추가합니다.
 
+### Cryptocurrency — 자세히 보기
+
+`run.vineyard.typepacks.cryptocurrency`는 `cryptocurrency` 카테고리의 유형 한 벌로 모든 체인을
+다루고, 어느 체인인지는 `network`로 나타냅니다. 같은 문자열도 네트워크가 다르면 다른 계정이므로
+(Bitcoin과 Bitcoin Cash의 `1…` 주소, Ethereum과 BSC의 같은 `0x…` 주소) `network`는 식별 값의
+일부이고, 그런 두 노드는 병합되지 않습니다.
+
+| 유형 (`category.name`) | 표시 라벨 | 식별 | 주요 속성 |
+|---|---|---|---|
+| `cryptocurrency.crypto_address` | 주소와 네트워크 | `network` + `address` + `memo` | `address_kind`, `balance`, `first_funder`, `public_label`, `sanctioned` |
+| `cryptocurrency.crypto_transaction` | 해시와 네트워크 | `network` + `tx_hash` | `block_height`, `block_time`, `status`, `fee` |
+| `cryptocurrency.crypto_token` | 심볼과 네트워크 | `network` + `contract_address` | `standard`, `decimals`, `issuer` |
+| `cryptocurrency.crypto_service` | 이름 | `name` | `service_type` (mixer, bridge, gambling, merchant, defi) |
+
+- **대소문자.** hex, bech32, CashAddr, TON raw 값은 대소문자와 관계없이 일치합니다. 그래서 EIP-55
+  체크섬 표기 주소와 소문자 표기는 한 노드이고, hex 64자 해시는 `0x` 유무와 관계없이 일치합니다.
+  Base58 값(비트코인 레거시, TRON, Solana, Monero, XRPL)은 적힌 그대로 비교합니다.
+- **`evm`과 `unknown`**은 아직 정해지지 않은 네트워크입니다. 출처가 체인을 말하지 않은 `0x…`
+  주소, 그리고 출처도 형식도 네트워크를 정하지 못한 그 밖의 주소입니다. 이 노드는 따로 남고,
+  네트워크가 정해지면 `evm`·`unknown` 노드에서 그 네트워크의 노드로 `same address on`을 긋습니다.
+- **거래소**와 고객 자금을 맡는 그 밖의 서비스(OTC 데스크, 수탁형 지갑, 결제대행)는
+  `financial.exchange`입니다. `crypto_service`는 자금을 맡지 않는 서비스에 씁니다.
+- **금액**(`balance`, `fee`)은 네트워크 기본 단위의 10진 문자열입니다. 정밀도는 그대로지만 숫자로
+  정렬되지 않습니다.
+- **Financial 팩의** `crypto_address`와 `crypto_transaction`은 기존 노드를 위해 남아 있고
+  "(legacy)"로 표시됩니다. 새 유형과 병합되지 않습니다. 두 팩을 함께 설치하면 짧은 이름
+  `crypto_address`는 Cryptocurrency 팩의 유형을 가리킵니다.
+
+각 `network`에는 다른 도구와 주고받는 CAIP-2 체인 ID가 있습니다. 이 ID는 식별 값에 들어가지 않으므로,
+나중에 고쳐도 노드가 갈라지지 않습니다.
+
+| `network` | CAIP-2 |
+|---|---|
+| `bitcoin` | `bip122:000000000019d6689c085ae165831e93` |
+| `bitcoin_cash` | `bip122:000000000000000000651ef99cb9fcbe` |
+| `bitcoin_sv` | `bsv:mainnet` (초안) |
+| `bitcoin_gold` | — |
+| `litecoin` | `bip122:12a765e31ffd4059bada1e25190f6e98` |
+| `dogecoin` | `bip122:1a91e3dace36e2be3bf030a65679fe82` |
+| `dash` | — |
+| `zcash` | — |
+| `monero` | `monero:418015bb9ae982a1975da7d79277c270` (초안) |
+| `verge` | — |
+| `ethereum` | `eip155:1` |
+| `ethereum_classic` | `eip155:61` |
+| `bsc` | `eip155:56` |
+| `polygon` | `eip155:137` |
+| `arbitrum` | `eip155:42161` |
+| `optimism` | `eip155:10` |
+| `base` | `eip155:8453` |
+| `avalanche_c` | `eip155:43114` |
+| `evm` | 없음 (체인 미정) |
+| `tron` | `tron:728126428` |
+| `solana` | `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp` |
+| `xrpl` | `xrpl:0` |
+| `ton` | `tvm:-239` |
+| `cardano` | 제안: `cardano:1-764824073` |
+| `bnb_beacon` | `cosmos:Binance-Chain-Tigris` (초안) |
+| `unknown` | 없음 |
+
+엣지에는 유형이 없으므로, Cryptocurrency 팩은 수집기가 쓸 라벨과 데이터 키를 정해 둡니다. 두 노드
+사이의 링크는 하나뿐입니다. 수집기는 이미 있는 링크의 라벨을 바꾸지 않고 데이터 키를 더하며, 출처가
+다른 수치는 각자의 키에 둡니다.
+
+| 시작 → 끝 | 라벨 | 데이터 |
+|---|---|---|
+| 주소 → 주소 | `sent to` | `network`, 출처별 `summary_<출처>`(`asset`, `symbol`, `count`, `total`, `first`, `last`, `window_from`, `window_to`, `complete`), 최근 20건 `recent`(`tx_hash`, `asset`, `amount`, `time`), `first_funding`, `deployment` |
+| 주소 → 주소 | `deployed` | `deployment`(`tx_hash`). 그 쌍에 링크가 아직 없을 때 |
+| 주소 → 거래 | `input to` | `amount`, `inputs`(`index`, `amount`, `prev_txid`, `prev_vout`) |
+| 거래 → 주소 | `output to` | `amount`, `outputs`(`index`, `amount`) |
+| 계약 주소 → 토큰 | `token contract` | — |
+| 주소 → 거래소, 서비스, 조직 | `attributed to` | 출처별 `attribution_<출처>`(`label`, `label_kind`: verified, prediction, public_tag, `as_of`) |
+| `evm`·`unknown` 주소 → 주소 | `same address on` | 네트워크를 정한 근거. 계약이면 같은 소유자라는 뜻이 아님 |
+| 사람·조직 → 주소 | `listed address` | `list`(예: OFAC SDN), `uid`, `program`, `as_of` |
+| URL·도메인 → 주소 | `accepts payment to` | 결제 주소를 찾은 곳 |
+| 옛 `financial.crypto_address`, 결제용 `web.tracking_id` → 주소 | `same as` | 같다고 본 근거 |
+
 !!! tip "Type Pack 혼합하기"
     필요한 만큼 Type Pack을 설치하세요 — 하나의 정규화된 유형 네임스페이스를
     공유하며 설계상 상호 연결됩니다. `threat.malware`를 그것이 비콘하는
     `infrastructure.ip_address`에 연결하고, `threat.campaign`을
-    `identity.organization`에 귀속시키고, 몸값 `financial.crypto_transaction`을
+    `identity.organization`에 귀속시키고, 몸값 `cryptocurrency.crypto_transaction`을
     추적할 수 있습니다.
 
 !!! note "신원 및 중복 제거"
@@ -123,7 +201,9 @@ ONYPHE·VirusTotal은 `md5`, Censys·Netlas·urlscan.io는 `sha256`으로 찾고
     `identity.account` → username + platform, `endpoint.file` → SHA-256·파일 이름·경로·호스트,
     `endpoint.process` → 프로세스 GUID·이름·PID), 아니면 `label_property` 값입니다. 같은
     유형과 같은 식별 값의 두 노드는 병합되고 속성이 결합됩니다. 팩이 대소문자 무시로 표시한
-    필드(도메인, 호스트 이름, 이메일, 핸들 등)는 대소문자와 관계없이 일치합니다. 따라서
+    필드(도메인, 호스트 이름, 이메일, 핸들 등)는 대소문자와 관계없이 일치합니다. 암호화폐
+    주소와 거래 해시는 hex·bech32 표기의 대소문자와 관계없이 일치하지만, Base58 주소는 적힌
+    그대로 비교하고 네트워크도 식별 값의 일부입니다. 따라서
     가장 유용한 라벨은 읽기 쉽고 *식별적인* 것입니다. 대부분의 유형은 자연적으로
     고유한 필드(IP, CVE ID, 트랜잭션 해시, WHOIS 주체)를 키로 사용합니다. 라벨이
     본질적으로 고유하지 않은 유형(`identity.person`의 이름, `identity.organization`의

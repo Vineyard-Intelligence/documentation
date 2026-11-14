@@ -4,7 +4,7 @@ Type Pack은 그래프와 플러그인이 사용할 **노드 엔티티 타입**�
 
 ## Type Pack이란 무엇인가
 
-플러그인은 자체 데이터 형태를 만들어내지 않습니다. Type Pack이 선언한 노드 타입을 정규화된 문자열로 주소 지정하여 `consume`하고 `produce`합니다. 엣지에는 타입이 없습니다: 관계는 엣지의 자유 텍스트 `label`로 기술합니다. 배포된 참조 팩은 [Infrastructure, Threat, Identity, Financial, Endpoint, Geospatial, Social Media, Telegram](../guide/typepacks.md)입니다.
+플러그인은 자체 데이터 형태를 만들어내지 않습니다. Type Pack이 선언한 노드 타입을 정규화된 문자열로 주소 지정하여 `consume`하고 `produce`합니다. 엣지에는 타입이 없습니다: 관계는 엣지의 자유 텍스트 `label`로 기술합니다. 배포된 참조 팩은 [Infrastructure, Threat, Identity, Financial, Cryptocurrency, Endpoint, Geospatial, Social Media, Telegram](../guide/typepacks.md)입니다.
 
 ## 최상위 필드
 
@@ -27,7 +27,7 @@ Type Pack은 그래프와 플러그인이 사용할 **노드 엔티티 타입**�
 `types[]`에는 최소 하나의 엔티티 타입이 필요합니다. 전체 필수/선택 필드 테이블은 [Type Pack 스키마](../reference/typepack-schema.md)에 있습니다.
 
 !!! note "참조 팩은 유효한 템플릿입니다"
-    8개의 참조 팩(`typepack-basic`의 `infrastructure.json`, `threat.json`, `identity.json`, `financial.json`, `endpoint.json`, `geo.json`, `typepack-social`의 `social.json`, `typepack-telegram`의 `telegram.json`)은 이 스키마를 따릅니다 — 명시적 프로퍼티 타입, 구조화된 유효성 검사기, 필수 최상위 필드 — 따라서 이들 중 아무거나 작업 템플릿으로 읽을 수 있습니다. `telegram.json`은 일부 프로퍼티에서 `optional`을 생략하므로, 직접 만드는 팩에서는 모든 프로퍼티에 적으세요([프로퍼티 타입](#property-types) 참조). 새 작성은 반드시 아래 스키마를 따라야 합니다.
+    9개의 참조 팩(`typepack-basic`의 `infrastructure.json`, `threat.json`, `identity.json`, `financial.json`, `endpoint.json`, `geo.json`, `typepack-social`의 `social.json`, `typepack-telegram`의 `telegram.json`, `typepack-cryptocurrency`의 `cryptocurrency.json`)은 이 스키마를 따릅니다 — 명시적 프로퍼티 타입, 구조화된 유효성 검사기, 필수 최상위 필드 — 따라서 이들 중 아무거나 작업 템플릿으로 읽을 수 있습니다. `telegram.json`은 일부 프로퍼티에서 `optional`을 생략하므로, 직접 만드는 팩에서는 모든 프로퍼티에 적으세요([프로퍼티 타입](#property-types) 참조). 새 작성은 반드시 아래 스키마를 따라야 합니다.
 
 ## 엔티티 타입 {#entity-types}
 
@@ -141,8 +141,13 @@ Type Pack의 프로퍼티 선언은 플러그인이나 AI 에이전트가 `creat
 `name`. 프로퍼티가 `"case_insensitive": true`를 설정하지 않는 한 값은 정확히 비교됩니다. 설정하면
 중복 제거에서만 대소문자를 무시합니다(표시와 저장은 작성된 그대로 유지). 핸들, 도메인, 호스트명,
 이메일, 16진수 다이제스트처럼 대소문자에 의미가 없는 곳에 설정하세요. 대소문자만으로 서로 다른
-엔티티가 구별될 수 있는 Base58/EIP-55 암호화폐 주소, URL 경로, 대소문자를 구분하는 파일 경로에는
-절대 설정하지 마세요. 유형은 정확한 정규화 키로만 해석되며, 설치된 팩에 정의되지 않은 유형의
+엔티티가 구별될 수 있는 Base58 암호화폐 주소, URL 경로, 대소문자를 구분하는 파일 경로에는
+절대 설정하지 마세요. 두 종류의 값이 섞이는 프로퍼티는 대신 `"normalize"`로 값마다 판단하는 규칙을
+지정합니다. 암호화폐 주소는 어떤 체인에서는 Base58이고 다른 체인에서는 hex나 bech32이며, EIP-55
+주소의 대소문자는 체크섬일 뿐입니다. 그래서 `"normalize": "crypto_address"`는 hex와 bech32 표기를
+접고 Base58은 그대로 두며, `"hex"`는 `0x` 유무와 관계없이 hex 64자 해시를 같은 값으로 봅니다
+([스키마 참조](../reference/typepack-schema.md#property-object)). 둘 다 값을 다시 인코딩하지 않으므로,
+값을 쓰는 쪽이 하나의 정규형으로 써야 합니다. 유형은 정확한 정규화 키로만 해석되며, 설치된 팩에 정의되지 않은 유형의
 노드는 원래 유형 문자열을 유지합니다 — 따라서 팩이 유형을 다른 카테고리로 이동시켜도
 (예: `url`이 `infrastructure`에서 `web`으로) 기존 노드가 새 유형의 생성물과 병합되지 않습니다.
 설치된 팩에 정의되지 않은 유형으로 노드를 생성하는 것은 거부됩니다. (각 `io.consumes`/`io.produces`
@@ -162,7 +167,7 @@ typeRef는 그 타입을 정의하는 Type Pack으로 해석됩니다. 플러그
 
 ## 유효성 검사 체크리스트
 
-설치 시점에 이 체크리스트로 Type Pack을 검증하는 것은 없습니다: 앱은 `content_type: vineyard:typepack`인 문서라면 무엇이든 로드합니다. 작성용 체크리스트로 활용하고, 참조 팩 저장소들처럼 자체 CI에서 문서를 [`typepack.schema.json`](https://registry.vineyard.run/schemas/typepack.schema.json)으로 검증하세요. 레지스트리 CI가 강제하는 것은 다음뿐입니다: 고정된 문서의 `identifier`, `content_type`, `version`이 항목과 일치할 것, `type_count`가 일치할 것, 항목에 `icon`이 있으면 첫 번째 타입의 lucide 아이콘과 같을 것, 모든 `identity_properties` 키가 실제로 존재하는 스칼라(`array`/`object`/`json`이 아닌) 프로퍼티를 가리킬 것, 그리고 다른 게시된 Type Pack이 이미 정의한 `category.name`이 없을 것.
+설치 시점에 이 체크리스트로 Type Pack을 검증하는 것은 없습니다: 앱은 `content_type: vineyard:typepack`인 문서라면 무엇이든 로드합니다. 작성용 체크리스트로 활용하고, 참조 팩 저장소들처럼 자체 CI에서 문서를 [`typepack.schema.json`](https://registry.vineyard.run/schemas/typepack.schema.json)으로 검증하세요. 레지스트리 CI가 강제하는 것은 다음뿐입니다: 고정된 문서의 `identifier`, `content_type`, `version`이 항목과 일치할 것, `type_count`가 일치할 것, 항목에 `icon`이 있으면 첫 번째 타입의 lucide 아이콘과 같을 것, 모든 `identity_properties` 키가 실제로 존재하는 스칼라(`array`/`object`/`json`이 아닌) 프로퍼티를 가리킬 것, 모든 `normalize`가 `crypto_address` 또는 `hex`이고 `case_insensitive: true` 없이 스칼라 프로퍼티에 있을 것, 그리고 다른 게시된 Type Pack이 이미 정의한 `category.name`이 없을 것.
 
 - [ ] `content_type`이 `vineyard:typepack`입니다.
 - [ ] `identifier`가 유효한 `<본인-네임스페이스>.typepacks.*` reverse-DNS 문자열입니다.
@@ -173,6 +178,7 @@ typeRef는 그 타입을 정의하는 Type Pack으로 해석됩니다. 플러그
 - [ ] 모든 프로퍼티가 `optional`을 명시합니다. 필수 프로퍼티는 `"optional": false`라고 적습니다.
 - [ ] 값 전체가 일치해야 하는 `validator.regex`는 모두 `^…$`로 앵커가 걸려 있습니다.
 - [ ] `enum` 프로퍼티는 `enum`을 제공합니다. `reference` 프로퍼티는 `reference.target`을 제공합니다. 모든 `default`는 `type`과 일치합니다.
+- [ ] `normalize`를 설정한 프로퍼티는 `"case_insensitive": true`를 함께 설정하지 않습니다.
 
 ## 다음 / 참고
 
@@ -181,4 +187,4 @@ typeRef는 그 타입을 정의하는 Type Pack으로 해석됩니다. 플러그
 - [플러그인 매니페스트](plugin-manifest.md) — 플러그인의 `io`가 Type Pack 타입을 참조하는 방식.
 - [샌드박스 및 보안](security.md) — 시크릿이 그래프 프로퍼티가 되지 않는 이유.
 - [배포](distribution.md) — 고정된 팩 문서를 가져오고 검증하는 방식.
-- 카탈로그: [참조 팩](../guide/typepacks.md) — Infrastructure, Threat, Identity, Financial, Endpoint, Geospatial, Social Media, Telegram.
+- 카탈로그: [참조 팩](../guide/typepacks.md) — Infrastructure, Threat, Identity, Financial, Cryptocurrency, Endpoint, Geospatial, Social Media, Telegram.

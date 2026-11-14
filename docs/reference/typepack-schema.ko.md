@@ -76,7 +76,8 @@
 | `type` | string (enum) | 예 | [type 열거형](#property-type-enum) 참조 | 논리적 속성 유형. |
 | `description` | string | 아니요 | — | 속성에 대한 사람용 설명. |
 | `optional` | boolean | 아니요 | `default: false` | `false` ⇒ `Node.data`의 필수 키. 모든 속성에 적으세요: 노드 생성은 속성이 `"optional": false`라고 명시했을 때만 빠진 키를 거부합니다. `optional`을 생략하면 Properties 패널은 그 속성을 필수(`*`)로 표시하지만, 그 키 없이 생성해도 받아들여집니다. |
-| `case_insensitive` | boolean | 아니요 | `default: false` | 이 속성이 중복 제거 식별자에 포함될 때 대소문자를 접습니다. 표시와 저장은 작성된 그대로 유지됩니다. 핸들, 도메인, 호스트명, 이메일, 16진 다이제스트에는 맞고, Base58/EIP-55 암호화폐 주소, URL 경로, 대소문자를 구분하는 파일 경로에는 틀립니다. 플래그가 빠지면 눈에 보이고 병합 가능한 중복이 생기지만, 잘못 붙이면 두 엔티티가 조용히 하나로 병합됩니다. |
+| `case_insensitive` | boolean | 아니요 | `default: false` | 이 속성이 중복 제거 식별자에 포함될 때 대소문자를 접습니다. 표시와 저장은 작성된 그대로 유지됩니다. 핸들, 도메인, 호스트명, 이메일, 16진 다이제스트에는 맞고, Base58 암호화폐 주소, URL 경로, 대소문자를 구분하는 파일 경로에는 틀립니다. 암호화폐 주소 속성에는 Base58과, 대소문자에 의미가 없는 hex·bech32가 섞이므로 대신 `normalize`를 씁니다. 플래그가 빠지면 눈에 보이고 병합 가능한 중복이 생기지만, 잘못 붙이면 두 엔티티가 조용히 하나로 병합됩니다. |
+| `normalize` | string (enum) | 아니요 | `crypto_address` 또는 `hex`. `case_insensitive: true`와 함께 쓸 수 없음 | 중복 제거 식별자에 쓰는 값 단위 규칙입니다. 대소문자가 의미 있는 형식과 의미 없는 형식이 한 속성에 섞일 때 씁니다. 표시와 저장은 작성된 그대로 유지됩니다. `crypto_address`는 값의 형식을 보고 접습니다: `0x` + hex 40자(EIP-55 대소문자는 체크섬), 알려진 접두어(`bc`, `tb`, `bcrt`, `ltc`, `tltc`, `btg`, `bnb`, `addr`, `addr_test`, `stake`, `stake_test`)에 체크섬이 맞는 bech32/bech32m, TON raw `<workchain>:<hex 64자>`는 소문자로, CashAddr는 `bitcoincash:` 유무와 관계없이 소문자 페이로드로 접고, 그 밖(Base58 포함)은 작성된 그대로 비교합니다. `hex`는 `0x` 유무와 관계없이 hex 64자 값을 `0x`를 뗀 소문자로 접습니다. 둘 다 다시 인코딩하지 않으므로, 변환해야 같아지는 값(TRON hex 주소, Litecoin `3…` 별칭, TON 사용자용 주소)은 정규형으로 써야 합니다. 이 규칙을 모르는 앱은 그대로 비교합니다. |
 | `default` | any | 아니요 | `type`과 일치해야 함 (검사하지 않음) | 받아들여지지만 적용되지 않음: 앱에서 빠진 키를 이 값으로 채우는 곳이 없습니다. |
 | `validator` | object | 아니요 | [validator 객체](#validator-object) 참조 | 구조화된 검증 규칙. |
 | `enum` | array | 조건부 | `minItems: 1`; 항목 `string`\|`number`\|`boolean` | **`type = "enum"`일 때 필수.** |
@@ -203,7 +204,8 @@
 - `label_property`는 `properties`에 존재하고 **비선택적**인 키를 지정해야 합니다.
 - `enum`은 `type = "enum"`일 때 정확히 필수입니다. `reference`는 `type = "reference"`일 때 정확히 필수입니다.
 - 위의 두 규칙은 작성 규칙입니다. 스키마는 이를 설명(description)으로만 적고 있으므로 스키마 검증기로도 강제되지 않으며, 다른 무엇도 강제하지 않습니다.
-- 레지스트리 CI가 Type Pack 문서에서 검사하는 것은 다음뿐입니다: `identifier`, `content_type`, `version`이 항목과 일치할 것, `type_count`와 (항목에 있다면) `icon`이 문서와 일치할 것, 모든 `identity_properties` 키가 `array`, `object`, `json`이 아닌 실제 속성을 가리킬 것, 그리고 다른 게시된 Type Pack이 같은 `category.name`을 정의하지 않을 것([레지스트리에 배포하기](../develop/publishing.md#what-ci-enforces) 참조).
+- `normalize`가 있는 속성은 `"case_insensitive": true`를 함께 쓸 수 없습니다. 스키마가 이 조합을 거부합니다.
+- 레지스트리 CI가 Type Pack 문서에서 검사하는 것은 다음뿐입니다: `identifier`, `content_type`, `version`이 항목과 일치할 것, `type_count`와 (항목에 있다면) `icon`이 문서와 일치할 것, 모든 `identity_properties` 키가 `array`, `object`, `json`이 아닌 실제 속성을 가리킬 것, 모든 `normalize`가 `crypto_address` 또는 `hex`이고 `case_insensitive: true`와 함께 쓰이지 않으며 `array`, `object`, `json`이 아닌 속성에 있을 것, 그리고 다른 게시된 Type Pack이 같은 `category.name`을 정의하지 않을 것([레지스트리에 배포하기](../develop/publishing.md#what-ci-enforces) 참조).
 - 앱은 노드를 쓸 때 선언된 속성으로 노드 데이터를 검사합니다. [앱이 노드 데이터에서 검사하는 것](../develop/typepacks.md#what-the-app-checks-on-node-data)을 참조하세요.
 - 팩을 등록하는 레지스트리 항목은 팩을 불변 커밋 SHA로 고정합니다. registry CI는 태그와 브랜치를 거부합니다 ([레지스트리 엔트리 스키마](registry-schema.md) 참조).
 

@@ -4,7 +4,7 @@ A Type Pack is a `vineyard:typepack` document that defines the **node entity typ
 
 ## What a Type Pack is
 
-Plugins do not invent their own data shapes. They `consume` and `produce` node types that a Type Pack declares, addressed by a qualified string. Edges carry no type: a relationship is stated in the edge's free-text `label`. The shipping reference packs are [Infrastructure, Threat, Identity, Financial, Endpoint, Geospatial, Social Media, and Telegram](../guide/typepacks.md).
+Plugins do not invent their own data shapes. They `consume` and `produce` node types that a Type Pack declares, addressed by a qualified string. Edges carry no type: a relationship is stated in the edge's free-text `label`. The shipping reference packs are [Infrastructure, Threat, Identity, Financial, Cryptocurrency, Endpoint, Geospatial, Social Media, and Telegram](../guide/typepacks.md).
 
 ## Top-level fields
 
@@ -27,7 +27,7 @@ Plugins do not invent their own data shapes. They `consume` and `produce` node t
 `types[]` requires at least one entity type. The full required/optional field table is in the [Type Pack schema reference](../reference/typepack-schema.md).
 
 !!! note "The reference packs are valid templates"
-    The eight reference packs (`infrastructure.json`, `threat.json`, `identity.json`, `financial.json`, `endpoint.json` and `geo.json` in `typepack-basic`, `social.json` in `typepack-social`, `telegram.json` in `typepack-telegram`) follow this schema — explicit property types, structured validators, and the required top-level fields — so you can read any of them as a working template. `telegram.json` leaves `optional` out on some properties; write it on every property of your own pack (see [Property types](#property-types)). New authoring MUST follow the schema below.
+    The nine reference packs (`infrastructure.json`, `threat.json`, `identity.json`, `financial.json`, `endpoint.json` and `geo.json` in `typepack-basic`, `social.json` in `typepack-social`, `telegram.json` in `typepack-telegram`, `cryptocurrency.json` in `typepack-cryptocurrency`) follow this schema — explicit property types, structured validators, and the required top-level fields — so you can read any of them as a working template. `telegram.json` leaves `optional` out on some properties; write it on every property of your own pack (see [Property types](#property-types)). New authoring MUST follow the schema below.
 
 ## Entity types
 
@@ -141,8 +141,13 @@ host de-duplicates by `"<category>.<name>"` + the identifying value, resolved in
 else `name`. Values are compared exactly unless the property sets `"case_insensitive": true`,
 which folds case for de-duplication only (display and storage keep what was written). Set it where
 case carries no meaning, such as handles, domains, hostnames, emails and hex digests. Never set it on
-Base58/EIP-55 crypto addresses, URL paths or case-sensitive file paths, where two different entities
-can differ by case alone. The type is resolved by its exact qualified key only — a node whose type
+Base58 crypto addresses, URL paths or case-sensitive file paths, where two different entities
+can differ by case alone. A property whose values mix the two kinds sets `"normalize"` instead, naming
+a rule that decides per value: a crypto address is Base58 on some chains and hex or bech32 on others,
+and an EIP-55 address's mixed case is only a checksum, so `"normalize": "crypto_address"` folds the
+hex and bech32 spellings and leaves Base58 exact, and `"hex"` does the same for a 64-hex hash with or
+without `0x` (see the [schema reference](../reference/typepack-schema.md#property-object)). Neither
+re-encodes a value, so whatever writes one must write it in a single canonical form. The type is resolved by its exact qualified key only — a node whose type
 is not defined by an installed pack keeps its raw type string, so a pack that moves a type to
 another category (e.g. `url` from `infrastructure` to `web`) never merges old nodes with the new
 type's creates. Creating a node with a type no installed pack defines is refused outright.
@@ -162,7 +167,7 @@ packs in that list alongside the plugin.)
 
 ## Validation checklist
 
-Nothing validates a Type Pack against this checklist at install time: the app loads any document with `content_type: vineyard:typepack`. Treat it as an authoring checklist, and validate your document against [`typepack.schema.json`](https://registry.vineyard.run/schemas/typepack.schema.json) in your own CI, as the reference pack repos do. Registry CI enforces only these: the pinned document's `identifier`, `content_type` and `version` match the entry; `type_count` matches; `icon`, when the entry carries one, equals the first type's lucide icon; every `identity_properties` key names an existing, scalar (not `array`/`object`/`json`) property; and no `category.name` is already defined by another published Type Pack.
+Nothing validates a Type Pack against this checklist at install time: the app loads any document with `content_type: vineyard:typepack`. Treat it as an authoring checklist, and validate your document against [`typepack.schema.json`](https://registry.vineyard.run/schemas/typepack.schema.json) in your own CI, as the reference pack repos do. Registry CI enforces only these: the pinned document's `identifier`, `content_type` and `version` match the entry; `type_count` matches; `icon`, when the entry carries one, equals the first type's lucide icon; every `identity_properties` key names an existing, scalar (not `array`/`object`/`json`) property; every `normalize` is `crypto_address` or `hex`, without `case_insensitive: true`, on a scalar property; and no `category.name` is already defined by another published Type Pack.
 
 - [ ] `content_type` is `vineyard:typepack`.
 - [ ] `identifier` is a valid `<your-namespace>.typepacks.*` reverse-DNS string.
@@ -173,6 +178,7 @@ Nothing validates a Type Pack against this checklist at install time: the app lo
 - [ ] Every property writes `optional` explicitly; each required one says `"optional": false`.
 - [ ] Every `validator.regex` that must match the whole value is anchored with `^…$`.
 - [ ] `enum` properties supply `enum`; `reference` properties supply `reference.target`; any `default` matches `type`.
+- [ ] A property that sets `normalize` does not also set `"case_insensitive": true`.
 
 ## Next / See also
 
@@ -181,4 +187,4 @@ Nothing validates a Type Pack against this checklist at install time: the app lo
 - [Plugin manifest](plugin-manifest.md) — how a plugin's `io` references Type Pack types.
 - [Security](security.md) — why secrets never become graph properties.
 - [Distribution](distribution.md) — how pinned pack documents are fetched and verified.
-- Catalog: the [reference packs](../guide/typepacks.md) — Infrastructure, Threat, Identity, Financial, Endpoint, Geospatial, Social Media, Telegram.
+- Catalog: the [reference packs](../guide/typepacks.md) — Infrastructure, Threat, Identity, Financial, Cryptocurrency, Endpoint, Geospatial, Social Media, Telegram.

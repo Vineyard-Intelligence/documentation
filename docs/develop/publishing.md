@@ -93,7 +93,7 @@ Every `io.consumes` / `io.produces` entry is resolved against the Type Packs **p
 
 A Type Pack the registry does not carry is **not** acceptable. Publish the Type Pack first, then the plugin that uses it.
 
-Type Packs get two checks of their own here. A `category.name` may be defined by only one published Type Pack. Every `identity_properties` key must name an existing property of that type that is not `array`, `object` or `json`.
+Type Packs get three checks of their own here. A `category.name` may be defined by only one published Type Pack. Every `identity_properties` key must name an existing property of that type that is not `array`, `object` or `json`. Every `normalize` must be `crypto_address` or `hex`, must not sit beside `"case_insensitive": true`, and must be on a property that is not `array`, `object` or `json`, because the app compares a rule it does not know exactly, without a word.
 
 ### What a human weighs
 
