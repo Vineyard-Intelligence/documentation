@@ -201,7 +201,7 @@ AI 에이전트 패널 머리글에는 **AI Agent**, 대화 제목, 사용 중�
 | --- | --- | --- |
 | **Apply the agent's changes automatically** | **Review everything (AI-assisted)** | **Review everything**(모든 변경이 승인을 기다리며, 모두 체크된 채 열림), **Review everything (AI-assisted)**(같은 검토이되, 에이전트가 권하지 않는 변경은 미리 체크 해제됨), **Apply automatically** 중 하나. |
 | **Stop and ask before anything is removed or overwritten** | 켜짐 | **Apply automatically**에서만: 무언가를 삭제하거나, 사용자가 쓴 링크 레이블을 바꾸거나, 이미 값이 있는 필드를 덮어쓰는 변경 세트를 검토를 위해 멈춰 둡니다. |
-| **Have an independent check test each inference, and collect what would settle it** | 꺼짐 | 두 번째 모델이 각 관계, 덮어쓰기, 삭제를 검증합니다. 검토 모드에서는 판정을 행에 표시하고, **Apply automatically**에서는 반박된 것을 보류합니다. |
+| **Have an independent check test each inference, and collect what would settle it** | 꺼짐 | 두 번째 모델이 각 관계, 덮어쓰기, 삭제를 검증합니다. 에이전트가 새로 그리거나 문구를 바꾼 링크는 그 링크에 함께 기록하는 필드까지 같이 검증합니다. 검토 모드에서는 판정을 행에 표시하고, **Apply automatically**에서는 반박된 것을 보류합니다. |
 | **Verification limit** | 50 (1–500) | 독립 검증이 한 변경 세트에서 검사하는 최대 항목 수. |
 
 ### 데스크탑 앱 {#desktop-app}

@@ -201,7 +201,7 @@ This group holds **Search provider** (default **Serper, through the Vineyard ser
 | --- | --- | --- |
 | **Apply the agent's changes automatically** | **Review everything (AI-assisted)** | **Review everything** (every change waits, all ticked), **Review everything (AI-assisted)** (the same review, with the changes the agent advises against already unticked) or **Apply automatically**. |
 | **Stop and ask before anything is removed or overwritten** | On | With **Apply automatically** only: holds a change set for your review when it deletes something, rewrites a link label you wrote or overwrites a field that already has a value. |
-| **Have an independent check test each inference, and collect what would settle it** | Off | A second model tests each relationship, overwrite and removal. Under review it puts its verdict on the row; under **Apply automatically** it holds back what it refutes. |
+| **Have an independent check test each inference, and collect what would settle it** | Off | A second model tests each relationship, overwrite and removal. A link the agent draws or rewords is tested together with the fields it records on the link. Under review it puts its verdict on the row; under **Apply automatically** it holds back what it refutes. |
 | **Verification limit** | 50 (1–500) | The most items the independent check examines in one change set. |
 
 ### Desktop app
