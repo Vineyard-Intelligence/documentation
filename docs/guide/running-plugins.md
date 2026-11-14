@@ -124,6 +124,26 @@ when you reopen the review, even after opening another project and coming back. 
 dialog from anywhere in it, except in the **Filter by keyword** field while it holds text, where it
 clears the filter first.
 
+A run waiting for review is also kept on this device, under your account, so a reload, a restart, an
+app update or a crash does not lose it. The next time you open the project it is waiting for review
+again in Tasks, with your choices and your **Why reject?** text, even if the dialog was open when the
+page went away. A plugin run or AI turn that a reload or a crash cut short comes back with what it had
+staged by then. The Tasks row for what it staged is `cancelled`, as after **Stop**, and says *Cut short
+by a reload*, and the review says *Cut short by a reload — this is what it had staged by then, not everything it would
+have found.* A run whose apply was under way when the page went away comes back too, but the server
+may already have written some of its rows: its review says *An apply of this set was under way when
+the page went away — some of these rows may already be in the graph*, and a plugin run's Tasks row
+says so as well. Check the graph before you apply or discard it. A run is kept for 7 days after its last change, and longer while a tab has it open, and
+then deleted. The footer of the dialog says where the review is kept: *Kept on this device only — a reload brings
+this review back, for 7 days after its last change*, or *Held in this tab only — a reload loses this
+review* when no account is signed in or this device's storage refuses it. Nothing of a run waiting for
+review is sent to the Vineyard server. A run waiting in a tab that is still open stays with that tab:
+another tab shows it only once that tab has been closed, the next time it opens the project.
+
+A change from the AI agent that edits a node's fields writes only the fields the agent changed. A
+field that someone else changed after the agent read the node, in this tab or another, keeps its new
+value, and the properties on the right show the node as it will be after the apply.
+
 If some changes cannot be written, a **Partly applied** toast says how many. Those stay staged with
 the reason on each row and the run is still waiting for review: reopen it to try them again. Once a
 run is applied or discarded, clicking its row opens a read-only record of what was applied or
@@ -148,8 +168,8 @@ if it has not finished within about 3 seconds, it is force-stopped. Any changes 
 are kept for you to review, not thrown away. A run that exceeds its time budget (10 minutes by
 default, at most 60) is stopped and marked failed. A run that fails discards anything it had staged:
 that includes a run stopped for exceeding its time budget, a sandbox that did not start, and a
-plugin error. Only **Stop** keeps partial results. See [Tasks & runs](tasks.md) for states and
-controls.
+plugin error. Only **Stop**, or a reload that cuts the run short, keeps partial results. See
+[Tasks & runs](tasks.md) for states and controls.
 
 Each request a plugin makes also has its own deadline, by default a minute at most unless the
 plugin sets another, so a host that does not answer fails that request instead of holding the run
