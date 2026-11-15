@@ -296,6 +296,22 @@ XRP Ledger, TON입니다. Polygon, Arbitrum, Base의 이력은 키가 필요한 
 Polygon PoS, Ethereum Classic에서 이 유형과 링크를 채웁니다.
 [Blockscout PRO로 자금 추적하기](running-plugins.md#blockscout-pro)를 보세요.
 
+**Helius로 보는 Solana.** **Helius** 플러그인팩에는 Helius API 키가 필요하고, 무료 플랜으로 이력과 첫
+자금 공급자를 볼 수 있습니다. Solana 지갑은 SPL 토큰을 자기가 소유한 토큰 계정에 두므로, 일반 Solana
+RPC의 지갑 이력에는 그 지갑으로 들어온 USDC 송금이 빠집니다. 이 팩의 이력은 그 토큰 계정의 잔액을 바꾼
+거래까지 읽습니다. `summary_helius`가 담긴 `sent to` 링크를 만들고, 새로 만드는 링크에는 `recent`도
+넣습니다. 프로젝트에 이미 있는 링크는 원래의 `recent` 목록을 그대로 둡니다. 지갑이 SOL을 자기 wSOL
+계정으로 감싼(wrap) 것은 지불로 세지 않습니다. 주소에는 `balance`, `last_seen`, `history_examined`,
+`history_complete`를 쓰고, `first_seen`은 이력을 끝까지 읽었을 때만 씁니다. 첫 자금 공급자 플러그인은
+`first_funder`, `first_funding_tx`, `activated_at`을 쓰고, 공급자에서 주소로 가는 `sent to` 링크에
+`first_funding`을 더합니다. 그 키의 `source`가 찾은 방법입니다. `helius funded-by`는 Helius의 자체
+조회로 유료 플랜(Developer 이상)이 필요합니다. `helius earliest SOL deposit`은 주소의 잔액이 처음 0에서
+늘어난 거래에 있는 SOL 송금으로, funded-by도 같은 정의를 씁니다. 무료 키로는 이 방법을 쓰고, funded-by에
+기록이 없는 주소도 이 방법으로 찾습니다. 송금이 아니라 프로그램이 처음 SOL을 넣어 준 주소에는 공급자를
+쓰지 않습니다.
+Helius의 신원 라벨(`public_label`, `helius_category`, 거래소·서비스·회사로 가는 `attributed to`)도
+유료 플랜이 필요합니다. 2022년 12월 이전의 토큰 전송은 토큰 계정으로 찾지 못합니다.
+
 여러 홉에 걸쳐 자금을 따라가려면 **Crypto fund-flow tracing** [Skill Pack](skillpacks.md)이
 에이전트에게 이 플러그인들을 쓰는 법을 알려 줍니다. 홉 전에 주소마다 네트워크를 정하고, 자산·시각·
 금액으로 전송을 따라가고, 거래소와 서비스에서 멈추고, 자금이 닿은 거래소와 스테이블코인 발행사에

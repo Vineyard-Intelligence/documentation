@@ -306,6 +306,23 @@ The **Blockscout PRO** plugin pack fills these types and links on Base, OP Mainn
 Arbitrum One, Polygon PoS and Ethereum Classic with your own free key; see
 [Following funds with Blockscout PRO](running-plugins.md#blockscout-pro).
 
+**Solana through Helius.** The **Helius** plugin pack needs a Helius API key, and its free plan
+covers history and first funder. A Solana wallet holds SPL tokens in token accounts it owns, so a
+plain Solana RPC history leaves out a USDC payment to it; this pack's history includes the
+transactions that change those token accounts. It writes `sent to` links with `summary_helius`, and
+`recent` on the links it creates; a link already in the project keeps its own `recent` list. SOL a
+wallet wraps into its own wSOL account is not counted as a payment. On the address it writes
+`balance`, `last_seen`, `history_examined` and `history_complete`, with `first_seen` only when the
+whole history was read. Its first-funder plugin writes `first_funder`, `first_funding_tx` and
+`activated_at`, and adds `first_funding` to the funder's `sent to` link. That key's `source` says
+how the funder was found: `helius funded-by` is Helius's own lookup, which needs a paid Helius plan
+(Developer or above); `helius earliest SOL deposit` is the SOL transfer in the transaction where the
+address's balance first rose from zero, the definition funded-by itself uses. A free key gets that
+method, and so does an address funded-by has no record of. An address first credited by a program
+rather than a transfer gets no funder. Helius's identity labels (`public_label`, `helius_category`,
+and `attributed to` an exchange, service or firm) need a paid plan too. Token transfers before
+December 2022 are not found through token accounts.
+
 To follow funds across several hops, the **Crypto fund-flow tracing** [Skill Pack](skillpacks.md)
 tells the agent how to use these plugins: settle each address's network before any hop, follow
 transfers by asset, time and amount, stop at exchanges and services, and draft the freeze and records
