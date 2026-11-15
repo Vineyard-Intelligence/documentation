@@ -292,6 +292,13 @@ undecided. The pack covers Bitcoin, Litecoin, Bitcoin Cash, Dogecoin, Dash, Zcas
 Smart Chain (the last 30 days), OP Mainnet, Avalanche C-Chain, Ethereum Classic, TRON, Solana, the
 XRP Ledger and TON. History on Polygon, Arbitrum and Base needs a keyed pack.
 
+To follow funds across several hops, the **Crypto fund-flow tracing** [Skill Pack](skillpacks.md)
+tells the agent how to use these plugins: settle each address's network before any hop, follow
+transfers by asset, time and amount, stop at exchanges and services, and draft the freeze and records
+requests for the exchanges and stablecoin issuers the funds reached. Transfers stay the plugins'
+links; an owner the agent infers from a label or a deposit pattern goes in its report as a candidate,
+not on the graph.
+
 !!! tip "Mixing Type Packs"
     Install as many Type Packs as you need — they share one qualified-type namespace and
     interlink by design. You might link a `threat.malware` to the `infrastructure.ip_address`

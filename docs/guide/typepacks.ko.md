@@ -282,6 +282,12 @@ Defend는 연결이 열릴 때와 닫힐 때 한 번씩 기록하지만 이벤�
 BNB Smart Chain(최근 30일), OP Mainnet, Avalanche C-Chain, Ethereum Classic, TRON, Solana,
 XRP Ledger, TON입니다. Polygon, Arbitrum, Base의 이력은 키가 필요한 팩이 다룹니다.
 
+여러 홉에 걸쳐 자금을 따라가려면 **Crypto fund-flow tracing** [Skill Pack](skillpacks.md)이
+에이전트에게 이 플러그인들을 쓰는 법을 알려 줍니다. 홉 전에 주소마다 네트워크를 정하고, 자산·시각·
+금액으로 전송을 따라가고, 거래소와 서비스에서 멈추고, 자금이 닿은 거래소와 스테이블코인 발행사에
+보낼 동결·자료 요청을 정리합니다. 전송은 플러그인이 그은 엣지로 남고, 에이전트가 라벨이나 입금
+패턴으로 추정한 주인은 그래프가 아니라 보고서에 후보로 씁니다.
+
 !!! tip "Type Pack 혼합하기"
     필요한 만큼 Type Pack을 설치하세요 — 하나의 정규화된 유형 네임스페이스를
     공유하며 설계상 상호 연결됩니다. `threat.malware`를 그것이 비콘하는
