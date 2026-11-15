@@ -5,10 +5,12 @@ plugins on it, review what they found. Each of those steps has a key, so you can
 the keyboard while you work.
 
 Press **?** or **⌘/** (**Ctrl+/** on Windows and Linux) anywhere you are not typing in a field, or
-choose **Keyboard shortcuts** at the foot of the sidebar, to see Vineyard's shortcuts. The list shows
-the keys of the computer you are on: ⌘ on a Mac, Ctrl on Windows and Linux. Type in its search field
-to narrow it, by what you want to do (`connect`), by where (`review`) or by a key (`esc`, `cmd`,
-`shift`). **Esc** empties the search field first, and closes the list once the field is empty.
+choose **Keyboard shortcuts** at the foot of the sidebar, to see Vineyard's shortcuts. While another
+dialog such as **Settings** is open the keys do nothing until you close it, and opening Settings closes
+the list. The list shows the keys of the computer you are on: ⌘ on a Mac, Ctrl on Windows and Linux.
+Type in its search field to narrow it, by what you want to do (`connect`), by where (`review`) or by
+a key (`esc`, `cmd`, `shift`). **Esc** empties the search field first, and closes the list once the
+field is empty.
 
 The list has the keys Vineyard gives you, on the canvas, in its panels and dialogs, and in its
 fields. It leaves out what every app shares: Tab between controls, Enter in a one-field form such as
@@ -37,8 +39,9 @@ layout again is what the key does.
 
 - A key on its own, such as **?**, works only when you are not typing in a field; in a field it types
   the character. The AI agent's message box locks while the agent works, so the keys you go on typing
-  right after sending a question are still typing: they run no shortcut until you pause for a moment
-  or click somewhere. **Esc** and the shortcuts with ⌘ or Ctrl still work.
+  after sending a question are still typing: while the box stays locked they run no shortcut, however
+  long you wait, until you click somewhere or move with **Tab**. **Esc** and the shortcuts with ⌘ or
+  Ctrl still work.
 - When the agent is done, the caret goes back into its message box, unless you have clicked
   somewhere else in the meantime.
 - In a field, besides the field's own keys, only **Esc**, **⌘G** (**Ctrl+G**) in the search field,

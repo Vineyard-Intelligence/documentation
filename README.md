@@ -34,10 +34,12 @@ the frontend repository and run `npm run docs:shortcuts` there; do not edit the 
 With this repository checked out beside the frontend, the frontend's build (`check:shortcut-help`)
 fails while the list here differs, while a guide page that the frontend's
 `scripts/shortcut-sources.mts` says describes a key no longer names it, and while a guide page names a
-⌘ or Ctrl key the app neither binds nor refuses. A key the browser, the OS or the desktop app's menu
-keeps (⌘Q, Ctrl+Shift+R) and the text-editing keys (⌘C, Ctrl+Z) may be named freely. This
-repository's own deploy does not run that check, so a page edited here is checked by the next
-frontend build. A checkout from before the shortcut pages existed is skipped with a note.
+⌘ or Ctrl key the app neither binds nor refuses. A key the keymap refuses because the browser, the OS
+or the desktop app's menu keeps it (⌘Q, Ctrl+Shift+R, ⌥⌘,) and the text-editing keys (⌘C, Ctrl+Z) may
+be named freely; a desktop menu key the keymap does not refuse yet fails, so add it to the keymap's
+forbidden keys first. This repository's own deploy does not run that check, so a page edited here is
+checked by the next frontend build. A checkout from before the shortcut pages existed is skipped with
+a note.
 
 ## Deployment
 
