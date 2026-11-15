@@ -267,9 +267,15 @@ Defend는 연결이 열릴 때와 닫힐 때 한 번씩 기록하지만 이벤�
 | 계약 주소 → 토큰 | `token contract` | — |
 | 주소 → 거래소, 서비스, 조직 | `attributed to` | 출처별 `attribution_<출처>`(`label`, `label_kind`: verified, prediction, public_tag, `as_of`) |
 | `evm`·`unknown` 주소 → 주소 | `same address on` | 네트워크를 정한 근거. 계약이면 같은 소유자라는 뜻이 아님 |
-| 사람·조직 → 주소 | `listed address` | `list`(예: OFAC SDN), `uid`, `program`, `as_of` |
+| 사람·조직 → 주소 | `listed address` | `list`(예: OFAC SDN), `uid`, `program`(그 항목의 프로그램), `listed_as`(목록이 그 주소에 붙인 코드. 예: USDT), `as_of`. 목록에 적힌 값이 다르면 그 값 `listed` |
 | URL·도메인 → 주소 | `accepts payment to` | 결제 주소를 찾은 곳 |
 | 옛 `financial.crypto_address`, 결제용 `web.tracking_id` → 주소 | `same as` | 같다고 본 근거 |
+
+`sanctioned`, `sanctions_programs`, `sanctions_as_of`는 `sanctions_as_of` 날짜의 목록에 대한 스크리닝
+결과입니다. `false`는 그 목록에 없다는 뜻이지, 문제가 없다는 뜻이 아닙니다. **Sanctions Screening**
+플러그인 팩이 OFAC SDN 목록으로 이 값을 쓰고, 어느 목록인지 `sanctions_list`에 적고,
+`listed address` 링크를 그립니다. 다른 목록이나 분석가가 이미 `sanctioned`로 표시한 주소는 건드리지
+않습니다. [제재 목록 스크리닝](running-plugins.md#sanctions)을 참조하세요.
 
 **Chain Explorer** 플러그인팩은 계정이나 키 없이 이 유형들을 채웁니다. 주소의 거래 이력과
 상대 주소, 거래의 입력과 출력, TRON과 XRP Ledger의 첫 자금 공급자, 계약 배포자와 토큰, 탐색기

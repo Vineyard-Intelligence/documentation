@@ -276,9 +276,15 @@ than relabelling it, and figures from different sources go under keys of their o
 | contract address → token | `token contract` | — |
 | address → exchange, service or organization | `attributed to` | per source `attribution_<source>` (`label`, `label_kind`: verified, prediction or public_tag, `as_of`) |
 | `evm` or `unknown` address → address | `same address on` | how the network was decided. For a contract it does not mean the same owner |
-| person or organization → address | `listed address` | `list` (e.g. OFAC SDN), `uid`, `program`, `as_of` |
+| person or organization → address | `listed address` | `list` (e.g. OFAC SDN), `uid`, `program` (the entry's programmes), `listed_as` (the codes the list gives the address, e.g. USDT), `as_of`; `listed`, the value as the list wrote it, when it differs |
 | URL or domain → address | `accepts payment to` | where the payment address was found |
 | legacy `financial.crypto_address`, or a payment `web.tracking_id` → address | `same as` | why they are the same |
+
+`sanctioned`, `sanctions_programs` and `sanctions_as_of` are a screening's answer for the list dated
+`sanctions_as_of`: `false` means not on that list, not cleared. The **Sanctions Screening** plugin
+pack writes them from OFAC's SDN list, with `sanctions_list` naming the list, and draws the
+`listed address` links. It leaves an address alone that is already marked `sanctioned` from another
+list or by hand; see [Screening against sanctions lists](running-plugins.md#sanctions).
 
 The **Chain Explorer** plugin pack fills these types without an account or a key. It reads an
 address's history and counterparties, a transaction's inputs and outputs, TRON and XRP Ledger first

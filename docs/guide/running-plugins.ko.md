@@ -245,6 +245,55 @@ Import** 플러그인 팩으로 가져옵니다.
 가져온 내용은 다른 노드처럼 프로젝트에 저장되므로, 공유 프로젝트에서는 TLP와 관계없이 협업자가
 봅니다.
 
+## 제재 목록 스크리닝 {#sanctions}
+
+[마켓플레이스](../marketplace.md)의 **Sanctions Screening** 플러그인 팩은 암호화폐 주소와 사람,
+조직을 OFAC의 SDN(Specially Designated Nationals) 목록과 대조합니다. 계정이나 키가 필요 없고,
+브라우저와 데스크탑 앱에서 모두 동작합니다.
+
+1. 프로젝트에 팩을 설치합니다. 이 팩은 Cryptocurrency와 Identity Type Pack의 유형을 씁니다.
+2. 노드를 선택하고 **Run plugins**를 연 뒤, Crypto Address 노드에는 **OFAC Address Screening**을,
+   Person과 Organization 노드에는 **OFAC Name Screening**을 체크합니다.
+3. 평소처럼 실행을 검토합니다.
+
+그래프에는 다음과 같이 들어갑니다.
+
+- **주소**는 그 주소의 네트워크에서 정확히 일치하는지 봅니다. 스크리닝한 주소마다 `sanctioned`
+  (`true` 또는 `false`), `sanctions_list`(`OFAC SDN`), `sanctions_programs`, 목록의 날짜인
+  `sanctions_as_of`가 들어갑니다. 목록에 오른 주소에는 목록이 지정한 사람이나 조직에서
+  `listed address` 링크가 SDN `uid`, 프로그램과 함께 그려집니다.
+- 분석가나 다른 출처가 이미 `sanctioned`로 표시한 주소는, `sanctions_list`가 없거나 다른 목록이면
+  값을 그대로 둡니다. OFAC 목록에 없다고 해서 그 표시가 풀리지는 않습니다. 요약에 그런 주소의 수가
+  나오고, OFAC 목록에도 있으면 `listed address` 링크는 그대로 그려집니다.
+- 같은 문자열이라도 네트워크가 다르면 다른 계정입니다. 요약에 그 사실이 나오지만 일치로 세지
+  않습니다. 목록이 체인을 밝히지 않고 USDT나 USDC로 올린 `0x…` 값은 모든 EVM 네트워크의 그 주소와
+  일치로 봅니다.
+- 네트워크가 `evm`이나 `unknown`인 주소, Financial 팩의 옛 암호화폐 주소는 목록이 그 문자열을 올린
+  네트워크마다 노드가 생기고, 원래 노드에서 `same address on`(옛 유형에서는 `same as`)으로
+  연결됩니다. 원래 노드의 네트워크는 그대로 둡니다. 옛 주소의 currency가 체인 하나를 가리키면
+  (`btc`, `ltc`, `xmr`, `trx`, `sol`) 그 체인에서만 대조합니다.
+- **이름**은 유사도로 대조합니다. 가까운 항목마다 `possible sanctions match` 링크가 생기고, 링크에는
+  `score`, 서로 맞은 두 이름, 생년월일이 있는 사람이면 `date_of_birth_check`가 담깁니다. 몇 개까지
+  연결할지는 **Min score**(기본 0.85)와 **Max candidates**(기본 3)로 정합니다. 대상 노드에는 제재
+  대상이라는 표시를 하지 않습니다. 후보는 비슷한 이름일 뿐이니, 같은 당사자로 보기 전에 당사자
+  노드의 생년월일, 국적, 목록 항목을 비교하세요. 라틴 문자가 아닌 이름은 아무것과도 맞지 않으므로
+  로마자 별칭으로 스크리닝하세요.
+- 목록의 당사자는 SDN 항목마다 노드 하나이고, `KIM, Yong Chol (OFAC SDN 12211)`처럼 uid를 붙여
+  이름을 짓습니다. 목록 안에서도 같은 이름을 가진 항목이 여럿 있기 때문입니다.
+- 목록이 바뀌지 않았으면 다시 실행해도 스테이징할 것이 없습니다. 새 목록에서 빠진 주소에는
+  `sanctioned = false`가 쓰이고, 이전 지정의 기록으로 `listed address` 링크는 남습니다. 프로젝트에
+  이미 있는 링크는 지금의 키를 그대로 가집니다. 이 버전의 Vineyard에서는 플러그인이 링크의 데이터를
+  읽을 수 없어서, 팩은 기존 링크를 건드리지 않고 그 수를 요약에 적습니다.
+
+목록의 출처: OFAC 원본 파일은 브라우저에서 읽을 수 없어서, 이 팩은 공개 사본인
+[sanctions-mirror](https://github.com/Vineyard-Intelligence/sanctions-mirror)를 읽습니다. 이 저장소는
+6시간마다 목록을 다시 만들고 OFAC의 digest와 대조합니다. 한 번의 실행은 주소 목록 전체, 또는 목록에
+오른 개인이나 단체 전체를 내려받아 이 기기에서 대조합니다. 그래서 GitHub는 스크리닝이 있었다는
+사실만 알고 무엇을 대조했는지는 모릅니다. 미러가 3일 동안 OFAC를 확인하지 않았으면 요약이
+경고합니다. 일치 결과로 조치하기 전에 OFAC의
+[Sanctions List Search](https://sanctionssearch.ofac.treas.gov/)에서 확인하세요. 다른 목록(UN, EU,
+영국, 한국)은 대조하지 않습니다.
+
 ## Chaos 레퍼런스 팩
 
 Chaos 팩은 실행 루프를 배우기 위해 그래프를 재구성하는 여섯 개의 작은 플러그인을 담은

@@ -253,6 +253,55 @@ What lands on the graph:
 What you import is stored in the project like any other node, so in a shared project its
 collaborators see it, whatever its TLP.
 
+## Screening against sanctions lists {#sanctions}
+
+The **Sanctions Screening** plugin pack from the [Marketplace](../marketplace.md) checks crypto
+addresses, people and organizations against OFAC's Specially Designated Nationals list (SDN). It
+needs no account or key, and works in the browser and the desktop app.
+
+1. Install the pack in the project. It writes types from the Cryptocurrency and Identity type packs.
+2. Select the nodes, open **Run plugins** and tick **OFAC Address Screening** for Crypto Address
+   nodes or **OFAC Name Screening** for Person and Organization nodes.
+3. Review the run as usual.
+
+What lands on the graph:
+
+- **Addresses** are matched exactly, on their own network. Each screened address gets `sanctioned`
+  (`true` or `false`), `sanctions_list` (`OFAC SDN`), `sanctions_programs` and `sanctions_as_of`,
+  the date of the list. A listed address is linked from the person or organization the list names
+  by `listed address`, with the SDN `uid` and programmes.
+- An address you, or another source, already marked `sanctioned` with no `sanctions_list` or
+  another list's keeps its fields: OFAC not listing it does not clear it. The summary counts such
+  addresses, and an OFAC listing of one is still drawn as its `listed address` link.
+- The same string on another network is another account: the summary names it, and it is not a
+  hit. A `0x…` value the list gives for USDT or USDC without naming a chain is a hit on that address
+  on every EVM network.
+- An address whose network is `evm` or `unknown`, or a legacy Financial crypto address, gets a node
+  on each network the list names it on, linked from the original by `same address on` (from the
+  legacy type, `same as`). The original keeps its network. A legacy address whose currency names
+  one chain (`btc`, `ltc`, `xmr`, `trx`, `sol`) is screened on that chain only.
+- **Names** are matched by similarity. Each close entry is linked as a `possible sanctions match`
+  with its `score`, the two names that met and, for a person with a date of birth,
+  `date_of_birth_check`. **Min score** (0.85 by default) and **Max candidates** (3) set how many.
+  The subject is not marked sanctioned: a possible match is a similar name, so compare the date of
+  birth, nationality and listing on the party node before treating it as the same party. A name in
+  a script other than Latin meets nothing; screen a romanized alias.
+- A listed party is one node per SDN entry, labelled with its uid, such as
+  `KIM, Yong Chol (OFAC SDN 12211)`, because the list itself gives one name to several entries.
+- A re-run on an unchanged list stages nothing. On a newer list, an address that is no longer listed
+  is written `sanctioned = false`, and its `listed address` link stays as the record of the earlier
+  listing. Links already in the project keep the keys they have: plugins cannot read a link's data
+  in this version of Vineyard, so the pack leaves existing links as they are, and the summary says
+  how many.
+
+Where the list comes from: OFAC's own file cannot be read from a browser, so the pack reads a public
+copy, [sanctions-mirror](https://github.com/Vineyard-Intelligence/sanctions-mirror), which rebuilds
+it every six hours and checks it against OFAC's digest. A run downloads the whole address list, or
+every listed individual or entity, and matches on your device: GitHub sees that a screening
+happened, not what was screened. The summary warns when the mirror has not checked OFAC for three
+days. Confirm a hit on OFAC's [Sanctions List Search](https://sanctionssearch.ofac.treas.gov/)
+before acting on it. Other lists (UN, EU, UK, Korea) are not checked.
+
 ## The Chaos reference pack
 
 The Chaos pack is a single bundle (`run.vineyard.pluginpacks.chaos`) of six small plugins that
