@@ -34,7 +34,7 @@
 
 ## 기타 툴바 버튼
 
-툴바는 보기 컨트롤 아래에 **Edit** 메뉴의 선택 작업(Select all, connected neighbors, outbound, inbound (1 hop), Invert, Select isolated, Clear)을 반복합니다. 마지막에는 **Run plugins**와 **Ask the AI agent**가 있습니다. **Run plugins**의 툴팁은 범위를 알려 줍니다 — "Run plugins on N selected nodes", 아무것도 선택하지 않았으면 whole-graph 플러그인을 뜻하는 "nothing selected". 노드가 선택된 상태에서 **Ask the AI agent**를 누르면 그 노드에 대한 질문이 미리 채워진 채로 AI 에이전트 패널이 열립니다.
+툴바는 보기 컨트롤 아래에 **Edit** 메뉴의 선택 작업(Select all, connected neighbors, outbound, inbound (1 hop), Invert, Select isolated, Clear)을 반복합니다. 마지막에는 **Run plugins**와 **Ask the AI agent**가 있습니다. **Run plugins**의 툴팁은 범위를 알려 줍니다 — "Run plugins on N selected nodes", 아무것도 선택하지 않았으면 whole-graph 플러그인을 뜻하는 "nothing selected". 노드가 선택된 상태에서 **Ask the AI agent**를 누르면 그 노드에 대한 질문이 미리 채워진 채로 AI 에이전트 패널이 열립니다. 키로도 누를 수 있는 버튼은 툴팁 끝에 그 키를 적습니다. 예를 들면 *Fit view · F*입니다([단축키](shortcuts.md#shown-keys) 참조).
 
 ## 상단 메뉴 바
 
@@ -87,6 +87,8 @@
 - **엣지** — **Reverse direction**(방향 반전), **Delete**.
 - **선택** — 무언가 선택된 상태에서 빈 캔버스를 우클릭하거나, 여러 항목 선택에 포함된 노드나 엣지를 우클릭하면 열립니다. 머리글에 개수가 표시됩니다(*Selected: N nodes, M edges*). **Run plugins…**, **Connect to…**, **Show in node table**(노드가 선택된 경우), **Merge nodes…**(노드가 두 개 이상 선택된 경우, [노드 병합](#merging-nodes) 참조), **Delete (N)**, **Select all**, **Fit view**.
 - **빈 캔버스** (선택 없음, 머리글 *Nothing selected — whole project*) — whole-graph 플러그인에 대한 **Run plugins…**, **Select all**, **Fit view**.
+
+키로도 할 수 있는 항목은 오른쪽에 그 키를 보여 줍니다. Run plugins…는 **R**, Connect to…는 **C**와 **⌘-클릭**(Mac) 또는 **Ctrl-클릭**, Delete는 **⌫**(Mac) 또는 **Delete**입니다. 엣지 메뉴에는 키가 없습니다. 엣지를 우클릭해도 엣지가 선택되지 않는데, 키는 선택에 동작하기 때문입니다.
 
 **Esc**는 메뉴만 닫고, 그 아래에 있는 것은 닫지 않습니다. Esc는 한 번 누를 때마다 하나씩, 앞에 있는 것부터 치웁니다. 대상을 기다리는 **Connect to…**, 열린 메뉴나 툴바의 **Filter** 패널, 그다음 앞에 그려진 패널, 마지막으로 선택 순서입니다. Run plugins 패널이 Skill pack 패널 위에 열려 있으면 첫 Esc는 Run plugins를, 다음 Esc는 Skill pack 패널을 닫고, 더 닫을 것이 없으면 Esc는 **Clear selection**처럼 선택을 해제합니다. 패널 안에서 누르거나 패널을 클릭한 직후에 누른 Esc는 그 위에 그려진 패널이 아니라 그 패널로 갑니다. 입력란에서 누르거나 Properties 패널을 클릭한 뒤에 누른 Esc는 선택을 그대로 두고, 한글 음절을 끝내는 Esc는 음절만 끝냅니다. Esc를 누를 때 Shift 같은 수정키를 함께 누르고 있어도 똑같이 동작합니다.
 

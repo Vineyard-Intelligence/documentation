@@ -4,6 +4,15 @@ A pivot is the same few steps again and again: select a node, widen the selectio
 
 The keys are written as on a Mac. On Windows and Linux, press **Ctrl** where this page shows **Cmd** (⌘).
 
+## Where the keys are shown {#shown-keys}
+
+You do not have to learn the keys from this page. A menu item that a key also does shows the key on its right, and a toolbar button names its key at the end of its tooltip, for example *Fit view · F*. The keys are written for your computer: **⌘A** on a Mac, **Ctrl+A** on Windows and Linux. In the **Layout** menus, ++shift+l++ is shown next to the layout in use, because picking it again is what ++shift+l++ does.
+
+- In the right-click menu, **Connect to…** shows its key and the click that links in one step (**⌘-click**, or **Ctrl-click** on Windows and Linux).
+- The edge menu shows no keys: a right-click on an edge does not select it, and the keys act on the selection.
+- While an AI agent conversation is open, **Ask the AI agent** on the toolbar and in the **Run** menu shows no key. Clicking it starts a new conversation, while ++a++ and ++g++ then ++a++ go into the open conversation's message box.
+- With the single keys turned off (see below), the menus and tooltips stop showing them, and show only the keys that still work.
+
 ## Where the keys work
 
 - **Not while you type.** In a text field, a single key types itself. Besides the field's own keys, only **Esc**, ++cmd+g++ in the search field, ++arrow-up++ in the AI agent's message box and ++cmd+enter++ in the Review dialog work there.
@@ -45,7 +54,7 @@ Press ++g++, then the second key within a second.
 | ++0++ | Zoom to 100%. |
 | Arrow keys | Move the view. With ++shift++, a longer step. |
 | ++l++ | Open the **Layout** menu; ++arrow-down++ reaches the first layout and ++enter++ picks one. |
-| ++shift+l++ | Lay the graph out again with the current layout, letting go of where nodes were left. |
+| ++shift+l++ | Lay the graph out again with the current layout, letting go of where nodes were left. The **Layout** menus show it next to the layout in use. |
 
 ## Selection
 
@@ -75,6 +84,7 @@ Press ++g++, then the second key within a second.
 | --- | --- |
 | ++enter++ / ++shift+enter++ | Send / new line. |
 | ++arrow-up++ | In an empty message box, bring back your last question to edit and send again. |
+| ++cmd+enter++ / ++esc++ | While you edit a note under **Setup → Project memory**: save it / cancel the edit. |
 | ++esc++ | Close the panel. A running turn keeps going (see [Tasks & runs](tasks.md#closing-and-deleting-a-conversation)). |
 
 ## Review dialog

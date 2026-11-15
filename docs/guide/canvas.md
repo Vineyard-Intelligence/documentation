@@ -34,7 +34,7 @@ Toolbar toggle buttons appear highlighted when on; menu items are checkmarked wh
 
 ## Other toolbar buttons
 
-Below the view controls, the toolbar repeats the **Edit** menu's selection actions (Select all, connected neighbors, outbound, inbound (1 hop), Invert, Select isolated, Clear). It ends with **Run plugins**, whose tooltip names the scope — "Run plugins on N selected nodes", or "nothing selected" for the whole-graph plugins — and **Ask the AI agent**; with nodes selected, the AI agent panel opens pre-filled with a question about them.
+Below the view controls, the toolbar repeats the **Edit** menu's selection actions (Select all, connected neighbors, outbound, inbound (1 hop), Invert, Select isolated, Clear). It ends with **Run plugins**, whose tooltip names the scope — "Run plugins on N selected nodes", or "nothing selected" for the whole-graph plugins — and **Ask the AI agent**; with nodes selected, the AI agent panel opens pre-filled with a question about them. A button that a key also presses ends its tooltip with the key, for example *Fit view · F* (see [Keyboard shortcuts](shortcuts.md#shown-keys)).
 
 ## Top menu bar
 
@@ -87,6 +87,8 @@ The three 1-hop actions add to the selection, so pressing one again walks one mo
 - **Edge** — Reverse direction, Delete.
 - **Selection** — right-click empty canvas with anything selected, or a node or edge inside a multi-item selection; the header shows the count (*Selected: N nodes, M edges*). Run plugins…, Connect to… and Show in node table (when nodes are selected), Merge nodes… (when two or more nodes are selected, see [Merging nodes](#merging-nodes)), Delete (N), Select all, Fit view.
 - **Empty canvas** (nothing selected, headed *Nothing selected — whole project*) — Run plugins… on the whole-graph plugins, Select all, Fit view.
+
+An item that a key also does shows the key on its right: **R** for Run plugins…, **C** and **⌘-click** (Mac) or **Ctrl-click** for Connect to…, **⌫** (Mac) or **Delete** for Delete. The edge menu shows none, since a right-click on an edge does not select it and the keys act on the selection.
 
 **Esc** closes the menu and nothing under it. Each press of Esc puts away one thing, the front one first: a **Connect to…** waiting for its target, an open menu or the toolbar's **Filter** panel, then the panel drawn in front, and last the selection. With the Run plugins panel open over a Skill pack panel, the first Esc closes Run plugins, the next one closes the Skill pack panel, and once nothing is left open Esc clears the selection, like **Clear selection**. An Esc pressed inside a panel, or right after you clicked in it, goes to that panel rather than to one drawn over it. An Esc typed in a field, or pressed after a click in the Properties panel, leaves the selection alone, and the Esc that finishes a Korean syllable only finishes the syllable. Holding Shift (or another modifier) while you press Esc makes no difference.
 
