@@ -152,8 +152,8 @@ names the DNS, IP and URL rules: `"hostname"` for a domain, host or record name 
 internationalised spelling fold into the plain punycode name), `"ip"` and `"cidr"` for addresses and
 ranges, and `"url"` for a URL, whose path keeps its case. Set `"case_insensitive": true` beside
 `hostname`, `ip` and `cidr`, so an app that predates the rule still folds case, and never beside the
-other three. The agent's `common_ground` applies a `normalize` rule by property name across every
-installed type, so declare it only on a name that means the same thing in every pack that uses it:
+other three. The agent's `common_ground` and `aggregate_values` apply a `normalize` rule by property name across
+every installed type, so declare it only on a name that means the same thing in every pack that uses it:
 another type's property of that name follows the rule too, and a name two packs give different rules
 is compared exactly as written. A property marked `"duplicate_key": true` holds a canonical form filled after the node
 was made, such as a phone number's `e164`: two nodes sharing it are reported as duplicates, and

@@ -346,8 +346,9 @@ no time zone, an EXIF time (`2021:12:14 11:58:18`) and an epoch number are shown
 being read as a moment in time.
 
 Which kind a value is, is read from its declared type, the property name and the value itself, so
-it can be wrong for an unusual value; a wrong reading changes only how the value is shown. The list
-of other nodes appears in the node panel, not in the Review dialog.
+it can be wrong for an unusual value; a wrong reading changes only how the value is shown and, for a
+list written into one text field, how the agent's `aggregate_values` counts its entries. The list of
+other nodes appears in the node panel, not in the Review dialog.
 
 ### Editing a value
 
