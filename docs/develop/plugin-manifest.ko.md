@@ -25,7 +25,7 @@ AI 에이전트는 `description`을 보고 플러그인을 고르므로, 플러�
     }
     ```
 
-    `sandbox-js`는 작성자의 번들 JavaScript를 자체 네트워크가 없는 전용 모듈 Web Worker 내에서 실행하며, 오직 호스트를 통해서만 나갑니다: `ctx.net.fetch`(선언된 `scopes.network` 엔드포인트로 제한), `ctx.service`(`scopes.services`), 또는 데스크톱 앱에서는 `ctx.net.probe`(`scopes.web_probe`). RDAP IP가 이 방식(`ctx.net.fetch`)을 씁니다.
+    `sandbox-js`는 작성자의 번들 JavaScript를 자체 네트워크가 없는 전용 모듈 Web Worker 내에서 실행하며, 오직 호스트를 통해서만 나갑니다: `ctx.net.fetch`(선언된 `scopes.network` 엔드포인트와 분석가가 `scopes.network_configurable`에 정한 주소로 제한), `ctx.service`(`scopes.services`), 또는 데스크톱 앱에서는 `ctx.net.probe`(`scopes.web_probe`). RDAP IP가 이 방식(`ctx.net.fetch`)을 씁니다.
 
 === "web (web-proxy)"
 

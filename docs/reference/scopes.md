@@ -4,12 +4,13 @@ A complete catalog of every scope string a plugin can declare in `manifest.scope
 
 For how grants are enforced at runtime (the Web Worker sandbox, the egress allowlist, secret handling), see [security](../develop/security.md).
 
-The `scopes` block has exactly five keys, all optional:
+The `scopes` block has exactly six keys, all optional:
 
 ```jsonc
 "scopes": {
   "graph":     ["node:read", "edge:create"],               // fine-grained graph verbs
   "network":   [ { "endpoint": "https://...", "methods": ["POST"] } ],
+  "network_configurable": [ { "config_key": "misp_url", "methods": ["POST"] } ],  // address set by the analyst
   "web_probe": { "purpose": "check whether a profile page exists" },  // desktop only
   "services":  ["rdap"],                                   // Vineyard-operated services, by name
   "config":    [ { "key": "max_concurrency", "type": "number" } ]
@@ -55,10 +56,46 @@ Each entry is a `NetworkScope` object, **not** a bare string. `ctx.net.fetch` is
 | `methods` | `HttpMethod[]` | Allowed verbs: `GET` `POST` `PUT` `PATCH` `DELETE`. An empty list allows every verb |
 | `purpose` | `string` (optional) | Human-readable reason, shown at install time |
 
-`ctx.net.fetch` is limited to these endpoints. A URL is matched on its **parsed origin** (protocol, host and port) plus a path-segment boundary, never as a string prefix — `https://h/v1` covers `/v1/search` but not `/v1beta` — and on the declared `methods`. Each request also has its own deadline, response body included: 60 s unless the request's `init.timeoutMs` sets another (clamped to 1 s – 10 min). A missed deadline rejects with an `Error` named `TimeoutError`; see [`net`](../develop/sdk.md#net-network-scope) in the SDK.
+`ctx.net.fetch` is limited to these endpoints and to the addresses the analyst sets for [`network_configurable`](#network_configurable). A URL is matched on its **parsed origin** (protocol, host and port) plus a path-segment boundary, never as a string prefix — `https://h/v1` covers `/v1/search` but not `/v1beta` — and on the declared `methods`. Each request also has its own deadline, response body included: 60 s unless the request's `init.timeoutMs` sets another (clamped to 1 s – 10 min). A missed deadline rejects with an `Error` named `TimeoutError`; see [`net`](../develop/sdk.md#net-network-scope) in the SDK.
 
 !!! warning "The host bridge is the only way out"
     Plugin code has no network of its own: any `fetch`, XHR, WebSocket or nested worker the plugin opens itself is refused, on the web and in the desktop app. Use `ctx.net.fetch` (checked against these endpoints), [`ctx.net.probe`](#web_probe) or [`ctx.service`](#services). A dev server does not enforce this, so a pack that calls `fetch` directly works in development and fails in production. A sandbox-js plugin may declare several endpoints. Cookies are not sent; your request headers pass through as written, including `Authorization` (see [Sending a credential](plugin-schema.md#sending-a-credential)). On desktop, declared endpoints are reachable even without CORS headers, except those on `localhost` or a loopback or private-network IP address, or on a name that resolves to one, which still need them. A URL on the origin of the Vineyard backend the app is connected to is refused whatever the manifest declares (see [Sandbox & security](../develop/security.md)).
+
+## network_configurable
+
+For a server only the analyst knows the address of: a self-hosted MISP or OpenCTI, or an organisation's own threat-intelligence platform. Each entry names a [`config`](#config) key instead of an endpoint, and the address the analyst enters for that key becomes an endpoint of `ctx.net.fetch`. (Source: the SDK's `sdk.ts` types — `ConfigurableNetworkScope`.)
+
+```jsonc
+"network_configurable": [
+  { "config_key": "misp_url",
+    "methods": ["POST"],
+    "purpose": "search events on your MISP" }
+],
+"config": [
+  { "key": "misp_url", "label": "MISP URL", "type": "url" },
+  { "key": "misp_key", "label": "MISP API key", "type": "string", "secret": true }
+]
+```
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `config_key` | `string` | A `scopes.config` key of `type: "url"` in the **same** plugin. Its value is the endpoint |
+| `methods` | `HttpMethod[]` | Allowed verbs, as for `network`. An empty list allows every verb |
+| `purpose` | `string` (optional) | Human-readable reason, shown at install time |
+| `schemes` | `("https" | "http")[]` (optional) | Schemes the address may use. `["https"]` when omitted |
+
+The address must be a scheme the entry allows, a host and an optional path, such as `https://misp.example.org` or `https://tip.example.org/opencti`. One with a user name or password, a `?` query or a `#` fragment is not used. Once set, the address is matched exactly as a `network` endpoint is: parsed origin, path-segment boundary, `methods`, and the Vineyard backend's origin refused. Until it is set, or while it is not usable, the entry grants nothing, and `ctx.net.fetch` rejects with an error that names the setting. The plugin cannot set or change the address: only the analyst can, in the plugin's settings. The Vineyard backend's own address is never usable, and the settings field says so.
+
+An `http` address works in the desktop app. The web app is served over https, and the browser blocks its requests to an http address as mixed content, so there an `http` address is not used, and the settings field says so, unless it is on this computer (`localhost`, `127.0.0.1`, `[::1]`).
+
+An entry whose `config_key` is not a `url` setting of the same plugin grants nothing, and registry CI refuses it. CI also refuses `methods` other than the five upper-case verbs, and any field but the four above: the app matches methods exactly, so `"post"` would have every request refused.
+
+The install screen shows **Network requests to the address you enter in "MISP URL" (https only)**, followed by the purposes and, when this pack already has an address on this device, the host it is set to. The settings field shows the host requests will go to, or why the address is not used. On the catalog card the scope counts as network.
+
+!!! warning "Your own network"
+    In the desktop app, an address you configure gets the same CORS waiver as a declared endpoint, and the same limit: it stops at the analyst's own network. For a server on this computer or on your organisation's network, such as a MISP on `10.0.0.0/8`, the settings field offers **Trust … on this computer…**, which adds the origin to **Additional trusted origins** in Desktop Settings after a confirmation dialog. That list applies in every project until you remove the origin there. In the browser, the server must answer CORS for the app's origin itself.
+
+Like `network`, this scope never attaches a Vineyard credential. Send your server's API key yourself, from a `secret` setting, as in [Sending a credential](plugin-schema.md#sending-a-credential).
 
 ## web_probe
 
@@ -114,7 +151,7 @@ to use this pack"), and in a pack installed earlier `ctx.service` throws
 
 Each entry is a `ConfigValue`. `ctx.config` is a read-only map of the declared keys the analyst has set a value for, secret ones included, coerced to the declared `type`. It is absent while none of them has a value, so read it as `ctx.config?.key ?? DEFAULT`. Values are kept per signed-in account — in the OS keychain on desktop (only until the app quits on a computer that cannot encrypt them), for the tab session in the browser. (Source: the SDK's `sdk.ts` types — `ConfigValue`, `HostContext.config`.)
 
-Members of the same Plugin Pack that declare a key and call the same set of network origins share one value for it, so the analyst enters it once. The origins are the scheme, host and port of the member's `scopes.network` endpoints; paths do not matter, so members calling different paths on one API host share. A plugin published on its own, or one with no `scopes.network` entry, keeps its own values, and two packs never share a value even when they call the same host. A member that calls one more origin than the others keeps its own value, so give members that should share a key the same origins. Sharing does not widen what a plugin receives: each plugin still gets only the keys its own manifest declares.
+Members of the same Plugin Pack that declare a key and call the same set of network origins share one value for it, so the analyst enters it once. The origins are the scheme, host and port of the member's `scopes.network` endpoints; paths do not matter, so members calling different paths on one API host share. Each `network_configurable` entry counts as one more destination, named by its `config_key`, so members that read the same address setting and call the same fixed hosts share both the address and the key that goes to it. A plugin published on its own, or one with no `scopes.network` or `network_configurable` entry, keeps its own values, and two packs never share a value even when they call the same host. A member that calls one more origin than the others keeps its own value, so give members that should share a key the same origins. Sharing does not widen what a plugin receives: each plugin still gets only the keys its own manifest declares.
 
 | Field | Type | Meaning |
 | --- | --- | --- |

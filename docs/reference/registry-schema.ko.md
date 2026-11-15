@@ -36,7 +36,7 @@ registry 저장소 (`Vineyard-Intelligence/registry`)는 **경로와 메타데�
 | `version` | string | 아니요 | 이 `ref`에서 `manifest.version`의 SemVer 미러 (`^\d+\.\d+\.\d+(?:[-+].+)?$`). |
 | `platforms` | string[] | 아니요 | **파생됨**: 팩의 plugin들이 `platforms` 아래에 선언한 플랫폼 키(`web`, `desktop`)에서 `primary`를 뺀 것, 고유값. 스키마의 enum은 `web-proxy`도 허용하지만 CI가 이를 파생하는 일은 없으므로, 이 값을 적은 항목은 실패합니다. |
 | `scopes_summary` | object | 아니요 | **파생된** 필터 패싯 (아래 참조). |
-| `scopes_summary.network` | boolean | 아니요 | `scopes.network`가 비어 있지 않거나 `web_probe`를 선언하면 `true`. |
+| `scopes_summary.network` | boolean | 아니요 | `scopes.network`나 `scopes.network_configurable`이 비어 있지 않거나 `web_probe`를 선언하면 `true`. |
 | `scopes_summary.graph_write` | boolean | 아니요 | `node:`/`edge:` create/update/delete 동사가 있으면 `true`. |
 | `scopes_summary.secret_config` | boolean | 아니요 | `scopes.config` 항목에 `secret: true`가 있으면 `true` (분석가가 직접 넣어야 하는 키). |
 | `plugin_count` | integer | 아니요 | **파생됨**: `identifier`가 **pack**을 명명할 때 번들된 plugin 수 (하나의 파일 → 여러 plugin). 단일 plugin 항목의 경우 생략되거나 `1`. 카드는 포함된 모든 plugin을 함께 설치합니다. 최소 `1`. |

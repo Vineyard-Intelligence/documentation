@@ -6,7 +6,7 @@ How Vineyard contains plugin JavaScript: graph writes that are staged for the an
 
 A plugin is **third-party code the installing user chose to run**. It can only touch what its [scopes](../reference/scopes.md) declare, on the project it was launched in. A `ctx` member is *absent* unless its scope was granted: a plugin with no graph scope has `ctx.graph === undefined`.
 
-The whole authority a plugin can ask for is five manifest keys: `graph` verbs, `network`, `web_probe` (desktop only), `services`, and `config`. `services` names a Vineyard-operated service (`rdap`, `telegram`) the plugin calls through `ctx.service` by name, never by URL: the host fixes the destination and attaches the analyst's own credential.
+The whole authority a plugin can ask for is six manifest keys: `graph` verbs, `network`, `network_configurable` (an address the analyst sets), `web_probe` (desktop only), `services`, and `config`. `services` names a Vineyard-operated service (`rdap`, `telegram`) the plugin calls through `ctx.service` by name, never by URL: the host fixes the destination and attaches the analyst's own credential.
 
 !!! note "Plugins cannot post chat messages"
     There is no `ctx.message`, and there is no `publish` / `message:post` scope: `publish` is not in the scopes schema, the app ignores it and grants nothing, so remove it.
@@ -58,7 +58,7 @@ export default definePlugin({
 
 ## Egress is allowlisted on the host side
 
-Every `ctx.net.fetch` is checked on the host against the manifest's declared `network` endpoints before the request is made:
+Every `ctx.net.fetch` is checked on the host against the manifest's declared `network` endpoints, and the addresses the analyst set for its `network_configurable` entries, before the request is made:
 
 | Rule | Effect |
 |---|---|
@@ -66,7 +66,8 @@ Every `ctx.net.fetch` is checked on the host against the manifest's declared `ne
 | A path prefix matches on a **segment boundary** | a scope of `https://h/v1` covers `/v1/search`, and does not cover `/v1beta` |
 | The method must be in the scope's `methods` list | a `GET`-only endpoint cannot be `POST`ed to; an empty `methods` list allows every method |
 | A URL that will not parse **denies** | — |
-| A URL on the **Vineyard backend's origin** is refused | whatever the manifest declares, and on any path of that origin. Graph writes reach the backend only through [staging](#graph-writes-are-staged-not-applied). A redirect to that origin or a `ctx.net.probe` of it is not refused, and carries none of the analyst's credentials |
+| A configured address must be **usable** | it is a URL setting the same plugin declares, set by the analyst, with a scheme the entry allows (https by default) and no user name, password, query or fragment. It is not the Vineyard backend's origin, and in the web app it is not an `http` address off `localhost`, which the browser would block from the https page. Until then the entry grants nothing, and the refusal names the setting. The plugin cannot write its own settings |
+| A URL on the **Vineyard backend's origin** is refused | whatever the manifest declares or the analyst configures, and on any path of that origin. Graph writes reach the backend only through [staging](#graph-writes-are-staged-not-applied). A redirect to that origin or a `ctx.net.probe` of it is not refused, and carries none of the analyst's credentials |
 
 Requests are sent without the analyst's cookies, and cancelling the run aborts anything still in flight. Headers you set, including `Authorization`, reach the endpoint as written.
 
@@ -78,6 +79,7 @@ On desktop, declared endpoints are reachable even if they send no CORS headers. 
 
 - An endpoint addressed as `localhost` or by a loopback or private-network IP address (e.g. `http://127.0.0.1:9200`) is left out and still needs the server's own CORS headers.
 - A name that resolves to such an address is judged on each response, by the address the connection reached. The response is refused unless the server itself allows `app://vineyard` or `*`. The request carries no `Origin` here, so a server that only answers CORS when it sees one does not qualify. The analyst can add the endpoint's origin, as the manifest wrote it, under **Additional trusted origins** in Desktop Settings.
+- An address the analyst sets for a `network_configurable` entry is treated exactly the same way: it is waived for the open project while it is the address, and not for the analyst's own network. For a server there, such as an internal MISP or OpenCTI, the plugin's settings field offers to add its origin to **Additional trusted origins**, behind the same confirmation dialog. That list is not per project: an origin on it is waived in every project, for the app and for every plugin whose endpoints include it, until it is removed in Desktop Settings.
 
 Judging a response takes one from the network, so a plugin's requests to an endpoint that gets this treatment skip the HTTP cache, whatever `Cache-Control` the plugin sets, and a plugin that repeats a request pays for it each time, rate limits included. An origin that is also a built-in AI provider or on the analyst's list keeps the cache.
 

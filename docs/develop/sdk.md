@@ -183,9 +183,12 @@ read back the `data` it wrote, nor an edge's `confidence` or `label_source`.
 
 #### `net` (network scope)
 
-Present iff a [`network` scope](../reference/scopes.md) is declared (or, in the desktop app,
-`web_probe` — then only `probe` exists). `fetch` is limited to the `manifest.scopes.network`
-endpoints and their declared `methods`. Requests are sent without cookies and pass your request
+Present iff a [`network`](../reference/scopes.md#network) or
+[`network_configurable`](../reference/scopes.md#network_configurable) scope is declared (or, in the
+desktop app, `web_probe` — then only `probe` exists). `fetch` is limited to the
+`manifest.scopes.network` endpoints, the addresses the analyst set for `network_configurable`, and
+their declared `methods`. While a configurable address is not set, a request for it rejects with an
+`Error` that names the setting. Requests are sent without cookies and pass your request
 headers, including `Authorization`, through unchanged. A request that carries any header or a body
 does not follow a redirect: a 3xx answer rejects with an `Error` whose message starts with
 `redirect not followed`. A request with neither follows redirects as the browser does.

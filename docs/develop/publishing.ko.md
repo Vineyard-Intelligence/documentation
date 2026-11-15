@@ -78,7 +78,8 @@ Plugin Pack으로 등재하세요.
 - **고정된 문서가 항목과 일치해야 합니다.** `repo@ref/path`의 문서를 가져와 그 `identifier`, `content_type`, `version`이 항목이 광고하는 값과 같아야 합니다. `ref`를 다시 고정하지 않고 메타데이터만 올린 항목은 여기서 실패합니다.
 - **팩이 두 글을 모두 갖고, 카드의 한 줄은 문서가 정합니다.** 고정된 문서에 `summary`와 비어 있지 않은 `description`이 있어야 하고, 항목의 `summary`는 문서의 `summary`와 정확히 같아야 합니다. 항목은 문서가 적은 한 줄을 그대로 옮겨 적는 것입니다. 페이지는 문서에만 있고, 마켓플레이스는 팩을 열 때 고정된 커밋에서 읽어 옵니다. (`verify_pinned.py`)
 - **한 줄과 페이지의 형식이 맞아야 합니다.** `summary`는 250자 이하의 한 줄이고, 페이지는 16,000자 이하이며 개행과 탭 외의 제어 문자가 없어야 합니다. 단독 `vineyard:plugin` 문서는 거부됩니다. [팩의 한 줄과 페이지](#pack-page)를 참고하세요. (`verify_pinned.py`)
-- **요약 필드는 신뢰하지 않고 다시 계산합니다.** `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count`, `type_count`를 고정된 문서에서 유도해 작성값과 대조합니다. `scopes_summary.network`는 멤버가 `network` **또는** `web_probe`를 선언하면 true입니다.
+- **요약 필드는 신뢰하지 않고 다시 계산합니다.** `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count`, `type_count`를 고정된 문서에서 유도해 작성값과 대조합니다. `scopes_summary.network`는 멤버가 `network`, `network_configurable` **또는** `web_probe`를 선언하면 true입니다.
+- **설정 가능한 엔드포인트는 그 플러그인 자신의 주소 설정을 읽어야 합니다.** 팩과 각 멤버의 모든 [`network_configurable`](../reference/scopes.md#network_configurable) 항목은 같은 플러그인이 선언한 `type: "url"`인 `scopes.config` 키를 가리켜야 하고, `methods`는 `GET`, `POST`, `PUT`, `PATCH`, `DELETE` 중에서(대문자로, 한 번씩) 적어야 하며, `schemes`가 있으면 `https`와 `http`만 적어야 하고, `config_key`, `methods`, `purpose`, `schemes` 외의 필드는 없어야 합니다. 앱은 그런 설정을 읽지 않는 항목에 아무것도 허용하지 않고 메서드를 정확히 비교하므로, 그런 팩은 설치된 뒤 모든 요청이 거부됩니다. (`verify_pinned.py`, `test_scopes.py`)
 - **번들이 고정된 커밋 안에 있고 매니페스트와 일치해야 합니다.** Plugin Pack의 경우 팩과 각 멤버의 `platforms.web.entry`는 저장소 안의 파일을 저장소 루트 기준 상대 경로로 적은 것(`dist/pack.mjs`)이어야 합니다. 경로의 각 세그먼트에는 ASCII 영문자, 숫자, `.`, `_`, `-`만 쓸 수 있고, 세그먼트가 `.`이나 `..`이면 안 됩니다. 절대 URL, 앞의 `/`, 백슬래시, `%`처럼 그 밖의 형태는 아무것도 가져오기 전에 여기서 실패합니다. 그 entry가 가리키는 모듈을 고정된 커밋에서 가져오며, 모듈이 팩과 각 멤버에 대해 선언하는 `version`과 `license`는 매니페스트의 값과 같아야 합니다. `dist/`를 다시 빌드하지 않고 매니페스트만 수정했거나, entry가 404이면 여기서 실패합니다. (`verify_pinned.py`)
 - **승인 목록이 코드의 다이제스트를 기록합니다.** 병합 후, 팩이 실행하는 각 모듈의 SHA-256이 고정된 매니페스트에서 읽혀 그 승인 행에 기록되며, 앱은 바이트가 이와 일치하지 않는 모듈을 거부합니다. 다이제스트는 고정 커밋에서 GitHub의 파일로 계산하고, 빌드는 같은 파일을 jsDelivr로도 가져와 바이트가 다르면 실패합니다. 카탈로그에 등재된 모든 팩에 이 값이 있어야 합니다. 등재된 팩의 문서나 모듈을 해시할 수 없으면 빌드가 실패하고 아무것도 게시되지 않으므로, 항목이 병합될 때 고정 커밋이 GitHub에 있어야 합니다. 모듈은 [자체 완결된 파일 하나](distribution.md#one-file)여야 합니다. (`build_approved.py`, `test_approved.py`)
 
@@ -101,6 +102,7 @@ Type Pack에는 여기서 자체 검사 세 가지가 더 있습니다. 하나�
 - 팩이 실제로 필요로 하는 것 대비 요청한 스코프의 범위.
 - `node:delete` / `edge:delete` 사용(그래프 파괴적 동사).
 - `network` + `node:read` 조합(데이터가 그래프를 떠나고, 이그레스가 있음).
+- `network_configurable`: 분석가가 정한 서버, 흔히 분석가 자신의 네트워크에 있는 서버에 닿습니다. 검토자는 번들이 그곳에 무엇을 보내는지, 그곳에서 읽은 것이 고정된 `network` 엔드포인트로 나가지는 않는지 읽습니다.
 - 난독화 전용 번들 — 읽을 수 있는 소스가 없음. 빠른 검토를 원하면 읽히는 코드를 제출하세요.
 - 시크릿처럼 보이는 `params` 키. 자격 증명은 사용자 대상 params가 아니라 `secret: true`와 함께 `scopes.config`에 있어야 합니다.
 - `native`/`subprocess` 데스크탑 런타임 — 현재 앱이 실행하지 않습니다.

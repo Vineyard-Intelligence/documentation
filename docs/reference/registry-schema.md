@@ -36,7 +36,7 @@ A row in `community-pluginpacks.json`. The schema sets `additionalProperties: fa
 | `version` | string | no | SemVer mirror of `manifest.version` at this `ref` (`^\d+\.\d+\.\d+(?:[-+].+)?$`). |
 | `platforms` | string[] | no | **Derived**: the platform keys the pack's plugins declare under `platforms` (`web`, `desktop`), without `primary`; unique. The schema's enum also allows `web-proxy`, but CI never derives it, so an entry that lists it fails. |
 | `scopes_summary` | object | no | **Derived** filter facets (see below). |
-| `scopes_summary.network` | boolean | no | `true` if `scopes.network` is non-empty **or** the plugin declares `web_probe`. |
+| `scopes_summary.network` | boolean | no | `true` if `scopes.network` or `scopes.network_configurable` is non-empty, **or** the plugin declares `web_probe`. |
 | `scopes_summary.graph_write` | boolean | no | `true` if any `node:`/`edge:` create/update/delete verb is present. |
 | `scopes_summary.secret_config` | boolean | no | `true` if any `scopes.config` entry has `secret: true` (a key the analyst must supply). |
 | `plugin_count` | integer | no | **Derived**: number of plugins bundled when the `identifier` names a **pack** (one file → many plugins). Omitted or `1` for a single-plugin entry. The card installs all contained plugins together. Minimum `1`. |

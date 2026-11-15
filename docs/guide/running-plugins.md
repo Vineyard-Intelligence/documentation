@@ -59,6 +59,17 @@ no network destination, keeps its own. A secret field names the hosts its value 
 when other plugins in the pack share it, how many (*Sent to … · shared with N other plugins in
 this pack*). Press **Run (N)** to start every ticked plugin.
 
+Some packs connect to a server whose address only you know, such as your organisation's MISP or
+OpenCTI. Their address field says where requests will go (*Requests from this plugin go to …*), or
+why the address is not used, for example *This address is not used: it must start with https://*.
+The plugin sends nothing there until the address is set. In the browser an `http://` address is not
+used unless it is on this computer (`localhost`), because the browser blocks it from the https app:
+use an https address, or the desktop app. In the desktop app, a server on this
+computer or on your organisation's network can be read only once you trust it: press
+**Trust … on this computer…** under the field and confirm the dialog. The origin is added to
+**Additional trusted origins** in **Desktop Settings…**, applies in every project, and is removed
+there.
+
 Values are kept separately for each account on this device — in the browser only in this tab, gone
 when it closes; in the desktop app encrypted and kept across launches (for the session only, on a
 computer that cannot encrypt them). This separates accounts inside Vineyard, not from someone with

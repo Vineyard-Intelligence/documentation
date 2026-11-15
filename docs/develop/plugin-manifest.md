@@ -25,7 +25,7 @@ The AI agent chooses a plugin by its `description`, so say what the plugin takes
     }
     ```
 
-    `sandbox-js` runs the author's bundled JavaScript inside a dedicated module Web Worker that has no network of its own; it reaches out only through the host: `ctx.net.fetch` (limited to the declared `scopes.network` endpoints), `ctx.service` (`scopes.services`), or, in the desktop app, `ctx.net.probe` (`scopes.web_probe`). This is what RDAP IP uses (`ctx.net.fetch`).
+    `sandbox-js` runs the author's bundled JavaScript inside a dedicated module Web Worker that has no network of its own; it reaches out only through the host: `ctx.net.fetch` (limited to the declared `scopes.network` endpoints and the addresses the analyst sets for `scopes.network_configurable`), `ctx.service` (`scopes.services`), or, in the desktop app, `ctx.net.probe` (`scopes.web_probe`). This is what RDAP IP uses (`ctx.net.fetch`).
 
 === "web (web-proxy)"
 

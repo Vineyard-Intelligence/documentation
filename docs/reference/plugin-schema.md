@@ -151,6 +151,7 @@ The plugin's authority surface. `type: object`, `additionalProperties: false`. `
 | `graph` | array | no | `uniqueItems`; enum items (below) | Fine-grained node/edge verbs. Backed by the project `graph_edit` tier. |
 | `web_probe` | object | no | `{ purpose?: string }` — an object, not an array | **Desktop only.** One anonymous request to an *arbitrary* public host. Backs `ctx.net.probe`, which is absent in the web build. |
 | `network` | array | no | items: [`networkScope`](#networkscope-scopesnetwork-items) | External XHR targets. |
+| `network_configurable` | array | no | items: [`configurableNetworkScope`](#configurablenetworkscope-scopesnetwork_configurable-items) | Endpoints whose address the analyst sets in a `url` setting, for a self-hosted MISP, OpenCTI or other TIP. See the [scopes reference](scopes.md#network_configurable). |
 | `services` | array | no | `uniqueItems`; enum: `rdap`, `telegram` | Vineyard-operated services called by **name** through `ctx.service` — never by URL. See the [scopes reference](scopes.md#services). |
 | `config` | array | no | items: [`configValue`](#configvalue-scopesconfig-items) | Install-time values injected at runtime only. |
 
@@ -197,9 +198,20 @@ string, because it ends up in logs.
 
 `Cookie` cannot be set, and no cookies are sent with plugin requests.
 
+### configurableNetworkScope (scopes.network_configurable items)
+
+`$defs.configurableNetworkScope`. `type: object`, `additionalProperties: false`. **Required:** `config_key`, `methods`.
+
+| Property | Type | Req. | Constraints | Meaning |
+|---|---|---|---|---|
+| `config_key` | string | yes | pattern `^[a-z0-9_]+$` | A `scopes.config` key of `type: url` in the same plugin. The analyst's value for it is the endpoint: scheme, host and optional path, with no user name, password, query or fragment. Registry CI refuses an entry whose key is not such a setting. |
+| `methods` | array | yes | `uniqueItems`; items enum: `GET`, `POST`, `PUT`, `PATCH`, `DELETE` | Allowed HTTP methods, as for `networkScope`. Registry CI refuses any other spelling, such as `post`. |
+| `purpose` | string | no | — | Human-readable reason, shown at install time. |
+| `schemes` | array | no | `uniqueItems`, `minItems: 1`; items enum: `https`, `http`; default `["https"]` | Schemes the address may use. List `http` only for a server that cannot serve TLS; the install screen then says the traffic may be unencrypted. An `http` address works in the desktop app; the web app uses one only on `localhost`, because the browser blocks it from the https page. |
+
 ### configValue (scopes.config items)
 
-`$defs.configValue`. `type: object`, `additionalProperties: false`. **Required:** `key`, `type`. Config values are entered by the analyst in the plugin's Settings section of the Run plugins dialog, or under **Settings → Keys & Secrets**, and read by the declaring plugin as `ctx.config`. Members of the same pack that declare a key and call the same set of network origins (scheme, host and port of their `scopes.network` endpoints) share one value, entered once; a plugin published on its own, or one with no `scopes.network` entry, keeps its own. Each plugin still receives only the keys its own manifest declares — see [scopes → config](scopes.md#config). Values are kept per signed-in account — in the OS keychain on desktop (only until the app quits on a computer that cannot encrypt them), for the tab session in the browser. `secret: true` masks the field. Values are never recorded in a task or conversation.
+`$defs.configValue`. `type: object`, `additionalProperties: false`. **Required:** `key`, `type`. Config values are entered by the analyst in the plugin's Settings section of the Run plugins dialog, or under **Settings → Keys & Secrets**, and read by the declaring plugin as `ctx.config`. Members of the same pack that declare a key and call the same set of network origins (scheme, host and port of their `scopes.network` endpoints, plus one destination per `network_configurable` setting) share one value, entered once; a plugin published on its own, or one with no `scopes.network` or `network_configurable` entry, keeps its own. Each plugin still receives only the keys its own manifest declares — see [scopes → config](scopes.md#config). Values are kept per signed-in account — in the OS keychain on desktop (only until the app quits on a computer that cannot encrypt them), for the tab session in the browser. `secret: true` masks the field. Values are never recorded in a task or conversation.
 
 | Property | Type | Req. | Allowed values | Default | Meaning |
 |---|---|---|---|---|---|

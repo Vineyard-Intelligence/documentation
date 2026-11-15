@@ -9,7 +9,7 @@ The normative reference for VINEYARD's plugin and Type Pack formats: the JSON-Sc
 | [Plugin manifest schema](plugin-schema.md) | The `vineyard:plugin` manifest — `identifier`, `version`, `platforms`, `io`, `scopes`, `lifecycle`. |
 | [Type Pack schema](typepack-schema.md) | The `vineyard:typepack` document — type definitions in the qualified `category.name` form (e.g. `infrastructure.ip_address`). |
 | [Registry entry schemas](registry-schema.md) | One row of `community-pluginpacks.json` / `community-typepacks.json` / `community-skillpacks.json` — the metadata-only catalog rows the browser reads. |
-| [Scopes](scopes.md) | The complete permission vocabulary: the `graph` verbs (`node:read`, `edge:delete`, …), `network`, `web_probe`, `services`, and `config`. |
+| [Scopes](scopes.md) | The complete permission vocabulary: the `graph` verbs (`node:read`, `edge:delete`, …), `network`, `network_configurable`, `web_probe`, `services`, and `config`. |
 
 ## Where the canonical artifacts live
 

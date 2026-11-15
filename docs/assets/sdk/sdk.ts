@@ -22,6 +22,22 @@ export interface NetworkScope {
     purpose?: string;
 }
 /**
+ * A network endpoint the ANALYST supplies — a self-hosted MISP or OpenCTI, an organisation's own
+ * TIP — which no manifest can name, because only the analyst knows where theirs is.
+ *
+ * The address is the value of `config_key`, a `scopes.config` entry of `type: 'url'` in the same
+ * manifest, and it is an endpoint exactly like a `network` one once it is set: origin plus a
+ * path-segment prefix. Until it is set, or while it is not a usable address, the scope grants
+ * nothing. The plugin cannot set it: config is the analyst's.
+ */
+export interface ConfigurableNetworkScope {
+    config_key: string;
+    methods: HttpMethod[];
+    purpose?: string;
+    /** The schemes the address may use. `['https']` when omitted. */
+    schemes?: Array<'https' | 'http'>;
+}
+/**
  * Anonymous probing of arbitrary public hosts — the capability behind `ctx.net.probe`.
  *
  * Distinct from `network` on purpose. `network` is an allowlist: the plugin names the few
@@ -47,6 +63,8 @@ export interface ConfigValue {
 export interface ManifestScopes {
     graph?: GraphScope[];
     network?: NetworkScope[];
+    /** Endpoints whose address the analyst sets in this plugin's settings. Backs `ctx.net.fetch`. */
+    network_configurable?: ConfigurableNetworkScope[];
     /** Desktop-only anonymous probe of arbitrary public hosts. Backs `ctx.net.probe`. */
     web_probe?: WebProbeScope;
     /**
@@ -248,8 +266,9 @@ export interface HostContext {
     };
 
     /**
-     * net — present iff a network or web_probe scope was granted.
-     *   - `fetch` is limited to manifest.scopes.network endpoints (absent without `network`).
+     * net — present iff a network, network_configurable or web_probe scope was granted.
+     *   - `fetch` is limited to manifest.scopes.network endpoints and the addresses the analyst set
+     *     for manifest.scopes.network_configurable (absent without either).
      *   - `probe` is the desktop-only anonymous cross-origin probe (absent without `web_probe`,
      *     and absent in the web build even with it — check for it before calling).
      */

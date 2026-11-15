@@ -151,6 +151,7 @@ plugin의 권한 범위. `type: object`, `additionalProperties: false`. `ctx` �
 | `graph` | array | no | `uniqueItems`; enum 항목 (아래) | 세분화된 노드/엣지 동사. 프로젝트 `graph_edit` 티어에 의해 지원됩니다. |
 | `web_probe` | object | no | `{ purpose?: string }` — 배열이 아니라 객체 | **데스크탑 전용.** *임의의* 공개 호스트에 대한 익명 요청 1회. `ctx.net.probe`를 지원하며, 웹 빌드에서는 `ctx.net.probe`가 존재하지 않습니다. |
 | `network` | array | no | 항목: [`networkScope`](#networkscope-scopesnetwork-items) | 외부 XHR 대상. |
+| `network_configurable` | array | no | 항목: [`configurableNetworkScope`](#configurablenetworkscope-scopesnetwork_configurable-items) | 분석가가 `url` 설정에 주소를 정하는 엔드포인트. 자체 호스팅 MISP, OpenCTI 같은 TIP용입니다. [스코프 레퍼런스](scopes.md#network_configurable) 참조. |
 | `services` | array | no | `uniqueItems`; enum: `rdap`, `telegram` | `ctx.service`를 통해 **이름으로** 호출하는 Vineyard 운영 서비스 — URL이 아닙니다. [스코프 레퍼런스](scopes.md#services) 참조. |
 | `config` | array | no | 항목: [`configValue`](#configvalue-scopesconfig-items) | 런타임에만 주입되는 설치 시 값. |
 
@@ -195,9 +196,20 @@ await ctx.net.fetch(url, { headers: { Authorization: `Bearer ${ctx.config.api_ke
 
 `Cookie`는 설정할 수 없으며, 플러그인 요청에는 쿠키가 실리지 않습니다.
 
+### configurableNetworkScope (scopes.network_configurable 항목) {#configurablenetworkscope-scopesnetwork_configurable-items}
+
+`$defs.configurableNetworkScope`. `type: object`, `additionalProperties: false`. **필수:** `config_key`, `methods`.
+
+| 속성 | 타입 | 필수 | 제약 | 의미 |
+|---|---|---|---|---|
+| `config_key` | string | yes | 패턴 `^[a-z0-9_]+$` | 같은 plugin의 `scopes.config`에 `type: url`로 선언된 키. 분석가가 입력한 값이 엔드포인트가 됩니다: 스킴, 호스트, 선택적인 경로이며 사용자 이름, 비밀번호, 쿼리, 프래그먼트는 없어야 합니다. 이런 설정을 가리키지 않는 항목은 레지스트리 CI가 거부합니다. |
+| `methods` | array | yes | `uniqueItems`; 항목 enum: `GET`, `POST`, `PUT`, `PATCH`, `DELETE` | `networkScope`와 같은 허용 HTTP 메서드. `post`처럼 다르게 적으면 레지스트리 CI가 거부합니다. |
+| `purpose` | string | no | — | 사람이 읽을 수 있는 이유, 설치 시 표시됨. |
+| `schemes` | array | no | `uniqueItems`, `minItems: 1`; 항목 enum: `https`, `http`; 기본값 `["https"]` | 주소에 쓸 수 있는 스킴. TLS를 제공할 수 없는 서버에만 `http`를 넣으세요. 그러면 설치 화면에 트래픽이 암호화되지 않을 수 있다고 표시됩니다. `http` 주소는 데스크톱 앱에서 쓰입니다. 웹 앱에서는 브라우저가 https 페이지에서 막으므로 `localhost`에서만 쓰입니다. |
+
 ### configValue (scopes.config 항목) {#configvalue-scopesconfig-items}
 
-`$defs.configValue`. `type: object`, `additionalProperties: false`. **필수:** `key`, `type`. config 값은 분석가가 Run plugins 대화상자의 해당 플러그인 Settings 섹션이나 **Settings → Keys & Secrets**에서 입력하며, 선언한 플러그인이 `ctx.config`로 읽습니다. 같은 팩의 멤버 가운데 같은 키를 선언하고 같은 네트워크 오리진 집합(`scopes.network` 엔드포인트의 스킴·호스트·포트)을 호출하는 멤버들은 값 하나를 공유하므로 한 번만 입력하면 됩니다. 단독으로 게시된 플러그인이나 `scopes.network` 항목이 없는 플러그인은 자기 값을 따로 가집니다. 각 플러그인은 여전히 자신의 매니페스트가 선언한 키만 받습니다 — [scopes → config](scopes.md#config)를 참조하세요. 값은 로그인한 계정별로 보관됩니다 — 데스크톱에서는 OS 키체인에(컴퓨터가 값을 암호화할 수 없으면 앱을 종료할 때까지만), 브라우저에서는 해당 탭 세션 동안. `secret: true`는 필드를 마스킹합니다. 값은 작업이나 대화에 기록되지 않습니다.
+`$defs.configValue`. `type: object`, `additionalProperties: false`. **필수:** `key`, `type`. config 값은 분석가가 Run plugins 대화상자의 해당 플러그인 Settings 섹션이나 **Settings → Keys & Secrets**에서 입력하며, 선언한 플러그인이 `ctx.config`로 읽습니다. 같은 팩의 멤버 가운데 같은 키를 선언하고 같은 네트워크 오리진 집합(`scopes.network` 엔드포인트의 스킴·호스트·포트, 그리고 `network_configurable` 설정마다 목적지 하나)을 호출하는 멤버들은 값 하나를 공유하므로 한 번만 입력하면 됩니다. 단독으로 게시된 플러그인이나 `scopes.network` 항목도 `network_configurable` 항목도 없는 플러그인은 자기 값을 따로 가집니다. 각 플러그인은 여전히 자신의 매니페스트가 선언한 키만 받습니다 — [scopes → config](scopes.md#config)를 참조하세요. 값은 로그인한 계정별로 보관됩니다 — 데스크톱에서는 OS 키체인에(컴퓨터가 값을 암호화할 수 없으면 앱을 종료할 때까지만), 브라우저에서는 해당 탭 세션 동안. `secret: true`는 필드를 마스킹합니다. 값은 작업이나 대화에 기록되지 않습니다.
 
 | 속성 | 타입 | 필수 | 허용 값 | 기본값 | 의미 |
 |---|---|---|---|---|---|

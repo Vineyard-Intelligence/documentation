@@ -4,12 +4,13 @@ plugin이 `manifest.scopes`에서 선언할 수 있는 모든 scope 문자열, �
 
 런타임에 권한 부여가 어떻게 시행되는지(Web Worker 샌드박스, 이그레스 허용 목록, 시크릿 처리)는 [샌드박스 및 보안](../develop/security.md)을 참조하세요.
 
-`scopes` 블록은 정확히 5개의 키를 가지며, 모두 선택 사항입니다:
+`scopes` 블록은 정확히 6개의 키를 가지며, 모두 선택 사항입니다:
 
 ```jsonc
 "scopes": {
   "graph":     ["node:read", "edge:create"],               // 세분화된 그래프 동사
   "network":   [ { "endpoint": "https://...", "methods": ["POST"] } ],
+  "network_configurable": [ { "config_key": "misp_url", "methods": ["POST"] } ],  // 분석가가 정하는 주소
   "web_probe": { "purpose": "check whether a profile page exists" },  // 데스크톱 전용
   "services":  ["rdap"],                                   // 이름으로 호출하는 Vineyard 운영 서비스
   "config":    [ { "key": "max_concurrency", "type": "number" } ]
@@ -55,10 +56,46 @@ plugin이 `manifest.scopes`에서 선언할 수 있는 모든 scope 문자열, �
 | `methods` | `HttpMethod[]` | 허용된 동사: `GET` `POST` `PUT` `PATCH` `DELETE`. 빈 목록은 모든 동사를 허용 |
 | `purpose` | `string` (선택 사항) | 사람이 읽을 수 있는 이유, 설치 시 표시됨 |
 
-`ctx.net.fetch`는 이 엔드포인트로 제한됩니다. URL은 문자열 접두사가 아니라 **파싱된 origin**(프로토콜, 호스트, 포트)과 경로 세그먼트 경계로 매칭되고 — `https://h/v1`은 `/v1/search`를 포함하지만 `/v1beta`는 포함하지 않습니다 — 선언된 `methods`로도 매칭됩니다. 요청마다 응답 본문까지 포함하는 기한도 따로 있습니다: 요청의 `init.timeoutMs`로 바꾸지 않으면 60초이며, 1초–10분 범위로 제한됩니다. 기한을 넘기면 이름이 `TimeoutError`인 `Error`로 거부됩니다. SDK의 [`net`](../develop/sdk.md#net-network)을 참조하세요.
+`ctx.net.fetch`는 이 엔드포인트와, 분석가가 [`network_configurable`](#network_configurable)에 정한 주소로 제한됩니다. URL은 문자열 접두사가 아니라 **파싱된 origin**(프로토콜, 호스트, 포트)과 경로 세그먼트 경계로 매칭되고 — `https://h/v1`은 `/v1/search`를 포함하지만 `/v1beta`는 포함하지 않습니다 — 선언된 `methods`로도 매칭됩니다. 요청마다 응답 본문까지 포함하는 기한도 따로 있습니다: 요청의 `init.timeoutMs`로 바꾸지 않으면 60초이며, 1초–10분 범위로 제한됩니다. 기한을 넘기면 이름이 `TimeoutError`인 `Error`로 거부됩니다. SDK의 [`net`](../develop/sdk.md#net-network)을 참조하세요.
 
 !!! warning "호스트 브리지가 유일한 출구입니다"
     plugin 코드에는 자체 네트워크가 없습니다: plugin이 직접 여는 `fetch`, XHR, WebSocket, 중첩 worker는 web과 데스크톱 앱 모두에서 거부됩니다. `ctx.net.fetch`(이 엔드포인트들로 검사됨), [`ctx.net.probe`](#web_probe), [`ctx.service`](#services)를 사용하세요. 개발 서버는 이를 강제하지 않으므로, `fetch`를 직접 호출하는 팩은 개발 중에는 동작하고 프로덕션에서는 실패합니다. sandbox-js plugin은 여러 엔드포인트를 선언할 수 있습니다. 쿠키는 전송되지 않으며, 요청 헤더는 `Authorization`을 포함해 작성한 그대로 전달됩니다([자격증명 보내기](plugin-schema.md#sending-a-credential) 참조). 데스크톱에서는 CORS 헤더가 없는 선언된 엔드포인트에도 접근할 수 있습니다. 단, `localhost`나 루프백·사설 네트워크 IP 주소에 있는 엔드포인트와 그런 주소로 풀리는 이름은 여전히 CORS 헤더가 필요합니다. 앱이 연결된 Vineyard 백엔드 오리진의 URL은 매니페스트에 무엇을 선언하든 거부됩니다([샌드박스 및 보안](../develop/security.md) 참조).
+
+## network_configurable
+
+주소를 분석가만 아는 서버를 위한 scope입니다. 자체 호스팅 MISP나 OpenCTI, 기관 내부 위협 인텔리전스 플랫폼이 그렇습니다. 각 항목은 엔드포인트 대신 [`config`](#config) 키를 가리키고, 분석가가 그 키에 입력한 주소가 `ctx.net.fetch`의 엔드포인트가 됩니다. (출처: SDK의 `sdk.ts` 타입 — `ConfigurableNetworkScope`.)
+
+```jsonc
+"network_configurable": [
+  { "config_key": "misp_url",
+    "methods": ["POST"],
+    "purpose": "search events on your MISP" }
+],
+"config": [
+  { "key": "misp_url", "label": "MISP URL", "type": "url" },
+  { "key": "misp_key", "label": "MISP API key", "type": "string", "secret": true }
+]
+```
+
+| 필드 | 타입 | 의미 |
+| --- | --- | --- |
+| `config_key` | `string` | **같은** plugin의 `scopes.config`에 `type: "url"`로 선언된 키. 그 값이 엔드포인트가 됨 |
+| `methods` | `HttpMethod[]` | `network`와 같이 허용된 동사. 빈 목록은 모든 동사를 허용 |
+| `purpose` | `string` (선택 사항) | 사람이 읽을 수 있는 이유, 설치 시 표시됨 |
+| `schemes` | `("https" | "http")[]` (선택 사항) | 주소에 쓸 수 있는 스킴. 생략하면 `["https"]` |
+
+주소는 항목이 허용하는 스킴, 호스트, 선택적인 경로로 이루어져야 합니다. `https://misp.example.org`나 `https://tip.example.org/opencti` 같은 형태입니다. 사용자 이름이나 비밀번호, `?` 쿼리, `#` 프래그먼트가 들어간 주소는 쓰이지 않습니다. 주소가 정해지면 `network` 엔드포인트와 똑같이 매칭됩니다: 파싱된 origin, 경로 세그먼트 경계, `methods`로 판정하고, Vineyard 백엔드 오리진은 거부합니다. 주소가 정해지기 전이나 쓸 수 없는 주소인 동안에는 항목이 아무것도 허용하지 않고, `ctx.net.fetch`는 해당 설정의 이름을 담은 오류로 거부됩니다. plugin은 주소를 정하거나 바꿀 수 없습니다. 분석가만 plugin 설정에서 정할 수 있습니다. Vineyard 백엔드 자신의 주소는 어떤 경우에도 쓰이지 않으며, 설정 칸에 그렇게 표시됩니다.
+
+`http` 주소는 데스크톱 앱에서 쓰입니다. 웹 앱은 https로 제공되고, 브라우저는 그 페이지에서 http 주소로 가는 요청을 혼합 콘텐츠로 막습니다. 그래서 웹 앱에서는 이 컴퓨터의 주소(`localhost`, `127.0.0.1`, `[::1]`)가 아니면 `http` 주소가 쓰이지 않으며, 설정 칸에 그렇게 표시됩니다.
+
+`config_key`가 같은 plugin의 `url` 설정이 아닌 항목은 아무것도 허용하지 않으며, 레지스트리 CI가 거부합니다. CI는 대문자 동사 다섯 개 외의 `methods`와, 위 네 필드 외의 필드도 거부합니다. 앱은 메서드를 정확히 비교하므로 `"post"`로 적으면 모든 요청이 거부되기 때문입니다.
+
+설치 화면에는 **Network requests to the address you enter in "MISP URL" (https only)**가 표시되고, 그 아래에 목적이, 이 기기에서 이 팩에 이미 주소가 정해져 있으면 그 호스트가 함께 표시됩니다. 설정 칸에는 요청이 갈 호스트나, 주소가 쓰이지 않는 이유가 표시됩니다. 카탈로그 카드에서는 이 scope가 네트워크로 집계됩니다.
+
+!!! warning "분석가 자신의 네트워크"
+    데스크톱 앱에서 분석가가 정한 주소는 선언된 엔드포인트와 같은 CORS 면제를 받고, 같은 한계도 따릅니다: 면제는 분석가 자신의 네트워크에서 멈춥니다. 이 컴퓨터나 기관 네트워크에 있는 서버(예: `10.0.0.0/8`의 MISP)라면, 설정 칸의 **Trust … on this computer…**를 누르세요. 확인 대화상자를 거쳐 Desktop Settings의 **Additional trusted origins**에 그 오리진이 추가됩니다. 이 목록은 그곳에서 오리진을 지울 때까지 모든 프로젝트에 적용됩니다. 브라우저에서는 서버가 앱의 오리진에 대해 직접 CORS로 응답해야 합니다.
+
+`network`와 마찬가지로 이 scope도 Vineyard 자격 증명을 붙이지 않습니다. 서버의 API 키는 [자격증명 보내기](plugin-schema.md#sending-a-credential)처럼 `secret` 설정에서 읽어 직접 보내세요.
 
 ## web_probe
 
@@ -112,7 +149,7 @@ const who = await ctx.service('telegram', 'resolve', {
 
 각 항목은 `ConfigValue`입니다. `ctx.config`는 분석가가 값을 설정한 선언된 키들(비밀 키 포함)을 선언된 `type`으로 변환해 담은 읽기 전용 맵입니다. 그중 어느 것에도 값이 없는 동안에는 존재하지 않으므로, `ctx.config?.key ?? DEFAULT`로 읽으세요. 값은 로그인한 계정별로 보관됩니다 — 데스크톱에서는 OS 키체인에(컴퓨터가 값을 암호화할 수 없으면 앱을 종료할 때까지만), 브라우저에서는 해당 탭 세션 동안. (출처: SDK의 `sdk.ts` 타입 — `ConfigValue`, `HostContext.config`.)
 
-같은 Plugin Pack의 멤버 가운데 같은 키를 선언하고 같은 네트워크 오리진 집합을 호출하는 멤버들은 그 키의 값 하나를 공유하므로, 분석가는 한 번만 입력합니다. 오리진은 멤버의 `scopes.network` 엔드포인트의 스킴·호스트·포트이며 경로는 상관없으므로, 한 API 호스트의 서로 다른 경로를 호출하는 멤버들도 값을 공유합니다. 단독으로 게시된 plugin이나 `scopes.network` 항목이 없는 plugin은 자기 값을 따로 가지며, 서로 다른 두 팩은 같은 호스트를 호출하더라도 값을 공유하지 않습니다. 다른 멤버보다 오리진을 하나 더 호출하는 멤버는 자기 값을 따로 가지므로, 키를 함께 써야 하는 멤버들에는 같은 오리진을 주세요. 공유한다고 plugin이 받는 범위가 넓어지지는 않습니다: 각 plugin은 여전히 자신의 매니페스트가 선언한 키만 받습니다.
+같은 Plugin Pack의 멤버 가운데 같은 키를 선언하고 같은 네트워크 오리진 집합을 호출하는 멤버들은 그 키의 값 하나를 공유하므로, 분석가는 한 번만 입력합니다. 오리진은 멤버의 `scopes.network` 엔드포인트의 스킴·호스트·포트이며 경로는 상관없으므로, 한 API 호스트의 서로 다른 경로를 호출하는 멤버들도 값을 공유합니다. `network_configurable` 항목은 `config_key`로 이름 붙은 목적지 하나로 집계되므로, 같은 주소 설정을 읽고 같은 고정 호스트를 호출하는 멤버들은 주소와 그 주소로 가는 키를 함께 공유합니다. 단독으로 게시된 plugin이나 `scopes.network` 항목도 `network_configurable` 항목도 없는 plugin은 자기 값을 따로 가지며, 서로 다른 두 팩은 같은 호스트를 호출하더라도 값을 공유하지 않습니다. 다른 멤버보다 오리진을 하나 더 호출하는 멤버는 자기 값을 따로 가지므로, 키를 함께 써야 하는 멤버들에는 같은 오리진을 주세요. 공유한다고 plugin이 받는 범위가 넓어지지는 않습니다: 각 plugin은 여전히 자신의 매니페스트가 선언한 키만 받습니다.
 
 | 필드 | 타입 | 의미 |
 | --- | --- | --- |
