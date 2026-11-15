@@ -280,6 +280,18 @@ than relabelling it, and figures from different sources go under keys of their o
 | URL or domain → address | `accepts payment to` | where the payment address was found |
 | legacy `financial.crypto_address`, or a payment `web.tracking_id` → address | `same as` | why they are the same |
 
+The **Chain Explorer** plugin pack fills these types without an account or a key. It reads an
+address's history and counterparties, a transaction's inputs and outputs, TRON and XRP Ledger first
+funders, contract deployers and tokens, explorer labels, and USDT and USDC freezes. Its Identify
+Crypto Network plugin decides the network of an `evm` or `unknown` address, a legacy Financial
+address or a payment tracking ID, and draws the `same address on` and `same as` links above. An
+address whose format several networks share is placed on each network where it has activity, once
+every one of those networks has answered: while an explorer is not answering, the address is left
+for the next run. An EVM address that has never sent a transaction and holds no coin or code stays
+undecided. The pack covers Bitcoin, Litecoin, Bitcoin Cash, Dogecoin, Dash, Zcash, Ethereum, BNB
+Smart Chain (the last 30 days), OP Mainnet, Avalanche C-Chain, Ethereum Classic, TRON, Solana, the
+XRP Ledger and TON. History on Polygon, Arbitrum and Base needs a keyed pack.
+
 !!! tip "Mixing Type Packs"
     Install as many Type Packs as you need — they share one qualified-type namespace and
     interlink by design. You might link a `threat.malware` to the `infrastructure.ip_address`

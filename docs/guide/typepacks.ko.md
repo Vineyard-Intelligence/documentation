@@ -271,6 +271,17 @@ Defend는 연결이 열릴 때와 닫힐 때 한 번씩 기록하지만 이벤�
 | URL·도메인 → 주소 | `accepts payment to` | 결제 주소를 찾은 곳 |
 | 옛 `financial.crypto_address`, 결제용 `web.tracking_id` → 주소 | `same as` | 같다고 본 근거 |
 
+**Chain Explorer** 플러그인팩은 계정이나 키 없이 이 유형들을 채웁니다. 주소의 거래 이력과
+상대 주소, 거래의 입력과 출력, TRON과 XRP Ledger의 첫 자금 공급자, 계약 배포자와 토큰, 탐색기
+라벨, USDT·USDC 동결 여부를 읽습니다. Identify Crypto Network 플러그인은 `evm`이나 `unknown`
+주소, 옛 Financial 주소, 결제용 추적 ID의 네트워크를 정하고 위 표의 `same address on`과
+`same as` 엣지를 그립니다. 여러 네트워크가 같은 형식을 쓰는 주소는 그 네트워크들이 모두 응답한
+뒤 활동이 있는 네트워크마다 노드가 됩니다. 응답하지 않는 탐색기가 있으면 그 주소는 다음 실행에서
+다시 판정합니다. 거래를 보낸 적이 없고 코인도 코드도 없는 EVM 주소는 판정하지 않은 채로 남습니다.
+다루는 네트워크는 Bitcoin, Litecoin, Bitcoin Cash, Dogecoin, Dash, Zcash, Ethereum,
+BNB Smart Chain(최근 30일), OP Mainnet, Avalanche C-Chain, Ethereum Classic, TRON, Solana,
+XRP Ledger, TON입니다. Polygon, Arbitrum, Base의 이력은 키가 필요한 팩이 다룹니다.
+
 !!! tip "Type Pack 혼합하기"
     필요한 만큼 Type Pack을 설치하세요 — 하나의 정규화된 유형 네임스페이스를
     공유하며 설계상 상호 연결됩니다. `threat.malware`를 그것이 비콘하는
