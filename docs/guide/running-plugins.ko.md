@@ -177,7 +177,7 @@ AI 에이전트가 노드의 필드를 고치는 변경은 에이전트가 바�
   <figcaption>실행 하나의 Review 대화상자: 스테이징된 노드와 엣지, 선택한 행의 속성, Apply (4) / Discard all.</figcaption>
 </figure>
 
-## 진행률 및 취소
+## 진행률 및 취소 {#progress-and-cancellation}
 
 직접 시작한 모든 실행은 **작업**이 되어 **Tasks** 패널에 표시됩니다 — 실시간 상태 배지, 플러그인이
 보고하는 경우 진행률 막대, 그리고 **Stop**(중지) 컨트롤이 있습니다. **Stop**은 플러그인에 종료를 요청하며, 약 3초 안에 끝나지
@@ -293,6 +293,57 @@ Import** 플러그인 팩으로 가져옵니다.
 경고합니다. 일치 결과로 조치하기 전에 OFAC의
 [Sanctions List Search](https://sanctionssearch.ofac.treas.gov/)에서 확인하세요. 다른 목록(UN, EU,
 영국, 한국)은 대조하지 않습니다.
+
+## Blockchair로 코인 따라가기 {#blockchair}
+
+[마켓플레이스](../marketplace.md)의 **Blockchair** 플러그인 팩은 Bitcoin, Bitcoin Cash, Litecoin,
+Bitcoin SV, Dogecoin, Dash, Zcash(투명 주소)의 주소와 거래를 Blockchair API로 읽습니다. 분석가 본인의
+Blockchair API 키가 필요하며, 네 플러그인에 한 번만 입력합니다. Cryptocurrency Type Pack의 유형을
+쓰므로 그 팩도 프로젝트에 설치하세요.
+
+| 플러그인 | 실행 대상 | 쓰는 것 |
+|---|---|---|
+| **Blockchair Address Summary** | Crypto Address | 확정된 `balance`, `first_seen`, `last_seen`, `address_kind`, Blockchair의 합계와 날짜(`blockchair_received`, `blockchair_first_spent` 등). 요청 하나에 주소 100개. 아무것도 만들지 않음 |
+| **Blockchair Address Transactions** | Crypto Address | 최근 거래, 또는 **Start from**을 oldest로 두면 처음 거래와 그 입력·출력. 주소에는 `tx_count`, `history_examined`, `history_complete` |
+| **Blockchair Transaction** | Crypto Transaction | 거래의 블록, 수수료, 개수, 그리고 입력·출력 |
+| **Blockchair Network Check** | `network`가 `unknown`인 Crypto Address | 그 문자열이 쓰인 네트워크마다 Crypto Address 하나 |
+
+그래프에는 다음과 같이 들어갑니다.
+
+- 거래는 노드입니다. 거래가 쓰는 입력의 주소는 거래에 **input to**로 이어지고, `amount`(그 주소가
+  넣은 입력의 합계)와 `inputs`(`index`, `amount`, `prev_txid`, `prev_vout`)를 담습니다. 거래가 보내는
+  주소는 **output to**로 이어지고 `amount`와 `outputs`(`index`, `amount`)를 담습니다. 금액은 코인의
+  기본 단위(사토시가 아니라 BTC)로 적은 10진 문자열입니다.
+- 거래의 각 쪽에서 선택한 주소는 언제나 그리고, 나머지는 금액이 큰 순서로 **Counterparties per
+  side**까지 그립니다. 거래 노드의 `blockchair_not_drawn`이 그리지 않은 개수이고, 모두 그렸으면 0입니다.
+  앞서 그린 링크는 그래프에 남아 있으므로, 나중에 더 작은 값으로 실행해도 이 수는 올라가지 않습니다.
+- 프로젝트에 이미 다른 라벨로 있는 링크는 그 라벨을 그대로 두고 금액만 더합니다. 플러그인이 쓸
+  라벨(`input to`, `output to`)이 이미 붙은 링크는 그대로 둡니다. 플러그인은 링크의 데이터를 읽을 수
+  없고, 거래의 금액은 바뀌지 않기 때문입니다. 그래서 다시 실행해도 검토에 링크 행이 새로 올라오지 않으며,
+  그대로 둔 링크 수는 실행 요약에 나옵니다.
+- `history_examined`와 `history_complete`는 그 주소에서 읽은 거래를 모두 그렸을 때만 씁니다. 키의 하루 요청
+  한도를 다 쓰는 등으로 실행이 중간에 멈추면, 주소에는 잔액과 날짜만 들어가고 다시 실행할 주소는
+  실행 요약에 나옵니다.
+- 주소는 네트워크마다 정한 형식으로 씁니다. Bitcoin Cash는 `bitcoincash:` 없는 CashAddr, Litecoin
+  `3…`는 `M…`, bech32는 소문자입니다. 다른 표기로 적힌 선택 주소는 그 표기를 유지하고, 실행은 그
+  주소의 거래를 여전히 그 노드에 잇습니다.
+- 그 네트워크에서 한 번도 쓰이지 않은 주소는 `balance` 0과 `blockchair_output_count` 0을 받습니다.
+  조회 실패가 아니라 실제로 없다는 결과입니다. HTTP 404나 주소 목록이 없는 응답처럼 그렇게 말하지 않는
+  응답은 조회 실패로 세고 아무것도 쓰지 않습니다.
+- Network Check는 활동이 있는 네트워크마다 노드를 하나 만들고, unknown 노드에서 **same address on**으로
+  잇습니다. 링크의 `check_blockchair`가 판정 근거입니다. `basis`는 `activity`이거나, 그 형식을 쓰는
+  네트워크가 하나뿐이면 `format`이고, `as_of`는 Blockchair 응답의 날짜입니다. 같은 쌍을 다른 플러그인이
+  판정해도 그 기록이 따로 남도록 이 키 하나에 담습니다. 체인 분기 전에 쓰인 `1…` 주소는 Bitcoin과
+  Bitcoin Cash에, 그리고 Bitcoin SV에도 활동이 있습니다. 문자열만 같은 별개의 계정입니다. `D…` 주소는
+  Blockchair가 다루지 않는 Verge 주소일 수도 있으므로, 쓰인 적이 없으면 unknown으로 남습니다.
+- 잔액, 날짜, 거래 목록은 확정된 것만 셉니다. 아직 멤풀에 있는 거래는 빠집니다.
+- 10분 시간 예산을 넘긴 실행은 실패하고 스테이징해 둔 내용을 모두 버립니다([진행률 및
+  취소](#progress-and-cancellation) 참고). 그래서 Blockchair 실행은 7분쯤부터 새 주소나 거래를 받지
+  않고, 하던 것을 마친 뒤 실행 요약에 **STOPPED**와 다시 실행할 개수를 적습니다. 주소마다 거래를 많이
+  읽는 큰 선택은 여러 번에 나눠 실행해야 할 수 있습니다.
+
+실행 요약에 그 실행이 쓴 키의 Blockchair 요청 포인트가 나옵니다. Blockchair는 조회한 모든 주소와
+거래를 키와 함께 받습니다.
 
 ## Chaos 레퍼런스 팩
 

@@ -302,6 +302,61 @@ happened, not what was screened. The summary warns when the mirror has not check
 days. Confirm a hit on OFAC's [Sanctions List Search](https://sanctionssearch.ofac.treas.gov/)
 before acting on it. Other lists (UN, EU, UK, Korea) are not checked.
 
+## Following coins with Blockchair {#blockchair}
+
+The **Blockchair** plugin pack from the [Marketplace](../marketplace.md) reads addresses and
+transactions on Bitcoin, Bitcoin Cash, Litecoin, Bitcoin SV, Dogecoin, Dash and Zcash (transparent
+addresses) through Blockchair's API. It needs your own Blockchair API key, typed once for all four
+plugins, and writes the Cryptocurrency type pack's types, so install that pack in the project too.
+
+| Plugin | Run it on | What it writes |
+|---|---|---|
+| **Blockchair Address Summary** | Crypto Address | The confirmed `balance`, `first_seen`, `last_seen`, `address_kind`, and Blockchair's totals and dates (`blockchair_received`, `blockchair_first_spent`, …). 100 addresses per request. It creates nothing |
+| **Blockchair Address Transactions** | Crypto Address | The latest transactions, or with **Start from** set to oldest the first ones, with their inputs and outputs; `tx_count`, `history_examined` and `history_complete` on the address |
+| **Blockchair Transaction** | Crypto Transaction | The block, fee and counts on the transaction, and its inputs and outputs |
+| **Blockchair Network Check** | Crypto Address whose network is `unknown` | A Crypto Address on each network the string was used on |
+
+What lands on the graph:
+
+- A transaction is a node. Each address it spends from is linked to it **input to**, with `amount`
+  (that address's total across the inputs) and `inputs` (`index`, `amount`, `prev_txid`,
+  `prev_vout`). Each address it pays is linked **output to**, with `amount` and `outputs` (`index`,
+  `amount`). Amounts are decimal strings in the coin's own unit, BTC rather than satoshi.
+- On each side of a transaction the selected addresses are always drawn, then the largest others up
+  to **Counterparties per side**. `blockchair_not_drawn` on the transaction counts the ones left out,
+  and reads 0 when nothing was. A later run with a smaller cap does not raise it, because the links
+  drawn before are still there.
+- A link already in the project under another label keeps that label and gets the amounts. One
+  that already has the label the plugin would write (`input to`, `output to`) is left as it is:
+  plugins cannot read a link's data, and a transaction's amounts do not change. So running the
+  plugin again adds no link rows to the review, and the summary counts the links it left alone.
+- `history_examined` and `history_complete` are written only when every transaction read for the
+  address was drawn. If a run stops part-way, for example when the key's daily requests run out, the
+  address still gets its balance and dates, and the summary says which addresses to run again.
+- Addresses are written in each network's own form: CashAddr without `bitcoincash:` for Bitcoin
+  Cash, `M…` for a Litecoin `3…`, lower-case bech32. A selected address written another way keeps
+  its spelling, and the run still links its transactions to it.
+- An address never used on its network gets a zero `balance` and `blockchair_output_count` 0. That
+  is a real negative, not a failed lookup: an answer that does not say so, such as an HTTP 404 or an
+  answer without the list of addresses, counts as a failed lookup and writes nothing.
+- Network Check makes one node for each network where the string has activity, linked **same
+  address on** from the unknown node. The link's `check_blockchair` says how it was decided: `basis`
+  is `activity`, or `format` when only one network has that format, and `as_of` is the date of
+  Blockchair's answer. It is a key of its own so that another plugin settling the same pair keeps
+  its own record beside it. A `1…` address used before a chain split has activity on Bitcoin and
+  Bitcoin Cash, and on Bitcoin SV too: separate accounts that share a string. A `D…` address may
+  also be a Verge address, which Blockchair does not cover, so an unused one stays unknown.
+- Balances, dates and transaction lists are confirmed only: transactions still in the mempool are
+  left out.
+- A run that passes its 10-minute time budget fails and keeps nothing it staged (see
+  [Progress and cancellation](#progress-and-cancellation)). So a Blockchair run takes no new
+  address or transaction after about seven minutes, finishes what it has, and says **STOPPED** in
+  its summary with how many to run again. A large selection with many transactions per address can
+  take several runs.
+
+Each run's summary says how many of the key's Blockchair request points it used. Blockchair
+receives every address and transaction looked up, with your key.
+
 ## The Chaos reference pack
 
 The Chaos pack is a single bundle (`run.vineyard.pluginpacks.chaos`) of six small plugins that

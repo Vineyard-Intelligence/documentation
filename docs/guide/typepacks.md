@@ -298,6 +298,10 @@ undecided. The pack covers Bitcoin, Litecoin, Bitcoin Cash, Dogecoin, Dash, Zcas
 Smart Chain (the last 30 days), OP Mainnet, Avalanche C-Chain, Ethereum Classic, TRON, Solana, the
 XRP Ledger and TON. History on Polygon, Arbitrum and Base needs a keyed pack.
 
+The **Blockchair** plugin pack writes the transaction rows of the table above, `input to` and
+`output to`, and `same address on`, for Bitcoin and six chains built like it; see
+[Following coins with Blockchair](running-plugins.md#blockchair).
+
 To follow funds across several hops, the **Crypto fund-flow tracing** [Skill Pack](skillpacks.md)
 tells the agent how to use these plugins: settle each address's network before any hop, follow
 transfers by asset, time and amount, stop at exchanges and services, and draft the freeze and records
