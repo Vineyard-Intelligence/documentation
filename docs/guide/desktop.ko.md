@@ -6,7 +6,7 @@ macOS, Windows, Linux용 Vineyard 데스크탑 앱은 [app.vineyard.run](https:/
 
 데스크탑 앱에는 설정 창이 두 개 있습니다.
 
-- **Settings**는 앱 자체의 설정으로, 브라우저에서 보는 것과 같은 대화상자입니다. 계정, AI 에이전트, 키 등이 여기 있습니다. **⌘,**(Mac)나 **Ctrl+,**(Windows, Linux)로 열고, 메뉴의 **Settings…**나 사이드바 아래쪽의 **Settings**(로그인한 상태에서는 계정 메뉴 안)로도 엽니다. 데스크탑 앱에서는 입력란에 글을 쓰는 중에도 이 키가 동작합니다. 브라우저에서는 입력란 밖에서만 동작하고, Mac에서는 브라우저가 이 키를 자기 설정에 쓸 수 있습니다. 로그인 화면에는 Settings가 없습니다. 그곳에서 **Settings…**나 이 키를 누르면 Settings가 어디 있는지, 서버 주소가 있는 Desktop Settings는 어디 있는지 알려 주는 안내가 나옵니다.
+- **Settings**는 앱 자체의 설정으로, 브라우저에서 보는 것과 같은 대화상자입니다. 계정, AI 에이전트, 키 등이 여기 있습니다. **⌘,**(Mac)나 **Ctrl+,**(Windows, Linux)로 열고, 메뉴의 **Settings…**나 사이드바 아래쪽의 **Settings**(로그인한 상태에서는 계정 메뉴 안)로도 엽니다. 데스크탑 앱에서는 입력란에 글을 쓰는 중에도 이 키가 동작합니다. 브라우저에서는 입력란 밖에서만 동작하고, Mac에서는 브라우저가 이 키를 자기 설정에 쓸 수 있습니다. 로그인 화면에는 Settings가 없습니다. 그곳에서 **Settings…**나 이 키를 누르면 Settings가 어디 있는지, 서버 주소가 있는 Desktop Settings는 어디 있는지 알려 주는 안내가 나옵니다. Terms, Privacy처럼 앱 바깥에 있는 페이지에도 Settings가 없어서, 그곳에서는 Settings가 어디 있는지 알려 주는 안내가 나옵니다. 앱을 실행한 직후 세션을 이어받는 동안 이 키를 누르면 결과를 기다렸다가, 로그인되어 있으면 Settings를 열고 아니면 로그인 화면의 안내를 보여 줍니다.
 - **Desktop Settings**는 데스크탑 앱의 설정입니다. **Backend**(연결할 서버), **Additional trusted origins**, **Updates**, **Key storage**가 있습니다. Mac에서는 **Vineyard → Desktop Settings…**(**⌥⌘,**)로, Windows와 Linux에서는 **File → Desktop Settings…**로 엽니다. Windows와 Linux에는 이 항목의 키가 없습니다.
 
 ## 메뉴 {#menus}
