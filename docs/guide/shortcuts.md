@@ -86,6 +86,9 @@ layout again is what the key does.
   after you edit a value in the Properties panel never deletes the selection.
 - **Esc** closes one thing per press, the one in front first, and once nothing is left open it
   clears the selection. [Right-click menus](canvas.md#right-click-menus) gives the order.
+- **⌘C** (**Ctrl+C**) copies the selected nodes' labels only while you are not typing in a field,
+  no text on the page is selected and no dialog is open; otherwise it copies what it always does.
+  See [Copying labels](canvas.md#copying-labels).
 - With a Korean input source, the keys still work by their place on the keyboard: the key that types
   ㄹ is **F**, and **G** then **A** is the key that types ㅎ, then the one that types ㅁ.
 - Keys that switch the input source are never shortcuts, so typing Korean never runs one: 한/영,
@@ -198,6 +201,7 @@ does.
 | Connect to… | <kbd>C</kbd> | <kbd>C</kbd> |
 | Edit the selection’s value | <kbd>↵</kbd> / <kbd>F2</kbd> | <kbd>Enter</kbd> / <kbd>F2</kbd> |
 | Delete | <kbd>⌫</kbd> / <kbd>⌦</kbd> | <kbd>Delete</kbd> / <kbd>Backspace</kbd> |
+| Copy labels<br><small>Of the selected nodes, one per line, while no text is selected and you are not typing in a field.</small> | <kbd>⌘</kbd><kbd>C</kbd> | <kbd>Ctrl</kbd>+<kbd>C</kbd> |
 | Add a node to the selection | <kbd>⇧</kbd>-click | <kbd>Shift</kbd>-click |
 | Select the nodes in an area | <kbd>⇧</kbd>-drag | <kbd>Shift</kbd>-drag |
 | Add every node of a type to the selection<br><small>On a row of the legend; a plain click selects only that type.</small> | <kbd>⇧</kbd>-click | <kbd>Shift</kbd>-click |

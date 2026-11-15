@@ -69,8 +69,10 @@ If you opened the project only through its public link, **Activity log…** is d
 | **Select isolated nodes** | Selects every node with no edges. |
 | **Clear selection** | Deselects all nodes and clears the selection count. |
 | **Merge selected nodes…** | Opens the merge view on the selected nodes (see [Merging nodes](#merging-nodes)). Unavailable until two or more nodes are selected. |
+| **Copy labels** | Copies the selected nodes' labels, one per line (see [Copying labels](#copying-labels)). |
+| **Copy labels, defanged** | Copies them defanged, so that no address, domain, URL or e-mail in them is a live link. |
 
-The three 1-hop actions add to the selection, so pressing one again walks one more hop; they are disabled until something is selected.
+The three 1-hop actions add to the selection, so pressing one again walks one more hop; they are disabled until something is selected. The two copy items are disabled until a node is selected.
 
 !!! note "Adding a node"
     New nodes are created from the **Types** panel, not from this menu: click one of the types that the project's Type Packs provide. In the command palette, **Add node:** and the type's name, such as **Add node: Domain**, does the same.
@@ -86,9 +88,9 @@ The three 1-hop actions add to the selection, so pressing one again walks one mo
 
 ## Right-click menus
 
-- **Node** — Run plugins… (on this node), Duplicate, Connect to… (see [Drawing edges](#drawing-edges)), Disconnect all (deletes every edge touching the node), Delete.
+- **Node** — Run plugins… (on this node), Copy labels and Copy labels, defanged (see [Copying labels](#copying-labels)), Duplicate, Connect to… (see [Drawing edges](#drawing-edges)), Disconnect all (deletes every edge touching the node), Delete.
 - **Edge** — Reverse direction, Delete.
-- **Selection** — right-click empty canvas with anything selected, or a node or edge inside a multi-item selection; the header shows the count (*Selected: N nodes, M edges*). Run plugins…, Connect to… and Show in node table (when nodes are selected), Merge nodes… (when two or more nodes are selected, see [Merging nodes](#merging-nodes)), Delete (N), Select all, Fit view.
+- **Selection** — right-click empty canvas with anything selected, or a node or edge inside a multi-item selection; the header shows the count (*Selected: N nodes, M edges*). Run plugins…, Connect to…, Show in node table, Copy labels and Copy labels, defanged (when nodes are selected), Merge nodes… (when two or more nodes are selected, see [Merging nodes](#merging-nodes)), Delete (N), Select all, Fit view.
 - **Empty canvas** (nothing selected, headed *Nothing selected — whole project*) — Run plugins… on the whole-graph plugins, Select all, Fit view.
 
 An item that a key also does shows the key on its right: **R** for Run plugins…, **C** and **⌘-click** (Mac) or **Ctrl-click** for Connect to…, **⌫** (Mac) or **Delete** for Delete. The edge menu shows none, since a right-click on an edge does not select it and the keys act on the selection.
@@ -101,6 +103,19 @@ An item that a key also does shows the key on its right: **R** for Run plugins�
   ![Node right-click menu](../assets/guide/canvas-context-menu.webp){ width="301" loading=lazy }
   <figcaption>The node menu.</figcaption>
 </figure>
+
+## Copying labels {#copying-labels}
+
+Select nodes and press **⌘C** (**Ctrl+C** on Windows and Linux) to copy their labels, one line per node, ready to paste into a ticket, a chat or a report. The labels are the ones the Properties panel shows, whole, not shortened as on the canvas; a label written over several lines, such as a note's, is copied on one line. A short message says how many labels were copied. **Copy labels** in the Edit menu, in a node's or a selection's right-click menu and in the [command palette](shortcuts.md#command-palette) does the same, and in the desktop app so does **Edit ▸ Copy** in its menu bar.
+
+⌘C copies the nodes only when nothing else would be copied:
+
+- while you are typing in a field, ⌘C copies the field's text, as always;
+- while any text on the page is selected, for example in the Properties panel or an AI agent answer, ⌘C copies that text;
+- while a dialog such as **Settings** or the Review dialog is open, ⌘C does not copy the nodes behind it;
+- only nodes' labels are copied, so with only links selected ⌘C copies nothing.
+
+**Defanged.** **Copy labels, defanged** writes every address, domain, URL and e-mail in the labels so that it is no longer a live link: `hxxps://evil[.]example/a`, `evil[.]example`, `admin[@]evil[.]example`, `203[.]0[.]113[.]7`, and `[:]` for the colons of an IPv6 address. The same goes for one inside a URL, such as a redirect's target: `hxxps://evil[.]example/r?u=hxxps://next[.]example/x`. A file name whose extension is also a top-level domain, such as `invoice.zip` or `setup.py`, reads as a domain and is defanged like one (`invoice[.]zip`). Anything else, such as a name, a hash or another file name, is copied as it is, and a label already written defanged is not changed. The AI agent's indicator extraction reads these spellings back. To have ⌘C always copy defanged, turn on **Settings ▸ Graph ▸ Defang when copying**; it is off by default, because a list pasted into another tool or a block list needs the values as they are.
 
 ## Layouts
 

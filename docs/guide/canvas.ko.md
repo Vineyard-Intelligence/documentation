@@ -69,8 +69,10 @@
 | **Select isolated nodes** (고립 노드 선택) | 엣지가 없는 모든 노드를 선택합니다. |
 | **Clear selection** (선택 해제) | 모든 노드 선택을 해제하고 선택 개수를 초기화합니다. |
 | **Merge selected nodes…** (선택한 노드 병합) | 선택한 노드로 병합 화면을 엽니다([노드 병합](#merging-nodes) 참조). 노드를 두 개 이상 선택해야 사용할 수 있습니다. |
+| **Copy labels** (라벨 복사) | 선택한 노드의 라벨을 한 줄에 하나씩 복사합니다([라벨 복사하기](#라벨-복사하기) 참조). |
+| **Copy labels, defanged** (디팡해서 라벨 복사) | 라벨 속 주소, 도메인, URL, 이메일이 살아 있는 링크가 되지 않도록 디팡해서 복사합니다. |
 
-세 가지 1홉 작업은 선택에 추가하므로, 다시 누르면 한 홉씩 더 나아갑니다. 아무것도 선택되지 않았으면 비활성화됩니다.
+세 가지 1홉 작업은 선택에 추가하므로, 다시 누르면 한 홉씩 더 나아갑니다. 아무것도 선택되지 않았으면 비활성화됩니다. 두 복사 항목은 노드를 선택하기 전까지 비활성화됩니다.
 
 !!! note "노드 추가하기"
     새 노드는 이 메뉴가 아니라 **Types**(유형) 패널에서 만듭니다. 프로젝트의 Type Pack이 제공하는 유형 중 하나를 클릭하세요. 커맨드 팔레트에서 **Add node:** 뒤에 타입 이름이 붙은 명령(예: **Add node: Domain**)도 같은 일을 합니다.
@@ -86,9 +88,9 @@
 
 ## 우클릭 메뉴 {#right-click-menus}
 
-- **노드** — **Run plugins…**(이 노드에 대해), **Duplicate**(복제), **Connect to…**([엣지 그리기](#엣지-그리기) 참조), **Disconnect all**(노드에 닿는 모든 엣지 삭제), **Delete**.
+- **노드** — **Run plugins…**(이 노드에 대해), **Copy labels**와 **Copy labels, defanged**([라벨 복사하기](#라벨-복사하기) 참조), **Duplicate**(복제), **Connect to…**([엣지 그리기](#엣지-그리기) 참조), **Disconnect all**(노드에 닿는 모든 엣지 삭제), **Delete**.
 - **엣지** — **Reverse direction**(방향 반전), **Delete**.
-- **선택** — 무언가 선택된 상태에서 빈 캔버스를 우클릭하거나, 여러 항목 선택에 포함된 노드나 엣지를 우클릭하면 열립니다. 머리글에 개수가 표시됩니다(*Selected: N nodes, M edges*). **Run plugins…**, **Connect to…**, **Show in node table**(노드가 선택된 경우), **Merge nodes…**(노드가 두 개 이상 선택된 경우, [노드 병합](#merging-nodes) 참조), **Delete (N)**, **Select all**, **Fit view**.
+- **선택** — 무언가 선택된 상태에서 빈 캔버스를 우클릭하거나, 여러 항목 선택에 포함된 노드나 엣지를 우클릭하면 열립니다. 머리글에 개수가 표시됩니다(*Selected: N nodes, M edges*). **Run plugins…**, **Connect to…**, **Show in node table**, **Copy labels**, **Copy labels, defanged**(노드가 선택된 경우), **Merge nodes…**(노드가 두 개 이상 선택된 경우, [노드 병합](#merging-nodes) 참조), **Delete (N)**, **Select all**, **Fit view**.
 - **빈 캔버스** (선택 없음, 머리글 *Nothing selected — whole project*) — whole-graph 플러그인에 대한 **Run plugins…**, **Select all**, **Fit view**.
 
 키로도 할 수 있는 항목은 오른쪽에 그 키를 보여 줍니다. Run plugins…는 **R**, Connect to…는 **C**와 **⌘-클릭**(Mac) 또는 **Ctrl-클릭**, Delete는 **⌫**(Mac) 또는 **Delete**입니다. 엣지 메뉴에는 키가 없습니다. 엣지를 우클릭해도 엣지가 선택되지 않는데, 키는 선택에 동작하기 때문입니다.
@@ -101,6 +103,19 @@
   ![노드 우클릭 메뉴](../assets/guide/canvas-context-menu.webp){ width="301" loading=lazy }
   <figcaption>노드 메뉴.</figcaption>
 </figure>
+
+## 라벨 복사하기 {#라벨-복사하기}
+
+노드를 선택하고 **⌘C**(Windows와 Linux에서는 **Ctrl+C**)를 누르면 노드 라벨이 한 줄에 하나씩 복사되어, 티켓이나 메신저, 보고서에 바로 붙여 넣을 수 있습니다. 라벨은 캔버스에서처럼 줄여 쓴 것이 아니라 Properties 패널에 보이는 전체 라벨입니다. 노트처럼 여러 줄로 된 라벨은 한 줄로 복사됩니다. 몇 개를 복사했는지 짧은 알림이 나옵니다. Edit 메뉴, 노드나 선택의 우클릭 메뉴, [커맨드 팔레트](shortcuts.md#command-palette)의 **Copy labels**도 같은 일을 하고, 데스크탑 앱에서는 메뉴 바의 **Edit ▸ Copy**도 같습니다.
+
+⌘C는 다른 것이 복사되지 않을 때만 노드를 복사합니다.
+
+- 입력칸에 입력하는 중이면 ⌘C는 늘 그렇듯 입력칸의 텍스트를 복사합니다.
+- Properties 패널이나 AI 에이전트의 답처럼 화면의 텍스트가 선택되어 있으면 ⌘C는 그 텍스트를 복사합니다.
+- **Settings**나 Review 대화상자 같은 대화상자가 열려 있으면 ⌘C는 그 뒤의 노드를 복사하지 않습니다.
+- 노드의 라벨만 복사하므로, 링크만 선택되어 있으면 ⌘C는 아무것도 복사하지 않습니다.
+
+**디팡.** **Copy labels, defanged**는 라벨 속 주소, 도메인, URL, 이메일을 살아 있는 링크가 아니게 바꿔 적습니다. `hxxps://evil[.]example/a`, `evil[.]example`, `admin[@]evil[.]example`, `203[.]0[.]113[.]7`처럼 적고, IPv6 주소의 콜론은 `[:]`로 적습니다. 리디렉트 대상처럼 URL 안에 든 것도 `hxxps://evil[.]example/r?u=hxxps://next[.]example/x`처럼 같은 방식으로 적습니다. `invoice.zip`이나 `setup.py`처럼 확장자가 최상위 도메인이기도 한 파일 이름은 도메인으로 읽히므로 도메인처럼 디팡됩니다(`invoice[.]zip`). 이름, 해시, 그 밖의 파일 이름처럼 나머지는 그대로 복사되고, 이미 디팡해서 적은 라벨은 바뀌지 않습니다. AI 에이전트의 지표 추출은 이렇게 적은 것을 원래대로 읽습니다. ⌘C가 늘 디팡해서 복사하게 하려면 **Settings ▸ Graph ▸ Defang when copying**을 켭니다. 다른 도구나 차단 목록에 붙여 넣을 목록에는 값이 그대로 있어야 하므로 기본값은 꺼짐입니다.
 
 ## 레이아웃
 

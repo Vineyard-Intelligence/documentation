@@ -83,6 +83,9 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
   **⌫**(**Backspace**)를 눌러도 선택이 지워지지 않습니다.
 - **Esc**는 한 번 누를 때마다 앞에 있는 것부터 하나씩 닫고, 더 닫을 것이 없으면 선택을 해제합니다.
   순서는 [우클릭 메뉴](canvas.md#right-click-menus)에 있습니다.
+- **⌘C**(**Ctrl+C**)는 입력칸에 입력하고 있지 않고, 화면에 선택된 텍스트가 없고, 대화상자가 열려 있지
+  않을 때만 선택한 노드의 라벨을 복사합니다. 그 밖에는 원래 복사하던 것을 복사합니다.
+  [라벨 복사하기](canvas.md#라벨-복사하기)를 참조하세요.
 - 한글 입력 소스에서도 키는 키보드의 자리로 동작합니다. ㄹ을 입력하는 키가 **F**이고, **G** 다음
   **A**는 ㅎ을 입력하는 키 다음 ㅁ을 입력하는 키입니다.
 - 입력 소스를 바꾸는 키는 단축키로 쓰지 않으므로, 한글을 입력하다가 단축키가 실행되는 일은 없습니다.
@@ -190,6 +193,7 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
 | Connect to… | <kbd>C</kbd> | <kbd>C</kbd> |
 | Edit the selection’s value | <kbd>↵</kbd> / <kbd>F2</kbd> | <kbd>Enter</kbd> / <kbd>F2</kbd> |
 | Delete | <kbd>⌫</kbd> / <kbd>⌦</kbd> | <kbd>Delete</kbd> / <kbd>Backspace</kbd> |
+| Copy labels<br><small>Of the selected nodes, one per line, while no text is selected and you are not typing in a field.</small> | <kbd>⌘</kbd><kbd>C</kbd> | <kbd>Ctrl</kbd>+<kbd>C</kbd> |
 | Add a node to the selection | <kbd>⇧</kbd>-클릭 | <kbd>Shift</kbd>-클릭 |
 | Select the nodes in an area | <kbd>⇧</kbd>-드래그 | <kbd>Shift</kbd>-드래그 |
 | Add every node of a type to the selection<br><small>On a row of the legend; a plain click selects only that type.</small> | <kbd>⇧</kbd>-클릭 | <kbd>Shift</kbd>-클릭 |
