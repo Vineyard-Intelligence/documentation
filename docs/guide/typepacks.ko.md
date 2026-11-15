@@ -300,7 +300,8 @@ Defend는 연결이 열릴 때와 닫힐 때 한 번씩 기록하지만 이벤�
     채웁니다. 라벨은 바꾸지 않습니다. `e164`가 같은 노드는 중복으로 찾아집니다(Identity 2.5.0
     이상). **수동으로** 추가한 노드는 절대 자동 병합되지 않습니다. 같은 엔터티인데 프로젝트에
     이미 두 노드로 있는 것은 AI 에이전트의 `find_duplicates`와 `merge_nodes`가 검토를 거쳐 찾아
-    합칩니다([중복과 병합](tasks.md#duplicates-and-merging) 참고).
+    합치거나([중복과 병합](tasks.md#duplicates-and-merging) 참고), 직접 합칩니다([노드 병합](canvas.md#merging-nodes)
+    참고).
 
 ## Properties 패널에서 값 읽기 {#reading-values-in-the-properties-panel}
 

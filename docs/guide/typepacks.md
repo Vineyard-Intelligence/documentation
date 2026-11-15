@@ -310,7 +310,8 @@ than relabelling it, and figures from different sources go under keys of their o
     duplicates (Identity 2.5.0 and later). Nodes you add **manually** are never auto-merged. Nodes
     that are one entity but are already two in the project are found and merged by the AI agent's
     `find_duplicates` and `merge_nodes`, through your review (see
-    [Duplicates and merging](tasks.md#duplicates-and-merging)).
+    [Duplicates and merging](tasks.md#duplicates-and-merging)), or you merge them yourself (see
+    [Merging nodes](canvas.md#merging-nodes)).
 
 ## Reading values in the Properties panel
 

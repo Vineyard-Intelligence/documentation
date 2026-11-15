@@ -63,6 +63,7 @@ If you opened the project only through its public link, **Activity log…** is d
 | **Invert selection** | Selects every unselected node and deselects every selected one. |
 | **Select isolated nodes** | Selects every node with no edges. |
 | **Clear selection** | Deselects all nodes and clears the selection count. |
+| **Merge selected nodes…** | Opens the merge view on the selected nodes (see [Merging nodes](#merging-nodes)). Unavailable until two or more nodes are selected. |
 
 The three 1-hop actions add to the selection, so pressing one again walks one more hop; they are disabled until something is selected.
 
@@ -81,7 +82,7 @@ The three 1-hop actions add to the selection, so pressing one again walks one mo
 
 - **Node** — Run plugins… (on this node), Duplicate, Connect to… (see [Drawing edges](#drawing-edges)), Disconnect all (deletes every edge touching the node), Delete.
 - **Edge** — Reverse direction, Delete.
-- **Selection** — right-click empty canvas with anything selected, or a node or edge inside a multi-item selection; the header shows the count (*Selected: N nodes, M edges*). Run plugins…, Connect to… and Show in node table (when nodes are selected), Delete (N), Select all, Fit view.
+- **Selection** — right-click empty canvas with anything selected, or a node or edge inside a multi-item selection; the header shows the count (*Selected: N nodes, M edges*). Run plugins…, Connect to… and Show in node table (when nodes are selected), Merge nodes… (when two or more nodes are selected, see [Merging nodes](#merging-nodes)), Delete (N), Select all, Fit view.
 - **Empty canvas** (nothing selected, headed *Nothing selected — whole project*) — Run plugins… on the whole-graph plugins, Select all, Fit view.
 
 **Esc** closes the menu and nothing under it. Each press of Esc puts away one thing, the front one first: a **Connect to…** waiting for its target, an open menu, then the panel drawn in front, and last the selection. With the Run plugins panel open over a Skill pack panel, the first Esc closes Run plugins, the next one closes the Skill pack panel, and once nothing is left open Esc clears the selection, like **Clear selection**. An Esc pressed inside a panel, or right after you clicked in it, goes to that panel rather than to one drawn over it. An Esc typed in a field, or pressed after a click in the Properties panel, leaves the selection alone, and the Esc that finishes a Korean syllable only finishes the syllable. Holding Shift (or another modifier) while you press Esc makes no difference.
@@ -197,6 +198,22 @@ Select the node(s) you want to link from, then **⌘-click** (Mac) or **Ctrl-cli
   <video src="../../assets/guide/draw-edge.mp4" poster="../../assets/guide/draw-edge.webp" width="960" height="638" muted loop playsinline controls preload="none" aria-label="Click one IP, Shift-click another, ⌘-click the AS node, type the relation and press Enter: one edge from each selected node."></video>
   <figcaption>Click one IP, Shift-click another, ⌘-click the AS node, type the relation and press Enter: one edge from each selected node.</figcaption>
 </figure>
+
+## Merging nodes {#merging-nodes}
+
+When one entity is in the project as two or more nodes, such as `Example.com.` and `example.com`, or `+82 10-1234-5678` and `010-1234-5678`, you can merge them into one. Select the nodes, then right-click and choose **Merge nodes…**, or choose **Edit → Merge selected nodes…**. One merge takes up to 21 nodes: the one kept and 20 folded into it.
+
+The merge view shows what the merge would do before anything changes:
+
+- **Keep** lists the selected nodes with their type and number of links. The node with the most links is picked to start with, because then the fewest links move; pick another to keep that one instead. When the selected nodes are of different types, none is picked, and you pick the one of the newer type. Each of the others says how the type packs relate it to the node kept: *same identity* (its identifying fields are the same value once the type pack folds the spelling), *same e164* (or another field the pack marks as the canonical form), *same entity via …* (through another of the selected nodes), or *not identified as the same*. For a node the type packs do not identify as the same, a warning says so: merge only nodes you know are one entity, because the merge deletes them.
+- **Fields** lists each field the kept node has no value for, filled from the first other node that has one, and each conflict: a field the kept node already has where another node has a different value. The kept node's value stays and the other is not written. To keep the other value, keep that node instead, or change the field after the merge.
+- **Links** lists every link of the nodes folded into the kept one, and what becomes of it. It moves to the kept node with its own record (who wrote it, its evidence grade and who gave it); or the kept node already has the same link, and the other writer's link corroborates it (when the link on the other node is yours and the kept one is not, the kept one takes your record instead); or the kept node already links that node in other words, and this link goes with its node; or it joins two of the merged nodes and goes with the merge. A moved link is a new edge, so its history in the activity log starts again.
+
+The selected nodes must all be in the graph, not waiting in a review, and of one type. Nodes of different types are different kinds of entity. To replace a node of an older type with its newer one, for example an old `financial.crypto_address` with its `cryptocurrency.crypto_address`, keep the node of the newer type and tick the box the view then offers. The box names the type that supersedes, the type it supersedes and the node kept; the other node's links move to the node kept and none of its fields do. Picking another node to keep clears the box. **Review merge** is unavailable while the project is still loading, because the merge has to see every link of the nodes it deletes. It is also unavailable while another change set waiting for review changes one of the nodes being merged or one of their links, because the merge's delete would take that change away; the view names that change set and offers **Open that review**, where you apply or discard it first.
+
+**Review merge** stages the merge as a change set of its own, named **Merge**, and opens it in the [Review dialog](running-plugins.md#reviewing-a-runs-changes). Nothing changes until you apply it there. It is the same merge the AI agent's `merge_nodes` makes, and the review and the apply treat it the same way: every row says it is part of the merge, unticking a node's delete keeps that node and unticks what would move off it, and when you apply, a node is deleted only after every link and field moving off it has landed, and not at all if it changed after the merge was staged (see [Duplicates and merging](tasks.md#duplicates-and-merging)). Closing the review leaves the merge staged, and its row in **Tasks** opens it again.
+
+A grade that rises because a merged node's writer drew the same link shows as *Graded by a merge* in the Properties panel, not as yours: you decided that the nodes are one entity, not how far to trust the link.
 
 ## Inspecting an edge {#inspecting-an-edge}
 
