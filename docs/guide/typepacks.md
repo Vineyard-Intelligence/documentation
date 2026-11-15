@@ -302,6 +302,10 @@ The **Blockchair** plugin pack writes the transaction rows of the table above, `
 `output to`, and `same address on`, for Bitcoin and six chains built like it; see
 [Following coins with Blockchair](running-plugins.md#blockchair).
 
+The **Blockscout PRO** plugin pack fills these types and links on Base, OP Mainnet, Ethereum,
+Arbitrum One, Polygon PoS and Ethereum Classic with your own free key; see
+[Following funds with Blockscout PRO](running-plugins.md#blockscout-pro).
+
 To follow funds across several hops, the **Crypto fund-flow tracing** [Skill Pack](skillpacks.md)
 tells the agent how to use these plugins: settle each address's network before any hop, follow
 transfers by asset, time and amount, stop at exchanges and services, and draft the freeze and records

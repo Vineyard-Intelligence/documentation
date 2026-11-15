@@ -345,6 +345,49 @@ Blockchair API 키가 필요하며, 네 플러그인에 한 번만 입력합니�
 실행 요약에 그 실행이 쓴 키의 Blockchair 요청 포인트가 나옵니다. Blockchair는 조회한 모든 주소와
 거래를 키와 함께 받습니다.
 
+## Blockscout PRO로 자금 추적하기 {#blockscout-pro}
+
+**Blockscout PRO** 플러그인 팩은 [dev.blockscout.com](https://dev.blockscout.com/)에서 받은 본인의
+무료 키로 EVM 체인을 읽습니다. Base, OP Mainnet, Ethereum, Arbitrum One, Polygon PoS, Ethereum
+Classic입니다. Etherscan 무료 키가 Base와 OP Mainnet을 다루지 않으므로, 이 두 체인이 이 팩을 쓰는
+이유입니다. 데스크탑 앱에서만 실행됩니다. 키는 플러그인 하나의 설정에 한 번만 붙여 넣으면 네
+플러그인이 함께 씁니다.
+
+| 플러그인 | 실행 대상 | 쓰는 것 |
+|---|---|---|
+| **Blockscout Address History** | Crypto Address | 그 주소가 보내고 받은 상대 주소와의 `sent to` 링크. 네이티브 코인과 ERC-20 토큰 |
+| **Blockscout Address Details** | Crypto Address | 계정·계약 구분, 잔액, 거래 수, 공개 라벨. 계약이면 배포자(`deployed`)와 그 토큰(`token contract`) |
+| **Blockscout First Funder** | Crypto Address | 그 주소에 네이티브 코인을 처음 보낸 쪽: `first_funder`, `first_funding_tx`, `activated_at` |
+| **Blockscout Transaction** | Crypto Transaction | 블록, 시각, 상태, 수수료, 종류. 보낸 쪽은 거래로 `input to`, 받은 쪽은 거래에서 `output to` |
+
+결과를 읽는 법:
+
+- 체인은 노드의 `network`가 정합니다. Blockscout가 다루지 않는 `bsc`·`avalanche_c` 노드와,
+  네트워크가 아직 `evm`·`unknown`인 노드는 건너뛰고 요약에 이유를 적습니다.
+- Address History는 목록마다 최신 것부터 **Pages per list**(한 페이지 50행)까지 읽고, 모든 목록이
+  빠짐없이 읽은 블록만 셉니다. 링크의 `summary_blockscout`는 자산별 건수와 합계를 그 범위
+  (`window_from`, `window_to`), 읽은 목록(`feeds`)과 함께 줍니다. `complete: false`는 더 오래된
+  이력을 읽지 않았다는 뜻입니다.
+- 주소의 `history_complete: true`와 `first_seen`은 **Include internal transactions**를 켜야
+  씁니다. 거래소 출금이나 L2의 브리지 입금처럼 계약이 지급한 코인은 내부 전송으로만 들어오고,
+  지갑의 첫 코인인 경우가 많습니다. 이 옵션을 끄면 `history_complete`는 `false`이고
+  `first_seen`은 쓰지 않습니다.
+- 두 주소 사이에 이미 있는 링크는 직접 쓴 라벨을 포함해 라벨을 그대로 둡니다. 수치는 그 링크에
+  더합니다. 새 링크에는 최근 20건 `recent`를 씁니다. 이미 있던 링크의 `recent`는 그대로 둡니다.
+  플러그인은 그 링크에 있는 행을 읽을 수 없어서, 쓰면 그 행을 덮어쓰기 때문입니다. 이런 링크
+  수는 실행 요약에 나옵니다.
+- Address History는 Blockscout가 스캠 에어드롭으로 표시한 토큰을
+  **Include tokens Blockscout flags as scams**를 켜야 읽습니다. 주소 오염(address poisoning) 사건에는 이 옵션이 필요합니다. 발행(mint), 소각,
+  NFT 전송은 링크로 그리지 않습니다.
+- 첫 자금 공급자는 더 이른 자금 유입이 없다고 확인될 때만 씁니다. 주소의 내부 전송이 페이지
+  한도를 넘거나, 거래 없이 받은 코인(Ethereum의 비콘 체인 출금, 블록 생성 보상)이 먼저였을 수
+  있으면 아무것도 쓰지 않고 요약에 이유를 적습니다.
+- EIP-7702로 코드에 위임한 지갑은 `eoa`로 쓰고, 위임 대상은 `eip7702_delegate`에 적습니다.
+- Blockscout Transaction은 실패한 거래에 `revert_reason`을 씁니다. 예:
+  `execution reverted: V3TooLittleReceived()`.
+- 무료 플랜은 하루 100,000크레딧이고, 조회 한 번에 20–40크레딧이 듭니다. 실행 요약에 쓴 크레딧이
+  나옵니다. 조회한 모든 주소와 거래는 Blockscout가 봅니다.
+
 ## Chaos 레퍼런스 팩
 
 Chaos 팩은 실행 루프를 배우기 위해 그래프를 재구성하는 여섯 개의 작은 플러그인을 담은

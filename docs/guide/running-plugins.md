@@ -357,6 +357,52 @@ What lands on the graph:
 Each run's summary says how many of the key's Blockchair request points it used. Blockchair
 receives every address and transaction looked up, with your key.
 
+## Following funds with Blockscout PRO {#blockscout-pro}
+
+The **Blockscout PRO** plugin pack reads EVM chains with your own free key from
+[dev.blockscout.com](https://dev.blockscout.com/): Base, OP Mainnet, Ethereum, Arbitrum One, Polygon
+PoS and Ethereum Classic. Base and OP Mainnet are why you would reach for it, since Etherscan's free
+key does not serve them. It runs in the desktop app only. Paste the key into one of its plugins'
+settings once; all four share it.
+
+| Plugin | Run it on | What it writes |
+|---|---|---|
+| **Blockscout Address History** | Crypto Address | `sent to` links to and from the addresses it paid and was paid by, in the native coin and ERC-20 tokens |
+| **Blockscout Address Details** | Crypto Address | Account or contract, balance, transaction count, public label; a contract's deployer (`deployed`) and its token (`token contract`) |
+| **Blockscout First Funder** | Crypto Address | Who first sent it the native coin: `first_funder`, `first_funding_tx`, `activated_at` |
+| **Blockscout Transaction** | Crypto Transaction | Block, time, status, fee and kind; its senders `input to` it and its recipients `output to` from it |
+
+Reading what it wrote:
+
+- The node's `network` decides the chain. A node on `bsc` or `avalanche_c`, which Blockscout does
+  not cover, and a node whose network is still `evm` or `unknown` are skipped, and the summary says
+  why.
+- Address History reads each list newest first, up to **Pages per list** (50 rows a page), and
+  counts only the blocks every list covered completely. Each link's `summary_blockscout` gives the
+  counts and totals per asset with that window (`window_from`, `window_to`) and the lists it covers
+  (`feeds`); `complete: false` means older history was not read.
+- `history_complete: true` and `first_seen` on the address need **Include internal transactions**.
+  Coin paid out through a contract, such as an exchange withdrawal or a bridge deposit on an L2,
+  arrives only as an internal transfer, and is often a wallet's first coin. Without that option,
+  `history_complete` is `false` and `first_seen` is not written.
+- A link already between two addresses keeps its label, including one you wrote; the figures are
+  added to it. A new link gets the latest 20 transfers in `recent`. A link that already exists
+  keeps its `recent` as it was, because a plugin cannot read the rows already on it and would
+  otherwise replace them; the run's summary counts these links.
+- Address History leaves out tokens Blockscout flags as scam airdrops unless you tick
+  **Include tokens Blockscout flags as scams**, which an address-poisoning case needs. Mints, burns and NFT transfers are not
+  linked.
+- A first funder is written only once every earlier funding is ruled out. When the address's
+  internal transfers run past the page limit, or it also received coin with no transaction
+  (beacon-chain withdrawals on Ethereum, credits for producing blocks) that may have come first,
+  nothing is written and the summary says why.
+- A wallet delegated to code under EIP-7702 is written as an `eoa`, with the delegate in
+  `eip7702_delegate`.
+- Blockscout Transaction writes `revert_reason` for a failed transaction, such as
+  `execution reverted: V3TooLittleReceived()`.
+- The free plan allows 100,000 credits a day, and a lookup costs 20 to 40. Each run's summary gives
+  the credits it used. Blockscout sees every address and transaction you look up.
+
 ## The Chaos reference pack
 
 The Chaos pack is a single bundle (`run.vineyard.pluginpacks.chaos`) of six small plugins that

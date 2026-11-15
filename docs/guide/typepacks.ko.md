@@ -292,6 +292,10 @@ XRP Ledger, TON입니다. Polygon, Arbitrum, Base의 이력은 키가 필요한 
 그와 같은 구조의 체인 여섯 개에서 씁니다. [Blockchair로 코인 따라가기](running-plugins.md#blockchair)를
 보세요.
 
+**Blockscout PRO** 플러그인 팩은 본인의 무료 키로 Base, OP Mainnet, Ethereum, Arbitrum One,
+Polygon PoS, Ethereum Classic에서 이 유형과 링크를 채웁니다.
+[Blockscout PRO로 자금 추적하기](running-plugins.md#blockscout-pro)를 보세요.
+
 여러 홉에 걸쳐 자금을 따라가려면 **Crypto fund-flow tracing** [Skill Pack](skillpacks.md)이
 에이전트에게 이 플러그인들을 쓰는 법을 알려 줍니다. 홉 전에 주소마다 네트워크를 정하고, 자산·시각·
 금액으로 전송을 따라가고, 거래소와 서비스에서 멈추고, 자금이 닿은 거래소와 스테이블코인 발행사에
