@@ -141,6 +141,13 @@ ONYPHE·VirusTotal은 `md5`, Censys·Netlas·urlscan.io는 `sha256`으로 찾고
 VirusTotal) `fingerprint_sha1`에 함께 담습니다. abuse.ch SSLBL 같은 차단 목록은 인증서를 SHA-1로만
 적고, SHA-1은 SHA-256에서 계산할 수 없기 때문입니다.
 
+`infrastructure.domain`은 Infrastructure 4.3.0부터 `.한국`(`xn--3e0b707e`)이나 `.рф`(`xn--p1ai`)
+같은 국제화 최상위 도메인 아래의 이름도 받습니다. 유니코드(`사이트.한국`)로 적어도, 퓨니코드
+(`xn--vf4b27jhrk.xn--3e0b707e`)로 적어도 같은 도메인입니다. 4.3.1부터는 이름의 나머지 부분처럼
+퓨니코드 접두사도 대문자로 적을 수 있습니다(`EXAMPLE.XN--P1AI`). AI 에이전트의
+`extract_indicators`는 텍스트에서 읽은 이름을 퓨니코드로 적습니다. 이전 버전의 프로젝트는 팩을
+업데이트하기 전까지(마켓플레이스에서 카드의 **Update**) 이런 이름을 거부합니다.
+
 각 유형은 자체 아이콘과 색상을 제공합니다.
 
 ### Endpoint — 호스트 아티팩트

@@ -147,6 +147,14 @@ near it; the favicon's other hash is still compared.
 (Shodan, Censys and VirusTotal do), it goes in `fingerprint_sha1`: blocklists such as abuse.ch SSLBL
 list certificates by SHA-1 alone, and a SHA-1 cannot be computed from the SHA-256.
 
+`infrastructure.domain` takes a name under an internationalised top-level domain, such as
+`.한국` (`xn--3e0b707e`) or `.рф` (`xn--p1ai`), from Infrastructure 4.3.0. Write it in Unicode
+(`사이트.한국`) or in punycode (`xn--vf4b27jhrk.xn--3e0b707e`): the two spellings are one domain.
+From 4.3.1 the punycode prefix may be in capitals too (`EXAMPLE.XN--P1AI`), as the rest of the name
+always could. The AI agent's `extract_indicators` writes a name it reads in text in punycode. A
+project on an earlier version refuses these names until the pack is updated (**Update** on its
+card in the marketplace).
+
 Each type ships its own icon and color.
 
 ### Endpoint — host artifacts
