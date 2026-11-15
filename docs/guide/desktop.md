@@ -18,7 +18,7 @@ The desktop app has two settings windows.
 | **Edit** | **Undo**, **Redo**, **Cut**, **Copy**, **Paste**, **Delete** and **Select All**, for text fields; on a Mac also **Paste and Match Style**. The canvas has no undo. |
 | **View** | **Actual Size**, **Zoom In** and **Zoom Out** zoom the whole window, not the graph. **Toggle Full Screen**. |
 | **Window** | **Minimize**. On a Mac, **Zoom** and **Bring All to Front**. On Windows and Linux, **Close**. |
-| **Help** | **Keyboard Shortcuts** (⌘/ or Ctrl+/) opens the [list of keys](#keyboard-shortcuts) below. **Documentation** opens this site in your browser, and **Release Notes** the notes for the version you are running, on GitHub. **Troubleshooting** holds **Reload** and **Force Reload**. |
+| **Help** | **Keyboard Shortcuts** (⌘/ or Ctrl+/) shows the app's list of shortcuts; while a dialog such as Settings is open, or the window is closed, it opens the [Keyboard shortcuts](shortcuts.md) page in your browser instead. **Documentation** opens this site in your browser, and **Release Notes** the notes for the version you are running, on GitHub. **Troubleshooting** holds **Reload** and **Force Reload**. |
 
 On Windows and Linux, **Ctrl+W** does nothing in the desktop app. The app has one window and quits when it closes, so the key that closes a tab in a browser would end the session. Close the window with **Window → Close** or Alt+F4.
 
@@ -26,23 +26,9 @@ On Windows and Linux, **Ctrl+W** does nothing in the desktop app. The app has on
 
 ## Keyboard shortcuts {#keyboard-shortcuts}
 
-| Mac | Windows, Linux | What it does |
-| --- | --- | --- |
-| ⌘, | Ctrl+, | Opens Settings. |
-| ⌥⌘, | | Opens Desktop Settings (Mac only; on Windows and Linux use **File → Desktop Settings…**). |
-| ⌘F | Ctrl+F | Jumps to **Search entities…** on the canvas ([Search](canvas.md#search)). |
-| Esc | Esc | Puts away the one thing in front: a **Connect to…** waiting for its target, a menu, the panel in front, and last the selection ([Right-click menus](canvas.md#right-click-menus)). |
-| ⌘/ | Ctrl+/ | Opens this list (desktop app). |
-| ⌘Z, ⇧⌘Z | Ctrl+Z; Ctrl+Y (Windows), Ctrl+Shift+Z (Linux) | Undo, Redo in a text field. |
-| ⌘X, ⌘C, ⌘V, ⌘A | Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A | Cut, Copy, Paste, Select All in a text field. |
-| ⌘0, ⌘+, ⌘- | Ctrl+0, Ctrl++, Ctrl+- | Window zoom: actual size, in, out (desktop app). |
-| ⌃⌘F | F11 | Full screen (desktop app). |
-| ⌘M | Ctrl+M | Minimize (desktop app). |
-| ⌘H, ⌥⌘H | | Hide Vineyard, hide the other apps. |
-| ⌘W | | Close the window (Mac). Vineyard keeps running; click its Dock icon or choose **Settings…** (⌘,) to open it again. While the window is closed, **Keyboard Shortcuts** opens this list in your browser. |
-| ⌘Q | Ctrl+Q (Linux), Alt+F4 (Windows) | Quit. |
-
-Fields have keys of their own, given where they are described: **Enter** in the AI agent's message box sends ([Tasks & runs](tasks.md#the-ai-agent-panel)), and **↑**, **↓** and **Enter** pick a search result.
+Every key of the app, the desktop app's menu keys among them, is on one page:
+[Keyboard shortcuts](shortcuts.md). The keys only the desktop app has, those of its menus, are under
+[In the desktop app](shortcuts.md#desktop-app) there.
 
 ## Next / See also
 

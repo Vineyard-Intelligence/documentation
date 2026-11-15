@@ -293,8 +293,34 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
 
 <!-- shortcuts:end -->
 
+## 데스크탑 앱에서 {#desktop-app}
+
+데스크탑 앱의 메뉴에는 따로 키가 있습니다. 위 목록은 앱 자체의 것이라 브라우저에서도 같으므로, 메뉴의
+키는 여기에 적습니다(메뉴는 [데스크탑 앱](desktop.md#menus) 참조).
+
+| Mac | Windows, Linux | 하는 일 |
+| --- | --- | --- |
+| ⌥⌘, | | Desktop Settings를 엽니다(Mac만. Windows와 Linux에서는 **File → Desktop Settings…**). |
+| ⌘Z, ⇧⌘Z | Ctrl+Z, Ctrl+Y(Windows), Ctrl+Shift+Z(Linux) | 입력란에서 실행 취소, 다시 실행. |
+| ⌘X, ⌘C, ⌘V, ⌘A | Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A | 입력란에서 잘라내기, 복사, 붙여넣기, 모두 선택. |
+| ⌘0, ⌘+, ⌘- | Ctrl+0, Ctrl++, Ctrl+- | 창 확대·축소: 실제 크기, 확대, 축소. |
+| ⌃⌘F | F11 | 전체 화면. |
+| ⌘M | Ctrl+M | 최소화. |
+| ⌘H, ⌥⌘H | | Vineyard 가리기, 다른 앱 가리기. |
+| ⌘W | | 창 닫기(Mac). Vineyard는 계속 실행되며, Dock 아이콘을 누르거나 **Settings…**(⌘,)를 고르면 창이 다시 열립니다. 창이 닫혀 있는 동안 **Help → Keyboard Shortcuts**는 이 페이지를 브라우저에서 엽니다. |
+| ⌘Q | Ctrl+Q(Linux), Alt+F4(Windows) | 종료. |
+
+- **⌘,**(**Ctrl+,**)와 **⌘/**(**Ctrl+/**)는 메뉴의 **Settings…**와 **Help → Keyboard Shortcuts**의
+  키이기도 해서, 데스크탑 앱에서는 입력칸에 입력하는 중에도 동작합니다.
+- **Settings** 같은 대화상자가 열려 있는 동안에는 그 입력칸 밖에서 누른 **⌘/**가 아무 일도 하지 않고,
+  **Help → Keyboard Shortcuts**는 목록 대신 이 페이지를 브라우저에서 엽니다.
+- Windows와 Linux에서 **Ctrl+W**는 아무 일도 하지 않습니다. 앱은 창이 하나뿐이고 그 창이 닫히면
+  종료되기 때문입니다. **Reload**와 **Force Reload**에는 키가 없어서, 실수로 누른 ⌘R이나 Ctrl+R이 창을
+  새로 고치지 않습니다.
+
 ## 다음 / 함께 보기
 
 - [캔버스](canvas.md) — 검색, 선택, 노드 연결, 노드 표
 - [플러그인 실행](running-plugins.md) — 검토 대화상자와 그 키
 - [작업 및 실행](tasks.md) — AI 에이전트 패널
+- [데스크탑 앱](desktop.md) — 메뉴와 두 설정 창

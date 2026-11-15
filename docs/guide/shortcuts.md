@@ -301,8 +301,34 @@ does.
 
 <!-- shortcuts:end -->
 
+## In the desktop app {#desktop-app}
+
+The desktop app's menus have keys of their own, listed here rather than above, since the list above
+is the app's and the same in a browser (see [The desktop app](desktop.md#menus) for the menus).
+
+| Mac | Windows, Linux | What it does |
+| --- | --- | --- |
+| ⌥⌘, | | Opens Desktop Settings (Mac only; on Windows and Linux use **File → Desktop Settings…**). |
+| ⌘Z, ⇧⌘Z | Ctrl+Z; Ctrl+Y (Windows), Ctrl+Shift+Z (Linux) | Undo, Redo in a text field. |
+| ⌘X, ⌘C, ⌘V, ⌘A | Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A | Cut, Copy, Paste, Select All in a text field. |
+| ⌘0, ⌘+, ⌘- | Ctrl+0, Ctrl++, Ctrl+- | Window zoom: actual size, in, out. |
+| ⌃⌘F | F11 | Full screen. |
+| ⌘M | Ctrl+M | Minimize. |
+| ⌘H, ⌥⌘H | | Hide Vineyard, hide the other apps. |
+| ⌘W | | Close the window (Mac). Vineyard keeps running; click its Dock icon or choose **Settings…** (⌘,) to open it again. While the window is closed, **Help → Keyboard Shortcuts** opens this page in your browser. |
+| ⌘Q | Ctrl+Q (Linux), Alt+F4 (Windows) | Quit. |
+
+- **⌘,** (**Ctrl+,**) and **⌘/** (**Ctrl+/**) are also the keys of **Settings…** and **Help →
+  Keyboard Shortcuts** in the menus, so in the desktop app they work while you are typing in a field
+  too.
+- While a dialog such as **Settings** is open, **⌘/** outside its fields does nothing, and **Help →
+  Keyboard Shortcuts** opens this page in your browser instead of the list.
+- On Windows and Linux, **Ctrl+W** does nothing: the app has one window and quits when it closes.
+  **Reload** and **Force Reload** have no key, so a stray ⌘R or Ctrl+R cannot reload the window.
+
 ## Next / See also
 
 - [The canvas](canvas.md) — searching, selecting, connecting nodes, and the node table
 - [Running plugins](running-plugins.md) — the review dialog and its keys
 - [Tasks & runs](tasks.md) — the AI agent panel
+- [The desktop app](desktop.md) — its menus and its two settings windows

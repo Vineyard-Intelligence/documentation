@@ -18,7 +18,7 @@ macOS, Windows, Linux용 Vineyard 데스크탑 앱은 [app.vineyard.run](https:/
 | **Edit** | 입력란에서 쓰는 **Undo**, **Redo**, **Cut**, **Copy**, **Paste**, **Delete**, **Select All**. Mac에는 **Paste and Match Style**도 있습니다. 캔버스에는 실행 취소가 없습니다. |
 | **View** | **Actual Size**, **Zoom In**, **Zoom Out**은 그래프가 아니라 창 전체를 확대·축소합니다. **Toggle Full Screen**. |
 | **Window** | **Minimize**. Mac에서는 **Zoom**과 **Bring All to Front**, Windows와 Linux에서는 **Close**. |
-| **Help** | **Keyboard Shortcuts**(⌘/ 또는 Ctrl+/)는 아래의 [키 목록](#keyboard-shortcuts)을 엽니다. **Documentation**은 이 사이트를 브라우저에서 열고, **Release Notes**는 실행 중인 버전의 릴리스 노트를 GitHub에서 엽니다. **Troubleshooting** 아래에 **Reload**와 **Force Reload**가 있습니다. |
+| **Help** | **Keyboard Shortcuts**(⌘/ 또는 Ctrl+/)는 앱의 단축키 목록을 보여 줍니다. Settings 같은 대화상자가 열려 있거나 창이 닫혀 있으면 대신 [단축키](shortcuts.md) 페이지를 브라우저에서 엽니다. **Documentation**은 이 사이트를 브라우저에서 열고, **Release Notes**는 실행 중인 버전의 릴리스 노트를 GitHub에서 엽니다. **Troubleshooting** 아래에 **Reload**와 **Force Reload**가 있습니다. |
 
 Windows와 Linux의 데스크탑 앱에서 **Ctrl+W**는 아무 일도 하지 않습니다. 앱은 창이 하나뿐이고 그 창이 닫히면 종료되므로, 브라우저에서 탭을 닫던 키가 작업을 끝내 버리기 때문입니다. 창은 **Window → Close**나 Alt+F4로 닫습니다.
 
@@ -26,23 +26,8 @@ Windows와 Linux의 데스크탑 앱에서 **Ctrl+W**는 아무 일도 하지 �
 
 ## 단축키 {#keyboard-shortcuts}
 
-| Mac | Windows, Linux | 하는 일 |
-| --- | --- | --- |
-| ⌘, | Ctrl+, | Settings를 엽니다. |
-| ⌥⌘, | | Desktop Settings를 엽니다(Mac만. Windows와 Linux에서는 **File → Desktop Settings…**). |
-| ⌘F | Ctrl+F | 캔버스의 **Search entities…**로 이동합니다([검색](canvas.md#검색)). |
-| Esc | Esc | 맨 앞의 것 하나를 치웁니다. 대상을 기다리는 **Connect to…**, 메뉴, 맨 앞의 패널 순서이고, 마지막에는 선택을 해제합니다([캔버스](canvas.md)의 우클릭 메뉴). |
-| ⌘/ | Ctrl+/ | 이 목록을 엽니다(데스크탑 앱). |
-| ⌘Z, ⇧⌘Z | Ctrl+Z, Ctrl+Y(Windows), Ctrl+Shift+Z(Linux) | 입력란에서 실행 취소, 다시 실행. |
-| ⌘X, ⌘C, ⌘V, ⌘A | Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A | 입력란에서 잘라내기, 복사, 붙여넣기, 모두 선택. |
-| ⌘0, ⌘+, ⌘- | Ctrl+0, Ctrl++, Ctrl+- | 창 확대·축소: 실제 크기, 확대, 축소(데스크탑 앱). |
-| ⌃⌘F | F11 | 전체 화면(데스크탑 앱). |
-| ⌘M | Ctrl+M | 최소화(데스크탑 앱). |
-| ⌘H, ⌥⌘H | | Vineyard 가리기, 다른 앱 가리기. |
-| ⌘W | | 창 닫기(Mac). Vineyard는 계속 실행되며, Dock 아이콘을 누르거나 **Settings…**(⌘,)를 고르면 창이 다시 열립니다. 창이 닫혀 있는 동안 **Keyboard Shortcuts**는 이 목록을 브라우저에서 엽니다. |
-| ⌘Q | Ctrl+Q(Linux), Alt+F4(Windows) | 종료. |
-
-입력란에는 저마다의 키가 있으며 각 입력란을 설명하는 곳에 적혀 있습니다. AI 에이전트 입력란에서 **Enter**는 메시지를 보내고([작업 및 실행](tasks.md#the-ai-agent-panel)), 검색 결과는 **↑**, **↓**, **Enter**로 고릅니다.
+데스크탑 앱 메뉴의 키를 포함해 앱의 모든 키는 [단축키](shortcuts.md) 페이지 한곳에 있습니다. 데스크탑
+앱에만 있는 메뉴의 키는 그 페이지의 [데스크탑 앱에서](shortcuts.md#desktop-app)에 있습니다.
 
 ## 다음 / 함께 보기
 
