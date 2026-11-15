@@ -421,6 +421,65 @@ other nodes appears in the node panel, not in the Review dialog.
   rules decide what is saved.
 - In a panel marked *View only*, values are shown and opened the same way and cannot be edited.
 
+### The value menu {#the-value-menu}
+
+Point at a value and **⋯** appears at the end of its cell (on a touch screen it is always there).
+It opens a menu for that value:
+
+- **Copy** copies the value as stored, line breaks included, and a structure as indented JSON.
+  **Copy defanged** appears when defanging changes the value: the scheme becomes `hxxp`, `hxxps` or
+  `fxp`, the dots of a host and of a URL's path become `[.]`, an e-mail's `@` becomes `[@]` and an
+  IPv6 address's colons `[:]`, and a URL inside a URL (a redirect's target) is defanged too. A
+  host name or an e-mail address is defanged whatever its top-level domain, `dc01.corp` and
+  `user@evil.zz` included. **Copy refanged** appears when the value was stored defanged.
+  Refanging a defanged copy gives back the value exactly.
+- **Search the graph** puts the value, refanged, in the canvas's search box and shows the results,
+  so `evil[.]example` finds `evil.example`. It is offered for a value on one line of up to 256
+  characters, and for a number.
+- When the whole value is one indicator (an IP address or block, a domain, a URL with its scheme,
+  an e-mail address, a phone number, a hash, a CVE id, a Bitcoin, TRON or EVM address), the menu
+  offers the node it names:
+    - **Go to …** when a node with that identity is already in the graph, and **Select it and run
+      plugins…** when an installed plugin takes its type and you can edit the project. The graph is
+      asked by the value as written too, and a hash in upper case as well, so a SHA-256 stored in
+      upper case or an IPv6 address written in full is found as that node. A field that holds
+      the node's own identity, such as a domain's `domain_name`, offers neither, however it is
+      written.
+    - **Review the staged …** when a change set waiting for review already creates it.
+    - Otherwise **New … node…**. It stages the node, with a link from the node that holds the value
+      labelled with the field's name (`name_servers`), and opens the Review dialog. Nothing is
+      written until you apply it, and you can untick the link. The link is recorded as yours, and the
+      Tasks pane keeps a row that reopens the review. When an installed plugin takes the node's type,
+      **Run plugins** is shown greyed with it, and with **Review the staged …** too: a plugin runs on
+      a node in the graph, so the new node has to be applied first.
+    - A hash is read with its field's name, as the grid reads it: a 64-digit value under `tx_hash`
+      is a transaction id, and a 32-digit one under `imphash` or `ja3` a fingerprint, so neither is
+      offered as a file's hash. Nor is a value in a field whose name says fingerprint or thumbprint
+      (a certificate's `fingerprint_sha256`, a PGP key's `fingerprint`), or in a field declared `hash`
+      that identifies its own node (a DOM hash's `hash_value`): each is the digest of that
+      certificate, key or page, not of a file. A SHA-256 becomes a `threat.file_hash`, an MD5 or
+      SHA-1 a `threat.indicator`. When no installed Type Pack defines the type, or the type's format refuses
+      the value, the item is greyed with the reason.
+- **Open in browser…**, for a URL stored with `http://` or `https://`, asks first and names the
+  host the browser will connect to, with its Unicode form when it is punycode, which is how a
+  look-alike host shows itself. That server sees your IP address and the time, and the page runs in
+  your browser. In the desktop app it opens in your default browser, with that browser's own
+  profile, cookies and fingerprint. A URL stored defanged is not offered: refang it on purpose
+  first.
+- **Esc** closes the menu and nothing behind it. In the Review dialog, keys pressed in the menu or
+  in its URL confirmation stay there: Space chooses the item rather than ticking the staged row, and
+  Esc in the confirmation leaves the review open.
+
+Each entry of a list written into one text field has its own **⋯** in the view under its row, so
+one name server can be copied, searched for or made a node of on its own.
+
+The menu reads a value the way the grid badges it and the AI agent's `extract_indicators` reads
+text, so an address shown as `private` in the grid is reported as private there too.
+
+In a panel marked *View only* the menu copies, searches, goes to nodes and opens URLs, and offers
+no new node. A link's stored data has the menu too, and a node made from it is not linked, since a
+link cannot end at another link. In the Review dialog the menu copies and opens URLs only.
+
 ### Document and JSON views {#document-and-json-views}
 
 Under a node's name, **Table**, **Document** and **JSON** change how the panel shows it. The choice
