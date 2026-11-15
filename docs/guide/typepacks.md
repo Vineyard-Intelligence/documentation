@@ -35,7 +35,9 @@ In the Types panel, types are grouped by **category**, not by pack, so one pack 
 groups (the Infrastructure pack appears under both Infrastructure and Web), each with a count.
 Hover a type to see its description, its **Category:** and the **Type pack:** it comes from.
 Click a type to create a new node of that type (a placeholder labelled `New <type>`), which is
-selected right away so you can fill in its properties. The **Search types…** box at the top
+selected right away so you can fill in its properties. The box beside each type is ticked while its
+nodes are drawn on the canvas; untick it to hide them (see [Hiding nodes and edges](canvas.md#hiding)).
+The **Search types…** box at the top
 filters the list by type name, category, description or pack name; a panel too narrow for it
 shows only the type icons. With no Type Pack installed, the panel says so and offers **Browse the
 marketplace**, except to a visitor reading a shared project without signing in.

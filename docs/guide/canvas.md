@@ -23,6 +23,8 @@ Toolbar toggle buttons appear highlighted when on; menu items are checkmarked wh
 | **Minimap** | Toggles the minimap overview panel (bottom-right). | Toolbar, View |
 | **Legend** | Toggles the node-type legend (bottom-left). | Toolbar, View |
 | **Snapline** | Toggles alignment guides shown while dragging nodes. | Toolbar, View |
+| **Filter** | Hides nodes and edges on the canvas by label, type, evidence grade or missing links (see [Hiding nodes and edges](#hiding)). Highlighted while a hiding rule is set. | Toolbar |
+| **Show all hidden** | Clears every hiding rule, so the canvas draws everything again. Unavailable while no hiding rule is set. | View |
 | **Node table** | Opens or closes the [node table](#node-table) below the canvas; checkmarked while it is open. | View |
 | **Reset panel layout** | Restores the project workspace's panel arrangement to its default. | View |
 
@@ -85,7 +87,7 @@ The three 1-hop actions add to the selection, so pressing one again walks one mo
 - **Selection** — right-click empty canvas with anything selected, or a node or edge inside a multi-item selection; the header shows the count (*Selected: N nodes, M edges*). Run plugins…, Connect to… and Show in node table (when nodes are selected), Merge nodes… (when two or more nodes are selected, see [Merging nodes](#merging-nodes)), Delete (N), Select all, Fit view.
 - **Empty canvas** (nothing selected, headed *Nothing selected — whole project*) — Run plugins… on the whole-graph plugins, Select all, Fit view.
 
-**Esc** closes the menu and nothing under it. Each press of Esc puts away one thing, the front one first: a **Connect to…** waiting for its target, an open menu, then the panel drawn in front, and last the selection. With the Run plugins panel open over a Skill pack panel, the first Esc closes Run plugins, the next one closes the Skill pack panel, and once nothing is left open Esc clears the selection, like **Clear selection**. An Esc pressed inside a panel, or right after you clicked in it, goes to that panel rather than to one drawn over it. An Esc typed in a field, or pressed after a click in the Properties panel, leaves the selection alone, and the Esc that finishes a Korean syllable only finishes the syllable. Holding Shift (or another modifier) while you press Esc makes no difference.
+**Esc** closes the menu and nothing under it. Each press of Esc puts away one thing, the front one first: a **Connect to…** waiting for its target, an open menu or the toolbar's **Filter** panel, then the panel drawn in front, and last the selection. With the Run plugins panel open over a Skill pack panel, the first Esc closes Run plugins, the next one closes the Skill pack panel, and once nothing is left open Esc clears the selection, like **Clear selection**. An Esc pressed inside a panel, or right after you clicked in it, goes to that panel rather than to one drawn over it. An Esc typed in a field, or pressed after a click in the Properties panel, leaves the selection alone, and the Esc that finishes a Korean syllable only finishes the syllable. Holding Shift (or another modifier) while you press Esc makes no difference.
 
 **Delete**, **Delete (N)** and **Disconnect all** ask first, every time. The confirmation says what will go, for example *Delete 3 nodes and 17 connected edges? This cannot be undone.* Deleting a node also deletes every edge connected to it, and the count includes those edges. **Cancel** has the focus, so pressing Enter by reflex does not delete; Esc cancels too. A delete cannot be undone. While the project is still loading, deleting a node and **Disconnect all** are refused, because the edges they would count have not all arrived yet: *The project is still loading — delete again once it has finished.* When you are signed in to a server, the activity log keeps a line for each deleted node with its type, and for each deleted edge with its label.
 
@@ -126,7 +128,7 @@ Applying a layout re-computes node positions and then fits the view.
 
 ### Search
 
-The **Search entities…** field at the top-right of the canvas finds nodes by type or by any of their property values; typing an AS number such as `AS64496` also finds nodes whose ASN is 64496. **⌘F** (Mac) or **Ctrl+F** jumps to the field; **↑**/**↓** and **Enter** pick a result, and **Esc** closes the list. Picking a result selects that node and centers it. While the project is still loading, an empty result means the node has not arrived yet, not that it doesn't exist.
+The **Search entities…** field at the top-right of the canvas finds nodes by type or by any of their property values; typing an AS number such as `AS64496` also finds nodes whose ASN is 64496. **⌘F** (Mac) or **Ctrl+F** jumps to the field; **↑**/**↓** and **Enter** pick a result, and **Esc** closes the list. Picking a result selects that node and centers it; a node the canvas [hides](#hiding) is shown first. While the project is still loading, an empty result means the node has not arrived yet, not that it doesn't exist.
 
 ### Grid
 
@@ -140,9 +142,9 @@ A translucent overview panel docked at the bottom-right corner. It shows the who
 
 A translucent, minimap-style panel at the bottom-left that lists the node **types currently present** in the graph. Each entry shows a colored swatch matching the node's type color, the type's name (the raw type string if no installed pack defines it), and a per-type **count** of how many nodes of that type exist. Entries are sorted alphabetically by label. When the graph is empty the legend reads "No nodes."
 
-Click a row to select every node of that type, or Shift-click to add them to the current selection. Hovering (or focusing) a row dims every other type on the canvas.
+Click a row to select every node of that type, or Shift-click to add them to the current selection. Hovering (or focusing) a row dims every other type on the canvas. The eye at the end of a row (shown while you point at the row) [hides](#hiding) that type on the canvas; a hidden type's row is dimmed, keeps its count, and shows the type again when clicked.
 
-Below the types, an **Evidence** key lists the edge confidence grades present in the project (assessed, asserted, recorded, circumstantial, contested, unassessed), strongest first, each drawn with the same line style (dash, width, opacity) the canvas uses for that grade and with a count. Hover a grade for what it means.
+Below the types, an **Evidence** key lists the edge confidence grades present in the project (assessed, asserted, recorded, circumstantial, contested, unassessed), strongest first, each drawn with the same line style (dash, width, opacity) the canvas uses for that grade and with a count. Hover a grade for what it means. Click a grade to hide the edges with that grade on the canvas, and click it again to show them; a hidden grade is dimmed and marked with a crossed-out eye, and stays listed even when no edge has it any more.
 
 The legend reflects whatever Type Packs the project uses — for example, an investigation built on the [Infrastructure Type Pack](typepacks.md) might show counts for `infrastructure.ip_address`, `infrastructure.domain`, and so on, each resolved to its Type Pack-defined name and color.
 
@@ -155,6 +157,30 @@ When enabled, dragging a node near another node's edges or center shows alignmen
 When two or more edges connect the same pair of nodes — in either direction — the canvas bends
 them apart into arcs instead of drawing one on top of the other, so each edge stays visible and
 individually clickable.
+
+## Hiding nodes and edges {#hiding}
+
+On a large graph, much of what is drawn has nothing to do with the question you are working on. **Filter** on the toolbar takes it off the canvas without changing the project:
+
+- **Label contains…** hides the nodes whose label contains the text, matched as [Search](#search) matches: case is ignored, and `AS64496` also matches a label that is exactly 64496. With **Show only matches**, every node whose label does not match is hidden instead. The canvas follows the text when you pause typing or press Enter, not at every keystroke. Korean is followed once the syllable being typed has its vowel, and text typed with another input method once you confirm it.
+- **Hide nodes with no visible links** hides every node that no shown edge touches, once the other rules have run, so a node linked only by edges of a hidden grade is hidden too. An edge from a node to itself counts as a link.
+- **Types**: untick a type to hide its nodes. Nodes stored under another name for the same type, such as its name without the category, are hidden with it. Each type shows how many nodes of it the project has, shown or hidden. A hidden type with no node in the project, such as one hidden from the Types panel or one whose last node was deleted, stays listed with a count of 0.
+- **Evidence**: untick a grade to hide the edges with that grade.
+
+An edge is also hidden when either of its ends is. **Show all** in the panel, or **View ▸ Show all hidden**, clears every rule.
+
+The same rules can be set in two other places. In the **Types** panel each type has a box beside it, ticked while its nodes are shown; a narrow panel showing only icons dims a hidden type instead. In the [legend](#legend), a type row's eye and a grade row do the same as the panel's boxes.
+
+The footer under the canvas counts what is hidden beside the project's totals, for example *Nodes: 400 (120 hidden) | Edges: 900 (310 hidden)*. The **Filter** button stays highlighted while a rule is set, and its tooltip says how much is hidden.
+
+Hiding changes only what the canvas draws:
+
+- Hidden nodes stay in the project. Plugins, the AI agent, [Search](#search), the [node table](#node-table) and **Export graph** still see every node.
+- A hidden node or edge cannot be selected, so **Run plugins**, **Delete (N)**, **Connect to…** and the AI agent never act on something the canvas does not show. Select all, Invert, a legend row and the node table's boxes leave hidden nodes out, and a selected node or edge that becomes hidden leaves the selection.
+- Going to one node shows it on its own if it is hidden: picking a search result, clicking a node table row, **Show on the canvas** in the activity log, the AI agent's `select_node`, and following what a collaborator has selected. The node is selected and centered once it is drawn, unless you select something else before then. The panel counts these as *N shown on request*, and **Hide again** puts them back under the rules. Clearing the last rule forgets them too, so a rule you set later hides them like any other node.
+- While a plugin run's changes are under review, the nodes and edges it would change or delete, and the nodes its new edges would connect, are drawn whatever the rules say.
+- A hidden node keeps its place on the canvas and comes back to it when shown again. A layout applied while nodes are hidden arranges only the nodes shown; the hidden ones are placed like newly added nodes when they come back, and showing many of them at once lays out the whole graph again.
+- The rules belong to the open project and last until you leave it or reload the page.
 
 ## Node table {#node-table}
 
@@ -175,8 +201,9 @@ Click a column header to sort by it, click again to reverse, and a third time to
 - **All nodes** / **From selection** — *From selection* lists the nodes that were selected when the table was opened on them. It does not follow the canvas: clicking through the rows changes the selection but not which rows are listed. When the canvas selection is something else, a refresh button beside it takes the current selection instead.
 - **All types** — one type only, with the number of nodes of each.
 - **Filter by keyword** — matches what [Search](#search) matches (the type or any property value, never a field name, and `AS64496` for an ASN of 64496, also inside a list of ASNs), and the label and type name as the table shows them. **Esc** empties the field.
+- **Shown and hidden** / **Shown on the canvas** / **Hidden on the canvas** — appears while the canvas [hides](#hiding) nodes, to list only the nodes it draws or only the ones it hides.
 
-The line above the table counts the rows shown and the nodes selected on the canvas. 100 rows are shown per page. While the project is still loading, rows appear as nodes arrive.
+The line above the table counts the rows shown and the nodes selected on the canvas, and how many of the rows the canvas hides. 100 rows are shown per page. While the project is still loading, rows appear as nodes arrive.
 
 ### Selecting from the table
 
@@ -187,6 +214,7 @@ The checkboxes are the canvas selection: a box is ticked exactly when its node i
 - Click a row to select only that node and center it on the canvas, as picking a search result does. **⌘-click** (Mac) or **Ctrl-click** adds or removes the row, and **Shift-click** adds the rows from the last one clicked.
 - To copy a value without changing the selection, drag across its text: a click that ends with text selected leaves the selection as it is. A double-click selects the row with its first click, as a plain click does.
 - **Select N on canvas** makes exactly the rows shown, on every page, the selection. **Run plugins**, **Delete (N)**, **Connect to…** and the AI agent then act on them.
+- A node the canvas [hides](#hiding) has a crossed-out eye instead of a box, since a hidden node cannot be selected. The header box, Shift ranges and **Select N on canvas** leave it out. Click its row to show it on the canvas and select it.
 
 The table only changes the selection, so a participant who can only view the project can use it too.
 
@@ -251,7 +279,7 @@ While the project is still loading (for example while it re-syncs after a reconn
 
 The drawer reads the log from the server a page at a time. **Load older** at the bottom reads the next page, as the log stood when the drawer opened or the filters last changed. What happens after that appears at the top as it happens, and the count beside the title is how many rows match, those included.
 
-Each row shows the action, the account and a summary, then the time in UTC to the second (for example `2026-11-14 09:02:33Z`) and how long ago that was. Hover the time to see it with every digit the server stored. Click a row's target, such as `node 033rOr…eClw`, to see only the rows about it. **Show on the canvas**, the button after a node's target, selects that node if it is still on the canvas.
+Each row shows the action, the account and a summary, then the time in UTC to the second (for example `2026-11-14 09:02:33Z`) and how long ago that was. Hover the time to see it with every digit the server stored. Click a row's target, such as `node 033rOr…eClw`, to see only the rows about it. **Show on the canvas**, the button after a node's target, selects that node if it is still in the project, and shows it first if the canvas [hides](#hiding) it.
 
 ### Filters
 
