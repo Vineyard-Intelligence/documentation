@@ -9,6 +9,8 @@ The view controls are exposed twice, and both stay in sync:
 - **On-canvas toolbar** — a compact vertical bar pinned to the top-left edge of the canvas, for the controls you reach for most while working.
 - **Top menu bar** — the `Project`, `Edit`, and `View` menus, which add data and navigation actions alongside the view toggles (a fourth menu, `Run`, launches plugins and the AI agent — see [Running plugins](running-plugins.md)).
 
+Every command of the menu bar, the toolbar and the right-click menus can also be found by its name in the **command palette** (**⌘K**, or **Ctrl+K** on Windows and Linux), together with the layouts, the types to add a node of and the nodes themselves; see [Command palette](shortcuts.md#command-palette). The right-click menus' commands act on the selection there.
+
 ## View controls (toolbar + View menu)
 
 Toolbar toggle buttons appear highlighted when on; menu items are checkmarked when on.
@@ -71,7 +73,7 @@ If you opened the project only through its public link, **Activity log…** is d
 The three 1-hop actions add to the selection, so pressing one again walks one more hop; they are disabled until something is selected.
 
 !!! note "Adding a node"
-    New nodes are created from the **Types** panel, not from this menu: click one of the types that the project's Type Packs provide.
+    New nodes are created from the **Types** panel, not from this menu: click one of the types that the project's Type Packs provide. In the command palette, **Add node:** and the type's name, such as **Add node: Domain**, does the same.
 
 ### Run
 
@@ -79,6 +81,7 @@ The three 1-hop actions add to the selection, so pressing one again walks one mo
 | --- | --- |
 | **Ask the AI agent…** | Opens the AI agent panel on a new conversation (an open one is kept in **Tasks**). To return to an earlier conversation, click its row in **Tasks**. |
 | **Run plugins…** | Opens the run panel, scoped to the current selection if any nodes are selected. |
+| **Run the last plugins again on the selection** | Shown once you have run plugins in the project: opens the run panel on the current selection with the last run's plugins ticked and its parameters filled in (see [Running the same plugins again](running-plugins.md#running-the-same-plugins-again)). |
 | *(Skill packs)* | Below a divider, under a **Skill packs** label: the installed skill packs that can be used here (a pack is listed only when every plugin pack it requires is installed and can run in this app, so in the browser Account & identity pivoting is missing), then the project's own packs, where one whose plugins cannot run is dimmed and marked *needs plugins*. Picking a pack opens it for reading; it does not run anything (see [Skill Packs](skillpacks.md)). The group appears once there is a pack to list; the project owner always sees it, with **New skill pack** (unavailable once the project has 32 packs of its own) and **Import skill pack…** at the end (see [Your project's own skill packs](skillpacks.md#custom-skill-packs)). |
 
 ## Right-click menus

@@ -1,8 +1,8 @@
 # Running plugins
 
 Once a plugin is installed in a project, you open the **Run plugins** panel from a right-click on
-a node, a selection or empty canvas, from the ▶ button on the canvas toolbar, or from
-**Run ▸ Run plugins…** in the top menu bar. You watch and cancel the run from the Tasks panel.
+a node, a selection or empty canvas, from the ▶ button on the canvas toolbar, from
+**Run ▸ Run plugins…** in the top menu bar, or from the command palette (**⌘K**). You watch and cancel the run from the Tasks panel.
 
 ## Where a plugin shows up
 
@@ -31,7 +31,7 @@ box searches names, descriptions and types. Selection chips can be dropped from 
   <figcaption>Run plugins opened from a right-click on example.com: the scope switch, the selection chip, and the plugins that match it.</figcaption>
 </figure>
 
-## Launch surfaces
+## Launch surfaces {#launch-surfaces}
 
 === "Right-click a node"
 
@@ -43,6 +43,28 @@ box searches names, descriptions and types. Selection chips can be dropped from 
     The top menu bar's **Run** menu — `Run ▸ Run plugins…` — opens the same panel, scoped to your
     current selection, or to the whole project when nothing is selected. The ▶ button on the canvas
     toolbar does the same; its tooltip names the scope.
+
+=== "The command palette"
+
+    Press **⌘K** (**Ctrl+K**) and type the plugin's name. **Run WHOIS on the selection** (for a plugin
+    that reads no nodes, **Run** and its name) opens the panel on your selection with that plugin
+    ticked. If the panel was already open, it becomes the only plugin ticked. Nothing runs from the
+    palette: you check the panel and press **Run**. **Run** takes the focus, or, when the plugin has
+    a required field that is empty, that field does. See [Command palette](shortcuts.md#command-palette).
+
+### Running the same plugins again {#running-the-same-plugins-again}
+
+A pivot runs the same plugins hop after hop. After a run, **Run ▸ Run the last plugins again on the
+selection** (also in the command palette) opens the panel on what is selected now, with the last
+run's plugins ticked and the parameters you typed for them filled in, and **Run** focused, so
+**Enter** runs them. Files you picked, list values, and anything a plugin marks as a password or a
+secret are not kept, so a run that needs a file asks for it again. A parameter you have already typed in an open
+panel is left as you typed it. The last run is forgotten when you leave the project.
+
+The focus moves once, when the panel opens this way, and never while you fill it in. When a required
+field is empty, the cursor goes to that field instead of **Run**. When the panel was already open
+with other plugins ticked, they stay ticked and **Run** does not take the focus, so **Enter** never
+runs a plugin you did not choose here.
 
 ## The pre-run form
 

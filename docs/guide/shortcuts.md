@@ -17,6 +17,38 @@ fields. It leaves out what every app shares: Tab between controls, Enter in a on
 a project's name or an invitation, Enter and Space on a button, and the arrows in an open menu or
 drop-down.
 
+## Command palette {#command-palette}
+
+Press **⌘K** (**Ctrl+K** on Windows and Linux), even while you are typing in a field, or choose
+**Command palette** in the sidebar, and type what you want to do. The palette finds every command of
+the project's menu bar, the canvas toolbar and the right-click menus by the name the menu gives it, so
+`export` finds **Export graph (JSON)** and `grid` finds **Grid**. Besides those it offers:
+
+- the **Settings** sections: `keys` finds **Settings: Keys & Secrets**;
+- the layouts, such as **Layout: Stress (distance-preserving)**, with the one in use ticked;
+- a new node of any installed type, such as **Add node: Domain**, added and selected as the
+  [Types panel](typepacks.md) adds one;
+- a plugin to run, such as **Run WHOIS on the selection**, offered while a node it reads is selected;
+  a plugin that reads no nodes is always offered. It opens **Run plugins** with that plugin ticked
+  (the only one ticked, if the panel was open), and nothing runs until you press **Run**;
+- **Run the last plugins again on the selection**, once you have run plugins in the project (see
+  [Running plugins](running-plugins.md#launch-surfaces));
+- the skill packs and their starters, such as **Infrastructure pivoting: Map the infrastructure**. A
+  starter with nothing to fill in puts its draft in a new AI agent conversation, where it waits for
+  you to send it; one with blanks opens the skill pack on that starter's form;
+- a node, by any of its values, as the graph search finds it. Nodes come after the commands, and
+  choosing one selects it and centres it.
+
+With nothing typed, the commands you ran most recently come first; the palette remembers the last
+eight on this device, never a node. **↓** and **↑** move, **Enter** runs the highlighted command, and
+**Esc** closes the palette. The Enter that finishes a Korean syllable only finishes the syllable. A
+command that cannot run right now is shown greyed with the reason the menu gives, for example
+*Select something first to expand from*. A command that cannot be undone never runs on Enter alone:
+**Delete** and **Disconnect all** open the same question as from the right-click menu, and **Stop the
+AI agent's turn** asks first, with **Cancel** focused; Esc there goes back to the list. Like the
+shortcut list, the palette does not open while another dialog such as **Settings** is open, and
+opening Settings closes it.
+
 ## Where the keys are shown {#shown-keys}
 
 You do not have to learn the keys from this page. A menu item that a key also does shows the key on
@@ -44,8 +76,9 @@ layout again is what the key does.
   Ctrl still work.
 - When the agent is done, the caret goes back into its message box, unless you have clicked
   somewhere else in the meantime.
-- In a field, besides the field's own keys, only **Esc**, **⌘G** (**Ctrl+G**) in the search field,
-  **↑** in the AI agent's message box and **⌘↵** (**Ctrl+Enter**) in the Review dialog work.
+- In a field, besides the field's own keys, only **Esc**, **⌘K** (**Ctrl+K**), **⌘G** (**Ctrl+G**)
+  in the search field, **↑** in the AI agent's message box and **⌘↵** (**Ctrl+Enter**) in the Review
+  dialog work.
 - The canvas keys need the canvas. Click the canvas, or press **G** then **C**, and the canvas keys
   act on it; a thin blue outline shows when the canvas has keyboard focus. They also work before you
   have clicked anywhere. A key pressed in the Properties panel, the menu bar, a floating panel or a
@@ -124,6 +157,7 @@ does.
 | Next search result | <kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>G</kbd> |
 | Previous search result | <kbd>⇧</kbd><kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd> |
 | Show keyboard shortcuts<br><small>Not while you are typing in a field.</small> | <kbd>?</kbd> / <kbd>⌘</kbd><kbd>/</kbd> | <kbd>?</kbd> / <kbd>Ctrl</kbd>+<kbd>/</kbd> |
+| Open the command palette<br><small>Every menu, toolbar and right-click command, a setting, a plugin or a node, by name.</small> | <kbd>⌘</kbd><kbd>K</kbd> | <kbd>Ctrl</kbd>+<kbd>K</kbd> |
 | Go to the AI agent | <kbd>G</kbd> then <kbd>A</kbd> | <kbd>G</kbd> then <kbd>A</kbd> |
 | Go to the canvas | <kbd>G</kbd> then <kbd>C</kbd> | <kbd>G</kbd> then <kbd>C</kbd> |
 | Go to Properties | <kbd>G</kbd> then <kbd>P</kbd> | <kbd>G</kbd> then <kbd>P</kbd> |
@@ -131,6 +165,14 @@ does.
 | Go to Tasks | <kbd>G</kbd> then <kbd>K</kbd> | <kbd>G</kbd> then <kbd>K</kbd> |
 | Project settings… | <kbd>G</kbd> then <kbd>S</kbd> | <kbd>G</kbd> then <kbd>S</kbd> |
 | Add from Marketplace… | <kbd>G</kbd> then <kbd>M</kbd> | <kbd>G</kbd> then <kbd>M</kbd> |
+
+### Command palette
+
+| Action | Mac | Windows and Linux |
+| --- | --- | --- |
+| Move through the commands | <kbd>↓</kbd> / <kbd>↑</kbd> | <kbd>↓</kbd> / <kbd>↑</kbd> |
+| Run the highlighted command<br><small>One that cannot be undone asks first, or opens the question its menu item opens.</small> | <kbd>↵</kbd> | <kbd>Enter</kbd> |
+| Close the palette<br><small>While it asks before a command, Esc goes back to the list.</small> | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
 
 ### Canvas
 

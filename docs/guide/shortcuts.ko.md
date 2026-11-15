@@ -15,6 +15,39 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
 뺐습니다. 컨트롤 사이를 옮기는 Tab, 프로젝트 이름이나 초대처럼 입력칸 하나로 된 양식의 Enter,
 버튼의 Enter와 Space, 열린 메뉴나 드롭다운의 화살표 키입니다.
 
+## 커맨드 팔레트 {#command-palette}
+
+**⌘K**(Windows와 Linux에서는 **Ctrl+K**)를 누르거나 사이드바의 **Command palette**를 고르고, 하려는
+일을 입력합니다. 입력칸에 입력하는 중에도 열립니다. 팔레트는 프로젝트의 메뉴 바, 캔버스 도구 모음,
+우클릭 메뉴에 있는 모든 명령을 메뉴에 적힌 이름으로 찾습니다. `export`는 **Export graph (JSON)**을,
+`grid`는 **Grid**를 찾습니다. 그 밖에 다음을 찾을 수 있습니다.
+
+- **Settings**의 각 섹션: `keys`는 **Settings: Keys & Secrets**를 찾습니다.
+- 레이아웃: **Layout: Stress (distance-preserving)** 같은 이름이며, 지금 쓰는 레이아웃에 체크 표시가
+  있습니다.
+- 설치된 타입의 새 노드: **Add node: Domain** 같은 이름이며, [Types 패널](typepacks.md)에서처럼
+  노드를 만들고 선택합니다.
+- 실행할 플러그인: **Run WHOIS on the selection** 같은 이름이며, 그 플러그인이 읽는 노드가 선택되어
+  있을 때 나옵니다. 노드를 읽지 않는 플러그인은 항상 나옵니다. 고르면 그 플러그인에 체크한 채로
+  **Run plugins**가 열리고(패널이 이미 열려 있었다면 그 플러그인만 체크됩니다), **Run**을 누르기
+  전에는 아무것도 실행되지 않습니다.
+- **Run the last plugins again on the selection**: 프로젝트에서 플러그인을 실행한 뒤에 나옵니다
+  ([플러그인 실행](running-plugins.md#launch-surfaces) 참조).
+- 스킬팩과 그 스타터: **Infrastructure pivoting: Map the infrastructure** 같은 이름입니다. 채울 칸이
+  없는 스타터는 새 AI 에이전트 대화의 입력칸에 초안을 넣고, 보내기는 직접 합니다. 채울 칸이 있는
+  스타터는 스킬팩을 그 스타터의 양식으로 엽니다.
+- 노드: 그래프 검색과 같은 규칙으로 노드의 아무 값으로나 찾습니다. 노드는 명령 뒤에 나오고, 고르면
+  그 노드를 선택하고 가운데로 옮깁니다.
+
+아무것도 입력하지 않으면 최근에 실행한 명령이 먼저 나옵니다. 팔레트는 이 기기에서 마지막 여덟 개를
+기억하며, 노드는 기억하지 않습니다. **↓**와 **↑**로 옮기고, **Enter**로 강조된 명령을 실행하고,
+**Esc**로 팔레트를 닫습니다. 한글 음절을 끝내는 Enter는 음절만 끝냅니다. 지금 실행할 수 없는 명령은
+메뉴와 같은 이유와 함께 흐리게 나옵니다. 예를 들면 *Select something first to expand from*입니다.
+되돌릴 수 없는 명령은 Enter 한 번으로 실행되지 않습니다. **Delete**와 **Disconnect all**은 우클릭
+메뉴에서와 같은 확인 창을 열고, **Stop the AI agent's turn**은 먼저 묻습니다. 이때 **Cancel**에
+포커스가 있고, Esc를 누르면 목록으로 돌아갑니다. 단축키 목록과 마찬가지로 **Settings** 같은 다른
+대화상자가 열려 있으면 팔레트가 열리지 않고, Settings를 열면 팔레트가 닫힙니다.
+
 ## 키가 보이는 곳 {#shown-keys}
 
 키를 이 페이지에서 외울 필요는 없습니다. 키로도 할 수 있는 메뉴 항목은 오른쪽에 그 키를 보여 주고,
@@ -41,7 +74,7 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
   단축키는 그대로 동작합니다.
 - 에이전트가 끝나면 커서가 메시지 입력칸으로 돌아갑니다. 그사이에 다른 곳을 클릭했다면 돌아가지
   않습니다.
-- 입력칸에서는 입력칸 자신의 키 말고는 **Esc**, 검색칸의 **⌘G**(**Ctrl+G**), AI 에이전트 입력칸의
+- 입력칸에서는 입력칸 자신의 키 말고는 **Esc**, **⌘K**(**Ctrl+K**), 검색칸의 **⌘G**(**Ctrl+G**), AI 에이전트 입력칸의
   **↑**, 리뷰 대화상자의 **⌘↵**(**Ctrl+Enter**)만 동작합니다.
 - 캔버스 키는 캔버스에서 동작합니다. 캔버스를 클릭하거나 **G** 다음 **C**를 누르면 캔버스 키가
   캔버스에 동작합니다. 캔버스에 키보드 포커스가 있으면 얇은 파란 테두리가 보입니다. 아직 아무 곳도
@@ -116,6 +149,7 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
 | Next search result | <kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>G</kbd> |
 | Previous search result | <kbd>⇧</kbd><kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd> |
 | Show keyboard shortcuts<br><small>Not while you are typing in a field.</small> | <kbd>?</kbd> / <kbd>⌘</kbd><kbd>/</kbd> | <kbd>?</kbd> / <kbd>Ctrl</kbd>+<kbd>/</kbd> |
+| Open the command palette<br><small>Every menu, toolbar and right-click command, a setting, a plugin or a node, by name.</small> | <kbd>⌘</kbd><kbd>K</kbd> | <kbd>Ctrl</kbd>+<kbd>K</kbd> |
 | Go to the AI agent | <kbd>G</kbd> 다음 <kbd>A</kbd> | <kbd>G</kbd> 다음 <kbd>A</kbd> |
 | Go to the canvas | <kbd>G</kbd> 다음 <kbd>C</kbd> | <kbd>G</kbd> 다음 <kbd>C</kbd> |
 | Go to Properties | <kbd>G</kbd> 다음 <kbd>P</kbd> | <kbd>G</kbd> 다음 <kbd>P</kbd> |
@@ -123,6 +157,14 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
 | Go to Tasks | <kbd>G</kbd> 다음 <kbd>K</kbd> | <kbd>G</kbd> 다음 <kbd>K</kbd> |
 | Project settings… | <kbd>G</kbd> 다음 <kbd>S</kbd> | <kbd>G</kbd> 다음 <kbd>S</kbd> |
 | Add from Marketplace… | <kbd>G</kbd> 다음 <kbd>M</kbd> | <kbd>G</kbd> 다음 <kbd>M</kbd> |
+
+### Command palette
+
+| 동작 | Mac | Windows·Linux |
+| --- | --- | --- |
+| Move through the commands | <kbd>↓</kbd> / <kbd>↑</kbd> | <kbd>↓</kbd> / <kbd>↑</kbd> |
+| Run the highlighted command<br><small>One that cannot be undone asks first, or opens the question its menu item opens.</small> | <kbd>↵</kbd> | <kbd>Enter</kbd> |
+| Close the palette<br><small>While it asks before a command, Esc goes back to the list.</small> | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
 
 ### Canvas
 
