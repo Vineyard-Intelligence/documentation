@@ -81,7 +81,9 @@ the run ends you get a toast ("N change(s) staged — review to apply") and a **
 on its Tasks row. Click the row to open the Review dialog, untick anything you do not want, then
 press **Apply (N)** — or **Discard all**. Nothing is written to the project until you apply; while the
 Review dialog is open, the changes are only previewed on the canvas. A run that stages nothing ends
-with a toast showing its summary (or "No changes").
+with a toast showing its summary (or "No changes"). A change that would leave an edge as it is, with
+its label and the fields it already stores, is not staged, so running a plugin again over the same
+data does not list those edges again.
 
 The right side of the dialog shows the selected row's properties. For a node, they are what the
 node will hold once the row is applied: for a change, its stored values with the proposed ones merged

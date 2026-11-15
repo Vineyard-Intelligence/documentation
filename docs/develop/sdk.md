@@ -166,9 +166,14 @@ the review is applied, against the node as it is then:
 `data` object that is merged into the edge; `confidence`, `confidence_source`, `label_source` and
 `corroborated_by` are host-owned and rejected. There is one edge per ordered node pair, so
 `createEdge` on a pair that is already linked proposes a relabel of that edge instead of adding
-one. The analyst sees the edge's `data` read-only, in the Review dialog before applying and in the
-edge's Properties panel under **Recorded with this link**, so it is the place for where and when
-your source observed the link (`source`, `first_seen`, `last_seen`, …).
+one. A call that would change nothing stages nothing: no new wording, and `data` whose every key the
+edge already holds with that value, a `null` matching a key the edge does not have. The one
+exception is `createEdge` with the edge's own wording from a writer other than the one that drew it:
+that writer is recorded in `corroborated_by` once, in the same change as any `data` it brings. A
+plugin can therefore write a whole summary on every run, and the review lists only the edges whose
+summary changed. The analyst sees the edge's `data` read-only, in the Review dialog before applying
+and in the edge's Properties panel under **Recorded with this link**, so it is the place for where
+and when your source observed the link (`source`, `first_seen`, `last_seen`, …).
 
 Edges read back through `edges` and `neighbors` carry only `id`, `from_node_id`, `to_node_id` and
 `label`. Their `data` is not returned, although the `GraphEdge` type declares it, so a plugin cannot

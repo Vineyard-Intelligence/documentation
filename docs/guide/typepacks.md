@@ -178,12 +178,13 @@ hosts would become one node. The process type has no host field, so the plugin w
 name to an extra `hostname` field, which the Properties panel shows. All events between one process
 and one destination are one link, and its `events` counts connections or lookups rather than
 records: Elastic Defend logs a connection when it opens and again when it closes, and that is one
-event. Importing a later export replaces that link's summary rather than adding to it, and a key
-the later export has no value for becomes empty; the review lists every such link again, even when
-nothing in it changed. A link that is already in the project keeps its label, including one you
-renamed, and only its summary is written: a `spawned` or `executed from` link you renamed is left
-as it is. A command line too long for one node (Linux allows megabytes of arguments) is cut,
-keeping its start, and the node says so in `command_line_truncated` and `command_line_length`.
+event. A new link carries that summary from the first import. Importing a later export replaces it
+rather than adding to it, and a key the later export has no value for becomes empty. The review
+lists only the links whose summary changed, so importing the same export again stages nothing. A
+link that is already in the project keeps its label, including one you renamed, and only its summary
+is written: a `spawned` or `executed from` link you renamed is left as it is. A command line too
+long for one node (Linux allows megabytes of arguments) is cut, keeping its start, and the node says
+so in `command_line_truncated` and `command_line_length`.
 Loopback and link-local traffic never comes in, and private-network addresses and internal names
 only when you turn that on.
 
