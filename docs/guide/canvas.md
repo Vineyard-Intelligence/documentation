@@ -27,6 +27,7 @@ Toolbar toggle buttons appear highlighted when on; menu items are checkmarked wh
 | **Show all hidden** | Clears every hiding rule, so the canvas draws everything again. Unavailable while no hiding rule is set. | View |
 | **Node table** | Opens or closes the [node table](#node-table) below the canvas; checkmarked while it is open. | View |
 | **Reset panel layout** | Restores the project workspace's panel arrangement to its default. | View |
+| **Saved views** | Keeps the canvas as it is under a name (node positions, zoom, hiding rules and panel layout), and opens a view saved earlier. See [Saved views](#saved-views). | View |
 
 !!! note "Reset panel layout resets panels, not the graph"
     *Reset panel layout* restores the surrounding workspace panels (the canvas, side panels, etc.) to their initial split, which closes the node table. It does **not** re-run a graph layout or move your nodes. To re-arrange nodes, pick a **Layout** instead.
@@ -180,7 +181,21 @@ Hiding changes only what the canvas draws:
 - Going to one node shows it on its own if it is hidden: picking a search result, clicking a node table row, **Show on the canvas** in the activity log, the AI agent's `select_node`, and following what a collaborator has selected. The node is selected and centered once it is drawn, unless you select something else before then. The panel counts these as *N shown on request*, and **Hide again** puts them back under the rules. Clearing the last rule forgets them too, so a rule you set later hides them like any other node.
 - While a plugin run's changes are under review, the nodes and edges it would change or delete, and the nodes its new edges would connect, are drawn whatever the rules say.
 - A hidden node keeps its place on the canvas and comes back to it when shown again. A layout applied while nodes are hidden arranges only the nodes shown; the hidden ones are placed like newly added nodes when they come back, and showing many of them at once lays out the whole graph again.
-- The rules belong to the open project and last until you leave it or reload the page.
+- The rules belong to the open project and last until you leave it or reload the page, unless you keep them in a [saved view](#saved-views).
+
+## Saved views {#saved-views}
+
+Node positions, the zoom, the hiding rules and the panel layout all start over when you reload the page or open the project again, so an arrangement made for a report or a briefing would be lost. **View ▸ Saved views** keeps it under a name.
+
+- **Save view…** opens the *Saved views* dialog. Type a name and press **Save** or Enter. The view keeps where every node is, hidden nodes included; the zoom and the point at the center of the canvas; the [hiding rules](#hiding); and the panel layout. If the project already has a view with that name (ignoring case), saving replaces it, and the button reads **Replace**.
+- The project's views are listed under **Save view…**, newest first. Choose one to open it. The dialog lists them too, each with **Open** and a delete button that asks once more before deleting.
+- Opening a view puts the nodes back where they were, sets the same zoom on the same point, sets the hiding rules it kept, and restores the panel layout. The canvas shows *Opening view…* while it redraws.
+    - A node the view has no place for, such as one added after it was saved, stays where it is. A node that has no place on the canvas either, such as one added while its type was hidden, is put next to the nodes it links to, or beside the graph if it links to none or there is no room near them, so the rest of the arrangement does not move. A node deleted since is skipped. A message says how many of each there were.
+    - If the saved panel layout no longer fits the workspace (it lacks one of the panels, for example), the panels are left as they are and the message says so. The rest of the view still opens.
+    - Opening a view changes only what you see, like hiding. Picking a **Layout** afterwards re-arranges the nodes as usual, and so does the AI agent's *Re-arrange the graph after each turn* when that setting is on. The saved view itself stays as it was.
+- A view cannot be saved or opened while a layout is being computed or the project is still loading. A message says so; try again once the canvas has settled.
+- Views are kept in this browser, or in the desktop app, per project and filed under the signed-in account; [local mode](modes.md) keeps its own. Collaborators do not see them. They are not part of the project or its file, nor of **Export graph**, and clearing the site's data in the browser removes them. Deleting or leaving the project in **Project settings** removes its views from this device too. Without a signed-in account, for example on a project opened from its link while signed out, no view can be kept.
+- A project keeps up to 20 views. Positions take room, so a very large project fits fewer, and the views of all your projects on one device share a limit of their own, so that they leave room for the rest of the app. When a view does not fit, the dialog says so and nothing already saved is changed; deleting a view of this or another project makes room.
 
 ## Node table {#node-table}
 
