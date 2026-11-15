@@ -20,7 +20,9 @@ the link. Each entity type carries:
   kind of value it holds ([Reading values in the Properties panel](#reading-values-in-the-properties-panel)). When you edit one,
   the value is checked against what the type declares: its kind, its allowed values, and any
   pattern or range (for example, `country_code` must be two capital letters and `asn` a whole
-  number from 1 to 4294967295). A value that fails is not saved, and a message says why.
+  number from 1 to 4294967295). A value that fails is not saved, and a message says why. A node
+  can also hold fields its type does not declare: plugins write them, and you can add your own
+  ([Adding and removing fields](#adding-and-removing-fields)).
 - An **`icon`** and a **`color`** — the visuals that drive how the node renders on the canvas and
   in the Types and Properties panels.
 
@@ -466,6 +468,8 @@ It opens a menu for that value:
   your browser. In the desktop app it opens in your default browser, with that browser's own
   profile, cookies and fingerprint. A URL stored defanged is not offered: refang it on purpose
   first.
+- **Remove field…** ends the menu of a field the node's type does not declare, also when the field
+  holds nothing ([Adding and removing fields](#adding-and-removing-fields)).
 - **Esc** closes the menu and nothing behind it. In the Review dialog, keys pressed in the menu or
   in its URL confirmation stay there: Space chooses the item rather than ticking the staged row, and
   Esc in the confirmation leaves the review open.
@@ -479,6 +483,47 @@ text, so an address shown as `private` in the grid is reported as private there 
 In a panel marked *View only* the menu copies, searches, goes to nodes and opens URLs, and offers
 no new node. A link's stored data has the menu too, and a node made from it is not linked, since a
 link cannot end at another link. In the Review dialog the menu copies and opens URLs only.
+
+### Adding and removing fields {#adding-and-removing-fields}
+
+A node can hold fields its type does not declare. Plugins write them, and you can add your own, such
+as notes or tags, without waiting for a new version of the Type Pack.
+
+- **+ Field**, under the last row, opens a form with a **Name**, a **Kind** and a **Value**. **Add
+  field** writes the field to the node at once; it is not staged for review.
+- A name is lower-case letters, digits and `_`, starting with a letter, up to 31 characters. That is
+  the rule a Type Pack's own field names follow, so a later version of the pack can declare the
+  field under the name you gave it. A name such as `First Seen` is refused with **Use `first_seen`**
+  beside it. A field the type declares is filled in its own row, and a field the node already has is
+  changed in its row, so neither name is accepted here.
+- Under the name, **Suggested** offers `notes` (text) and `tags` (a list), then the fields that other
+  nodes of the same type carry and their type does not declare, most common first, so one field
+  keeps one name across the graph. Clicking a name fills it in, with the kind the other nodes hold
+  it as. A name the type declares or the node has is not suggested.
+- The kinds are **Text**, **Number**, **True / false**, **List** (text entries: type one and press
+  **Enter**) and **JSON** (an object `{…}` or a list `[…]`). A field is added with its value: an
+  empty text, a list with no entries, and `{}` or `[]` are refused, since a field with nothing in it
+  reads as one the node does not have. A number too large to store exactly is refused; choose
+  **Text** to keep every digit.
+- **Enter** in the name or in a number adds the field, and **⌘Enter** (Mac) or **Ctrl+Enter** adds it
+  from anywhere in the form, the JSON editor included, with a list entry you are still typing.
+  **Esc** or **Cancel** closes the form and drops what you typed. If the panel moves to another node
+  first, the form closes and a notice offers **Copy the value**.
+- Adding waits until a change you made in a row has been saved, then writes the node's data as it is
+  at that moment with the new field in it, so a change saved just before, yours or someone else's,
+  is kept. If someone else added a field of the same name meanwhile, the form says so and writes
+  nothing.
+- A field the node's type does not declare has **Remove field…** at the end of its value menu
+  (**⋯**), also when it holds nothing. Vineyard asks first and shows what the field holds. If the
+  field changes before you confirm, you are asked again with its new value; if someone else has
+  already removed it, nothing is written. Like adding, it waits for a change you made in a row to be
+  saved. Like a removal in the JSON view, it writes the node's whole data, so a change someone else
+  saves at the same moment can be lost.
+- A field the type declares keeps its row: clear its value instead, or, when the type does not
+  require it, remove it in the JSON view. When the node's Type Pack is not installed or did not
+  load, Vineyard cannot tell which fields the type declares, so **Remove field…** is not offered;
+  the JSON view can still remove a field.
+- In a panel marked *View only*, **+ Field** is not shown and no field can be removed.
 
 ### Document and JSON views {#document-and-json-views}
 
