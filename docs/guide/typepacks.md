@@ -406,6 +406,32 @@ it can be wrong for an unusual value; a wrong reading changes only how the value
 list written into one text field, how the agent's `aggregate_values` counts its entries. The list of
 other nodes appears in the node panel, not in the Review dialog.
 
+### Finding a field {#finding-a-field}
+
+Above the grid, **Find a field or value** and **Hide empty** narrow what it shows. Neither changes the
+node, and both are there in a panel marked *View only*.
+
+- **Find a field or value** keeps the fields whose name or value contains what you type, ignoring
+  case. `first seen` finds `first_seen`. A list is matched entry by entry and JSON by its values,
+  not its keys, and `AS64496` also finds a field that holds the number `64496`. **Esc** or **×**
+  empties it. What you type stays when you select another node, so you can look at one field across
+  several nodes.
+- **Hide empty** leaves out the fields that hold nothing: no value, an empty text, an empty list or
+  `{}`. `0` and `false` are values. A field the type requires (`*`) stays. The choice is remembered
+  on this device.
+- The field you are in stays on screen until you leave it, even when you clear it or what you type
+  no longer matches.
+- A field you changed stays after you leave it, whatever the finder and **Hide empty** say, until
+  the change is saved. When the value is refused or the server cannot be reached, it stays with
+  what you typed, so you can correct it.
+- While fields are left out, a line under the grid says how many are shown, how many do not match
+  (**Clear** empties the finder) and how many are empty (**Show** turns **Hide empty** off).
+- The fields the node's type does not declare come after the others, under **Added fields** and the
+  name of the type that does not declare them. A plugin, an import, the AI agent or
+  [**+ Field**](#adding-and-removing-fields) wrote them, and the type does not check their values.
+  When the node's Type Pack is not installed or did not load, Vineyard cannot tell which fields the
+  type declares, and the heading is not shown.
+
 ### Editing a value
 
 - Click a value, or move to it with **Tab**, to edit it. Long text and code grow in place.
@@ -487,7 +513,8 @@ link cannot end at another link. In the Review dialog the menu copies and opens 
 ### Adding and removing fields {#adding-and-removing-fields}
 
 A node can hold fields its type does not declare. Plugins write them, and you can add your own, such
-as notes or tags, without waiting for a new version of the Type Pack.
+as notes or tags, without waiting for a new version of the Type Pack. The grid lists them under
+**Added fields**, after the fields the type declares ([Finding a field](#finding-a-field)).
 
 - **+ Field**, under the last row, opens a form with a **Name**, a **Kind** and a **Value**. **Add
   field** writes the field to the node at once; it is not staged for review.
