@@ -117,15 +117,22 @@ works on the selection (on the whole graph when nothing is selected).
 
 Look for:
 
-- Links between the domains such as `shared nameserver: ns1.dovrapark-dns.test` or
-  `shared registrar: …`. The plugin uses only what the nodes already hold and sends no request.
-- What the shared value is. One small DNS host's name server, shared by three brand-like domains
-  registered in the same week, narrows the field. A mainstream registrar or a large DNS provider's
-  name servers group nobody. The plugin skips a value that more than 30 of the nodes it compares
-  share, but a value that is rare among them can still be common on the internet.
+- One link between two domains, naming every value they share, such as
+  `shared registrar: …; shared nameserver: ns1.dovrapark-dns.test, ns2.dovrapark-dns.test`. Up to
+  four values of each attribute are named, then *and N more*. The plugin uses only what the nodes
+  already hold and sends no request.
+- Run it again after the graph has grown, and a link it drew is relabelled in place when what the
+  two domains share has changed. A link between them that you or another plugin drew is left as it
+  is, and the summary counts those pairs (*already linked under another label, left as they are*).
+- What the shared values are. Read every value the label names, not the first one: the registrar
+  comes first, and it is often the weakest. One small DNS host's name server, shared by three
+  brand-like domains registered in the same week, narrows the field. A mainstream registrar or a large
+  DNS provider's name servers group nobody. The plugin skips a value that more than 30 of the nodes
+  it compares share, and leaves it out of the label, but a value that is rare among them can still be
+  common on the internet.
 - The links' grade. They join nodes that were already in the graph and state a shared value, not an
-  observation, so they are applied as `unassessed` and drawn dotted. That is the honest reading of
-  them.
+  observation, so they are applied as `unassessed` and drawn dotted, also when one domain lists more
+  name servers than the other. That is the honest reading of them.
 
 ### 6. Ask the agent to weigh it {#ask-the-agent}
 
@@ -157,9 +164,11 @@ Look for:
 - A Tracking ID that another site in the project carries too. Both sites link to the same Tracking
   ID node by **carries tracking ID**, a strong lead and still a candidate: a cloned kit keeps the
   analytics ID of the site it was cloned from.
-- Favicon hashes. Run Shared-Attribute Clustering again, and favicons whose perceptual hashes differ
-  in at most 10 of 64 bits are linked `similar favicon: …`. A blank or single-colour icon is not
-  compared.
+- Favicon hashes. The URL node is still selected, and Shared-Attribute Clustering compares only
+  the selected nodes, so first clear the selection (**Esc**, or a click on empty canvas) to compare
+  every favicon in the project, or select the Favicon Hash nodes. Then run Shared-Attribute
+  Clustering again, and favicons whose perceptual hashes differ in at most 10 of 64 bits are linked
+  `similar favicon: …`. A blank or single-colour icon is not compared.
 
 ## Where it ends {#where-it-ends}
 

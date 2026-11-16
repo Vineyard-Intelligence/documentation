@@ -508,7 +508,7 @@ own line, and the legend's **Evidence** key lists the grades in the project
 |---|---|---|
 | `assessed` | An independent check argued against this link and it held. | The independent check, or a re-verification you apply |
 | `asserted` | A person vouched for this link: an analyst's judgement, not a measurement. It says nothing about whether anything checked the link. | A person. A link you draw starts here. |
-| `recorded` | A tool recorded this: one end's own fields name the other, or two independent collectors both drew it. Not a claim that it was verified. | Applying a plugin's or the agent's changes, or a link made from a value's menu, which reads *Graded here* because you applied it |
+| `recorded` | A tool recorded this: one end's own fields name the other, a collector linked what it found to a node it did not find (a DNS lookup's domain to the IP it resolved), or two independent collectors both drew it. Not a claim that it was verified. | Applying a plugin's or the agent's changes, or a link made from a value's menu, which reads *Graded here* because you applied it |
 | `circumstantial` | Checked, and consistent, but innocent explanations fit the same evidence. | The independent check, or a re-verification |
 | `contested` | The check refused this link. It is here because a person kept it. Drawn heavier, in amber. | The independent check, or a re-verification |
 | `unassessed` | Nothing on this link says it was checked. | Applying changes nothing checked, or a person taking back `asserted` |

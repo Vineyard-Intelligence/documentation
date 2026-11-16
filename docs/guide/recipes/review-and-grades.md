@@ -102,13 +102,20 @@ How a link gets its grade when it is applied, without any model:
 
 | The link | Its grade |
 |---|---|
-| A plugin's link between the node you ran it on and a node the run found: DNS Lookup's `resolves to`, Certificate Transparency's `subdomain` | `recorded` |
-| A link where one end's own fields name the other, such as an account whose `profile_url` holds the URL the link points at | `recorded` |
+| A plugin's link between the node you ran it on and a node the run found: DNS Lookup's `resolves to`, Certificate Transparency's `subdomain`, IP to ASN's link from an address to its AS | `recorded` |
+| A link where one end's own fields name the other in a field of its own, such as an account whose `profile_url` holds the URL the link points at, or a bio that quotes the other account's address | `recorded` |
 | The same link in the same words, drawn by a second collector: OTX Passive DNS's `subdomain` where crt.sh already drew one | `recorded`, and OTX's plugin is added to `corroborated_by`. The same plugin running again adds nothing, and nor does the AI agent agreeing. |
-| A plugin's link between two nodes already in the graph, stating a shared value: Shared-Attribute Clustering's `shared nameserver: …` | `unassessed` |
+| A plugin's link between two nodes already in the graph, stating a shared value: Shared-Attribute Clustering's `shared registrar: …; shared nameserver: …` | `unassessed` |
 | An AI agent's link that nothing checked and whose ends do not name each other | `unassessed` |
 | An AI agent's link that the check judged | From its verdict (step 4) |
 | A link you draw yourself | `asserted` |
+
+A value both ends hold in the same field is a shared attribute, not one end naming the other, also
+when one end's value is longer or contains the other's: one domain listing `ns1` and `ns2` against
+one listing only `ns1`, `Ostrel Hosting` against `Ostrel Hosting Ltd`, an RDAP status that adds
+`add period` to the other's, a handle against the same handle with a suffix. A link that rests on
+such a value is not `recorded`. With no check it is `unassessed` and drawn dotted, and the AI agent's
+link of that shape is an inference that the independent check, when it is on, judges.
 
 `recorded` says a tool recorded the link, not that anyone verified it. A grade records what was known
 when the link was written: it does not change by itself as the graph grows, only when the link is

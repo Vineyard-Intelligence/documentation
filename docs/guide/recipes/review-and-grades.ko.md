@@ -101,13 +101,20 @@ Lookup의 `resolves to` 위에 제안된 OTX의 `resolved to (2026-09-14 → 202
 
 | 링크 | 등급 |
 |---|---|
-| 플러그인을 실행한 노드와 그 실행이 찾은 노드 사이의 플러그인 링크: DNS Lookup의 `resolves to`, Certificate Transparency의 `subdomain` | `recorded` |
-| 한쪽 끝의 필드가 다른 쪽을 가리키는 링크. 예를 들어 `profile_url`에 링크가 가리키는 URL이 들어 있는 계정 | `recorded` |
+| 플러그인을 실행한 노드와 그 실행이 찾은 노드 사이의 플러그인 링크: DNS Lookup의 `resolves to`, Certificate Transparency의 `subdomain`, IP to ASN이 주소에서 그 AS로 그린 링크 | `recorded` |
+| 한쪽 끝이 자기 필드에서 다른 쪽을 가리키는 링크. 예를 들어 `profile_url`에 링크가 가리키는 URL이 들어 있는 계정, 다른 계정의 주소를 인용한 소개글 | `recorded` |
 | 두 번째 수집기가 같은 말로 다시 그린 같은 링크: crt.sh가 이미 그린 곳에 OTX Passive DNS가 그린 `subdomain` | `recorded`. OTX 플러그인이 `corroborated_by`에 더해집니다. 같은 플러그인을 다시 실행해도, AI 에이전트가 동의해도 더해지지 않습니다. |
-| 이미 그래프에 있던 두 노드 사이에 공유하는 값을 말하는 플러그인 링크: Shared-Attribute Clustering의 `shared nameserver: …` | `unassessed` |
+| 이미 그래프에 있던 두 노드 사이에 공유하는 값을 말하는 플러그인 링크: Shared-Attribute Clustering의 `shared registrar: …; shared nameserver: …` | `unassessed` |
 | 아무것도 검사하지 않았고 양 끝이 서로를 가리키지 않는 AI 에이전트의 링크 | `unassessed` |
 | 검사가 판단한 AI 에이전트의 링크 | 판정에 따라(4단계) |
 | 직접 그린 링크 | `asserted` |
+
+양 끝이 같은 필드에 가진 값은, 한쪽 값이 더 길거나 다른 쪽 값을 품고 있어도 한쪽이 다른 쪽을
+가리키는 것이 아니라 공유하는 속성입니다. `ns1`과 `ns2`를 적은 도메인과 `ns1`만 적은 도메인,
+`Ostrel Hosting`과 `Ostrel Hosting Ltd`, 다른 쪽 상태에 `add period`가 더 붙은 RDAP 상태, 핸들과
+뒤에 무언가 붙은 같은 핸들이 그렇습니다. 이런 값에 기대는 링크는 `recorded`가 아닙니다. 검사가 없으면
+`unassessed`이고 점선으로 그려지며, 이런 모양의 AI 에이전트 링크는 추론이므로 독립 검사가 켜져 있으면
+검사가 판단합니다.
 
 `recorded`는 도구가 링크를 기록했다는 뜻이지 누군가 검증했다는 뜻이 아닙니다. 등급은 링크를 쓴 때
 알려져 있던 것을 기록합니다. 그래프가 커져도 저절로 바뀌지 않고, 새 증거와 함께 링크가 다시 쓰일
