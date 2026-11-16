@@ -9,7 +9,7 @@ The view controls are exposed twice, and both stay in sync:
 - **On-canvas toolbar** — a compact vertical bar pinned to the top-left edge of the canvas, for the controls you reach for most while working.
 - **Top menu bar** — the `Project`, `Edit`, and `View` menus, which add data and navigation actions alongside the view toggles (a fourth menu, `Run`, launches plugins and the AI agent — see [Running plugins](running-plugins.md)).
 
-Every command of the menu bar, the toolbar and the right-click menus can also be found by its name in the **command palette** (**⌘K**, or **Ctrl+K** on Windows and Linux), together with the layouts, the types to add a node of and the nodes themselves; see [Command palette](shortcuts.md#command-palette). The right-click menus' commands act on the selection there.
+The commands of the menu bar, the toolbar and the right-click menus can also be found by their names in the **command palette** (**⌘K**, or **Ctrl+K** on Windows and Linux), together with the layouts, the types to add a node of and the nodes themselves; see [Command palette](shortcuts.md#command-palette). The right-click menus' commands act on the selection there. The controls for [hiding](#hiding) and [saved views](#saved-views) are the exception: the toolbar's **Filter**, **View ▸ Show all hidden** and **View ▸ Saved views** are not in the palette.
 
 ## View controls (toolbar + View menu)
 
@@ -93,7 +93,7 @@ The three 1-hop actions add to the selection, so pressing one again walks one mo
 - **Selection** — right-click empty canvas with anything selected, or a node or edge inside a multi-item selection; the header shows the count (*Selected: N nodes, M edges*). Run plugins…, Connect to…, Show in node table, Copy labels and Copy labels, defanged (when nodes are selected), Merge nodes… (when two or more nodes are selected, see [Merging nodes](#merging-nodes)), Delete (N), Select all, Fit view.
 - **Empty canvas** (nothing selected, headed *Nothing selected — whole project*) — Run plugins… on the whole-graph plugins, Select all, Fit view.
 
-An item that a key also does shows the key on its right: **R** for Run plugins…, **C** and **⌘-click** (Mac) or **Ctrl-click** for Connect to…, **⌫** (Mac) or **Delete** for Delete. The edge menu shows none, since a right-click on an edge does not select it and the keys act on the selection.
+An item that a key also does shows the key on its right: **R** for Run plugins…, **C** and **⌘-click** (Mac) or **Ctrl-click** for Connect to…, **⌘C** (**Ctrl+C**) for Copy labels, **⌫** (Mac) or **Delete** for Delete, **⌘A** (**Ctrl+A**) for Select all and **F** for Fit view. The edge menu shows none, since a right-click on an edge does not select it and the keys act on the selection.
 
 **Esc** closes the menu and nothing under it. Each press of Esc puts away one thing, the front one first: a **Connect to…** waiting for its target, an open menu (a right-click menu, or the **Project**, **Edit**, **View** or **Run** menu of the menu bar) or the toolbar's **Filter** panel, then the panel drawn in front, and last the selection. The panels are drawn in this order, front first: the Review dialog, Run plugins, the Skill pack panel, the AI agent. With the Run plugins panel open over a Skill pack panel, the first Esc closes Run plugins, the next one closes the Skill pack panel, and once nothing is left open Esc clears the selection, like **Clear selection**. A menu of the menu bar closes on its own, and if focus was in the menu it goes back to the menu's name in the bar. The Review dialog closes on an Esc pressed in it, and on one pressed while nothing has focus, as right after **Apply**; while a review is open, Run plugins does not close on Esc. An Esc pressed inside a panel, or right after you clicked in it, goes to that panel rather than to one drawn over it. An Esc typed in a field, or pressed after a click in the Properties panel, leaves the selection alone, and the Esc that finishes a Korean syllable only finishes the syllable. Holding Shift (or another modifier) while you press Esc makes no difference.
 
@@ -264,7 +264,7 @@ Select the node(s) you want to link from, then **⌘-click** (Mac) or **Ctrl-cli
 
 ## Merging nodes {#merging-nodes}
 
-When one entity is in the project as two or more nodes, such as `Example.com.` and `example.com`, or `+82 10-1234-5678` and `010-1234-5678`, you can merge them into one. Select the nodes, then right-click and choose **Merge nodes…**, or choose **Edit → Merge selected nodes…**. One merge takes up to 21 nodes: the one kept and 20 folded into it.
+When one entity is in the project as two or more nodes, such as `Example.com.` and `example.com`, or `+82 10-1234-5678` and `010-1234-5678`, you can merge them into one. Select the nodes, then right-click and choose **Merge nodes…**, or choose **Edit → Merge selected nodes…**. In the [command palette](shortcuts.md#command-palette), either menu's words, `merge nodes` or `merge selected nodes`, find **Merge nodes…**. One merge takes up to 21 nodes: the one kept and 20 folded into it.
 
 The merge view shows what the merge would do before anything changes:
 

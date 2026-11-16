@@ -19,8 +19,11 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
 
 **⌘K**(Windows와 Linux에서는 **Ctrl+K**)를 누르거나 사이드바의 **Command palette**를 고르고, 하려는
 일을 입력합니다. 입력칸에 입력하는 중에도 열립니다. 팔레트는 프로젝트의 메뉴 바, 캔버스 도구 모음,
-우클릭 메뉴에 있는 모든 명령을 메뉴에 적힌 이름으로 찾습니다. `export`는 **Export graph (JSON)**을,
-`grid`는 **Grid**를 찾습니다. 그 밖에 다음을 찾을 수 있습니다.
+우클릭 메뉴에 있는 명령을 메뉴에 적힌 이름으로 찾습니다. `export`는 **Export graph (JSON)**을,
+`grid`는 **Grid**를 찾습니다. 두 메뉴가 한 명령을 다르게 부르면 어느 이름으로도 찾습니다.
+`merge selected`는 Edit 메뉴의 **Merge selected nodes…**인 **Merge nodes…**를 찾습니다. 숨기기와 저장된 뷰의
+컨트롤, 곧 도구 모음의 **Filter**와 View 메뉴의 **Show all hidden**, **Saved views**는 팔레트에
+없습니다. 명령 말고도 다음을 찾을 수 있습니다.
 
 - **Settings**의 각 섹션: `keys`는 **Settings: Keys & Secrets**를 찾습니다.
 - 레이아웃: **Layout: Stress (distance-preserving)** 같은 이름이며, 지금 쓰는 레이아웃에 체크 표시가
@@ -160,7 +163,7 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
 | Next search result | <kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>G</kbd> |
 | Previous search result | <kbd>⇧</kbd><kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd> |
 | Show keyboard shortcuts<br><small>Not while you are typing in a field.</small> | <kbd>?</kbd> / <kbd>⌘</kbd><kbd>/</kbd> | <kbd>?</kbd> / <kbd>Ctrl</kbd>+<kbd>/</kbd> |
-| Open the command palette<br><small>Every menu, toolbar and right-click command, a setting, a plugin or a node, by name.</small> | <kbd>⌘</kbd><kbd>K</kbd> | <kbd>Ctrl</kbd>+<kbd>K</kbd> |
+| Open the command palette<br><small>A menu, toolbar or right-click command, a setting, a plugin or a node, by name.</small> | <kbd>⌘</kbd><kbd>K</kbd> | <kbd>Ctrl</kbd>+<kbd>K</kbd> |
 | Go to the AI agent | <kbd>G</kbd> 다음 <kbd>A</kbd> | <kbd>G</kbd> 다음 <kbd>A</kbd> |
 | Go to the canvas | <kbd>G</kbd> 다음 <kbd>C</kbd> | <kbd>G</kbd> 다음 <kbd>C</kbd> |
 | Go to Properties | <kbd>G</kbd> 다음 <kbd>P</kbd> | <kbd>G</kbd> 다음 <kbd>P</kbd> |

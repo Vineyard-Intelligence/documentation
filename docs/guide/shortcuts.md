@@ -20,9 +20,13 @@ drop-down.
 ## Command palette {#command-palette}
 
 Press **⌘K** (**Ctrl+K** on Windows and Linux), even while you are typing in a field, or choose
-**Command palette** in the sidebar, and type what you want to do. The palette finds every command of
-the project's menu bar, the canvas toolbar and the right-click menus by the name the menu gives it, so
-`export` finds **Export graph (JSON)** and `grid` finds **Grid**. Besides those it offers:
+**Command palette** in the sidebar, and type what you want to do. The palette finds the commands of
+the project's menu bar, the canvas toolbar and the right-click menus by the name the menu gives them,
+so `export` finds **Export graph (JSON)** and `grid` finds **Grid**. Where two menus name one command
+differently, either name finds it: `merge selected` finds **Merge nodes…**, the Edit menu's **Merge
+selected nodes…**. The controls for hiding and saved views, the toolbar's **Filter** and the View
+menu's **Show all hidden** and **Saved views**, are not in the palette. Besides the commands it
+offers:
 
 - the **Settings** sections: `keys` finds **Settings: Keys & Secrets**;
 - the layouts, such as **Layout: Stress (distance-preserving)**, with the one in use ticked;
@@ -168,7 +172,7 @@ does.
 | Next search result | <kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>G</kbd> |
 | Previous search result | <kbd>⇧</kbd><kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd> |
 | Show keyboard shortcuts<br><small>Not while you are typing in a field.</small> | <kbd>?</kbd> / <kbd>⌘</kbd><kbd>/</kbd> | <kbd>?</kbd> / <kbd>Ctrl</kbd>+<kbd>/</kbd> |
-| Open the command palette<br><small>Every menu, toolbar and right-click command, a setting, a plugin or a node, by name.</small> | <kbd>⌘</kbd><kbd>K</kbd> | <kbd>Ctrl</kbd>+<kbd>K</kbd> |
+| Open the command palette<br><small>A menu, toolbar or right-click command, a setting, a plugin or a node, by name.</small> | <kbd>⌘</kbd><kbd>K</kbd> | <kbd>Ctrl</kbd>+<kbd>K</kbd> |
 | Go to the AI agent | <kbd>G</kbd> then <kbd>A</kbd> | <kbd>G</kbd> then <kbd>A</kbd> |
 | Go to the canvas | <kbd>G</kbd> then <kbd>C</kbd> | <kbd>G</kbd> then <kbd>C</kbd> |
 | Go to Properties | <kbd>G</kbd> then <kbd>P</kbd> | <kbd>G</kbd> then <kbd>P</kbd> |
