@@ -125,7 +125,7 @@ A chevron (**›**) at the end of a value opens a view of the whole value under 
 | IP address or CIDR block | The value, `v4` or `v6`, and a special-purpose range such as `private`, `loopback` or `documentation`. A block written from a host address is marked `host bits set`. | The canonical form of an address, or a block's network, netmask, first and last address and size. The other nodes in the same /24 (IPv6: /64), or with an address in the block. |
 | E-mail address | The domain highlighted. | The local part, the tag after a `+`, and the domain (and its Unicode form). |
 | Size, count or amount (`size_bytes`, `*_count`, `followers`, `balance`) | Digits grouped in thousands, a size also in KiB, MiB or GiB, an amount with the node's currency. | — |
-| Code: a detection rule, an armored key, a raw record, a command line | Monospace, the first line. | Line numbers, highlighting for YARA, Sigma, PGP armor and WHOIS (up to 8,000 characters), **Find**, **Wrap**, **Copy**, **Download**, and **Edit**, a code editor that saves when you press **Save**. |
+| Code: a detection rule, an armored key, a raw record, a command line | Monospace, the first line. | Line numbers, highlighting for YARA, Sigma, PGP armor and WHOIS (up to 8,000 characters), **Find**, **Wrap**, **Copy**, **Download**, and **Edit**, a code editor that saves when you press **Save**. The editor is highlighted when the code is up to 8,000 characters as it opens, and plain otherwise; code that grows past that while you edit loses its colours and keeps the editor, the caret and undo. |
 | Cryptocurrency address | The chain its format belongs to, and whether its checksum holds (EIP-55, Base58Check, Bech32 and Bech32m). Solana addresses and all-lowercase EVM addresses carry no checksum, and Monero's is not checked. A Base58Check address whose version byte names no chain Vineyard knows (Bitcoin Gold, Dash) shows `checksum ok` without a chain. | The format, the chain, what the node's own currency or network field says, and a link to a block explorer: the one for the network the node names, or for the format's own chain when it names none. The link asks before it opens, because the explorer sees your IP address, the time and the address you looked up. |
 | JSON | One line of JSON, with **{ }** to edit it ([JSON values](#json-values)). | A tree: fold and unfold, click a key to copy its path (`rdap.events[0].action`), **Find**, and **Raw** for the indented JSON. |
 
@@ -173,6 +173,10 @@ Values of these kinds are shown as they are stored, even when the type expects s
   and time) **Enter** saves; in long text and code **Enter** adds a line and **⌘Enter** (Mac) or
   **Ctrl+Enter** saves. A value is also saved when you leave the field. The **Enter** or **Esc**
   that finishes a Korean syllable only finishes the syllable.
+- In a choice (an `enum`, or `true` and `false`), a list and the colour picker, **Esc** leaves the
+  field too, and does not close a Run plugins or Skill pack panel open beside the panel. With a
+  choice's list of options open, Esc closes only the list. In the colour picker, Esc puts the stored
+  colour back over one half typed.
 - While you type, the field stays the one you clicked, even when what you have typed so far reads
   as a URL, an address or a list. It shows as that kind when you leave it.
 - While you edit a URL, an e-mail or IP address, a hash or a cryptocurrency address, a line under
@@ -203,7 +207,9 @@ text**: the field is then the text as stored. **Edit as entries** turns it back.
 ### Lists {#lists}
 
 A list's entries are chips, with **Add…** after them. Type an entry and press **Enter** to add it, or
-press an entry's **×** to remove it. Each change is saved at once. A field its type declares a list
+press an entry's **×** to remove it. Each change is saved at once. An entry you have typed is also
+added when you leave the field, with a click elsewhere or **Tab**; **Esc** drops it and adds nothing.
+A list written in one text field behaves the same way. A field its type declares a list
 (`array`) is edited this way even before it holds anything.
 
 The list keeps the kind of its entries:
@@ -234,6 +240,9 @@ the line opens it in a JSON editor, on the value as it is stored when you open i
   is refused. JavaScript would already have rounded it, so `18446744073709551616` would be saved as
   `18446744073709552000`. Put it in quotes, `"18446744073709551616"`, to keep every digit.
 - **Cancel**, **Esc** or a click outside closes the editor without saving.
+- The editor highlights the JSON when it is up to 8,000 characters as it opens, and is plain
+  otherwise. JSON that grows past 8,000 characters while you edit loses its colours but stays in the
+  same editor, with the caret where it was and undo still working.
 - What you save is then checked against the type like any other value
   ([Saving and checks](#saving-and-checks)).
 
@@ -365,7 +374,8 @@ as notes or tags, without waiting for a new version of the Type Pack. The grid l
   reads as one the node does not have. A number too large to store exactly is refused; choose
   **Text** to keep every digit.
 - **Enter** in the name or in a number adds the field, and **⌘Enter** (Mac) or **Ctrl+Enter** adds it
-  from anywhere in the form, the JSON editor included, with a list entry you are still typing.
+  from anywhere in the form, the JSON editor included (without adding a line break to the JSON),
+  with a list entry you are still typing.
   **Esc** or **Cancel** closes the form and drops what you typed. If the panel moves to another node
   first, the form closes and a notice offers **Copy the value**.
 - Adding waits until a change you made in a row has been saved, then writes the node's data as it is
@@ -415,7 +425,9 @@ and **G** then **P**, open a field from **Document** or **JSON** too: the panel 
 
 **JSON** shows the node's whole data as indented JSON; **Tree** folds it, finds in it and copies a
 key's path (`whois.events[0]`). **Edit** opens the data in the JSON editor, where a field can be
-changed, added or removed.
+changed, added or removed. A node that holds a WHOIS or RDAP record is often close to 8,000
+characters: the editor is highlighted or plain from its size when it opens, as for a
+[JSON value](#json-values), so deleting or pasting a raw record does not cost you the caret or undo.
 
 - Saving writes only the fields you changed, added or removed. A field you left as it was keeps
   whatever the node holds when you save, so a change someone else made to it while the editor was
