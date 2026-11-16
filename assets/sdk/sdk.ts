@@ -1,4 +1,5 @@
-// Vineyard plugin SDK (types, define helpers and createMockContext): the app's copy as shipped on 2026-10-20 (desktop 0.4.62).
+// Vineyard plugin SDK (types, define helpers and createMockContext): the app's copy as of 2026-11-16,
+// with the pack-level `summary` a pack's build writes into its manifest.
 // @vineyard/plugin-sdk (in-app runtime copy).
 //
 // A plugin is `export default definePlugin({ manifest, run })`. It only ever touches the
@@ -20,6 +21,26 @@ export interface NetworkScope {
     endpoint: string;
     methods: HttpMethod[];
     purpose?: string;
+}
+/**
+ * A network endpoint the ANALYST supplies — a self-hosted MISP or OpenCTI, an organisation's own
+ * TIP — which no manifest can name, because only the analyst knows where theirs is.
+ *
+ * The address is the value of `config_key`, a `scopes.config` entry of `type: 'url'` in the same
+ * manifest, and it is an endpoint exactly like a `network` one once it is set: origin plus a
+ * path-segment prefix (net-allowlist.ts). Until it is set, or while it is not a usable address,
+ * the scope grants nothing. The plugin cannot set it: config is the analyst's, written only by the
+ * settings forms.
+ *
+ * `ctx.net.fetch` only, never `ctx.service`: the host attaches no credential of the analyst's to a
+ * request whose destination someone other than the host chose.
+ */
+export interface ConfigurableNetworkScope {
+    config_key: string;
+    methods: HttpMethod[];
+    purpose?: string;
+    /** The schemes the address may use. `['https']` when omitted. */
+    schemes?: Array<'https' | 'http'>;
 }
 /**
  * Anonymous probing of arbitrary public hosts — the capability behind `ctx.net.probe`.
@@ -47,6 +68,8 @@ export interface ConfigValue {
 export interface ManifestScopes {
     graph?: GraphScope[];
     network?: NetworkScope[];
+    /** Endpoints whose address the analyst sets in this plugin's settings. Backs `ctx.net.fetch`. */
+    network_configurable?: ConfigurableNetworkScope[];
     /** Desktop-only anonymous probe of arbitrary public hosts. Backs `ctx.net.probe`. */
     web_probe?: WebProbeScope;
     /**
@@ -201,6 +224,41 @@ export interface SafeProbeResponse {
     headerNames?: string[]; // when requested: header names as sent
 }
 
+/** What stageMerge stages — the shape of agent/graph-analytics.ts MergePlan it reads. */
+export interface MergeStaging {
+    keep: string;
+    absorb: string[];
+    fill: Record<string, unknown>;
+    filledFrom: Record<string, string>;
+    fillBy: Array<{ id: string; data: Record<string, unknown> }>;
+    /** Fields of keep a duplicate's stricter value replaces (`tlp`), also in `fill`. */
+    raised?: Array<{ field: string; from: unknown; to: unknown; by: string }>;
+    /** Source fields of keep the duplicates' parts are added to (node-merge.ts mergeUnion), also in `fill`. */
+    unioned?: Array<{ field: string; from: unknown; to: unknown; added: Array<{ id: string; parts: string[] }> }>;
+    notKept: Record<string, string[]>;
+    moves: Array<{
+        from: string;
+        to: string;
+        label: string;
+        edges: string[];
+        absorbed: string[];
+        /** The moved link's `tlp`, raised to the strictest of the links it carries. */
+        tlp?: { from: unknown; to: unknown };
+    }>;
+    corroborations: Array<{
+        edge: string;
+        corroboratedBy: string[];
+        edges: string[];
+        absorbed: string[];
+        record?: string;
+        /** `edge`'s `tlp`, raised to the strictest among it and `edges`. */
+        tlp?: { from: unknown; to: unknown };
+        /** The links add no source, only the stricter `tlp`. */
+        onlyTlp?: true;
+    }>;
+    dropped: Array<{ edge: string; absorbed: string; reason: string; keptEdge?: string }>;
+}
+
 export interface HostContext {
     readonly run: {
         runId: string;
@@ -220,7 +278,17 @@ export interface HostContext {
         edges?(): Promise<GraphEdge[]>;
         neighbors?(nodeId: string): Promise<{ nodes: GraphNode[]; edges: GraphEdge[] }>;
         createNode?(draft: EntityDraft): Promise<GraphNode>;
-        updateNode?(nodeId: string, data: Record<string, unknown>): Promise<void>;
+        /**
+         * `opts.patchKeys` is for the host's own agent, whose `data` is the whole node with its patch
+         * spread over it: the keys that patch named, so a field it sets back to what the node held
+         * still counts as its change (plugins/staged-update.ts). Ignored for a plugin, whose `data`
+         * is its delta and names every key it changes.
+         */
+        updateNode?(
+            nodeId: string,
+            data: Record<string, unknown>,
+            opts?: { patchKeys?: readonly string[] },
+        ): Promise<void>;
         deleteNode?(nodeId: string): Promise<void>;
         deleteNodes?(nodeIds: string[]): Promise<{ deleted: number }>;
         createEdge?(edge: EdgeDraft): Promise<void>;
@@ -241,15 +309,31 @@ export interface HostContext {
          *     route. Omit `label` here and the grade stands.
          *
          * Same refusals on `data` as `createEdge`, and the same merge.
+         *
+         * A call that would change nothing stages nothing, here and in `createEdge`: the same wording
+         * (or none) and `data` whose every key the edge already holds with that value, `null` matching
+         * a key it does not have. Writing a whole summary again is therefore free when it has not
+         * changed, and the analyst's review lists only the links that did.
          */
         updateEdge?(edgeId: string, patch: { label?: string; data?: Record<string, unknown> }): Promise<void>;
         deleteEdge?(edgeId: string): Promise<void>;
         deleteEdges?(edgeIds: string[]): Promise<{ deleted: number }>;
+        /**
+         * Stage a MERGE of duplicate nodes as planned by agent/graph-analytics.ts planMerge.
+         * THE AGENT'S RUN ONLY: never present on a plugin's bridge, so no worker can reach it (the
+         * worker is handed the bridge's own keys, worker-host.ts). The agent's bridge is the one built
+         * with BridgeOptions.agent, never one picked by pluginId, and no plugin may carry the agent's
+         * id (plugin-id.ts). It stages rows no other verb can —
+         * a link that keeps its writer's record, a corroboration — and those are only safe from code
+         * that planned them off the live graph, which a plugin's is not.
+         */
+        stageMerge?(merge: MergeStaging): Promise<{ staged: number }>;
     };
 
     /**
-     * net — present iff a network or web_probe scope was granted.
-     *   - `fetch` is limited to manifest.scopes.network endpoints (absent without `network`).
+     * net — present iff a network, network_configurable or web_probe scope was granted.
+     *   - `fetch` is limited to manifest.scopes.network endpoints and the addresses the analyst set
+     *     for manifest.scopes.network_configurable (absent without either).
      *   - `probe` is the desktop-only anonymous cross-origin probe (absent without `web_probe`,
      *     and absent in the web build even with it — check for it before calling).
      */
@@ -302,6 +386,8 @@ export interface VineyardPluginPack {
     content_type?: 'vineyard:pluginpack';
     name: string;
     version: string;
+    /** The pack's one line in the marketplace; the app reads it from the manifest JSON, not from here. */
+    summary?: string;
     description?: string;
     plugins: VineyardPlugin[];
 }

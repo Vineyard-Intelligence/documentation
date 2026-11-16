@@ -604,14 +604,31 @@
       return m ? m[1] : n.endpoint || "an undeclared host";
     }));
     if (hosts.length) out.push({ icon: "globe", text: "Network: calls " + hosts.join(", ") + "." });
+    var cfg = s.config || [];
+    var label = function (c) { return c.label || c.key; };
+    // network_configurable has no host to name: the analyst types it into one of the plugin's own url
+    // settings, so the line names that setting, once per setting, and its own "asks for" line below is
+    // dropped as a duplicate. Same wording as the app's install gate (frontend marketplace/registry.ts
+    // scopeLines). Without this line a pack that sends its key and graph data to the analyst's server
+    // showed only a settings line here, which reads as no egress at all.
+    var addressKeys = [], httpKeys = {};
+    (s.network_configurable || []).forEach(function (n) {
+      var key = String((n && n.config_key) || "");
+      if (addressKeys.indexOf(key) < 0) addressKeys.push(key);
+      if (((n && n.schemes) || []).indexOf("http") >= 0) httpKeys[key] = true;
+    });
+    addressKeys.forEach(function (key) {
+      var c = cfg.filter(function (c) { return c.key === key; })[0];
+      out.push({ icon: "globe", text: "Network: calls the address you enter in “" + (c ? label(c) : key) + "”" +
+        (httpKeys[key] ? ", which may be unencrypted http." : " (https only).") });
+    });
     // web_probe picks its destination while it runs, so there is no endpoint to name.
     if (s.web_probe) out.push({ icon: "globe", text: "Network: anonymous requests to any public site, chosen while it runs — " +
       "no cookies or credentials sent, no redirects followed, no private or loopback addresses. Desktop app only." });
     uniq(s.services || []).forEach(function (name) {
       out.push({ icon: "server", text: "Service: calls the Vineyard " + name + " service on your behalf (your identity is attached)." });
     });
-    var cfg = s.config || [];
-    var label = function (c) { return c.label || c.key; };
+    cfg = cfg.filter(function (c) { return addressKeys.indexOf(c.key) < 0; });
     var secrets = uniq(cfg.filter(function (c) { return c.secret; }).map(label));
     var settings = uniq(cfg.filter(function (c) { return !c.secret; }).map(label));
     if (secrets.length) out.push({ icon: "key", text: "Config: asks for " + secrets.join(", ") +
@@ -632,11 +649,15 @@
   }
 
   // A pack's permissions are the union of its plugins' scopes, as the app's install gate shows them.
+  // Every list scope must be named here: one left out is granted by the app and missing from the
+  // drawer (the app enforces the same with its SCOPE_UNION table, frontend marketplace/registry.ts).
   function unionScopes(plugins) {
-    var u = { graph: [], network: [], services: [], config: [], web_probe: null };
+    var u = { graph: [], network: [], network_configurable: [], services: [], config: [], web_probe: null };
     plugins.forEach(function (p) {
       var s = p.scopes || {};
-      ["graph", "network", "services", "config"].forEach(function (k) { u[k] = u[k].concat(s[k] || []); });
+      ["graph", "network", "network_configurable", "services", "config"].forEach(function (k) {
+        u[k] = u[k].concat(s[k] || []);
+      });
       u.web_probe = u.web_probe || s.web_probe;
     });
     return u;
