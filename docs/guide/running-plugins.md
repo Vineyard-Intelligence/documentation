@@ -157,7 +157,12 @@ by a reload*, and the review says *Cut short by a reload — this is what it had
 have found.* A run whose apply was under way when the page went away comes back too, but the server
 may already have written some of its rows: its review says *An apply of this set was under way when
 the page went away — some of these rows may already be in the graph*, and a plugin run's Tasks row
-says so as well. Check the graph before you apply or discard it. A run is kept for 7 days after its last change, and longer while a tab has it open, and
+says so as well. Check the graph before you apply or discard it. If you discard it, each row the
+graph already holds, one that applying now would not change, is recorded as applied and the rest
+as discarded, as after a partial apply (below), so the AI agent is told what landed and that you
+rejected the rest. That needs the whole graph: discarded while the project is still loading, every
+row is recorded as discarded.
+A run is kept for 7 days after its last change, and longer while a tab has it open, and
 then deleted. The footer of the dialog says where the review is kept: *Kept on this device only — a reload brings
 this review back, for 7 days after its last change*, or *Held in this tab only — a reload loses this
 review* when no account is signed in or this device's storage refuses it. Nothing of a run waiting for

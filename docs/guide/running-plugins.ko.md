@@ -153,7 +153,11 @@ then, not everything it would have found.*가 나옵니다. 적용하는 도중�
 돌아오지만, 서버가 그 행의 일부를 이미 기록했을 수 있습니다. 그런 실행의 검토에는 *An apply of this
 set was under way when the page went away — some of these rows may already be in the graph*가 나오고,
 플러그인 실행이라면 **Tasks** 행에도 같은 내용이 표시됩니다. 다시 적용하거나 폐기하기 전에 그래프를
-확인하세요. 실행은 마지막으로 바뀐 뒤 7일 동안 보관되고,
+확인하세요. 이런 실행을 폐기하면, 그래프에 이미 있어서 지금 적용해도 아무것도 바꾸지 않는 행은
+적용된 것으로, 나머지는 폐기된 것으로 기록됩니다. 아래의 일부 적용 뒤 폐기와 같으며, AI 에이전트에게는
+무엇이 반영되었고 나머지는 거부되었다고 전달됩니다. 이를 가리려면 그래프 전체가 필요하므로,
+프로젝트를 아직 불러오는 중에 폐기하면 모든 행이 폐기된 것으로 기록됩니다.
+실행은 마지막으로 바뀐 뒤 7일 동안 보관되고,
 열어 둔 탭이 있으면 그보다 오래 보관되며, 그 뒤에 삭제됩니다. 대화상자 하단에는 검토가 어디에 보관되는지 나옵니다. 보통은 *Kept on this device only —
 a reload brings this review back, for 7 days after its last change*이고, 로그인한 계정이 없거나 이
 기기의 저장소가 거부하면 *Held in this tab only — a reload loses this review*입니다. 검토를 기다리는
