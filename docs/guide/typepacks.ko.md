@@ -181,7 +181,11 @@ Defend는 연결이 열릴 때와 닫힐 때 한 번씩 기록하지만 이벤�
 링크는 건드리지 않습니다. 노드 하나에 담을 수 없을 만큼 긴 명령줄(Linux는 수 MB의 인자를
 허용)은 앞부분만 남기고 자르며, 노드의 `command_line_truncated`와 `command_line_length`에 그
 사실을 적습니다. 루프백과 링크 로컬 트래픽은 가져오지 않고, 사설망 주소와 내부 이름은 그
-옵션을 켰을 때만 가져옵니다.
+옵션을 켰을 때만 가져옵니다. `update.example.xn--p1ai`처럼 국제화 최상위 도메인 아래 이름의 DNS
+조회는 그 Domain으로 가는 `queried` 링크가 됩니다. 아직 Infrastructure 4.2인 프로젝트는 그런 이름을
+받지 않으며, 요약은 그것을 어떤 Domain 유형도 받지 않는 이름과 함께 세고(*… names this project's
+Domain type does not accept (Infrastructure 4.3 or later takes internationalised names)*) 쓰기 실패로
+치지 않습니다.
 
 !!! warning "서버에 남는 호스트 데이터"
     호스트 이름, 사용자 이름, 명령줄은 노드 필드가 됩니다. Vineyard 서버의 프로젝트에서는 그

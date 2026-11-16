@@ -218,8 +218,8 @@ AI 에이전트가 시작한 플러그인 실행은 따로 **Tasks** 행을 갖�
 채널에서 받은 STIX 2.1 번들과 MISP 이벤트는 [마켓플레이스](../marketplace.md)의 **STIX & MISP
 Import** 플러그인 팩으로 가져옵니다.
 
-1. 프로젝트에 팩을 설치합니다. 이 팩은 Infrastructure, Identity, Endpoint, Financial, Geo, Threat
-   Type Pack의 유형을 씁니다. 유형의 Type Pack이 없는 노드는 빠지고, 실행 요약에 설치할 Type
+1. 프로젝트에 팩을 설치합니다. 이 팩은 Infrastructure, Identity, Endpoint, Cryptocurrency, Geo,
+   Threat Type Pack의 유형을 씁니다. 유형의 Type Pack이 없는 노드는 빠지고, 실행 요약에 설치할 Type
    Pack이 나옵니다.
 2. **Whole graph**에서 **Run plugins**를 열고 **Import STIX or MISP Files**를 체크한 뒤, 그 필드에
    파일을 끌어놓습니다. 파일은 함께 읽으므로 한 파일의 관계가 다른 파일의 객체에 닿습니다. 파일은
@@ -232,6 +232,14 @@ Import** 플러그인 팩으로 가져옵니다.
   노드와 만납니다. 패턴이 값만 가리키는 STIX 지표는 그 값들의 노드가 되고, 그 밖의 패턴은
   Indicator 하나로 남습니다. 맞는 유형이 없는 값은 `observable_type` 필드가 있는 Indicator가
   됩니다.
+- `пример.рф`나 `example.xn--p1ai`처럼 국제화 최상위 도메인 아래의 도메인은 프로젝트에
+  Infrastructure 4.3 이상이 있으면 Domain이 됩니다. 그보다 오래된 Infrastructure 팩에서는 TLP와 출처를
+  가진 Indicator로 스테이징되고, 요약에 그 개수가 나옵니다(*… domains this project's Domain type
+  refuses staged as Indicators (Infrastructure 4.3 or later takes internationalised names)*).
+- MISP의 `btc`, `xmr`, `dash` 속성은 값이 그 네트워크에서 유효한 주소이면 Cryptocurrency Type Pack의
+  Crypto Address가 되어 `bitcoin`, `monero`, `dash` 위에 그 네트워크의 정규형으로 적힙니다. 다른
+  유형으로 잘못 분류되었거나 체크섬이 틀린 값처럼 유효하지 않은 값은 그 형식이 정하는 네트워크에
+  들어갑니다. `0x…` 값은 `evm`, 나머지는 `unknown`입니다.
 - STIX 관계와 목격(sighting), MISP 객체 참조는 관계를 말로 적은 레이블의 엣지가 됩니다
   (`attributed-to` → `attributed to`). 파일이 같은 두 노드 사이에 관계를 두 개 적으면 엣지 하나가
   둘 다 적습니다. STIX 보고서나 MISP 이벤트는 노드가 아니며, 그 이름은 담고 있던 각 노드의
@@ -248,7 +256,8 @@ Import** 플러그인 팩으로 가져옵니다.
   `markings`, `references`를 지우지 않고, 새 값을 덧붙입니다. 검토를 적용할 때 그 시점의
   프로젝트를 기준으로 다시 확인하므로, 검토를 기다리는 가져오기 여러 개를 어떤 순서로 적용해도
   됩니다. 노드에 직접 입력한 TLP는 그 안의 가장 엄격한 레이블로 읽으므로, `TLP:RED (Case 7 only)`나
-  `RED - do not share`는 RED로 지켜집니다. `see note`처럼 레이블이 없는 값은 지켜지지 않습니다.
+  `RED - do not share`는 RED로 지켜지고, `TLP=RED`, `TLP/RED`, `(RED)`도 그렇습니다. `see note`처럼
+  레이블이 없는 값은 지켜지지 않습니다.
 - 검토를 적용할 때 프로젝트에 이미 있는 엣지는 레이블과 필드를 그대로 둡니다. 이 실행을
   스테이징한 뒤 다른 가져오기가 추가한 엣지도 마찬가지입니다. 이런 엣지는 파일의 TLP를 받지
   않으므로, 엣지가 말하는 내용을 공유하기 전에 파일의 표시를 확인하세요.

@@ -190,7 +190,11 @@ is written: a `spawned` or `executed from` link you renamed is left as it is. A 
 long for one node (Linux allows megabytes of arguments) is cut, keeping its start, and the node says
 so in `command_line_truncated` and `command_line_length`.
 Loopback and link-local traffic never comes in, and private-network addresses and internal names
-only when you turn that on.
+only when you turn that on. A DNS query for a name under an internationalised top-level domain, such
+as `update.example.xn--p1ai`, is a `queried` link to its Domain. A project still on Infrastructure
+4.2 does not take such a name: the summary counts it with the names no Domain type takes (*… names
+this project's Domain type does not accept (Infrastructure 4.3 or later takes internationalised
+names)*), and it is not a failed write.
 
 !!! warning "Host data on a server"
     Host names, user names and command lines become node fields. In a project on a Vineyard server

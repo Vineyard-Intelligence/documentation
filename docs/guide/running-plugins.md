@@ -226,7 +226,7 @@ MISP events, the files a TIP or a sharing channel sends, come in through the **S
 plugin pack from the [Marketplace](../marketplace.md):
 
 1. Install the pack in the project. It writes types from the Infrastructure, Identity, Endpoint,
-   Financial, Geo and Threat type packs; a node whose type pack is missing is left out, and the
+   Cryptocurrency, Geo and Threat type packs; a node whose type pack is missing is left out, and the
    run's summary names the type pack to install.
 2. Open **Run plugins** on **Whole graph**, tick **Import STIX or MISP Files** and drop the files on
    its field. The files are read together, so a relationship in one file reaches the objects in
@@ -239,6 +239,16 @@ What lands on the graph:
   so they meet the nodes other plugins wrote. A STIX indicator whose pattern only names values
   becomes those values' nodes; any other pattern stays one Indicator. A value with no matching type
   becomes an Indicator with an `observable_type` field.
+- A domain under an internationalised top-level domain, such as `пример.рф` or `example.xn--p1ai`,
+  is a Domain where the project has Infrastructure 4.3 or later. With an older Infrastructure pack
+  it is staged as an Indicator, with its TLP and sources, and the summary counts those (*… domains
+  this project's Domain type refuses staged as Indicators (Infrastructure 4.3 or later takes
+  internationalised names)*).
+- A MISP `btc`, `xmr` or `dash` attribute becomes a Crypto Address of the Cryptocurrency type pack
+  on `bitcoin`, `monero` or `dash`, written in that network's canonical form, when the value is a
+  valid address there. A value that is not, such as one filed under the wrong type or with a bad
+  checksum, goes on the network its format settles: `evm` for a `0x…` value, `unknown` for the
+  rest.
 - STIX relationships and sightings and MISP object references become edges labelled with the
   relation in words (`attributed-to` → `attributed to`). When the files state two relations between
   the same two nodes, one edge names both. A STIX report or a MISP event is not a node: its name is
@@ -256,8 +266,8 @@ What lands on the graph:
   `source_report`, `created_by`, `tags`, `markings` or `references`: the new values are added.
   This is checked again when you apply the review, against the project as it is then, so imports
   waiting for review at once can be applied in any order. A TLP typed on a node counts as the
-  strictest label in it, so `TLP:RED (Case 7 only)` or `RED - do not share` is held as RED. A
-  value with no label in it, such as `see note`, is not.
+  strictest label in it, so `TLP:RED (Case 7 only)` or `RED - do not share` is held as RED, and so
+  are `TLP=RED`, `TLP/RED` and `(RED)`. A value with no label in it, such as `see note`, is not.
 - An edge already in the project when you apply the review keeps its label and fields, including
   one another import added after this one was staged. It does not take the file's TLP, so check
   the file's marking before you share what such an edge says.
