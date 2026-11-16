@@ -149,7 +149,7 @@ near it; the favicon's other hash is still compared.
 
 `infrastructure.certificate` is identified by its SHA-256. When the source reports the SHA-1 too
 (Shodan, Censys and VirusTotal do), it goes in `fingerprint_sha1`: blocklists such as abuse.ch SSLBL
-list certificates by SHA-1 alone, and a SHA-1 cannot be computed from the SHA-256.
+list certificates by SHA-1 alone, and a SHA-1 cannot be computed from the SHA-256. The **abuse.ch** pack's SSLBL Certificate Check reads it (see [Looking up malware with abuse.ch](running-plugins.md#abusech)).
 
 `infrastructure.domain` takes a name under an internationalised top-level domain, such as
 `.한국` (`xn--3e0b707e`) or `.рф` (`xn--p1ai`), from Infrastructure 4.3.0. Write it in Unicode

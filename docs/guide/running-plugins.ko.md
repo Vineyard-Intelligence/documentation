@@ -428,6 +428,60 @@ Base는 유료 플랜(Builder 이상)이 필요합니다. Blockscout는 2026-10-
 - 조회 한 번에 20–40크레딧이 들고, 실행 요약에 쓴 크레딧이 나옵니다. 조회한 모든 주소와 거래는
   Blockscout가 봅니다.
 
+## abuse.ch로 악성코드 조회하기 {#abusech}
+
+[마켓플레이스](../marketplace.md)의 **abuse.ch** 플러그인 팩은 무료 abuse.ch 트래커로 조사의 악성코드
+쪽을 채웁니다. 샘플이 무엇이고 abuse.ch가 언제 처음 보았는지(MalwareBazaar), 해시·IP 주소·도메인·URL이
+어느 패밀리로, 누구에 의해, 얼마나 확신을 갖고 보고되었는지(ThreatFox), 페이로드가 어디서
+배포되었는지(URLhaus), 어떤 TLS 인증서가 C2 서버에서 발견되었는지(SSLBL)입니다. abuse.ch의 어떤
+호스트도 웹 페이지가 응답을 읽도록 허용하지 않으므로 데스크탑 앱에서만 실행됩니다. Infrastructure
+타입팩(4.2.0 이상)과 Threat 타입팩의 유형을 쓰므로, 두 팩을 프로젝트에 함께 설치하세요.
+
+MalwareBazaar, ThreatFox, URLhaus에는 [auth.abuse.ch](https://auth.abuse.ch/)에서 무료로 받는 본인의
+Auth-Key가 필요합니다. 팩의 플러그인 하나의 설정에 한 번 붙여 넣으면 네 플러그인이 함께 씁니다. SSLBL
+Certificate Check는 키 없이도 동작하며, 키가 있으면 패밀리 이름을 ThreatFox의 이름에 맞춥니다.
+
+| 플러그인 | 실행 대상 | 쓰는 것 |
+|---|---|---|
+| **MalwareBazaar Hash Lookup** | File Hash(SHA-256, SHA-1, MD5) | 빠진 해시와 크기, 그리고 `mb_*` 필드: 시그니처, 태그, 처음·마지막으로 본 시각, 파일 이름과 형식, 보고자, 출처 국가, imphash, TLSH, ssdeep, YARA 규칙 이름, 샘플 페이지. 시그니처는 Malware나 Tool로, `classified as` |
+| **ThreatFox IOC Lookup** | IP Address, Domain, URL, File Hash | ThreatFox 기록마다 노드를 `refers_to`하는 Indicator. `valid_from`(처음 본 시각), `threatfox_confidence`, `threatfox_reporter`, 기록 페이지를 담고, 패밀리와 `indicates`로 이어짐. File Hash에는 ThreatFox가 그 샘플과 묶은 지표(대개 C2)도 `associated in ThreatFox with`로 |
+| **URLhaus Lookup** | URL, Domain, IP Address, File Hash | `urlhaus_*` 필드. URL이 배포한 페이로드는 File Hash로(`served file`), 호스트의 URL(`hosts`), 페이로드를 배포한 URL(`served file`), 페이로드의 패밀리(`classified as`) |
+| **SSLBL Certificate Check** | `fingerprint_sha1`이 있는 TLS Certificate | 목록에 있는 인증서에 `sslbl_listed`(등재일)와 `sslbl_reason`, 그리고 SSLBL이 지목한 패밀리를 `used as C2`, `used for malware distribution`, `used for MITM`으로 |
+
+쓴 내용 읽기:
+
+- 패밀리는 트래커마다 부르는 이름이 달라도 노드 하나입니다. **IP Classification** 팩이 쓰는 패밀리는 그
+  팩의 이름과 유형을 그대로 쓰고(`DcRAT`, Cobalt Strike는 Tool), 그 밖의 패밀리는 ThreatFox의 이름을
+  씁니다. 프로젝트에 이미 있는 패밀리는 그대로 두고 링크만 잇습니다. 프로젝트에 처음 생기는 패밀리는
+  `malware_type: unknown`이 됩니다. abuse.ch는 어떤 종류의 악성코드인지 알려 주지 않기 때문입니다.
+  *Unknown malware* 같은 자리표시 이름은 노드를 만들지 않으며, 요약에서 그 수를 셉니다.
+- `threatfox_confidence`(0–100)는 보고자의 주장이지 판정이 아닙니다. Indicator에 따로 남고, 사용자의
+  값인 Indicator의 `confidence`에는 쓰지 않습니다. 틀렸다고 판단한 주장은 그 Indicator와 함께 지우면
+  되고, 주장의 대상인 IP 주소는 남습니다.
+- ThreatFox는 IP 주소를 포트와 함께 적으므로 Indicator는 `203.0.113.7:443`처럼 읽힙니다. IP 주소는
+  느슨하게 검색한 뒤 기록마다 대조하므로, `11.2.3.45:80`을 `1.2.3.4`로 잘못 보지 않습니다.
+- MalwareBazaar와 URLhaus가 처음 본 시각은 `mb_first_seen`과 `urlhaus_first_seen`에 씁니다. File Hash의
+  `first_seen`은 VirusTotal처럼 그 값을 쓰는 스캐너에 맡깁니다.
+- SSLBL은 인증서를 SHA-1로 나열하며, Shodan, Censys, VirusTotal 팩이 그 값을 `fingerprint_sha1`에
+  씁니다. 이 값이 없는 인증서는 검사하지 않고 개수만 세며, 요약에 그 값을 채우는 플러그인이 나옵니다.
+  SSLBL 목록에 없는 인증서에는 아무것도 쓰지 않습니다. IP 주소는 SSLBL로 검사하지 않습니다. SSLBL의
+  C2 IP 목록은 2025-01-03에 지원이 끝난 뒤로 비어 있습니다.
+- SSLBL 목록은 통째로 내려받아 이 기기에서 대조합니다. 목록이 잘린 채 도착하면, 빠진 인증서를 목록에
+  없다고 보고하는 대신 실행이 실패하고 아무것도 검사하지 않습니다. 몇 분 뒤 다시 실행하세요.
+- **Max indicators per node**(기본 50)를 넘는 ThreatFox 기록과 **Max URLs or payloads per node**(25)를
+  넘는 URLhaus URL·페이로드는 추가하지 않고 요약에서 개수만 셉니다. 공유 호스트나 봇넷 페이로드에는
+  수만 개가 있을 수 있습니다.
+- ThreatFox가 보고한 도메인은 Domain 노드가 됩니다. 더 오래된 Infrastructure 팩을 쓰는 프로젝트는 4.3.0
+  전의 국제화 최상위 도메인 아래 이름처럼 그 도메인을 거부할 수 있습니다. 그러면 값은 Indicator에 남고,
+  요약이 그렇다고 알려 줍니다.
+
+조회한 모든 해시, IP 주소, 도메인, URL은 사용자의 키와 함께 abuse.ch(Spamhaus)에 전달됩니다. 검사하는
+인증서는 보내지 않으며, 조사 대상 호스트에는 접속하지 않습니다. MalwareBazaar, ThreatFox, URLhaus는
+[abuse.ch 이용 약관](https://abuse.ch/terms-of-use/)에 따라 비영리 용도로만 무료이고, 영리 목적으로 쓰려면
+Spamhaus 구독이 필요할 수 있습니다. SSLBL은 CC0입니다. 약관은 Spamhaus의 동의 없이 이 데이터로 AI
+모델을 학습시키거나 개선하는 것도 금지하므로, abuse.ch 결과를 AI 에이전트에 넘기기 전에 그 뒤의 제공자가
+받은 내용을 어떻게 다루는지 확인하세요.
+
 ## Chaos 레퍼런스 팩
 
 Chaos 팩은 실행 루프를 배우기 위해 그래프를 재구성하는 여섯 개의 작은 플러그인을 담은

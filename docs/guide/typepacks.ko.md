@@ -142,7 +142,7 @@ ONYPHE·VirusTotal은 `md5`, Censys·Netlas·urlscan.io는 `sha256`으로 찾고
 
 `infrastructure.certificate`는 SHA-256으로 식별합니다. 출처가 SHA-1도 알려 주면(Shodan, Censys,
 VirusTotal) `fingerprint_sha1`에 함께 담습니다. abuse.ch SSLBL 같은 차단 목록은 인증서를 SHA-1로만
-적고, SHA-1은 SHA-256에서 계산할 수 없기 때문입니다.
+적고, SHA-1은 SHA-256에서 계산할 수 없기 때문입니다. **abuse.ch** 팩의 SSLBL Certificate Check가 이 값을 읽습니다([abuse.ch로 악성코드 조회하기](running-plugins.md#abusech) 참조).
 
 `infrastructure.domain`은 Infrastructure 4.3.0부터 `.한국`(`xn--3e0b707e`)이나 `.рф`(`xn--p1ai`)
 같은 국제화 최상위 도메인 아래의 이름도 받습니다. 유니코드(`사이트.한국`)로 적어도, 퓨니코드

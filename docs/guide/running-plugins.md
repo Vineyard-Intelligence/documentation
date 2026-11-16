@@ -447,6 +447,65 @@ Reading what it wrote:
 - A lookup costs 20 to 40 credits, and each run's summary gives the credits it used. Blockscout
   sees every address and transaction you look up.
 
+## Looking up malware with abuse.ch {#abusech}
+
+The **abuse.ch** plugin pack from the [Marketplace](../marketplace.md) covers the malware side of an
+investigation from the free abuse.ch trackers: what a sample is and when abuse.ch first saw it
+(MalwareBazaar), which family a hash, IP address, domain or URL was reported for, by whom and how
+confidently (ThreatFox), where a payload was spread from (URLhaus), and which TLS certificates were
+seen on C2 servers (SSLBL). It runs in the desktop app only, because no abuse.ch host lets a web page
+read its answers. It writes types from the Infrastructure type pack (4.2.0 or later) and the Threat
+type pack, so install both in the project.
+
+MalwareBazaar, ThreatFox and URLhaus need your own Auth-Key, free from
+[auth.abuse.ch](https://auth.abuse.ch/). Paste it into one of the pack's plugins' settings once; all
+four share it. SSLBL Certificate Check works without it, and with it matches family names to
+ThreatFox's.
+
+| Plugin | Run it on | What it writes |
+|---|---|---|
+| **MalwareBazaar Hash Lookup** | File Hash (SHA-256, SHA-1 or MD5) | The missing hashes and size, and `mb_*` fields: signature, tags, first and last seen, file name and type, reporter, origin country, imphash, TLSH, ssdeep, YARA rule names and the sample's page. The signature as a Malware or Tool, `classified as` |
+| **ThreatFox IOC Lookup** | IP Address, Domain, URL, File Hash | Each ThreatFox record as an Indicator that `refers_to` the node, with `valid_from` (first seen), `threatfox_confidence`, `threatfox_reporter` and the record's page, linked `indicates` to its family. For a File Hash, also the indicators ThreatFox ties to the sample, usually its C2, linked `associated in ThreatFox with` |
+| **URLhaus Lookup** | URL, Domain, IP Address, File Hash | `urlhaus_*` fields. A URL's payloads as File Hashes (`served file`), a host's URLs (`hosts`), the URLs that served a payload (`served file`), and a payload's family (`classified as`) |
+| **SSLBL Certificate Check** | TLS Certificate with `fingerprint_sha1` | On a listed certificate, `sslbl_listed` (the listing date) and `sslbl_reason`, and the family SSLBL names, linked `used as C2`, `used for malware distribution` or `used for MITM` |
+
+Reading what it wrote:
+
+- A family is one node whatever each tracker calls it. The families the **IP Classification** pack
+  writes keep its name and type (`DcRAT`, and Cobalt Strike as a Tool), and every other family takes
+  ThreatFox's name. A family already in the project is linked as it is. One new to the project gets
+  `malware_type: unknown`, because abuse.ch does not say what kind of malware it is. Placeholders
+  such as *Unknown malware* make no node, and the summary counts them.
+- `threatfox_confidence` (0 to 100) is the reporter's claim, not a verdict. It stays on the
+  Indicator and is not written into the Indicator's `confidence`, which is yours. A claim you judge
+  wrong goes with its Indicator, and the IP address it was about stays.
+- ThreatFox lists an IP address with its port, so its Indicator reads like `203.0.113.7:443`. An IP
+  address is searched loosely and every record is checked against it, so `11.2.3.45:80` is not
+  taken for `1.2.3.4`.
+- MalwareBazaar's and URLhaus's first sightings go in `mb_first_seen` and `urlhaus_first_seen`. A
+  File Hash's `first_seen` is left to the scanner that writes it, such as VirusTotal.
+- SSLBL lists certificates by SHA-1, which the Shodan, Censys and VirusTotal packs write in
+  `fingerprint_sha1`. A certificate without one is counted, not checked, and the summary names the
+  plugins that fill it. A certificate SSLBL does not list gets nothing written. IP addresses are
+  not checked against SSLBL, whose C2 IP list has been empty since it was deprecated on 2025-01-03.
+- SSLBL's list is downloaded whole and matched on your device. A list that arrives cut short fails
+  the run and checks nothing, rather than reporting the certificates it lacks as not listed; run it
+  again a few minutes later.
+- ThreatFox records past **Max indicators per node** (50 by default) and URLhaus URLs or payloads
+  past **Max URLs or payloads per node** (25) are counted in the summary, not added: a shared host
+  or a botnet payload can have tens of thousands.
+- A domain ThreatFox reports becomes a Domain node. A project on an older Infrastructure pack can
+  refuse one, such as a name under an internationalised top-level domain before 4.3.0; the value
+  then stays on its Indicator, and the summary says so.
+
+abuse.ch (Spamhaus) receives every hash, IP address, domain and URL you look up, with your key. The
+certificates you check are not sent, and the hosts you investigate are not contacted. MalwareBazaar,
+ThreatFox and URLhaus are free for not-for-profit use under the
+[abuse.ch terms of use](https://abuse.ch/terms-of-use/), and for-profit use may need a Spamhaus
+subscription; SSLBL is CC0. The terms also forbid using the data to train or improve an AI model
+without Spamhaus's consent, so check how the provider behind the AI agent treats what it is sent
+before giving it abuse.ch results.
+
 ## The Chaos reference pack
 
 The Chaos pack is a single bundle (`run.vineyard.pluginpacks.chaos`) of six small plugins that
