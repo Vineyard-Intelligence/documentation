@@ -15,7 +15,7 @@ running → succeeded | failed | cancelled | incomplete
 | `running` | Executing. |
 | `succeeded` | Completed normally. |
 | `failed` | Completed with an error. |
-| `cancelled` | Stopped: the Tasks panel's Stop button, or leaving the project (a run the agent launched is also cancelled when its turn is stopped). Changes it had already staged stay available for review. |
+| `cancelled` | Stopped: the Tasks panel's Stop button, or leaving the project (a run the agent launched is also cancelled when its turn is stopped). A run that a reload or a crash cut short while it was still staging also comes back `cancelled` when the project is opened again, marked *Cut short by a reload*. Changes it had already staged stay available for review. |
 | `incomplete` | AI agent only — the turn ended before the agent finished. While the app is open, that means the turn ended holding tool calls it never got answers for. When the project is reopened, a turn that ran out of steps or was cut off by the app closing also comes back as `incomplete`, and so, usually, does a turn you stopped; its last answer then offers **Continue**. What it did is kept and can be continued. |
 
 Each run gets one dedicated Web Worker, spawned directly — there is no worker pool or queue.
@@ -36,7 +36,7 @@ See the [SDK](sdk.md) for a `ctx.signal` checkpoint example.
 
 The one lifecycle hint the host actually enforces is a wall-clock budget for one run. Past it, the host terminates the sandbox and fails the task — the backstop for a plugin that stops yielding to its event loop and so can never see `ctx.signal`.
 
-Every run has a budget. Without `timeout_ms` it is 10 minutes, and a declared value is capped at 60 minutes, so a pack may raise its budget but cannot opt out of having one. A timed-out run fails with "plugin exceeded its time budget (…s) and was terminated". Like every failed run, whether it timed out, its sandbox did not start or the plugin threw an error, it discards the changes it had staged; only a Stop keeps them.
+Every run has a budget. Without `timeout_ms` it is 10 minutes, and a declared value is capped at 60 minutes, so a pack may raise its budget but cannot opt out of having one. A timed-out run fails with "plugin exceeded its time budget (…s) and was terminated". Like every failed run, whether it timed out, its sandbox did not start or the plugin threw an error, it discards the changes it had staged. Only a Stop keeps them, or a reload or a crash that cuts the run off: what it had staged by then was already kept on the device, and comes back for review.
 
 ```json
 "lifecycle": {
