@@ -4,7 +4,8 @@
 수입니다. 노드의 값을 읽고 편집하고, 필드를 더하거나 지우고, 노드를 한 페이지로 읽고, 링크를 얼마나
 믿을 수 있는지와 누가 그렸는지를 보는 곳입니다. 오른쪽, Tasks 위에 있습니다([작업 화면
 그림](getting-started.md#3-meet-the-canvas)의 7). 다른 패널처럼 다른 곳으로 끌어
-옮기거나 크기를 바꿀 수 있고, **Reset panel layout**을 누르면 제자리로 돌아갑니다.
+옮기거나 크기를 바꾸거나 제목 줄의 **×**로 닫을 수 있습니다. **View ▸ Properties**로 다시 보이고,
+**Reset panel layout**을 누르면 제자리로 돌아갑니다([패널](canvas.md#panes)).
 
 ## 패널이 보여 주는 것 {#what-the-panel-shows}
 

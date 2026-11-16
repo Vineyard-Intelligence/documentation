@@ -1,6 +1,6 @@
 # Tasks & runs
 
-Every plugin run you start, and every AI agent conversation, is a **task** shown in the Tasks panel (one row per conversation; each new turn updates it).
+Every plugin run you start, and every AI agent conversation, is a **task** shown in the Tasks panel (one row per conversation; each new turn updates it). If you closed the panel, starting a plugin run opens it again, and so does **View ▸ Tasks** ([Panels](canvas.md#panes)).
 
 ## How tasks work
 

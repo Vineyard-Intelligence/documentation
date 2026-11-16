@@ -40,7 +40,8 @@ Vineyard는 브라우저([app.vineyard.run](https://app.vineyard.run))에서, �
 
 캔버스는 작업 표면입니다 — 팬, 줌, 배치할 수 있는 노드/엣지 그래프. 메뉴와 컨텍스트
 메뉴의 전체 둘러보기는 [캔버스](canvas.md)를 참조하세요. 선택한 노드나 엣지를 읽고 편집하는
-Properties 패널(7)은 [별도 페이지](properties.md)에서 설명합니다.
+Properties 패널(7)은 [별도 페이지](properties.md)에서 설명합니다. 캔버스를 뺀 모든 패널은 제목 줄의
+**×**로 닫고 **View** 메뉴에서 다시 엽니다([패널](canvas.md#panes)).
 
 <figure class="vy-shot" markdown="span">
   ![프로젝트 작업 화면](../assets/guide/workspace.webp){ width="800" loading=lazy }

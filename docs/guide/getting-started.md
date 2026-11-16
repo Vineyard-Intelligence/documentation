@@ -27,7 +27,7 @@ An organization shares projects with a team: its page under **Organizations** li
 
 ## 3. Meet the canvas
 
-The canvas is your working surface — a node/edge graph you can pan, zoom, and lay out. For the full tour of menus and context menus, see [The canvas](canvas.md). The Properties panel (7), where you read and edit the node or edge you select, has [a page of its own](properties.md).
+The canvas is your working surface — a node/edge graph you can pan, zoom, and lay out. For the full tour of menus and context menus, see [The canvas](canvas.md). The Properties panel (7), where you read and edit the node or edge you select, has [a page of its own](properties.md). Every panel but the canvas closes with the **×** in its title bar and comes back from the **View** menu ([Panels](canvas.md#panes)).
 
 <figure class="vy-shot" markdown="span">
   ![Project workspace](../assets/guide/workspace.webp){ width="800" loading=lazy }

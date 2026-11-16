@@ -4,7 +4,8 @@ The **Properties** panel shows what you have selected on the canvas: one node, o
 many nodes. It is where you read a node's values, edit them, add and remove fields, read it as one
 page, and see what a link is worth and who drew it. It sits on the right, above Tasks (7 in the
 [workspace picture](getting-started.md#3-meet-the-canvas)). Like the other panels it can be dragged
-elsewhere and resized, and **Reset panel layout** puts it back.
+elsewhere, resized, and closed with the **×** in its title bar; **View ▸ Properties** shows it again,
+and **Reset panel layout** puts it back ([Panels](canvas.md#panes)).
 
 ## What the panel shows {#what-the-panel-shows}
 
