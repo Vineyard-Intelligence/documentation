@@ -112,9 +112,9 @@ layout again is what the key does.
   another text field.
 - **Going places.** Press **G**, then the second key within a second. **G** then **A** goes to the AI
   agent's message box, and opens a new conversation if the panel is closed. **G** then **P** goes to
-  the first field of the Properties panel, and **G** then **T** to the Types panel's search field, or
-  to its first type when the panel is collapsed to icons. **G** then **M** opens the Marketplace when
-  the **Project** menu offers it.
+  the first field of the Properties panel, switching it to **Table** from **Document** or **JSON**,
+  and **G** then **T** to the Types panel's search field, or to its first type when the panel is
+  collapsed to icons. **G** then **M** opens the Marketplace when the **Project** menu offers it.
 - **The view.** **F** fits the whole graph in view, like **Fit view**, and **⇧F** (**Shift+F**) fits
   the selection, centring a single node at 150%. **=** or **+** and **-** zoom like the toolbar
   buttons; hold one to keep zooming. **0** zooms to 100%. The arrow keys move the view, a longer step
@@ -130,9 +130,11 @@ layout again is what the key does.
   instead and fills in the question only if the box is empty, so a question you have started stays
   as it is. **C** is **Connect to…**: click the node to connect the selection to. **Enter** or **F2**
   edits the selected node's value in the Properties panel, in the field its label shows; for an edge,
-  its relation. **⌫** or **⌦** (**Delete** or **Backspace** on Windows and Linux) deletes the
-  selection: the same confirmation as **Delete (N)** opens, with **Cancel** focused. **Duplicate**
-  and stopping an agent turn have no key, so neither can happen by a stray keystroke.
+  its relation. From the panel's **Document** or **JSON** view the panel switches to **Table** for
+  it, and the field opens even when the panel's finder or **Hide empty** leaves it out. **⌫** or
+  **⌦** (**Delete** or **Backspace** on Windows and Linux) deletes the selection: the same
+  confirmation as **Delete (N)** opens, with **Cancel** focused. **Duplicate** and stopping an agent
+  turn have no key, so neither can happen by a stray keystroke.
 - **The AI agent panel.** **↑** in an empty message box brings back your last question to edit and
   send again. **Esc** closes the Setup drawer, then the panel; a running turn keeps going (see
   [Tasks & runs](tasks.md#closing-and-deleting-a-conversation)).
@@ -140,7 +142,9 @@ layout again is what the key does.
   ticked changes, also from the **Why reject?** field, but only while **Apply** is shown and has
   something to apply. **Esc** closes the dialog; the run and your ticks stay (see
   [Running plugins](running-plugins.md#reviewing-a-runs-changes)).
-- **The Properties panel.** **Tab** and **Shift+Tab** move to the next and previous field.
+- **The Properties panel.** **Tab** and **Shift+Tab** move to the next and previous field. In a
+  one-line field, a number and a date included, **Enter** saves and **Esc** puts the value back as
+  stored (see [Editing a value](properties.md#editing-a-value)).
 
 ## All shortcuts
 

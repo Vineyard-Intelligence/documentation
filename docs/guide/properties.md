@@ -102,6 +102,8 @@ node, and both are there in a panel marked *View only*.
 - A field you changed stays after you leave it, whatever the finder and **Hide empty** say, until
   the change is saved. When the value is refused or the server cannot be reached, it stays with
   what you typed, so you can correct it.
+- **Enter** or **F2** on the canvas opens the field the node's label shows even when the finder or
+  **Hide empty** leaves it out: its row is shown while you are in it.
 - While fields are left out, a line under the grid says how many are shown, how many do not match
   (**Clear** empties the finder) and how many are empty (**Show** turns **Hide empty** off).
 
@@ -166,12 +168,11 @@ Values of these kinds are shown as they are stored, even when the type expects s
 ## Editing a value {#editing-a-value}
 
 - Click a value, or move to it with **Tab**, to edit it. Long text and code grow in place.
-- In a text field, a date and time, long text and code, **Esc** puts the value back as stored and
-  leaves the field. In a one-line field **Enter** saves; in long text and code **Enter** adds a line
-  and **⌘Enter** (Mac) or **Ctrl+Enter** saves. A value is also saved when you leave the field.
-- A number field that holds a number or nothing, and a date picker, take neither key: what you type
-  is saved when you leave the field. To undo an edit there, type the stored value again before you
-  leave it; a value that is what the node already holds writes nothing.
+- In a text field, a number field, a date picker, a date and time, long text and code, **Esc** puts
+  the value back as stored and leaves the field. In a one-line field (text, a number, a date, a date
+  and time) **Enter** saves; in long text and code **Enter** adds a line and **⌘Enter** (Mac) or
+  **Ctrl+Enter** saves. A value is also saved when you leave the field. The **Enter** or **Esc**
+  that finishes a Korean syllable only finishes the syllable.
 - While you type, the field stays the one you clicked, even when what you have typed so far reads
   as a URL, an address or a list. It shows as that kind when you leave it.
 - While you edit a URL, an e-mail or IP address, a hash or a cryptocurrency address, a line under
@@ -240,10 +241,10 @@ The [JSON view](#document-and-json-views) edits the node's whole data under the 
 
 ## Saving and checks {#saving-and-checks}
 
-- Text and a date and time are saved when you leave the field or press **Enter** (**⌘Enter** or
-  **Ctrl+Enter** in long text and code), a number or a date when you leave the field. A switch, a
-  choice, a list entry and a colour are saved as soon as you change them, and a JSON value when you
-  press **Save** in its editor.
+- Text, a number, a date and a date and time are saved when you leave the field or press **Enter**
+  (**⌘Enter** or **Ctrl+Enter** in long text and code). A switch, a choice, a list entry and a
+  colour are saved as soon as you change them, and a JSON value when you press **Save** in its
+  editor.
 - Nothing is written when the value is what the node already holds, so clicking or tabbing through
   fields writes nothing.
 - The value you changed is checked against what the type declares for it: its kind, its allowed
@@ -386,7 +387,9 @@ as notes or tags, without waiting for a new version of the Type Pack. The grid l
 ## Document and JSON views {#document-and-json-views}
 
 Under a node's name, **Table**, **Document** and **JSON** change how the panel shows it. The choice
-is remembered on this device. **Table** is [the grid](#the-grid).
+is remembered on this device. **Table** is [the grid](#the-grid). **Enter** or **F2** on the canvas,
+and **G** then **P**, open a field from **Document** or **JSON** too: the panel switches to
+**Table** for it, and the view remembered on this device stays the one you chose.
 
 **Document** shows the node as one page to read:
 
