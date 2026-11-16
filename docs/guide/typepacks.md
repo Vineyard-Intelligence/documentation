@@ -68,7 +68,7 @@ different packs (a `threat.malware` that **communicates with** an
 | **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 15 | The network you map during recon, plus the web resource (URL), web-fingerprint (header, favicon, DOM hash) and tracking-ID entities observed on it |
 | **Threat** (`…typepacks.threat`) | `threat` | 10 | Threat-intelligence (STIX-aligned) |
 | **Identity** (`…typepacks.identity`) | `identity` | 7 | People, orgs, and online personas |
-| **Financial** (`…typepacks.financial`) | `financial` | 4 | Exchanges and other virtual-asset service providers, bank accounts, and two legacy crypto types |
+| **Financial** (`…typepacks.financial`) | `financial` | 2 | Exchanges and other virtual-asset service providers, and bank accounts |
 | **Cryptocurrency** (`…typepacks.cryptocurrency`) | `cryptocurrency` | 4 | Addresses, transactions, tokens and non-custodial services on every chain, identified by network |
 | **Endpoint** (`…typepacks.endpoint`) | `endpoint` | 6 | Host / DFIR artifacts |
 | **Geospatial** (`…typepacks.geo`) | `geo` | 3 | Places and physical context |
@@ -232,9 +232,14 @@ Ethereum and on BSC — so `network` is part of the identity, and two such nodes
   payment processors) are `financial.exchange`; `crypto_service` is for services that do not.
 - **Amounts** (`balance`, `fee`) are decimal strings in the network's native unit: full precision,
   but they do not sort as numbers.
-- **The Financial pack's** `crypto_address` and `crypto_transaction` remain for older nodes and are
-  shown as "(legacy)". They do not merge with the new types. With both packs installed, the short
-  name `crypto_address` means the Cryptocurrency pack's type.
+- **The Financial pack's** `crypto_address` and `crypto_transaction`, which identified an address or
+  a transaction by its string alone, were removed in Financial 3.0.0. A project on Financial 2.0.0
+  or older still has them, shown as "(legacy)", and with both packs installed the short name
+  `crypto_address` means the Cryptocurrency pack's type. Updating to 3.0.0 does not convert their
+  nodes: they stay, with a type no installed pack defines, so the run panel offers no plugin that
+  takes an address or a transaction on them, and they never merge with the new types. The update
+  dialog says how many there are first. Identify Crypto Network links each legacy address to a Cryptocurrency pack address; nothing
+  converts a legacy transaction, so write its `cryptocurrency.crypto_transaction` from the record.
 
 Most `network` values have a CAIP-2 chain id, the form other tools exchange: some only as a draft
 or a proposal, and a few have none registered. The ids are not part of the identity, so a

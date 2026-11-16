@@ -116,8 +116,10 @@ To add several packs at once, tick their cards (or **Select all**) and choose **
 selected**; one dialog shows everything that will be added. Installs are pinned to the version you
 installed. When the catalog has a newer one, the card shows **Update** and the detail drawer
 **Update available**. Either opens the same approval dialog as an install: permissions the new
-version adds are marked **New**, and packs it now needs are listed under **Also installs**. Nothing
-changes until you confirm. To uninstall, open the pack and click **Installed — click to remove**;
+version adds are marked **New**, and packs it now needs are listed under **Also installs**. A Type
+Pack update that removes types lists them, with how many of the project's nodes use each; the update
+does not convert those nodes, so they stay with a type no installed pack defines, and the button
+reads **Update anyway**. Nothing changes until you confirm. To uninstall, open the pack and click **Installed — click to remove**;
 if nodes in the project still use a Type Pack's types, you are shown how many first and can
 **Remove anyway**. A pack the registry has retired is badged **Deprecated** (still installable;
 hover the badge for the reason) or **Withdrawn** (cannot be installed, and listed only in a project

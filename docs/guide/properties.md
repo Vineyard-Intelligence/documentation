@@ -362,10 +362,11 @@ It opens a menu for that value:
     - A Bitcoin, TRON or EVM address becomes the Cryptocurrency pack's
       `cryptocurrency.crypto_address`, on the network its format settles: `bitcoin` for `bc1…`,
       `tron` for `T…`, `evm` for a `0x` address, and `unknown` for a legacy `1…` or `3…` address,
-      which is the same string on Bitcoin, Bitcoin Cash and Bitcoin SV. A project that has the
-      Financial pack and not the Cryptocurrency pack is offered the legacy
-      `financial.crypto_address` with its currency instead. With neither pack installed, the item
-      is greyed and names `cryptocurrency.crypto_address`.
+      which is the same string on Bitcoin, Bitcoin Cash and Bitcoin SV. A project on Financial
+      2.0.0 or older that has no Cryptocurrency pack is offered the legacy
+      `financial.crypto_address` with its currency instead; Financial 3.0.0 has no such type, so a
+      project on it never is. With neither type installed, the item is greyed and names
+      `cryptocurrency.crypto_address`.
     - When no installed Type Pack defines the type, or the type's format refuses the value, the
       item is greyed with the reason.
 - **Open in browser…**, for a URL stored with `http://` or `https://`, asks first and names the

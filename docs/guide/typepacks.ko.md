@@ -63,7 +63,7 @@ Vineyard는 여러 공식 Type Pack을 제공합니다. 각각은 독립적입�
 | **Infrastructure** (`…typepacks.infrastructure`) | `infrastructure`, `web` | 15 | 정찰 중 매핑하는 네트워크, 그리고 그 위에서 관측되는 웹 리소스(URL), 웹 지문(헤더, 파비콘, DOM 해시), 트래킹 ID 엔티티 |
 | **Threat** (`…typepacks.threat`) | `threat` | 10 | 위협 인텔리전스 (STIX 정렬) |
 | **Identity** (`…typepacks.identity`) | `identity` | 7 | 사람, 조직, 온라인 페르소나 |
-| **Financial** (`…typepacks.financial`) | `financial` | 4 | 거래소와 그 밖의 가상자산사업자, 은행 계좌, 옛 암호화폐 유형 두 개 |
+| **Financial** (`…typepacks.financial`) | `financial` | 2 | 거래소와 그 밖의 가상자산사업자, 은행 계좌 |
 | **Cryptocurrency** (`…typepacks.cryptocurrency`) | `cryptocurrency` | 4 | 모든 체인의 주소, 거래, 토큰, 자금을 맡지 않는 서비스. 네트워크로 식별 |
 | **Endpoint** (`…typepacks.endpoint`) | `endpoint` | 6 | 호스트 / DFIR 아티팩트 |
 | **Geospatial** (`…typepacks.geo`) | `geo` | 3 | 장소와 물리적 맥락 |
@@ -221,9 +221,14 @@ Domain type does not accept (Infrastructure 4.3 or later takes internationalised
   `financial.exchange`입니다. `crypto_service`는 자금을 맡지 않는 서비스에 씁니다.
 - **금액**(`balance`, `fee`)은 네트워크 기본 단위의 10진 문자열입니다. 정밀도는 그대로지만 숫자로
   정렬되지 않습니다.
-- **Financial 팩의** `crypto_address`와 `crypto_transaction`은 기존 노드를 위해 남아 있고
-  "(legacy)"로 표시됩니다. 새 유형과 병합되지 않습니다. 두 팩을 함께 설치하면 짧은 이름
-  `crypto_address`는 Cryptocurrency 팩의 유형을 가리킵니다.
+- 주소나 거래를 문자열만으로 식별하던 **Financial 팩의** `crypto_address`와 `crypto_transaction`은
+  Financial 3.0.0에서 없어졌습니다. Financial 2.0.0 이하인 프로젝트에는 여전히 있고 "(legacy)"로
+  표시되며, 두 팩을 함께 설치하면 짧은 이름 `crypto_address`는 Cryptocurrency 팩의 유형을
+  가리킵니다. 3.0.0으로 업데이트해도 그 노드는 변환되지 않습니다. 설치된 어떤 팩도 정의하지 않는
+  유형으로 남으므로 플러그인 실행 패널은 그 노드에 주소나 거래를 받는 플러그인을 제시하지 않고,
+  새 유형과 병합되지도 않습니다. 업데이트 대화상자가 그 개수를 먼저 보여 줍니다. Identify Crypto Network는
+  옛 주소마다 Cryptocurrency 팩 주소를 연결합니다. 옛 거래를 변환하는 것은 없으므로 기록을 보고
+  `cryptocurrency.crypto_transaction`을 직접 쓰세요.
 
 `network` 값 대부분에는 다른 도구와 주고받는 CAIP-2 체인 ID가 있습니다. 초안이나 제안 단계인 것도
 있고, 등재된 ID가 없는 것도 몇 있습니다. 이 ID는 식별 값에 들어가지 않으므로, 나중에 고쳐도 노드가

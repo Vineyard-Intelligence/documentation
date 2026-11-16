@@ -336,9 +336,10 @@ Vineyard에 탐색기가 없는 네트워크(Ethereum Classic, Bitcoin Gold, Das
     - 비트코인, TRON, EVM 주소는 주소 형식이 정하는 네트워크의 Cryptocurrency 팩
       `cryptocurrency.crypto_address`가 됩니다. `bc1…`은 `bitcoin`, `T…`는 `tron`, `0x` 주소는
       `evm`, 옛 형식의 `1…`·`3…` 주소는 `unknown`입니다. 이 마지막 형식은 비트코인, 비트코인 캐시,
-      비트코인 SV에서 같은 문자열이기 때문입니다. Financial 팩만 있고 Cryptocurrency 팩이 없는
-      프로젝트에는 대신 옛 `financial.crypto_address`를 통화와 함께 제안합니다. 두 팩이 모두 없으면
-      항목은 흐리게 표시되고 `cryptocurrency.crypto_address`를 알려 줍니다.
+      비트코인 SV에서 같은 문자열이기 때문입니다. Financial 2.0.0 이하이고 Cryptocurrency 팩이 없는
+      프로젝트에는 대신 옛 `financial.crypto_address`를 통화와 함께 제안합니다. Financial 3.0.0에는
+      그 유형이 없으므로 3.0.0인 프로젝트에는 제안하지 않습니다. 두 유형이 모두 없으면 항목은 흐리게
+      표시되고 `cryptocurrency.crypto_address`를 알려 줍니다.
     - 그 유형을 정의하는 Type Pack이 설치되어 있지 않거나 유형의 형식이 값을 거부하면, 항목은 이유와
       함께 흐리게 표시됩니다.
 - **Open in browser…**는 `http://`나 `https://`로 저장된 URL에 나오며, 열기 전에 확인을 받고 브라우저가

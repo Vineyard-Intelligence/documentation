@@ -43,8 +43,8 @@ For more depth where the keyless sources stop, these keyed packs are optional:
 | **Helius** | Solana history including the SPL tokens paid into a wallet's token accounts, and who sent a wallet its first SOL | A Helius key; its wallet identity labels need a paid plan |
 | **Blockchair** | Bitcoin, Bitcoin Cash, Litecoin, Bitcoin SV, Dogecoin, Dash and Zcash | A Blockchair key |
 
-The type packs these plugins write (Cryptocurrency, and for Sanctions Screening and Helius also
-Identity and Financial) are installed with them.
+The type packs these plugins write (Cryptocurrency, Identity for Sanctions Screening and Helius, and
+Financial for Helius) are installed with them.
 
 Who sees it: each explorer and API a plugin calls receives the addresses and transactions you look
 up. Nothing reaches the addresses' owners. Chain Explorer's free sources promise no uptime and have
@@ -73,6 +73,8 @@ take step 2.
 
 Select the address and open **Run plugins…**. **Identify Crypto Network** takes no node type, so it is
 listed under **Whole-graph / input via form**; tick it and press **Run**. It works on the selection.
+A legacy Financial address goes through it too: Financial 3.0.0 removed that type, and the plugins
+in the steps below take only the Cryptocurrency pack's address it links (**same as**).
 
 Look for: a Crypto Address on each network where the string has activity, linked **same address on**
 from the original, with the reason on the link. The original is left as it is. A `0x…` string active

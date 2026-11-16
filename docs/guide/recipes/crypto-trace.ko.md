@@ -43,8 +43,8 @@ TRON 위의 USDT 2,400을 보냈습니다. 손에 있는 것은 주소, 금액, 
 | **Helius** | 지갑의 토큰 계정으로 들어온 SPL 토큰까지 포함한 Solana 내역, 지갑에 처음 SOL을 보낸 쪽 | Helius 키. 지갑 신원 라벨은 유료 플랜 |
 | **Blockchair** | Bitcoin, Bitcoin Cash, Litecoin, Bitcoin SV, Dogecoin, Dash, Zcash | Blockchair 키 |
 
-이 플러그인들이 쓰는 Type Pack(Cryptocurrency, 그리고 Sanctions Screening과 Helius가 쓰는 Identity와
-Financial)은 함께 설치됩니다.
+이 플러그인들이 쓰는 Type Pack(Cryptocurrency, Sanctions Screening과 Helius가 쓰는 Identity, Helius가
+쓰는 Financial)은 함께 설치됩니다.
 
 누가 보는가: 플러그인이 부르는 익스플로러와 API는 내가 조회한 주소와 거래를 받습니다. 주소의 주인에게
 가는 것은 없습니다. Chain Explorer의 무료 출처는 가용성을 보장하지 않으며 하루 한도가 있습니다.
@@ -71,7 +71,8 @@ Financial)은 함께 설치됩니다.
 
 주소를 선택하고 **Run plugins…**를 엽니다. **Identify Crypto Network**는 노드 유형을 받지 않으므로
 **Whole-graph / input via form** 아래에 있습니다. 체크하고 **Run**을 누릅니다. 선택한 노드에 대해
-동작합니다.
+동작합니다. 옛 Financial 주소도 여기를 거칩니다. Financial 3.0.0에서 그 유형이 없어졌고, 아래 단계의
+플러그인은 이 플러그인이 연결한(**same as**) Cryptocurrency 팩 주소만 받습니다.
 
 볼 것: 그 문자열에 활동이 있는 네트워크마다 Crypto Address가 생기고, 원래 노드에서 **same address
 on**으로 이어지며 링크에 판단 이유가 붙습니다. 원래 노드는 그대로 둡니다. Ethereum과 BNB Smart
