@@ -271,6 +271,18 @@ The checkboxes are the canvas selection: a box is ticked exactly when its node i
 
 The table only changes the selection, so a participant who can only view the project can use it too.
 
+### Keyboard {#node-table-keyboard}
+
+The table takes the keys the [Review dialog](running-plugins.md#reviewing-a-runs-changes) takes. Its list of rows has the focus when the table opens, and after a click on a row; **Tab** reaches it from the filters. While the focus is anywhere in the table, a bar down the left edge of a row marks the one the keys act on: the first row of the page until you move.
+
+- **↓** / **↑** move to the next or previous row. They go on across pages: after a page's last row the next page opens on its first.
+- **→** / **←** turn to the next or previous page, onto its first row.
+- **Space** ticks or unticks the row's box, as a click on the box does. A row the canvas hides has no box, and Space leaves it.
+- **Enter** does what a click on the row does: it selects only that node and centers it on the canvas, showing it first if the canvas hides it.
+- **/** puts the cursor in **Filter by keyword**, with its text selected.
+
+These keys act on the table only, never on the canvas beside it. A new filter, a sort or another selection taken starts again from the first row.
+
 ## Drawing edges
 
 Select the node(s) you want to link from, then **⌘-click** (Mac) or **Ctrl-click** (Windows/Linux) the node to link them to. A small box opens at the click; type the relation (free text, e.g. `resolves to`) and press **Enter**. One edge is created from every selected node to the clicked node. Hold **Shift** while clicking, or press **Reverse** in the box, to link the other way (clicked node → selection). You can also right-click a node or a selection and choose **Connect to…**, or press **C** on the canvas, then plain-click the target. **Esc** cancels at either step, and nothing is written until you press Enter. An edge is unique per ordered pair of nodes, so pairs that are already connected are skipped and counted as "already connected"; the reverse direction is a separate edge. If nothing is selected, the click only shows a hint to select the nodes first.

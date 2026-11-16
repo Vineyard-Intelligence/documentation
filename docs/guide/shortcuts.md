@@ -291,6 +291,11 @@ does.
 
 | Action | Mac | Windows and Linux |
 | --- | --- | --- |
+| Filter the node table by keyword | <kbd>/</kbd> | <kbd>/</kbd> |
+| Move to the next or previous row<br><small>In the list of rows, across pages.</small> | <kbd>↓</kbd> / <kbd>↑</kbd> | <kbd>↓</kbd> / <kbd>↑</kbd> |
+| Turn to the next or previous page of rows | <kbd>→</kbd> / <kbd>←</kbd> | <kbd>→</kbd> / <kbd>←</kbd> |
+| Tick or untick the row you are on | <kbd>Space</kbd> | <kbd>Space</kbd> |
+| Select only the row’s node and center it<br><small>As a click on the row does; a node the canvas hides is shown.</small> | <kbd>↵</kbd> | <kbd>Enter</kbd> |
 | Add a row to the selection, or take it out | <kbd>⌘</kbd>-click | <kbd>Ctrl</kbd>-click |
 | Add the rows from the last one you clicked | <kbd>⇧</kbd>-click | <kbd>Shift</kbd>-click |
 | Sort by another column as well<br><small>On a column header, after the first column.</small> | <kbd>⇧</kbd>-click | <kbd>Shift</kbd>-click |
