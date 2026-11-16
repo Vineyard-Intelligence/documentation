@@ -88,7 +88,7 @@
 
 ## 우클릭 메뉴 {#right-click-menus}
 
-- **노드** — **Run plugins…**(이 노드에 대해), **Copy labels**와 **Copy labels, defanged**([라벨 복사하기](#라벨-복사하기) 참조), **Duplicate**(복제), **Connect to…**([엣지 그리기](#엣지-그리기) 참조), **Disconnect all**(노드에 닿는 모든 엣지 삭제), **Delete**.
+- **노드** — **Run plugins…**(이 노드에 대해), **Copy labels**와 **Copy labels, defanged**([라벨 복사하기](#라벨-복사하기) 참조), **Duplicate**(복제), **Connect to…**([엣지 그리기](#엣지-그리기) 참조), **Disconnect all**(캔버스가 그 노드에 그리는 엣지 삭제. [캔버스 필터](#숨기기)가 숨긴 엣지는 남음), **Delete**.
 - **엣지** — **Reverse direction**(방향 반전), **Delete**.
 - **선택** — 무언가 선택된 상태에서 빈 캔버스를 우클릭하거나, 여러 항목 선택에 포함된 노드나 엣지를 우클릭하면 열립니다. 머리글에 개수가 표시됩니다(*Selected: N nodes, M edges*). **Run plugins…**, **Connect to…**, **Show in node table**, **Copy labels**, **Copy labels, defanged**(노드가 선택된 경우), **Merge nodes…**(노드가 두 개 이상 선택된 경우, [노드 병합](#merging-nodes) 참조), **Delete (N)**, **Select all**, **Fit view**.
 - **빈 캔버스** (선택 없음, 머리글 *Nothing selected — whole project*) — whole-graph 플러그인에 대한 **Run plugins…**, **Select all**, **Fit view**.
@@ -97,7 +97,7 @@
 
 **Esc**는 메뉴만 닫고, 그 아래에 있는 것은 닫지 않습니다. Esc는 한 번 누를 때마다 하나씩, 앞에 있는 것부터 치웁니다. 대상을 기다리는 **Connect to…**, 열린 메뉴(우클릭 메뉴, 메뉴 바의 **Project**, **Edit**, **View**, **Run** 메뉴, 또는 툴바의 **Layout** 메뉴)나 툴바의 **Filter** 패널, 그다음 앞에 그려진 패널, 마지막으로 선택 순서입니다. 패널은 Review 대화상자, Run plugins, Skill pack 패널, AI 에이전트 순으로 앞에 그려집니다. Run plugins 패널이 Skill pack 패널 위에 열려 있으면 첫 Esc는 Run plugins를, 다음 Esc는 Skill pack 패널을 닫고, 더 닫을 것이 없으면 Esc는 **Clear selection**처럼 선택을 해제합니다. 메뉴 바의 메뉴는 그 메뉴만 닫히고, 포커스가 메뉴 안에 있었다면 메뉴 바의 그 메뉴 이름으로 돌아갑니다. 포커스가 메뉴 바와 그 메뉴 밖으로 나가도 메뉴는 바로 닫힙니다. **Edit**을 클릭한 뒤 **?**나 **⌘/**(단축키 목록) 또는 **⌘K**(팔레트)를 누르면 대화상자가 열리면서 메뉴가 닫히므로, 다음 Esc는 그 대화상자만 닫습니다. Properties 패널의 선택 필드, 노드 테이블의 유형 필드와 *On the canvas* 필드, Run plugins에서 선택지 목록이 있는 플러그인 파라미터처럼 드롭다운 목록이 열려 있을 때 누른 Esc는 그 목록만 닫고, 다음 Esc가 패널을 닫습니다. Review 대화상자는 그 안에서 누른 Esc와, **Apply**를 누른 직후처럼 아무것에도 포커스가 없을 때 누른 Esc로 닫힙니다. 마지막으로 클릭한 곳이 AI 에이전트, Run plugins, Skill pack 패널이었어도 키보드로 **Apply**한 뒤라면 마찬가지이며, 리뷰 뒤의 패널은 열린 채로 남습니다. 리뷰가 열려 있는 동안 Run plugins나 Skill pack 패널 안에서 누르거나 그 패널을 클릭한 직후에 누른 Esc는 그 패널을 닫고 리뷰는 그대로 둡니다. 다른 곳에서 누른 Esc는 두 패널을 모두 그대로 둡니다. 패널 안에서 누르거나 패널을 클릭한 직후에 누른 Esc는 그 위에 그려진 패널이 아니라 그 패널로 갑니다. 입력란에서 누르거나 Properties 패널을 클릭한 뒤에 누른 Esc는 선택을 그대로 두고, 한글 음절을 끝내는 Esc는 음절만 끝냅니다. Esc를 누를 때 Shift 같은 수정키를 함께 누르고 있어도 똑같이 동작합니다.
 
-**Delete**, **Delete (N)**, **Disconnect all**은 매번 먼저 확인을 묻습니다. 캔버스에서 **Delete**나 **⌫** 키를 눌러도 같습니다. 확인 창은 무엇이 지워지는지 알려 줍니다. 예: *Delete 3 nodes and 17 connected edges? This cannot be undone.* 노드를 지우면 그 노드에 연결된 엣지도 모두 함께 지워지며, 그 엣지도 개수에 포함됩니다. **Cancel**에 포커스가 있어서 습관적으로 Enter를 눌러도 삭제되지 않고, Esc로도 취소됩니다. 삭제는 되돌릴 수 없습니다. 프로젝트를 아직 불러오는 중이면 노드 삭제와 **Disconnect all**이 거부되고 *The project is still loading — delete again once it has finished.*라는 알림이 표시됩니다. 함께 셀 엣지가 아직 다 도착하지 않았기 때문입니다. 서버에 로그인한 상태라면 활동 로그에 지운 노드마다 타입이, 지운 엣지마다 라벨이 한 줄씩 남습니다.
+**Delete**, **Delete (N)**, **Disconnect all**은 매번 먼저 확인을 묻습니다. 캔버스에서 **Delete**나 **⌫** 키를 눌러도 같습니다. 확인 창은 무엇이 지워지는지 알려 줍니다. 예: *Delete 3 nodes and 17 connected edges? This cannot be undone.* 노드를 지우면 그 노드에 연결된 엣지도 모두 함께 지워지며, [캔버스 필터](#숨기기)가 숨긴 엣지도 마찬가지입니다. 개수에는 그 엣지도 포함되고, 그중 몇 개가 숨겨져 있는지도 알려 줍니다. 예: *Delete 1 node and 3 connected edges, 2 of them hidden on the canvas? This cannot be undone.* **Disconnect all**은 캔버스가 그 노드에 그리는 엣지만 지우고 숨겨진 엣지는 남기며, 확인 창은 몇 개가 남는지 알려 줍니다. 예: *Delete the edge the canvas shows on this node? The 2 hidden on the canvas stay. This cannot be undone.* 엣지가 모두 숨겨진 노드에서는 묻지도 지우지도 않고 그렇다는 알림만 표시합니다. 예: *This node's 2 edges are hidden on the canvas. Nothing was deleted.* **Cancel**에 포커스가 있어서 습관적으로 Enter를 눌러도 삭제되지 않고, Esc로도 취소됩니다. 삭제는 되돌릴 수 없습니다. 프로젝트를 아직 불러오는 중이면 노드 삭제와 **Disconnect all**이 거부되고 *The project is still loading — delete again once it has finished.*라는 알림이 표시됩니다. 함께 셀 엣지가 아직 다 도착하지 않았기 때문입니다. 서버에 로그인한 상태라면 활동 로그에 지운 노드마다 타입이, 지운 엣지마다 라벨이 한 줄씩 남습니다.
 
 <figure class="vy-shot" markdown="span">
   ![노드 우클릭 메뉴](../assets/guide/canvas-context-menu.webp){ width="301" loading=lazy }
@@ -197,7 +197,7 @@
 숨기기는 캔버스가 그리는 것만 바꿉니다.
 
 - 숨긴 노드는 프로젝트에 그대로 있습니다. 플러그인, AI 에이전트, [검색](#검색), [노드 표](#노드-표), **Export graph**는 여전히 모든 노드를 봅니다.
-- 숨긴 노드와 엣지는 선택할 수 없습니다. 그래서 **Run plugins**, **Delete (N)**, **Connect to…**, AI 에이전트가 캔버스에 보이지 않는 것에 대해 동작하는 일은 없습니다. Select all, Invert, 범례 항목, 노드 표의 상자는 숨긴 노드를 빼고 선택하며, 선택된 노드나 엣지가 숨겨지면 선택에서 빠집니다.
+- 숨긴 노드와 엣지는 선택할 수 없습니다. 그래서 **Run plugins**, **Delete (N)**, **Connect to…**, AI 에이전트가 캔버스에 보이지 않는 것에 대해 동작하는 일은 없습니다. Select all, Invert, 범례 항목, 노드 표의 상자는 숨긴 노드를 빼고 선택하며, 선택된 노드나 엣지가 숨겨지면 선택에서 빠집니다. **Disconnect all**도 노드의 숨긴 엣지는 건드리지 않습니다. 노드 삭제만은 예외입니다. 숨긴 엣지도 노드와 함께 지워지며, 확인 창은 그 엣지를 캔버스에서 숨겨진 것으로 따로 셉니다([우클릭 메뉴](#right-click-menus) 참조).
 - 노드 하나로 가는 동작은 그 노드가 숨겨져 있으면 그 노드만 보이게 합니다. 검색 결과 고르기, 노드 표의 행 누르기, 활동 로그의 **Show on the canvas**, AI 에이전트의 `select_node`, 협업자가 선택한 것 따라가기가 그렇습니다. 노드는 캔버스에 그려지면 선택되고 화면 가운데로 옵니다. 그 전에 다른 것을 선택하면 그 선택이 유지됩니다. 패널은 이것을 *N shown on request*(요청으로 보임)로 세고, **Hide again**(다시 숨기기)을 누르면 규칙대로 다시 숨깁니다. 마지막 규칙을 지워도 이 목록은 사라지므로, 나중에 정한 규칙은 이 노드들도 다른 노드처럼 숨깁니다.
 - 플러그인 실행의 변경을 검토하는 동안에는, 그 실행이 바꾸거나 지울 노드와 엣지, 그리고 새로 만들 엣지가 잇는 노드를 규칙과 관계없이 그립니다.
 - 숨긴 노드는 캔버스의 자리를 유지하고, 다시 보이면 그 자리로 돌아옵니다. 노드를 숨긴 채로 레이아웃을 적용하면 보이는 노드만 배치합니다. 숨긴 노드는 다시 보일 때 새로 추가된 노드처럼 배치되며, 한꺼번에 많이 보이게 하면 그래프 전체를 다시 배치합니다.
