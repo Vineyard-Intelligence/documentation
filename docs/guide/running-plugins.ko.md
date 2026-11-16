@@ -165,7 +165,10 @@ set was under way when the page went away — some of these rows may already be 
 실행은 마지막으로 바뀐 뒤 7일 동안 보관되고,
 열어 둔 탭이 있으면 그보다 오래 보관되며, 그 뒤에 삭제됩니다. 대화상자 하단에는 검토가 어디에 보관되는지 나옵니다. 보통은 *Kept on this device only —
 a reload brings this review back, for 7 days after its last change*이고, 로그인한 계정이 없거나 이
-기기의 저장소가 거부하면 *Held in this tab only — a reload loses this review*입니다. 검토를 기다리는
+기기의 저장소가 거부하면 *Held in this tab only — a reload loses this review*입니다. 저장소가 거부하는
+동안에는 빨간 알림(*Changes waiting for review are not being kept on this device*)도 화면에 남고,
+플러그인 실행이나 AI 턴이 아직 작업 중일 때 프로젝트를 떠나려 하면 변경이 이 탭에만 있어 새로
+고치면 사라진다고 알립니다([기본적으로 임시](tasks.md#ephemeral-by-default) 참조). 검토를 기다리는
 실행의 내용은 Vineyard 서버로 전송되지 않습니다. 아직 열려 있는 탭에서 기다리는 실행은 그 탭에
 남습니다. 다른 탭에는 그 탭을 닫은 뒤 프로젝트를 다시 열 때 나타납니다.
 

@@ -170,8 +170,11 @@ row is recorded as discarded.
 A run is kept for 7 days after its last change, and longer while a tab has it open, and
 then deleted. The footer of the dialog says where the review is kept: *Kept on this device only — a reload brings
 this review back, for 7 days after its last change*, or *Held in this tab only — a reload loses this
-review* when no account is signed in or this device's storage refuses it. Nothing of a run waiting for
-review is sent to the Vineyard server. A run waiting in a tab that is still open stays with that tab:
+review* when no account is signed in or this device's storage refuses it. While the storage refuses
+it, a red notice also stays on screen (*Changes waiting for review are not being kept on this
+device*), and leaving the project while a plugin run or an AI turn is still working says the changes
+live in this tab only and a reload loses them (see [Ephemeral by default](tasks.md#ephemeral-by-default)).
+Nothing of a run waiting for review is sent to the Vineyard server. A run waiting in a tab that is still open stays with that tab:
 another tab shows it only once that tab has been closed, the next time it opens the project.
 
 A change from the AI agent that edits a node's fields writes only the fields the agent changed. A
