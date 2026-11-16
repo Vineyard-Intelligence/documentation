@@ -155,7 +155,7 @@ Values of these kinds are shown as they are stored, even when the type expects s
   value the type does not list stays on screen as itself, marked `(not in type)`, and hovering it
   says *Not one of the values this type lists.* Only a field the type does not require has a **×**
   to clear it.
-- **True or false** (`boolean`) is a switch. A field that holds nothing is not shown as false: it
+- **A boolean** (`boolean`) is a switch. A field that holds nothing is not shown as false: it
   reads `—`, with a choice of `true` or `false`, and hovering it says *Not collected. Nothing is
   stored here, which is not the same as false.* A value that is neither, such as `yes`, is shown as
   stored. Choosing writes `true` or `false`.
@@ -192,7 +192,7 @@ What you edit a value in depends on its declared type and on what it holds:
 | Text its type declares `text`, or any value with a line break, unless it reads as a list (below) | A field of several lines. Line endings stay as the value had them, so the CRLF endings of a raw WHOIS record are still CRLF after an edit. |
 | A number | A number field. In one that holds text, what you type is saved as a number when it is written as one (`13335`), and refused otherwise, with the reason. |
 | A choice (`enum`) | A list of the values the type lists. |
-| True or false | A switch, or a choice of `true` and `false` when the field holds neither. |
+| A boolean (`boolean`) | A switch, or a choice of `true` and `false` when the field holds neither. |
 | A date (`date`) | A date picker, or a text field when the picker cannot show the value. |
 | A date and time (`datetime`) | A text field, with what it reads as under it. |
 | A colour (`color`) | A colour picker, in hex. |
@@ -372,15 +372,17 @@ as notes or tags, without waiting for a new version of the Type Pack. The grid l
   field under the name you gave it. A name such as `First Seen` is refused with **Use `first_seen`**
   beside it. A field the type declares is filled in its own row, and a field the node already has is
   changed in its row, so neither name is accepted here.
-- Under the name, **Suggested** offers `notes` (text) and `tags` (a list), then the fields that other
+- Under the name, **Suggested** offers `notes` (Text) and `tags` (Array), then the fields that other
   nodes of the same type carry and their type does not declare, most common first, so one field
   keeps one name across the graph. Clicking a name fills it in, with the kind the other nodes hold
   it as. A name the type declares or the node has is not suggested.
-- The kinds are **Text**, **Number**, **True / false**, **List** (text entries: type one and press
-  **Enter**) and **JSON** (an object `{…}` or a list `[…]`). A field is added with its value: an
-  empty text, a list with no entries, and `{}` or `[]` are refused, since a field with nothing in it
-  reads as one the node does not have. A number too large to store exactly is refused; choose
-  **Text** to keep every digit.
+- The kinds carry the names the Type Pack schema gives these values: **Text** (`text`, line breaks
+  kept), **Number** (`number`), **Boolean** (`boolean`), **Array** (`array` of text entries: type one
+  and press **Enter**) and **Object** (`object`, written in braces `{…}`). A list typed under Object
+  is refused with a pointer to Array; a list of numbers can be written in the node's
+  [JSON view](#document-and-json-views). A field is added with its value: an empty text, an array
+  with no entries, and `{}` are refused, since a field with nothing in it reads as one the node does
+  not have. A number too large to store exactly is refused; choose **Text** to keep every digit.
 - **Enter** in the name or in a number adds the field, and **⌘Enter** (Mac) or **Ctrl+Enter** adds it
   from anywhere in the form, the JSON editor included (without adding a line break to the JSON),
   with a list entry you are still typing.
