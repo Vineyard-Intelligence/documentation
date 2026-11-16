@@ -113,7 +113,7 @@ Type Pack의 프로퍼티 선언은 플러그인이나 AI 에이전트가 `creat
 - **`validator.min` / `validator.max`**: 숫자 값에 적용됩니다.
 - **`"optional": false`**: 생성 시에만, 키가 있고 비어 있지 않아야 합니다.
 
-검사하지 않는 것: 힌트일 뿐인 `validator.min_length`, `max_length`, `format`; 유형이 선언하지 않은 키; 없는 것으로 취급되는 빈 값(`null`, `""`). Types 패널에서 만든 노드는 검사하지 않은 자리표시자(`New <type>`)로 시작하며, 분석가가 편집할 때 그 값이 검사됩니다.
+검사하지 않는 것: 힌트일 뿐인 `validator.min_length`, `max_length`, `format`; 유형이 선언하지 않은 키; 없는 것으로 취급되는 빈 값(`null`, `""`). Types 패널에서 만든 노드는 검사하지 않은 자리표시자(`New <type>`)로 시작하며, 분석가가 편집할 때 그 값이 검사됩니다. Properties 패널이 선언된 유형마다 값을 어떻게 편집하게 하는지, 값이 거부되면 분석가에게 무엇이 보이는지는 [Properties 패널](../guide/properties.md#editing-a-value)에 있습니다.
 
 ## 시각 요소: icon 및 color
 

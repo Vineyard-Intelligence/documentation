@@ -75,6 +75,12 @@ AI 에이전트에게 프로젝트를 다룰 조사 플레이북을 제공하세
 </div>
 
 <div class="vy-card" markdown>
+### :material-form-select: Properties 패널
+선택한 노드의 필드를 읽고 편집하고, 링크를 얼마나 믿을 수 있는지와 누가 그렸는지 봅니다.
+→ [Properties 패널](properties.md)
+</div>
+
+<div class="vy-card" markdown>
 ### :material-progress-clock: 작업 및 실행
 진행 중인 실행을 추적하고, 취소하고, 적용되기 전에 스테이징된 변경을 검토하세요.
 → [작업 및 실행](tasks.md)

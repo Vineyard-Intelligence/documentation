@@ -131,6 +131,7 @@ plugins:
             "Running plugins": 플러그인 실행
             "Working with Type Packs": Type Pack 사용하기
             "The canvas": 캔버스
+            "The Properties panel": Properties 패널
             "Tasks & runs": 작업 및 실행
             "Keyboard shortcuts": 단축키
             "Working with Skill Packs": Skill Pack 사용하기
@@ -169,6 +170,7 @@ nav:
       - Working with Type Packs: guide/typepacks.md
       - Working with Skill Packs: guide/skillpacks.md
       - The canvas: guide/canvas.md
+      - The Properties panel: guide/properties.md
       - Tasks & runs: guide/tasks.md
       - Keyboard shortcuts: guide/shortcuts.md
   - Developer Guide:

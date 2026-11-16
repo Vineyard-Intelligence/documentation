@@ -165,7 +165,7 @@ A translucent, minimap-style panel at the bottom-left that lists the node **type
 
 Click a row to select every node of that type, or Shift-click to add them to the current selection. Hovering (or focusing) a row dims every other type on the canvas. The eye at the end of a row (shown while you point at the row) [hides](#hiding) that type on the canvas; a hidden type's row is dimmed, keeps its count, and shows the type again when clicked.
 
-Below the types, an **Evidence** key lists the edge confidence grades present in the project (assessed, asserted, recorded, circumstantial, contested, unassessed), strongest first, each drawn with the same line style (dash, width, opacity) the canvas uses for that grade and with a count. Hover a grade for what it means. Click a grade to hide the edges with that grade on the canvas, and click it again to show them; a hidden grade is dimmed and marked with a crossed-out eye, and stays listed even when no edge has it any more.
+Below the types, an **Evidence** key lists the edge confidence grades present in the project (assessed, asserted, recorded, circumstantial, contested, unassessed), strongest first, each drawn with the same line style (dash, width, opacity) the canvas uses for that grade and with a count. Hover a grade for what it means; [Evidence grades](properties.md#evidence-grades) lists them all. Click a grade to hide the edges with that grade on the canvas, and click it again to show them; a hidden grade is dimmed and marked with a crossed-out eye, and stays listed even when no edge has it any more.
 
 The legend reflects whatever Type Packs the project uses — for example, an investigation built on the [Infrastructure Type Pack](typepacks.md) might show counts for `infrastructure.ip_address`, `infrastructure.domain`, and so on, each resolved to its Type Pack-defined name and color.
 
@@ -280,18 +280,9 @@ A grade that rises because a merged node's writer drew the same link shows as *G
 
 ## Inspecting an edge {#inspecting-an-edge}
 
-Click an edge to show it in the Properties panel. The top names its two ends, who wrote its label
-(*Edited here*, *Written by …* or *Original label*), and its evidence grade with who set it and what
-the grade means, followed by **Re-verify**. Below that, **relation** (the edge's label) and
-**confidence** are the two values you can change, if you can edit the project.
-
-Under **Recorded with this link** is everything else the edge stores, read-only for everyone. It is
-what the plugin or the agent that drew the edge recorded with it, such as where and when the link
-was observed: OTX Passive DNS, for example, stores `source`, `record_type`, `first_seen` and
-`last_seen`. The list also holds `corroborated_by`, the other writers that drew the same link, which
-the evidence grade counts. An edge that stores nothing more, such as one you drew yourself, shows
-*Nothing else is stored with this link.* The [Review dialog](running-plugins.md#reviewing-a-runs-changes)
-shows the same list for an edge that is waiting to be applied.
+Click an edge to show it in the Properties panel: its two ends, who wrote its label, its evidence
+grade with who set it and what it means, **Re-verify**, the **relation** and **confidence** you can
+change, and what its writer recorded with it. See [A link](properties.md#a-link).
 
 ## Export graph (JSON) {#export-graph-json}
 
@@ -352,5 +343,6 @@ Times are written in UTC. In the CSV file the top lines begin with `#`, and a ce
 
 - [Running plugins](running-plugins.md) — execute plugins against nodes on the canvas.
 - [Working with Type Packs](typepacks.md) — how node types, colors, and labels drive the legend.
+- [The Properties panel](properties.md) — read and edit the selected node or edge.
 - [Tasks](tasks.md) — track long-running plugin runs.
 - [Browse the Marketplace](../marketplace.md) — find packs to add.

@@ -165,7 +165,7 @@
 
 항목을 클릭하면 해당 유형의 모든 노드가 선택되고, Shift-클릭하면 현재 선택에 추가됩니다. 항목에 마우스를 올리거나 포커스하면 캔버스에서 다른 유형이 모두 흐려집니다. 항목 끝의 눈 아이콘(항목을 가리키는 동안 나타남)을 누르면 그 유형을 캔버스에서 [숨깁니다](#숨기기). 숨긴 유형의 항목은 흐리게 표시되고 개수는 그대로 남으며, 누르면 그 유형이 다시 보입니다.
 
-유형 아래의 **Evidence** 키는 프로젝트에 있는 엣지 신뢰도 등급(assessed, asserted, recorded, circumstantial, contested, unassessed)을 강한 순서대로 나열하며, 각 등급을 캔버스가 그 등급에 쓰는 것과 같은 선 스타일(대시, 두께, 불투명도)과 개수로 표시합니다. 등급에 마우스를 올리면 의미가 표시됩니다. 등급을 누르면 그 등급의 엣지를 캔버스에서 숨기고, 한 번 더 누르면 다시 보입니다. 숨긴 등급은 흐리게, 빗금 친 눈 아이콘과 함께 표시되며, 그 등급의 엣지가 하나도 남지 않아도 목록에 남습니다.
+유형 아래의 **Evidence** 키는 프로젝트에 있는 엣지 신뢰도 등급(assessed, asserted, recorded, circumstantial, contested, unassessed)을 강한 순서대로 나열하며, 각 등급을 캔버스가 그 등급에 쓰는 것과 같은 선 스타일(대시, 두께, 불투명도)과 개수로 표시합니다. 등급에 마우스를 올리면 의미가 표시되며, [증거 등급](properties.md#evidence-grades)에 모두 정리되어 있습니다. 등급을 누르면 그 등급의 엣지를 캔버스에서 숨기고, 한 번 더 누르면 다시 보입니다. 숨긴 등급은 흐리게, 빗금 친 눈 아이콘과 함께 표시되며, 그 등급의 엣지가 하나도 남지 않아도 목록에 남습니다.
 
 범례는 프로젝트가 사용하는 Type Pack을 반영합니다 — 예를 들어, [Infrastructure Type Pack](typepacks.md)으로 구축된 조사는 `infrastructure.ip_address`, `infrastructure.domain` 등의 개수를 표시하며, 각각 Type Pack에서 정의된 이름과 색상으로 해석됩니다.
 
@@ -280,18 +280,9 @@
 
 ## 엣지 살펴보기 {#inspecting-an-edge}
 
-엣지를 클릭하면 Properties 패널에 표시됩니다. 위쪽에는 양 끝 노드, 레이블을 쓴 쪽(*Edited here*,
-*Written by …*, *Original label*), 증거 등급과 그 등급을 매긴 쪽, 등급의 뜻이 나오고, 이어서
-**Re-verify**가 있습니다. 그 아래의 **relation**(엣지의 레이블)과 **confidence**는 프로젝트를 편집할
-수 있으면 바꿀 수 있는 두 값입니다.
-
-**Recorded with this link** 아래에는 엣지에 저장된 나머지 값이 모두 나오며, 누구에게나 읽기
-전용입니다. 엣지를 그린 플러그인이나 에이전트가 함께 기록한 값으로, 링크를 어디서 언제
-관측했는지 같은 것입니다. 예를 들어 OTX Passive DNS는 `source`, `record_type`, `first_seen`,
-`last_seen`을 저장합니다. 같은 링크를 함께 그린 다른 작성자를 담은 `corroborated_by`도 이 목록에
-나오며, 증거 등급은 이것을 셉니다. 직접 그린 엣지처럼 더 저장된 값이 없으면 *Nothing else is
-stored with this link.*가 표시됩니다. 적용을 기다리는 엣지에는
-[Review 대화상자](running-plugins.md#reviewing-a-runs-changes)가 같은 목록을 보여 줍니다.
+엣지를 클릭하면 Properties 패널에 나옵니다. 양 끝 노드, 레이블을 쓴 쪽, 증거 등급과 그 등급을 매긴
+쪽과 뜻, **Re-verify**, 바꿀 수 있는 **relation**과 **confidence**, 그리고 엣지를 그린 쪽이 함께 기록한
+값입니다. [링크](properties.md#a-link)를 참조하세요.
 
 ## JSON 그래프 내보내기 {#json-그래프-내보내기}
 
@@ -352,5 +343,6 @@ stored with this link.*가 표시됩니다. 적용을 기다리는 엣지에는
 
 - [플러그인 실행](running-plugins.md) — 캔버스의 노드에 대해 플러그인을 실행합니다.
 - [Type Pack 사용하기](typepacks.md) — 노드 유형, 색상, 레이블이 범례를 구동하는 방식.
+- [Properties 패널](properties.md) — 선택한 노드나 엣지를 읽고 편집하는 곳.
 - [작업 및 실행](tasks.md) — 장기 실행 플러그인 실행을 추적합니다.
 - [마켓플레이스 둘러보기](../marketplace.md) — 추가할 팩을 찾습니다.

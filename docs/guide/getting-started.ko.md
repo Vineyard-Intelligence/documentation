@@ -36,10 +36,11 @@ Vineyard는 브라우저([app.vineyard.run](https://app.vineyard.run))에서, �
     팩은 계정이 아닌 **프로젝트**에 설치되므로, 해당 프로젝트의 모든 협업자가 동일한
     어휘와 도구를 받습니다. 설치 세트를 변경할 수 있는 사람은 프로젝트 소유자뿐입니다.
 
-## 3. 캔버스 만나기
+## 3. 캔버스 만나기 {#3-meet-the-canvas}
 
-캔버스는 작업 표면입니다 — 팬, 줌, 배치할 수 있는 노드/엣지 그래프. 메뉴, 컨텍스트
-메뉴, 사이드 패널의 전체 둘러보기는 [캔버스](canvas.md)를 참조하세요.
+캔버스는 작업 표면입니다 — 팬, 줌, 배치할 수 있는 노드/엣지 그래프. 메뉴와 컨텍스트
+메뉴의 전체 둘러보기는 [캔버스](canvas.md)를 참조하세요. 선택한 노드나 엣지를 읽고 편집하는
+Properties 패널(7)은 [별도 페이지](properties.md)에서 설명합니다.
 
 <figure class="vy-shot" markdown="span">
   ![프로젝트 작업 화면](../assets/guide/workspace.webp){ width="800" loading=lazy }
@@ -117,3 +118,4 @@ Vineyard는 브라우저([app.vineyard.run](https://app.vineyard.run))에서, �
 - [둘러보기 및 설치](installing.md) — 검색, 필터, 설치, 스코프 승인
 - [플러그인 실행](running-plugins.md) — 실행 경로와 **Tasks** 패널
 - [Type Pack 사용하기](typepacks.md) — 엔티티 유형이 하는 일과 관리 방법
+- [Properties 패널](properties.md) — 선택한 노드나 엣지를 읽고 편집하는 곳

@@ -75,6 +75,12 @@ Explore, lay out, and style your graph of nodes and edges.
 </div>
 
 <div class="vy-card" markdown>
+### :material-form-select: The Properties panel
+Read and edit the selected node's fields, and see what a link is worth and who drew it.
+→ [The Properties panel](properties.md)
+</div>
+
+<div class="vy-card" markdown>
 ### :material-progress-clock: Tasks & runs
 Track in-progress runs, cancel them, and review what they staged before it is applied.
 → [Tasks &amp; runs](tasks.md)

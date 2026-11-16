@@ -113,7 +113,7 @@ A Type Pack's property declarations are checked when a plugin or the AI agent ca
 - **`validator.min` / `validator.max`**: applied to number values.
 - **`"optional": false`**: on create only, the key must be present and not blank.
 
-Not checked: `validator.min_length`, `max_length` and `format`, which are hints; keys the type does not declare; and blank values (`null`, `""`), which count as absent. A node created from the Types panel starts as an unchecked placeholder (`New <type>`); its values are checked as the analyst edits them.
+Not checked: `validator.min_length`, `max_length` and `format`, which are hints; keys the type does not declare; and blank values (`null`, `""`), which count as absent. A node created from the Types panel starts as an unchecked placeholder (`New <type>`); its values are checked as the analyst edits them. How the Properties panel edits each declared type, and what an analyst sees when a value is refused, is in [The Properties panel](../guide/properties.md#editing-a-value).
 
 ## Visuals: icon and color
 

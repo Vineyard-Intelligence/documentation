@@ -126,9 +126,9 @@ already in the project* and shows the merged values. For an edge, **Recorded wit
 link** below them lists what the edge will store besides its label and grade once the row is
 applied: for a new edge, what the plugin recorded with it, such as where and when the link was
 observed; for a change, the edge's stored values with the proposed ones in their place; for a
-delete, what goes with the edge. The edge's Properties panel shows the same list
-(see [Inspecting an edge](canvas.md#inspecting-an-edge)). Once the apply has finished, or when you
-reopen the run from Tasks as history, the list is headed **Proposed by this change** and shows only
+delete, what goes with the edge. The edge's Properties panel shows the same list (see
+[Recorded with this link](properties.md#recorded-with-this-link)). Once the apply has finished, or
+when you reopen the run from Tasks as history, the list is headed **Proposed by this change** and shows only
 what the row itself proposed, since the edge may have changed since. The **Status** column says
 whether it landed, and the edge's Properties panel shows what it stores now.
 
