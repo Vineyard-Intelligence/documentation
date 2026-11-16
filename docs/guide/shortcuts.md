@@ -99,6 +99,9 @@ layout again is what the key does.
   See [Copying labels](canvas.md#copying-labels).
 - With a Korean input source, the keys still work by their place on the keyboard: the key that types
   ㄹ is **F**, and **G** then **A** is the key that types ㅎ, then the one that types ㅁ.
+- A symbol key is the character it types, wherever your layout puts it. On German, French, Spanish,
+  Italian, Nordic and Swiss layouts, **[** and **]** are typed with **AltGr** on Windows or **Option**
+  on a Mac, and that is how they select inbound and outbound neighbors there.
 - Keys that switch the input source are never shortcuts, so typing Korean never runs one: 한/영,
   한자, Caps Lock, Shift+Space, and Ctrl or ⌘ with Space. The key that finishes a Korean syllable
   only finishes the syllable.
@@ -334,9 +337,14 @@ is the app's and the same in a browser (see [The desktop app](desktop.md#menus) 
 
 - **⌘,** (**Ctrl+,**) and **⌘/** (**Ctrl+/**) are also the keys of **Settings…** and **Help →
   Keyboard Shortcuts** in the menus, so in the desktop app they work while you are typing in a field
-  too.
-- While a dialog such as **Settings** is open, **⌘/** outside its fields does nothing, and **Help →
-  Keyboard Shortcuts** opens this page in your browser instead of the list.
+  too. The app's own list says so on its **Show keyboard shortcuts** row: *? not while you are typing
+  in a field; ⌘/ works there too.* (*Ctrl+/* on Windows and Linux). In a browser, and in the table
+  above, the row says only *Not while you are typing in a field.*
+- Holding **⌘/** or **⌘,** counts as one press: a held **⌘/** that closes the shortcut list leaves it
+  closed, and a held **⌘,** opens Settings once.
+- While a dialog such as **Settings** is open, **⌘/** outside its fields does nothing, even when held,
+  and choosing **Help → Keyboard Shortcuts** from the menu opens this page in your browser instead of
+  the list.
 - On Windows and Linux, **Ctrl+W** does nothing: the app has one window and quits when it closes.
   **Reload** and **Force Reload** have no key, so a stray ⌘R or Ctrl+R cannot reload the window.
 
