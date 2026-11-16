@@ -64,8 +64,9 @@ layout again is what the key does.
 - While an AI agent conversation is open, **Ask the AI agent** on the toolbar and in the **Run** menu
   shows no key. Clicking it starts a new conversation, while **A** and **G** then **A** go into the
   open conversation's message box.
-- With the single keys turned off (see below), the menus and tooltips stop showing them, and show
-  only the keys that still work.
+- With the single keys turned off (see below), the menus, the tooltips and the command palette
+  stop showing them, and show only the keys that still work. **Keyboard shortcuts** at the foot of
+  the sidebar then shows **⌘/** (**Ctrl+/**) instead of **?**.
 
 ## How shortcuts behave
 
@@ -317,7 +318,7 @@ is the app's and the same in a browser (see [The desktop app](desktop.md#menus) 
 | --- | --- | --- |
 | ⌥⌘, | | Opens Desktop Settings (Mac only; on Windows and Linux use **File → Desktop Settings…**). |
 | ⌘Z, ⇧⌘Z | Ctrl+Z; Ctrl+Y (Windows), Ctrl+Shift+Z (Linux) | Undo, Redo in a text field. |
-| ⌘X, ⌘C, ⌘V, ⌘A | Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A | Cut, Copy, Paste, Select All in a text field. |
+| ⌘X, ⌘C, ⌘V, ⌘A | Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A | Cut, Copy, Paste, Select All in a text field. Where the canvas has the keys, Select All and Copy do what the keys do there: select every node, copy the selected nodes' labels. |
 | ⌘0, ⌘+, ⌘- | Ctrl+0, Ctrl++, Ctrl+- | Window zoom: actual size, in, out. |
 | ⌃⌘F | F11 | Full screen. |
 | ⌘M | Ctrl+M | Minimize. |

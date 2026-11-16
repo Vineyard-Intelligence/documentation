@@ -15,7 +15,7 @@ macOS, Windows, Linux용 Vineyard 데스크탑 앱은 [app.vineyard.run](https:/
 | --- | --- |
 | **Vineyard** (Mac) | **About Vineyard**, **Settings…**(⌘,), **Desktop Settings…**(⌥⌘,), **Services**, **Hide Vineyard**(⌘H), **Hide Others**(⌥⌘H), **Show All**, **Quit Vineyard**(⌘Q). |
 | **File** | Mac에서는 **Close Window**(⌘W). Windows와 Linux에서는 **Settings…**(Ctrl+,), **Desktop Settings…**, 그리고 Windows의 **Exit**(Alt+F4)나 Linux의 **Quit**(Ctrl+Q). |
-| **Edit** | 입력란에서 쓰는 **Undo**, **Redo**, **Cut**, **Copy**, **Paste**, **Delete**, **Select All**. Mac에는 **Paste and Match Style**도 있습니다. 캔버스에는 실행 취소가 없습니다. |
+| **Edit** | 입력란에서 쓰는 **Undo**, **Redo**, **Cut**, **Copy**, **Paste**, **Delete**, **Select All**. Mac에는 **Paste and Match Style**도 있습니다. 캔버스에 키가 갈 때는 ⌘A와 ⌘C(Ctrl+A와 Ctrl+C)처럼 **Select All**이 모든 노드를 선택하고 **Copy**가 선택한 노드의 라벨을 복사합니다([라벨 복사하기](canvas.md#라벨-복사하기)). 캔버스에는 실행 취소가 없습니다. |
 | **View** | **Actual Size**, **Zoom In**, **Zoom Out**은 그래프가 아니라 창 전체를 확대·축소합니다. **Toggle Full Screen**. |
 | **Window** | **Minimize**. Mac에서는 **Zoom**과 **Bring All to Front**, Windows와 Linux에서는 **Close**. |
 | **Help** | **Keyboard Shortcuts**(⌘/ 또는 Ctrl+/)는 앱의 단축키 목록을 보여 줍니다. Settings 같은 대화상자가 열려 있거나 창이 닫혀 있으면 대신 [단축키](shortcuts.md) 페이지를 브라우저에서 엽니다. **Documentation**은 이 사이트를 브라우저에서 열고, **Release Notes**는 실행 중인 버전의 릴리스 노트를 GitHub에서 엽니다. **Troubleshooting** 아래에 **Reload**와 **Force Reload**가 있습니다. |
