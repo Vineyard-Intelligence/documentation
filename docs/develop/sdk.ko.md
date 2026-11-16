@@ -24,7 +24,7 @@ export default definePluginPack({
 | 헬퍼 | 시그니처 | 검증하는 형태 |
 |---|---|---|
 | `definePlugin` | `(p: VineyardPlugin) => VineyardPlugin` | `{ manifest, run }` |
-| `definePluginPack` | `(pack: VineyardPluginPack) => VineyardPluginPack` | `{ identifier, name, version, plugins[] }` |
+| `definePluginPack` | `(pack: VineyardPluginPack) => VineyardPluginPack` | `{ identifier, name, version, summary?, description?, plugins[] }` |
 
 번들의 기본 내보내기는 단일 플러그인, 플러그인 배열, 또는 팩(`PluginEntry`)일 수 있습니다. 호스트는 `flattenPlugins`로 이들을 평탄화합니다. 패키징 규칙은 [플러그인 팩](plugin-packs.md)을 참조하세요.
 
@@ -105,10 +105,12 @@ ctx.graph?.deleteEdges?(ids: string[]): Promise<{ deleted: number }>
 
 `updateNode`에서, 그리고 `createNode`가 노드를 재사용할 때, 다음 여섯 필드는 다르게 병합됩니다. 검토를 적용할 때 그 시점의 노드를 기준으로 한 번 더 적용됩니다.
 
-- `tlp`는 낮아지지 않습니다. 노드에 이미 있는 TLP 레이블은 더 엄격한 레이블로만 바뀝니다. 순서는 `TLP:CLEAR`(TLP 1.0의 `WHITE`), `TLP:GREEN`, `TLP:AMBER`, `TLP:AMBER+STRICT`, `TLP:RED`이며, 대소문자와 `TLP:` 접두사 유무(`TLP-`, `TLP_`, `TLP `도 접두사로 읽음)는 가리지 않고, `AMBER+STRICT`는 `AMBER STRICT`나 `AMBER_STRICT`로 써도 됩니다. `TLP:RED (Case 7 only)`나 `RED - do not share`처럼 레이블에 다른 글이 붙은 값은 그 안의 가장 엄격한 레이블로 읽으므로, 같은 등급의 레이블이 와도 글이 그대로 남습니다. 레이블이 없는 값은 레이블을 바꾸지 못합니다.
+- `tlp`는 낮아지지 않습니다. 노드에 이미 있는 TLP 레이블은 더 엄격한 레이블로만 바뀝니다. 순서는 `TLP:CLEAR`(TLP 1.0의 `WHITE`), `TLP:GREEN`, `TLP:AMBER`, `TLP:AMBER+STRICT`, `TLP:RED`이며, 대소문자와 `TLP` 접두사 유무는 가리지 않습니다. 접두사와 레이블 사이에는 글자나 숫자가 아닌 문자가 몇 개든 올 수 있고(`TLP:RED`, `TLP-RED`, `TLP=RED`, `TLP/RED`), `AMBER+STRICT`는 `AMBER STRICT`나 `AMBER_STRICT`로 써도 됩니다. `(RED)`나 `[AMBER]`처럼 괄호 안의 레이블로 시작하는 값도 그 레이블로 읽습니다. `TLP:RED (Case 7 only)`나 `RED - do not share`처럼 레이블에 다른 글이 붙은 값은 그 안의 가장 엄격한 레이블로 읽으므로, 같은 등급의 레이블이 와도 글이 그대로 남습니다. 레이블이 없는 값은 레이블을 바꾸지 못합니다.
 - `source_report`, `created_by`, `markings`(`; `로 구분), `tags`(`, `로 구분), `references`(한 줄에 하나)는 목록입니다. 전달한 항목은 이미 있는 항목 뒤에 한 번씩만 덧붙으므로, 두 번째 출처가 첫 번째 출처를 대체하지 않습니다. 배열은 그 요소들의 목록이며, 문자열과 배열이 만나도 같은 방식으로 합치고, 결과는 노드에 이미 있던 형태를 따릅니다.
 
 `updateEdge`는 `edge:create`로 게이트됩니다(`edge:update` 스코프는 현재 아무것도 부여하지 않음). `label`을 생략하면 문구와 그 등급이 그대로 유지됩니다. `EdgeDraft`/`updateEdge`는 엣지에 병합되는 선택적 `data` 객체를 받으며, `confidence`, `confidence_source`, `label_source`, `corroborated_by`는 호스트 소유이므로 거부됩니다. 순서가 있는 노드 쌍마다 엣지는 하나이므로, 이미 연결된 쌍에 대한 `createEdge`는 엣지를 추가하는 대신 그 엣지의 레이블 변경을 제안합니다. 아무것도 바꾸지 않을 호출은 아무것도 스테이징하지 않습니다. 새 문구가 없고, `data`의 모든 키를 엣지가 이미 같은 값으로 갖고 있으면 그렇습니다. 이때 `null`은 엣지에 없는 키와 같게 봅니다. 예외는 엣지를 그린 작성자가 아닌 다른 작성자가 같은 문구로 부른 `createEdge`입니다. 그 작성자는 함께 보낸 `data`와 같은 변경 안에서 `corroborated_by`에 한 번 기록됩니다. 그러므로 플러그인은 실행할 때마다 요약 전체를 써도 되고, 검토 목록에는 요약이 바뀐 엣지만 나옵니다. 분석가는 엣지의 `data`를 적용 전에는 Review 대화상자에서, 적용 후에는 엣지의 Properties 패널 **Recorded with this link** 아래에서 읽기 전용으로 봅니다. 그러므로 소스가 링크를 어디서 언제 관측했는지(`source`, `first_seen`, `last_seen` 등)는 여기에 담습니다.
+
+`get`, `list`, `neighbors`로 읽어 온 노드와 `createNode`가 돌려준 노드에는 `data`의 사본이 담기며, 안에 든 목록과 객체도 사본입니다. 그래서 바꿔도 프로젝트에도, 실행이 스테이징한 것에도 아무 영향이 없습니다. 쓰려면 `updateNode`를 쓰세요.
 
 `edges`와 `neighbors`로 읽어 온 엣지에는 `id`, `from_node_id`, `to_node_id`, `label`과 함께 프로젝트가 가진 그대로의 `data`가 담깁니다. 작성자들이 기록한 값과 `confidence`, `confidence_source`, `label_source`, `corroborated_by` 같은 호스트 자신의 키입니다. `data`는 사본이므로 바꿔도 프로젝트에는 아무 영향이 없습니다. 쓰려면 `updateEdge`를 쓰세요. 데이터가 없는 엣지는 `data` 없이 오고, 앱의 이전 버전에서는 모든 엣지가 그렇게 오므로, `data`가 없으면 키가 없다는 뜻이 아니라 알 수 없다는 뜻으로 읽으세요. `updateEdge`는 보낸 최상위 키를 통째로 바꿉니다. 최근 행 목록처럼 엣지가 가진 목록에 더하려면 읽은 값과 합친 결과를 보내세요.
 
@@ -185,7 +187,7 @@ mock은 다음 점에서 앱과 달라서, 테스트가 통과해도 이 차이�
 
 - 쓰기가 mock의 그래프에 곧바로 반영되므로, `get`, `list`, `edges`, `neighbors`는 실행이 만들거나 바꾼 것을 보고 삭제한 것은 더 이상 보지 않습니다. 앱에서는 이 읽기들이 라이브 그래프에서 오며, 스테이징된 변경은 적용되기 전까지 보이지 않습니다. 실행이 만든 노드를 찾아 주는 것은 `get`뿐입니다.
 - `list({ type })`는 `type`을 무시하고 모든 노드를 반환합니다.
-- `edges`와 `neighbors`는 전달한 엣지 객체 자체를 반환하므로, 하나를 바꾸면 mock의 그래프가 바뀝니다. 앱은 엣지마다 사본을 반환합니다. 실행이 mock에서 만든 엣지에는 `data`가 없습니다.
+- `get`, `list`, `edges`, `neighbors`는 전달한 노드와 엣지 객체 자체를 반환하므로, 하나를 바꾸면 mock의 그래프가 바뀝니다. 앱은 하나하나 사본을 반환합니다. 실행이 mock에서 만든 엣지에는 `data`가 없습니다.
 - `ctx.signal`은 `signal`을 전달하지 않으면 `undefined`이므로, `ctx.signal.aborted`를 읽는 코드는 테스트에서 signal을 넘겨야 합니다. `onCancel` 핸들러는 호출되지 않습니다.
 - `config`를 전달하지 않으면 `ctx.config`는 `{}`입니다. 앱에서는 분석가가 선언된 키 중 하나를 설정하기 전까지 존재하지 않습니다.
 - `ctx.service`가 없습니다. `net.fetch`는 모든 요청을 `netHandler`에 그대로 넘기며, 선언된 엔드포인트와 메서드 검사, 제한 시간, 리다이렉트 규칙이 모두 없습니다.

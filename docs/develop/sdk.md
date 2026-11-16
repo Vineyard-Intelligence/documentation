@@ -30,7 +30,7 @@ export default definePluginPack({
 | Helper | Signature | Shape it validates |
 |---|---|---|
 | `definePlugin` | `(p: VineyardPlugin) => VineyardPlugin` | `{ manifest, run }` |
-| `definePluginPack` | `(pack: VineyardPluginPack) => VineyardPluginPack` | `{ identifier, name, version, plugins[] }` |
+| `definePluginPack` | `(pack: VineyardPluginPack) => VineyardPluginPack` | `{ identifier, name, version, summary?, description?, plugins[] }` |
 
 A bundle's default export may be a single plugin, an array of plugins, or a pack
 (`PluginEntry`); the host flattens them with `flattenPlugins`. See
@@ -150,8 +150,10 @@ the review is applied, against the node as it is then:
 
 - `tlp` is never lowered. A TLP label already on the node is replaced only by a stricter one, in
   the order `TLP:CLEAR` (TLP 1.0 `WHITE`), `TLP:GREEN`, `TLP:AMBER`, `TLP:AMBER+STRICT`,
-  `TLP:RED`, read in any case, with or without a `TLP:` prefix (also `TLP-`, `TLP_` or `TLP `),
-  and with `AMBER+STRICT` also written `AMBER STRICT` or `AMBER_STRICT`. A value with a label
+  `TLP:RED`, read in any case, with or without a `TLP` prefix, which any run of characters other
+  than letters and digits separates from the label (`TLP:RED`, `TLP-RED`, `TLP=RED`, `TLP/RED`),
+  and with `AMBER+STRICT` also written `AMBER STRICT` or `AMBER_STRICT`. A value that starts with a
+  bare label in brackets, such as `(RED)` or `[AMBER]`, is read as that label too. A value with a label
   and other text, such as `TLP:RED (Case 7 only)` or `RED - do not share`, counts as the
   strictest label in it, so it keeps its text against a label of the same rank. A value with no
   label in it does not replace one that is.
@@ -174,6 +176,10 @@ plugin can therefore write a whole summary on every run, and the review lists on
 summary changed. The analyst sees the edge's `data` read-only, in the Review dialog before applying
 and in the edge's Properties panel under **Recorded with this link**, so it is the place for where
 and when your source observed the link (`source`, `first_seen`, `last_seen`, …).
+
+Nodes read back through `get`, `list` and `neighbors`, and the node `createNode` returns, carry a
+copy of their `data`, nested lists and objects included, so changing it changes nothing in the
+project or in what the run staged; write with `updateNode`.
 
 Edges read back through `edges` and `neighbors` carry `id`, `from_node_id`, `to_node_id`, `label`
 and the edge's `data` as the project holds it: what its writers recorded and the host's own keys,
@@ -322,8 +328,8 @@ The mock differs from the app in ways a passing test can hide:
   live graph, where staged changes do not show until they are applied; only `get` also finds a
   node the run created.
 - `list({ type })` ignores `type` and returns every node.
-- `edges` and `neighbors` return the very edge objects you passed in, so changing one changes the
-  mock's graph; the app returns a copy of each edge. An edge the run creates in the mock carries no
+- `get`, `list`, `edges` and `neighbors` return the very node and edge objects you passed in, so
+  changing one changes the mock's graph; the app returns a copy of each. An edge the run creates in the mock carries no
   `data`.
 - `ctx.signal` is `undefined` unless you pass `signal`, so code that reads `ctx.signal.aborted`
   needs one in tests; `onCancel` handlers are never called.
