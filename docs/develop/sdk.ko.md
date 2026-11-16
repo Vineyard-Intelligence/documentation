@@ -110,7 +110,7 @@ ctx.graph?.deleteEdges?(ids: string[]): Promise<{ deleted: number }>
 
 `updateEdge`는 `edge:create`로 게이트됩니다(`edge:update` 스코프는 현재 아무것도 부여하지 않음). `label`을 생략하면 문구와 그 등급이 그대로 유지됩니다. `EdgeDraft`/`updateEdge`는 엣지에 병합되는 선택적 `data` 객체를 받으며, `confidence`, `confidence_source`, `label_source`, `corroborated_by`는 호스트 소유이므로 거부됩니다. 순서가 있는 노드 쌍마다 엣지는 하나이므로, 이미 연결된 쌍에 대한 `createEdge`는 엣지를 추가하는 대신 그 엣지의 레이블 변경을 제안합니다. 아무것도 바꾸지 않을 호출은 아무것도 스테이징하지 않습니다. 새 문구가 없고, `data`의 모든 키를 엣지가 이미 같은 값으로 갖고 있으면 그렇습니다. 이때 `null`은 엣지에 없는 키와 같게 봅니다. 예외는 엣지를 그린 작성자가 아닌 다른 작성자가 같은 문구로 부른 `createEdge`입니다. 그 작성자는 함께 보낸 `data`와 같은 변경 안에서 `corroborated_by`에 한 번 기록됩니다. 그러므로 플러그인은 실행할 때마다 요약 전체를 써도 되고, 검토 목록에는 요약이 바뀐 엣지만 나옵니다. 분석가는 엣지의 `data`를 적용 전에는 Review 대화상자에서, 적용 후에는 엣지의 Properties 패널 **Recorded with this link** 아래에서 읽기 전용으로 봅니다. 그러므로 소스가 링크를 어디서 언제 관측했는지(`source`, `first_seen`, `last_seen` 등)는 여기에 담습니다.
 
-`edges`와 `neighbors`로 읽어 온 엣지에는 `id`, `from_node_id`, `to_node_id`, `label`만 담깁니다. `GraphEdge` 타입에는 `data`가 선언되어 있지만 반환되지 않으므로, 플러그인은 자신이 쓴 `data`도, 엣지의 `confidence`나 `label_source`도 다시 읽을 수 없습니다.
+`edges`와 `neighbors`로 읽어 온 엣지에는 `id`, `from_node_id`, `to_node_id`, `label`과 함께 프로젝트가 가진 그대로의 `data`가 담깁니다. 작성자들이 기록한 값과 `confidence`, `confidence_source`, `label_source`, `corroborated_by` 같은 호스트 자신의 키입니다. `data`는 사본이므로 바꿔도 프로젝트에는 아무 영향이 없습니다. 쓰려면 `updateEdge`를 쓰세요. 데이터가 없는 엣지는 `data` 없이 오고, 앱의 이전 버전에서는 모든 엣지가 그렇게 오므로, `data`가 없으면 키가 없다는 뜻이 아니라 알 수 없다는 뜻으로 읽으세요. `updateEdge`는 보낸 최상위 키를 통째로 바꿉니다. 최근 행 목록처럼 엣지가 가진 목록에 더하려면 읽은 값과 합친 결과를 보내세요.
 
 <div id="net-network"></div>
 
@@ -185,7 +185,7 @@ mock은 다음 점에서 앱과 달라서, 테스트가 통과해도 이 차이�
 
 - 쓰기가 mock의 그래프에 곧바로 반영되므로, `get`, `list`, `edges`, `neighbors`는 실행이 만들거나 바꾼 것을 보고 삭제한 것은 더 이상 보지 않습니다. 앱에서는 이 읽기들이 라이브 그래프에서 오며, 스테이징된 변경은 적용되기 전까지 보이지 않습니다. 실행이 만든 노드를 찾아 주는 것은 `get`뿐입니다.
 - `list({ type })`는 `type`을 무시하고 모든 노드를 반환합니다.
-- `edges`와 `neighbors`는 전달한 엣지를 `data`까지 그대로 반환하지만, 앱은 엣지의 `data`를 반환하지 않습니다.
+- `edges`와 `neighbors`는 전달한 엣지 객체 자체를 반환하므로, 하나를 바꾸면 mock의 그래프가 바뀝니다. 앱은 엣지마다 사본을 반환합니다. 실행이 mock에서 만든 엣지에는 `data`가 없습니다.
 - `ctx.signal`은 `signal`을 전달하지 않으면 `undefined`이므로, `ctx.signal.aborted`를 읽는 코드는 테스트에서 signal을 넘겨야 합니다. `onCancel` 핸들러는 호출되지 않습니다.
 - `config`를 전달하지 않으면 `ctx.config`는 `{}`입니다. 앱에서는 분석가가 선언된 키 중 하나를 설정하기 전까지 존재하지 않습니다.
 - `ctx.service`가 없습니다. `net.fetch`는 모든 요청을 `netHandler`에 그대로 넘기며, 선언된 엔드포인트와 메서드 검사, 제한 시간, 리다이렉트 규칙이 모두 없습니다.

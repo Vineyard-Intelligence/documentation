@@ -175,9 +175,14 @@ summary changed. The analyst sees the edge's `data` read-only, in the Review dia
 and in the edge's Properties panel under **Recorded with this link**, so it is the place for where
 and when your source observed the link (`source`, `first_seen`, `last_seen`, …).
 
-Edges read back through `edges` and `neighbors` carry only `id`, `from_node_id`, `to_node_id` and
-`label`. Their `data` is not returned, although the `GraphEdge` type declares it, so a plugin cannot
-read back the `data` it wrote, nor an edge's `confidence` or `label_source`.
+Edges read back through `edges` and `neighbors` carry `id`, `from_node_id`, `to_node_id`, `label`
+and the edge's `data` as the project holds it: what its writers recorded and the host's own keys,
+such as `confidence`, `confidence_source`, `label_source` and `corroborated_by`. The `data` is a
+copy, so changing it changes nothing in the project; write with `updateEdge`. An edge that holds no
+data comes back without `data`, and so does every edge in older versions of the app, so read a
+missing `data` as not known rather than as no keys. `updateEdge` replaces each top-level key you
+send whole: to add to a list the edge holds, such as its recent rows, merge it with what you read
+and send the result.
 
 <div id="net-network"></div>
 
@@ -317,7 +322,8 @@ The mock differs from the app in ways a passing test can hide:
   live graph, where staged changes do not show until they are applied; only `get` also finds a
   node the run created.
 - `list({ type })` ignores `type` and returns every node.
-- `edges` and `neighbors` return the edges you passed in, `data` included; the app returns no edge
+- `edges` and `neighbors` return the very edge objects you passed in, so changing one changes the
+  mock's graph; the app returns a copy of each edge. An edge the run creates in the mock carries no
   `data`.
 - `ctx.signal` is `undefined` unless you pass `signal`, so code that reads `ctx.signal.aborted`
   needs one in tests; `onCancel` handlers are never called.

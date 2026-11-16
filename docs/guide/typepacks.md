@@ -312,9 +312,9 @@ plan; see
 **Solana through Helius.** The **Helius** plugin pack needs a Helius API key, and its free plan
 covers history and first funder. A Solana wallet holds SPL tokens in token accounts it owns, so a
 plain Solana RPC history leaves out a USDC payment to it; this pack's history includes the
-transactions that change those token accounts. It writes `sent to` links with `summary_helius`, and
-`recent` on the links it creates; a link already in the project keeps its own `recent` list. SOL a
-wallet wraps into its own wSOL account is not counted as a payment. On the address it writes
+transactions that change those token accounts. It writes `sent to` links with `summary_helius` and
+`recent`, the latest 20 transfers merged into the list a link already holds. SOL a wallet wraps
+into its own wSOL account is not counted as a payment. On the address it writes
 `balance`, `last_seen`, `history_examined` and `history_complete`, with `first_seen` only when the
 whole history was read. Its first-funder plugin writes `first_funder`, `first_funding_tx` and
 `activated_at`, and adds `first_funding` to the funder's `sent to` link. That key's `source` says

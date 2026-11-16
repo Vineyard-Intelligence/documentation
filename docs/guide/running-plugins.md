@@ -292,9 +292,8 @@ What lands on the graph:
   `KIM, Yong Chol (OFAC SDN 12211)`, because the list itself gives one name to several entries.
 - A re-run on an unchanged list stages nothing. On a newer list, an address that is no longer listed
   is written `sanctioned = false`, and its `listed address` link stays as the record of the earlier
-  listing. Links already in the project keep the keys they have: plugins cannot read a link's data
-  in this version of Vineyard, so the pack leaves existing links as they are, and the summary says
-  how many.
+  listing. A link already in the project keeps its label and gets only the keys the newer list
+  changes or adds, such as its programmes.
 
 Where the list comes from: OFAC's own file cannot be read from a browser, so the pack reads a public
 copy, [sanctions-mirror](https://github.com/Vineyard-Intelligence/sanctions-mirror), which rebuilds
@@ -329,9 +328,9 @@ What lands on the graph:
   and reads 0 when nothing was. A later run with a smaller cap does not raise it, because the links
   drawn before are still there.
 - A link already in the project under another label keeps that label and gets the amounts. One
-  that already has the label the plugin would write (`input to`, `output to`) is left as it is:
-  plugins cannot read a link's data, and a transaction's amounts do not change. So running the
-  plugin again adds no link rows to the review, and the summary counts the links it left alone.
+  that already has the label the plugin would write (`input to`, `output to`) gets them only when
+  what it holds differs, as when another collector drew it without amounts. A transaction's amounts
+  do not change, so running the plugin again adds no link rows to the review.
 - `history_examined` and `history_complete` are written only when every transaction read for the
   address was drawn. If a run stops part-way, for example when the key's daily requests run out, the
   address still gets its balance and dates, and the summary says which addresses to run again.
@@ -399,9 +398,9 @@ Reading what it wrote:
   arrives only as an internal transfer, and is often a wallet's first coin. Without that option,
   `history_complete` is `false` and `first_seen` is not written.
 - A link already between two addresses keeps its label, including one you wrote; the figures are
-  added to it. A new link gets the latest 20 transfers in `recent`. A link that already exists
-  keeps its `recent` as it was, because a plugin cannot read the rows already on it and would
-  otherwise replace them; the run's summary counts these links.
+  added to it. `recent` holds the latest 20 transfers. On a link that already has one, this run's
+  transfers are merged into it by transaction and asset, so the rows an earlier run or another
+  source left there are not replaced by this run's alone.
 - Address History leaves out tokens Blockscout flags as scam airdrops unless you tick
   **Include tokens Blockscout flags as scams**, which an address-poisoning case needs. Mints, burns and NFT transfers are not
   linked.

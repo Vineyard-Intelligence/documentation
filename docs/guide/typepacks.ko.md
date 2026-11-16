@@ -300,8 +300,8 @@ Arbitrum One에서, 유료 Blockscout 플랜으로는 Polygon PoS와 Base에서�
 **Helius로 보는 Solana.** **Helius** 플러그인팩에는 Helius API 키가 필요하고, 무료 플랜으로 이력과 첫
 자금 공급자를 볼 수 있습니다. Solana 지갑은 SPL 토큰을 자기가 소유한 토큰 계정에 두므로, 일반 Solana
 RPC의 지갑 이력에는 그 지갑으로 들어온 USDC 송금이 빠집니다. 이 팩의 이력은 그 토큰 계정의 잔액을 바꾼
-거래까지 읽습니다. `summary_helius`가 담긴 `sent to` 링크를 만들고, 새로 만드는 링크에는 `recent`도
-넣습니다. 프로젝트에 이미 있는 링크는 원래의 `recent` 목록을 그대로 둡니다. 지갑이 SOL을 자기 wSOL
+거래까지 읽습니다. `summary_helius`와 `recent`가 담긴 `sent to` 링크를 씁니다. `recent`는 최근 이체
+20건이며, 링크에 이미 있는 목록에 합쳐 넣습니다. 지갑이 SOL을 자기 wSOL
 계정으로 감싼(wrap) 것은 지불로 세지 않습니다. 주소에는 `balance`, `last_seen`, `history_examined`,
 `history_complete`를 쓰고, `first_seen`은 이력을 끝까지 읽었을 때만 씁니다. 첫 자금 공급자 플러그인은
 `first_funder`, `first_funding_tx`, `activated_at`을 쓰고, 공급자에서 주소로 가는 `sent to` 링크에
