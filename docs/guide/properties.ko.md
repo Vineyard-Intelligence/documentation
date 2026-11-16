@@ -303,8 +303,15 @@ Vineyard에 탐색기가 없는 네트워크(Ethereum Classic, Bitcoin Gold, Das
       thumbprint가 든 필드의 값(인증서의 `fingerprint_sha256`, PGP 키의 `fingerprint`)과, `hash`로
       선언되어 자기 노드를 식별하는 필드의 값(DOM 해시의 `hash_value`)도 마찬가지입니다. 각각 파일이
       아니라 그 인증서, 키, 페이지의 다이제스트입니다. SHA-256은
-      `threat.file_hash`가, MD5나 SHA-1은 `threat.indicator`가 됩니다. 그 유형을 정의하는 Type Pack이
-      설치되어 있지 않거나 유형의 형식이 값을 거부하면, 항목은 이유와 함께 흐리게 표시됩니다.
+      `threat.file_hash`가, MD5나 SHA-1은 `threat.indicator`가 됩니다.
+    - 비트코인, TRON, EVM 주소는 주소 형식이 정하는 네트워크의 Cryptocurrency 팩
+      `cryptocurrency.crypto_address`가 됩니다. `bc1…`은 `bitcoin`, `T…`는 `tron`, `0x` 주소는
+      `evm`, 옛 형식의 `1…`·`3…` 주소는 `unknown`입니다. 이 마지막 형식은 비트코인, 비트코인 캐시,
+      비트코인 SV에서 같은 문자열이기 때문입니다. Financial 팩만 있고 Cryptocurrency 팩이 없는
+      프로젝트에는 대신 옛 `financial.crypto_address`를 통화와 함께 제안합니다. 두 팩이 모두 없으면
+      항목은 흐리게 표시되고 `cryptocurrency.crypto_address`를 알려 줍니다.
+    - 그 유형을 정의하는 Type Pack이 설치되어 있지 않거나 유형의 형식이 값을 거부하면, 항목은 이유와
+      함께 흐리게 표시됩니다.
 - **Open in browser…**는 `http://`나 `https://`로 저장된 URL에 나오며, 열기 전에 확인을 받고 브라우저가
   접속할 호스트를 보여 줍니다. 호스트가 퓨니코드이면 유니코드 형태도 함께 보여 주므로, 비슷하게 생긴
   호스트가 드러납니다. 그 서버는 사용자의 IP 주소와 시각을 알게 되고, 페이지는 사용자의 브라우저에서

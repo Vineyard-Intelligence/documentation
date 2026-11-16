@@ -327,8 +327,16 @@ It opens a menu for that value:
       (a certificate's `fingerprint_sha256`, a PGP key's `fingerprint`), or in a field declared `hash`
       that identifies its own node (a DOM hash's `hash_value`): each is the digest of that
       certificate, key or page, not of a file. A SHA-256 becomes a `threat.file_hash`, an MD5 or
-      SHA-1 a `threat.indicator`. When no installed Type Pack defines the type, or the type's format refuses
-      the value, the item is greyed with the reason.
+      SHA-1 a `threat.indicator`.
+    - A Bitcoin, TRON or EVM address becomes the Cryptocurrency pack's
+      `cryptocurrency.crypto_address`, on the network its format settles: `bitcoin` for `bc1…`,
+      `tron` for `T…`, `evm` for a `0x` address, and `unknown` for a legacy `1…` or `3…` address,
+      which is the same string on Bitcoin, Bitcoin Cash and Bitcoin SV. A project that has the
+      Financial pack and not the Cryptocurrency pack is offered the legacy
+      `financial.crypto_address` with its currency instead. With neither pack installed, the item
+      is greyed and names `cryptocurrency.crypto_address`.
+    - When no installed Type Pack defines the type, or the type's format refuses the value, the
+      item is greyed with the reason.
 - **Open in browser…**, for a URL stored with `http://` or `https://`, asks first and names the
   host the browser will connect to, with its Unicode form when it is punycode, which is how a
   look-alike host shows itself. That server sees your IP address and the time, and the page runs in
