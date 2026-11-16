@@ -8,7 +8,9 @@ a node, a selection or empty canvas, from the ▶ button on the canvas toolbar, 
 
 Every installed plugin is listed in one panel, **Run plugins**. At the top, a scope switch picks
 **Selected (N)** — the plugins that read nodes, each seeing only the selected ones of the type it
-accepts — or **Whole graph (N)** — the plugins that take no node input at all. A plugin that
+accepts — or **Whole graph (N)** — the plugins that take no node input at all. N counts nodes: in
+**Selected** the selected nodes this run keeps (a chip you drop leaves the count), in **Whole graph**
+every node in the project. A plugin that
 declares an input type (`consumes`) runs only on nodes you picked; there is no "run it over every
 node of that type" shortcut, the same way the agent's `invoke_plugin` refuses a call without
 `node_ids`. Every plugin declares its inputs, and that declaration decides which group it appears
@@ -128,7 +130,9 @@ The right side of the dialog shows the selected row's properties. For a node, th
 node will hold once the row is applied: for a change, its stored values with the proposed ones merged
 in. A new node that is in the project by now, because a review you applied since this run staged
 added it, is merged into that node instead of being added twice; the pane then says *This node is
-already in the project* and shows the merged values. For an edge, **Recorded with this
+already in the project* and shows the merged values, with the node's own spelling of the fields that
+identify it (`Example.com` stays `Example.com` when the run found `example.com`), as the apply keeps
+it. For an edge, **Recorded with this
 link** below them lists what the edge will store besides its label and grade once the row is
 applied: for a new edge, what the plugin recorded with it, such as where and when the link was
 observed; for a change, the edge's stored values with the proposed ones in their place; for a
