@@ -31,7 +31,7 @@ Plugin Pack, Type Pack, Skill Pack을 공개 Vineyard 마켓플레이스에 게�
 
 시작하기 전에 알아둘 것:
 
-- 항목의 `identifier`는 `manifest.identifier`(또는 `typepack.identifier`)와 동일해야 하며 reverse-DNS 형식 `<본인-네임스페이스>.pluginpacks.*` / `.typepacks.*` / `.skillpacks.*`을 사용합니다 — [세 가지 콘텐츠 유형](index.md#the-three-content-types) 참조.
+- 항목의 `identifier`는 `manifest.identifier`(또는 `typepack.identifier`)와 동일해야 하며 reverse-DNS 형식 `<본인-네임스페이스>.pluginpacks.*` / `.typepacks.*` / `.skillpacks.*`을 사용합니다 — [세 가지 콘텐츠 유형](index.md#the-three-content-types) 참조. Plugin Pack 안의 모든 플러그인과 멤버는 `<본인-네임스페이스>.plugins.<name>`이어야 하고, 앱 자신의 작성자가 쓰는 id(`run.vineyard.agent`, `.merge`, `.retest`, `.value`)는 쓸 수 없습니다. 그렇지 않으면 레지스트리가 받아들였더라도 앱이 팩 전체를 거부합니다([Plugin Pack](plugin-packs.md#how-a-pack-appears-in-the-registry) 참조).
 - `ref`가 코드를 고정하는 유일한 요소입니다. 새 버전을 배포하려면 해당 팩의 파일을 그 자리에서 새 `ref`와 더 높은 `version`으로 수정하세요 — [업데이트](updates.md)를 참조하세요.
 - 파생 필드(`platforms`, `scopes_summary`, `categories`, `type_count`, …)는 전체 매니페스트/Type Pack의 투영이므로, 찾아보기 페이지가 모든 매니페스트를 가져오지 않고도 렌더링됩니다. CI가 고정된 문서에서 `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count`, `type_count`를 다시 계산해, 항목에 적힌 값 중 하나라도 불일치하면 거부합니다. `categories`와 Skill Pack의 `applies_to`/`requires`는 다시 계산하지 않으므로 직접 정확하게 유지하세요.
 

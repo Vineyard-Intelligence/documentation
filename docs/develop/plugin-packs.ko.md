@@ -58,7 +58,7 @@ run.vineyard.plugins.schrodingers_node
 
 평탄화 후에는 특별한 "팩" 런타임 객체가 없습니다 — 오직 플러그인만 있습니다. Korean Roulette은 선언된 스코프(`node:read`, `node:delete`, `edge:read`, `edge:delete`)만으로 자체 샌드박스 Web Worker에서 실행되며, 6개가 하나의 파일로 배포되었음에도 다른 5개와 독립적입니다.
 
-## 레지스트리에서 팩이 표시되는 방식
+## 레지스트리에서 팩이 표시되는 방식 {#how-a-pack-appears-in-the-registry}
 
 Marketplace 레지스트리는 **메타데이터 전용**(코드가 아닌 포인터 저장)이며, 각 항목은 작성자 저장소에 있는 전체 매니페스트의 간소화된 투영입니다. 팩은 여전히 **단일 레지스트리 항목**을 차지하며, 팩 식별자로 키가 지정됩니다. 두 개의 파생 필드가 팩을 목록에서 이해할 수 있게 만듭니다:
 
@@ -66,6 +66,8 @@ Marketplace 레지스트리는 **메타데이터 전용**(코드가 아닌 포�
 - `scopes_summary` — 포함된 플러그인 권한의 롤업(예: `graph_write: true`). 각 매니페스트를 가져오지 않고도 카드가 전체 팩의 기능을 요약할 수 있습니다.
 
 팩이 제공하는 플러그인은 `repo@ref/path`의 JSON 매니페스트에서 읽습니다(content_type `vineyard:pluginpack`이며 `identifier`, `name`, `version`, `summary`와 `description`, 번들을 가리키는 `platforms.web.entry`, 멤버 매니페스트의 `plugins` 배열을 가짐). `summary`는 팩의 한 줄, `description`은 팩의 페이지입니다([팩의 한 줄과 페이지](publishing.md#pack-page) 참고). 각 멤버는 자기 `description`을 그대로 가지며, 에이전트는 그 글을 보고 플러그인을 고릅니다. 멤버가 실행될 때 클라이언트는 번들을 가져와 레지스트리의 다이제스트와 대조한 뒤 새 워커에서 임포트하고, 기본 내보내기를 평탄화하고 식별자가 일치하는 멤버를 고릅니다 — 따라서 JSON의 모든 멤버는 같은 식별자로 번들 안에 있어야 합니다. 자체 `platforms.web.entry`가 없는 멤버는 팩의 것을 상속하며, 모듈을 가리키지 않는 `"inline"` entry와 고정 커밋 안의 경로가 아닌 entry는 레지스트리 CI가 거부합니다([배포](distribution.md#entry) 참조). 정확한 레지스트리 항목 형태 — `plugin_count`, `scopes_summary`, 간소화된 투영 — 는 [레지스트리에 배포하기](publishing.md)에 문서화되어 있습니다.
+
+클라이언트는 팩을 불러오기 전에 문서의 모든 식별자를 그 형태와 대조하며, 레지스트리 포인터와 dev override 모두 마찬가지입니다. 팩의 식별자는 `<reverse-DNS>.pluginpacks.<name>`, 각 플러그인과 멤버의 식별자는 `<reverse-DNS>.plugins.<name>`이어야 합니다. 앱 자신의 작성자가 스테이징할 때 쓰는 id — `run.vineyard.agent`(AI 에이전트), `run.vineyard.merge`(병합), `run.vineyard.retest`(재검증), `run.vineyard.value`(값 메뉴의 **New node**) — 는 어떤 플러그인도 쓸 수 없습니다. 앱이 그 id로 자신의 쓰기와 플러그인의 쓰기를 구분하기 때문입니다. 이를 어기는 식별자가 하나라도 있는 문서는 통째로 거부됩니다. 그 플러그인은 하나도 목록에 나오거나 실행되지 않고, 분석가에게는 그 팩을 알리며 고친 릴리스를 요청하라는 빨간 알림이 나옵니다. 레지스트리 스키마는 이미 이 id들을 금지하지만, 레지스트리 CI가 고정하는 문서에 스키마를 적용하지 않으므로 클라이언트가 확인합니다.
 
 ## 팩을 사용해야 하는 경우
 

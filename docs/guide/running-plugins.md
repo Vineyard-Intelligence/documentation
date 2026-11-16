@@ -26,6 +26,11 @@ You can tick several plugins and press **Run (N)**. Once there are more than 6 p
 box searches names, descriptions and types; its **×** clears it. Selection chips can be dropped from this run with their
 ×, which leaves the canvas selection unchanged.
 
+A pack in which a plugin is not named as a plugin, or is named as one of the app's own writers (the
+AI agent, a merge, a re-verification, **New node**), is not loaded at all, and none of its plugins is
+listed or run. A red notice names it: *1 pack was not loaded — … so none of it was run. It needs a
+corrected release; tell the pack author or the registry maintainers.*
+
 <figure class="vy-shot" markdown="span">
   ![Run plugins panel](../assets/guide/run-plugins-panel.webp){ width="800" loading=lazy }
   <figcaption>Run plugins opened from a right-click on example.com: the scope switch, the selection chip, and the plugins that match it.</figcaption>

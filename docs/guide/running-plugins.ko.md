@@ -24,6 +24,11 @@
 유형을 검색하는 필터 상자가 나타나고, 그 **×**로 비웁니다. 선택 칩은 ×로 이번 실행에서만 뺄 수
 있으며, 캔버스 선택은 그대로 유지됩니다.
 
+플러그인이 플러그인 식별자로 이름 붙지 않았거나 앱 자신의 작성자(AI 에이전트, 병합, 재검증,
+**New node**)의 식별자를 쓰는 팩은 아예 불러오지 않으며, 그 팩의 플러그인은 목록에 나오지도 실행되지도
+않습니다. 빨간 알림이 그 팩을 알립니다. *1 pack was not loaded — … so none of it was run. It needs a
+corrected release; tell the pack author or the registry maintainers.*
+
 <figure class="vy-shot" markdown="span">
   ![Run plugins 패널](../assets/guide/run-plugins-panel.webp){ width="800" loading=lazy }
   <figcaption>example.com을 우클릭해 연 Run plugins 패널: 범위 전환, 선택 칩, 선택과 맞는 플러그인.</figcaption>

@@ -31,7 +31,7 @@ Submissions go to **`Vineyard-Intelligence/registry`**. The repo carries *pointe
 
 A few things worth knowing going in:
 
-- The `identifier` in the entry must equal `manifest.identifier` (or `typepack.identifier`) and uses the reverse-DNS form `<your-namespace>.pluginpacks.*` / `.typepacks.*` / `.skillpacks.*` — see [the three content types](index.md#the-three-content-types).
+- The `identifier` in the entry must equal `manifest.identifier` (or `typepack.identifier`) and uses the reverse-DNS form `<your-namespace>.pluginpacks.*` / `.typepacks.*` / `.skillpacks.*` — see [the three content types](index.md#the-three-content-types). Inside a Plugin Pack, every plugin and member is `<your-namespace>.plugins.<name>`, and none may be one of the ids the app's own writers use (`run.vineyard.agent`, `.merge`, `.retest`, `.value`): the app refuses the whole pack otherwise, whatever the registry accepted (see [Plugin Packs](plugin-packs.md#how-a-pack-appears-in-the-registry)).
 - `ref` is the only thing pinning your code. To ship a new version, edit your pack's file in place with the new `ref` and a higher `version` — see [Updates](updates.md).
 - Derived fields (`platforms`, `scopes_summary`, `categories`, `type_count`, …) are projections of the full manifest/Type Pack so the browse page renders without fetching every manifest. CI recomputes `scopes_summary`, `platforms`, `services`, `plugin_count`, `desktop_only`, `icon`, `section_count` and `type_count` from the pinned document and rejects the entry if any it carries disagree. `categories` and a Skill Pack's `applies_to`/`requires` are not recomputed, so keep them accurate yourself.
 
