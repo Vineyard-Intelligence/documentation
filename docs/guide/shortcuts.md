@@ -85,7 +85,9 @@ layout again is what the key does.
   dialog, or right after you clicked in one of them, leaves the graph alone: **⌫** (**Backspace**)
   after you edit a value in the Properties panel never deletes the selection.
 - **Esc** closes one thing per press, the one in front first, and once nothing is left open it
-  clears the selection. [Right-click menus](canvas.md#right-click-menus) gives the order.
+  clears the selection. An open menu of the menu bar (**Project**, **Edit**, **View**, **Run**)
+  closes on its own, before the panel behind it. [Right-click menus](canvas.md#right-click-menus)
+  gives the order.
 - **⌘C** (**Ctrl+C**) copies the selected nodes' labels only while you are not typing in a field,
   no text on the page is selected and no dialog is open; otherwise it copies what it always does.
   See [Copying labels](canvas.md#copying-labels).
@@ -140,7 +142,8 @@ layout again is what the key does.
   [Tasks & runs](tasks.md#closing-and-deleting-a-conversation)).
 - **The Review dialog.** **/** goes to **Filter by keyword**. **⌘↵** (**Ctrl+Enter**) applies the
   ticked changes, also from the **Why reject?** field, but only while **Apply** is shown and has
-  something to apply. **Esc** closes the dialog; the run and your ticks stay (see
+  something to apply. **Esc** closes the dialog, also while nothing has focus, as right after
+  **Apply**; the run and your ticks stay (see
   [Running plugins](running-plugins.md#reviewing-a-runs-changes)).
 - **The Properties panel.** **Tab** and **Shift+Tab** move to the next and previous field. In a
   one-line field, a number and a date included, **Enter** saves and **Esc** puts the value back as

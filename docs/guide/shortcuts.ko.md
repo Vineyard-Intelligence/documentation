@@ -82,7 +82,8 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
   그곳을 클릭한 직후에 누른 키는 그래프를 건드리지 않습니다. Properties 패널에서 값을 편집한 뒤
   **⌫**(**Backspace**)를 눌러도 선택이 지워지지 않습니다.
 - **Esc**는 한 번 누를 때마다 앞에 있는 것부터 하나씩 닫고, 더 닫을 것이 없으면 선택을 해제합니다.
-  순서는 [우클릭 메뉴](canvas.md#right-click-menus)에 있습니다.
+  메뉴 바의 메뉴(**Project**, **Edit**, **View**, **Run**)가 열려 있으면 그 뒤의 패널보다 먼저 그
+  메뉴만 닫힙니다. 순서는 [우클릭 메뉴](canvas.md#right-click-menus)에 있습니다.
 - **⌘C**(**Ctrl+C**)는 입력칸에 입력하고 있지 않고, 화면에 선택된 텍스트가 없고, 대화상자가 열려 있지
   않을 때만 선택한 노드의 라벨을 복사합니다. 그 밖에는 원래 복사하던 것을 복사합니다.
   [라벨 복사하기](canvas.md#라벨-복사하기)를 참조하세요.
@@ -133,8 +134,9 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
   실행](tasks.md#closing-and-deleting-a-conversation) 참조).
 - **리뷰 대화상자.** **/**는 **Filter by keyword**로 이동합니다. **⌘↵**(**Ctrl+Enter**)는 체크한 변경을
   **Apply**합니다. **Why reject?** 입력칸에서도 동작하지만, **Apply** 버튼이 있고 적용할 것이 있을
-  때만 동작합니다. **Esc**는 대화상자를 닫으며, 실행과 체크 상태는 남습니다([플러그인
-  실행](running-plugins.md#reviewing-a-runs-changes) 참조).
+  때만 동작합니다. **Esc**는 **Apply**를 누른 직후처럼 아무것에도 포커스가 없을 때도 대화상자를
+  닫으며, 실행과 체크 상태는 남습니다([플러그인 실행](running-plugins.md#reviewing-a-runs-changes)
+  참조).
 - **Properties 패널.** **Tab**과 **Shift+Tab**은 다음 칸과 이전 칸으로 옮깁니다. 숫자와 날짜를 포함한
   한 줄 입력칸에서 **Enter**는 저장하고 **Esc**는 저장된 값으로 되돌립니다
   ([값 편집하기](properties.md#editing-a-value) 참조).

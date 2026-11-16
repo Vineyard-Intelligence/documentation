@@ -23,7 +23,7 @@ in:
 - **Desktop only** → installed, but not runnable in a browser.
 
 You can tick several plugins and press **Run (N)**. Once there are more than 6 plugins, a filter
-box searches names, descriptions and types. Selection chips can be dropped from this run with their
+box searches names, descriptions and types; its **×** clears it. Selection chips can be dropped from this run with their
 ×, which leaves the canvas selection unchanged.
 
 <figure class="vy-shot" markdown="span">
@@ -143,8 +143,10 @@ changes came from one of its conversations.
 Closing the dialog with the X or **Esc** keeps the run waiting for review, and keeps your choices
 with it: what you unticked or ticked back on, and what you typed in **Why reject?**, are still there
 when you reopen the review, even after opening another project and coming back. **Esc** closes the
-dialog from anywhere in it, except in the **Filter by keyword** field while it holds text, where it
-clears the filter first.
+dialog from anywhere in it, and also while nothing has focus, as right after **Apply**. In the
+**Filter by keyword** field while it holds text, it clears the filter first, as the field's **×**
+does. An Esc right after a click in another panel, such as the AI agent's, is that panel's; Run
+plugins does not close on Esc while a review is open.
 
 A run waiting for review is also kept on this device, under your account, so a reload, a restart, an
 app update or a crash does not lose it. The next time you open the project it is waiting for review
