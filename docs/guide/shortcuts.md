@@ -24,12 +24,16 @@ Press **⌘K** (**Ctrl+K** on Windows and Linux), even while you are typing in a
 the project's menu bar, the canvas toolbar and the right-click menus by the name the menu gives them,
 so `export` finds **Export graph (JSON)** and `grid` finds **Grid**. Where two menus name one command
 differently, either name finds it: `merge selected` finds **Merge nodes…**, the Edit menu's **Merge
-selected nodes…**. The controls for hiding and saved views, the toolbar's **Filter** and the View
-menu's **Show all hidden** and **Saved views**, are not in the palette. Besides the commands it
-offers:
+selected nodes…**. The controls for [hiding](canvas.md#hiding) and
+[saved views](canvas.md#saved-views) are commands too: **Filter the canvas…** opens the toolbar's
+**Filter** panel, **Show all hidden** clears its rules (greyed with *Nothing is hidden on the
+canvas.* while nothing is), and **Save view…** opens the *Saved views* dialog. Besides the commands it offers:
 
 - the **Settings** sections: `keys` finds **Settings: Keys & Secrets**;
 - the layouts, such as **Layout: Stress (distance-preserving)**, with the one in use ticked;
+- the project's saved views on this device, such as **Saved view: For the report**, opened as
+  **View ▸ Saved views** opens one. They are listed wherever views can be kept, so not on a project
+  opened from its link while signed out;
 - a new node of any installed type, such as **Add node: Domain**, added and selected as the
   [Types panel](typepacks.md) adds one;
 - a plugin to run, such as **Run WHOIS on the selection**, offered while a node it reads is selected;
@@ -44,7 +48,7 @@ offers:
   choosing one selects it and centres it.
 
 With nothing typed, the commands you ran most recently come first; the palette remembers the last
-eight on this device, never a node. **↓** and **↑** move, **Enter** runs the highlighted command, and
+eight on this device, never a node or a saved view. **↓** and **↑** move, **Enter** runs the highlighted command, and
 **Esc** closes the palette. The Enter that finishes a Korean syllable only finishes the syllable. A
 command that cannot run right now is shown greyed with the reason the menu gives, for example
 *Select something first to expand from*. A command that cannot be undone never runs on Enter alone:

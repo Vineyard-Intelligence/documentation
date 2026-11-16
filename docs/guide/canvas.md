@@ -9,7 +9,7 @@ The view controls are exposed twice, and both stay in sync:
 - **On-canvas toolbar** — a compact vertical bar pinned to the top-left edge of the canvas, for the controls you reach for most while working.
 - **Top menu bar** — the `Project`, `Edit`, and `View` menus, which add data and navigation actions alongside the view toggles (a fourth menu, `Run`, launches plugins and the AI agent — see [Running plugins](running-plugins.md)).
 
-The commands of the menu bar, the toolbar and the right-click menus can also be found by their names in the **command palette** (**⌘K**, or **Ctrl+K** on Windows and Linux), together with the layouts, the types to add a node of and the nodes themselves; see [Command palette](shortcuts.md#command-palette). The right-click menus' commands act on the selection there. The controls for [hiding](#hiding) and [saved views](#saved-views) are the exception: the toolbar's **Filter**, **View ▸ Show all hidden** and **View ▸ Saved views** are not in the palette.
+The commands of the menu bar, the toolbar and the right-click menus can also be found by their names in the **command palette** (**⌘K**, or **Ctrl+K** on Windows and Linux), together with the layouts, the types to add a node of and the nodes themselves; see [Command palette](shortcuts.md#command-palette). The right-click menus' commands act on the selection there. The controls for [hiding](#hiding) and [saved views](#saved-views) are there too: **Filter the canvas…** opens the toolbar's **Filter** panel, **Show all hidden** is the View menu's, **Save view…** opens the *Saved views* dialog, and each saved view of the project is a row of its own, such as **Saved view: For the report**.
 
 ## View controls (toolbar + View menu)
 
@@ -190,6 +190,8 @@ On a large graph, much of what is drawn has nothing to do with the question you 
 
 An edge is also hidden when either of its ends is. **Show all** in the panel, or **View ▸ Show all hidden**, clears every rule.
 
+The panel opens with the focus in **Label contains…**, so you can start typing at once, and closing it puts the focus back where it was. The [command palette](shortcuts.md#command-palette) reaches both: **⌘K** (**Ctrl+K**), then **Filter the canvas…** or **Show all hidden**, which is greyed with *Nothing is hidden on the canvas.* while nothing is.
+
 The same rules can be set in two other places. In the **Types** panel each type has a box beside it, ticked while its nodes are shown; a narrow panel showing only icons dims a hidden type instead. In the [legend](#legend), a type row's eye and a grade row do the same as the panel's boxes.
 
 The footer under the canvas counts what is hidden beside the project's totals, for example *Nodes: 400 (120 hidden) | Edges: 900 (310 hidden)*. The **Filter** button stays highlighted while a rule is set, and its tooltip says how much is hidden.
@@ -208,7 +210,7 @@ Hiding changes only what the canvas draws:
 Node positions, the zoom, the hiding rules and the panel layout all start over when you reload the page or open the project again, so an arrangement made for a report or a briefing would be lost. **View ▸ Saved views** keeps it under a name.
 
 - **Save view…** opens the *Saved views* dialog. Type a name and press **Save** or Enter. The view keeps where every node is, hidden nodes included; the zoom and the point at the center of the canvas; the [hiding rules](#hiding); and the panel layout. If the project already has a view with that name (ignoring case), saving replaces it, and the button reads **Replace**.
-- The project's views are listed under **Save view…**, newest first. Choose one to open it. The dialog lists them too, each with **Open** and a delete button that asks once more before deleting.
+- The project's views are listed under **Save view…**, newest first. Choose one to open it. The dialog lists them too, each with **Open** and a delete button that asks once more before deleting. In the [command palette](shortcuts.md#command-palette), **Save view…** opens the dialog and each view is a row such as **Saved view: For the report**, which opens it as the menu does.
 - Opening a view puts the nodes back where they were, sets the same zoom on the same point, sets the hiding rules it kept, and restores the panel layout. The canvas shows *Opening view…* while it redraws.
     - A node the view has no place for, such as one added after it was saved, stays where it is. A node that has no place on the canvas either, such as one added while its type was hidden, is put next to the nodes it links to, or beside the graph if it links to none or there is no room near them, so the rest of the arrangement does not move. A node deleted since is skipped. A message says how many of each there were.
     - If the saved panel layout no longer fits the workspace (it lacks one of the panels, for example), the panels are left as they are and the message says so. The rest of the view still opens.

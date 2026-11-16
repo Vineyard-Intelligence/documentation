@@ -21,13 +21,18 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
 일을 입력합니다. 입력칸에 입력하는 중에도 열립니다. 팔레트는 프로젝트의 메뉴 바, 캔버스 도구 모음,
 우클릭 메뉴에 있는 명령을 메뉴에 적힌 이름으로 찾습니다. `export`는 **Export graph (JSON)**을,
 `grid`는 **Grid**를 찾습니다. 두 메뉴가 한 명령을 다르게 부르면 어느 이름으로도 찾습니다.
-`merge selected`는 Edit 메뉴의 **Merge selected nodes…**인 **Merge nodes…**를 찾습니다. 숨기기와 저장된 뷰의
-컨트롤, 곧 도구 모음의 **Filter**와 View 메뉴의 **Show all hidden**, **Saved views**는 팔레트에
-없습니다. 명령 말고도 다음을 찾을 수 있습니다.
+`merge selected`는 Edit 메뉴의 **Merge selected nodes…**인 **Merge nodes…**를 찾습니다. [숨기기](canvas.md#숨기기)와
+[저장된 뷰](canvas.md#저장된-뷰)의 컨트롤도 팔레트의 명령입니다. **Filter the canvas…**는
+도구 모음의 **Filter** 패널을 열고, **Show all hidden**은 숨기기 규칙을 지우며(숨긴 것이 없으면
+*Nothing is hidden on the canvas.*와 함께 흐리게 나옵니다), **Save view…**는 *Saved views* 대화상자를
+엽니다. 명령 말고도 다음을 찾을 수 있습니다.
 
 - **Settings**의 각 섹션: `keys`는 **Settings: Keys & Secrets**를 찾습니다.
 - 레이아웃: **Layout: Stress (distance-preserving)** 같은 이름이며, 지금 쓰는 레이아웃에 체크 표시가
   있습니다.
+- 이 기기에 있는 프로젝트의 저장된 뷰: **Saved view: For the report** 같은 이름이며, **View ▸ Saved
+  views**에서처럼 그 뷰를 엽니다. 뷰를 저장할 수 있는 곳에서만 나오므로, 로그인하지 않고 링크로 연
+  프로젝트에서는 나오지 않습니다.
 - 설치된 타입의 새 노드: **Add node: Domain** 같은 이름이며, [Types 패널](typepacks.md)에서처럼
   노드를 만들고 선택합니다.
 - 실행할 플러그인: **Run WHOIS on the selection** 같은 이름이며, 그 플러그인이 읽는 노드가 선택되어
@@ -43,7 +48,7 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
   그 노드를 선택하고 가운데로 옮깁니다.
 
 아무것도 입력하지 않으면 최근에 실행한 명령이 먼저 나옵니다. 팔레트는 이 기기에서 마지막 여덟 개를
-기억하며, 노드는 기억하지 않습니다. **↓**와 **↑**로 옮기고, **Enter**로 강조된 명령을 실행하고,
+기억하며, 노드와 저장된 뷰는 기억하지 않습니다. **↓**와 **↑**로 옮기고, **Enter**로 강조된 명령을 실행하고,
 **Esc**로 팔레트를 닫습니다. 한글 음절을 끝내는 Enter는 음절만 끝냅니다. 지금 실행할 수 없는 명령은
 메뉴와 같은 이유와 함께 흐리게 나옵니다. 예를 들면 *Select something first to expand from*입니다.
 되돌릴 수 없는 명령은 Enter 한 번으로 실행되지 않습니다. **Delete**와 **Disconnect all**은 우클릭
