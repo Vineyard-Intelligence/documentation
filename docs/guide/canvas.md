@@ -192,7 +192,7 @@ An edge is also hidden when either of its ends is. **Show all** in the panel, or
 
 The panel opens with the focus in **Label contains…**, so you can start typing at once, and closing it puts the focus back where it was. The [command palette](shortcuts.md#command-palette) reaches both: **⌘K** (**Ctrl+K**), then **Filter the canvas…** or **Show all hidden**, which is greyed with *Nothing is hidden on the canvas.* while nothing is.
 
-The same rules can be set in two other places. In the **Types** panel each type has a box beside it, ticked while its nodes are shown; a narrow panel showing only icons dims a hidden type instead. In the [legend](#legend), a type row's eye and a grade row do the same as the panel's boxes.
+The [legend](#legend) sets the same rules from the canvas: a type row's eye hides that type, a hidden type's row shows it again when clicked, and a grade row hides or shows the edges with that grade. The **Types** panel only shows a hidden type, dimmed, with *Hidden on the canvas* in its tooltip; it has no control of its own for it.
 
 The footer under the canvas counts what is hidden beside the project's totals, for example *Nodes: 400 (120 hidden) | Edges: 900 (310 hidden)*. The **Filter** button stays highlighted while a rule is set, and its tooltip says how much is hidden.
 
