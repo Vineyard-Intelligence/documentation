@@ -51,7 +51,11 @@ agent reads first), every **section**, and the **starters** grouped by category 
 `Corroborate`, `Report`, …) — and shows the one you pick on the right. The **Filter sections and
 starters…** box above the list shows only the sections and starters that contain what you type. The
 panel opens on the first starter, and like the other panels it can be moved and resized while you
-keep working on the graph; **Esc** closes it.
+keep working on the graph; **Esc** closes it, after first closing a comparison or going back from
+editing to reading. With a dialog open over the panel, such as **Saved views** or **Settings ▸ Keys &
+Secrets**, one Esc closes only the dialog, also right after you clicked a saved view's delete button
+or **Keep**, or edited a key, and the panel stays as it was. While a review is open, an Esc pressed in
+the panel, or right after you clicked in it, closes the panel and leaves the review open.
 
 <figure class="vy-shot" markdown="span">
   ![Skill pack panel](../assets/guide/skillpack-panel.webp){ width="800" loading=lazy }

@@ -37,7 +37,7 @@ Skill Pack은 플러그인과 정확히 같은 방식으로 [마켓플레이스]
 
 ## Skill Pack 사용
 
-상단 메뉴 바에서 **Run ▸ Skill packs**를 열고 팩을 고릅니다. **Skill pack** 패널은 왼쪽에 팩의 구성 — **Overview**(무엇에 관한 팩인지, 어떤 플러그인이 필요한지, 에이전트가 먼저 읽는 본문), 모든 **섹션**, 카테고리(`Find accounts`, `Corroborate`, `Report`, …)별 **starter** — 을 나열하고, 고른 항목을 오른쪽에 보여 줍니다. 목록 위의 **Filter sections and starters…** 상자에 입력하면 그 내용이 들어 있는 섹션과 starter만 보입니다. 처음 열면 첫 번째 starter가 선택되어 있고, 다른 패널처럼 그래프 작업을 하면서 옮기거나 크기를 바꿀 수 있으며, **Esc**를 누르면 닫힙니다.
+상단 메뉴 바에서 **Run ▸ Skill packs**를 열고 팩을 고릅니다. **Skill pack** 패널은 왼쪽에 팩의 구성 — **Overview**(무엇에 관한 팩인지, 어떤 플러그인이 필요한지, 에이전트가 먼저 읽는 본문), 모든 **섹션**, 카테고리(`Find accounts`, `Corroborate`, `Report`, …)별 **starter** — 을 나열하고, 고른 항목을 오른쪽에 보여 줍니다. 목록 위의 **Filter sections and starters…** 상자에 입력하면 그 내용이 들어 있는 섹션과 starter만 보입니다. 처음 열면 첫 번째 starter가 선택되어 있고, 다른 패널처럼 그래프 작업을 하면서 옮기거나 크기를 바꿀 수 있으며, **Esc**를 누르면 닫힙니다. 비교 중이거나 편집 중이면 Esc가 먼저 비교를 닫거나 편집에서 읽기로 돌아갑니다. **Saved views**나 **Settings ▸ Keys & Secrets**처럼 패널 위에 대화상자가 열려 있으면, Esc 한 번은 그 대화상자만 닫고 패널은 그대로 둡니다. 저장된 뷰의 삭제 버튼이나 **Keep**을 누른 직후, 또는 키를 편집한 직후에도 마찬가지입니다. 리뷰가 열려 있는 동안 패널 안에서 누르거나 패널을 클릭한 직후에 누른 Esc는 패널을 닫고 리뷰는 그대로 둡니다.
 
 <figure class="vy-shot" markdown="span">
   ![Skill pack 패널](../assets/guide/skillpack-panel.webp){ width="800" loading=lazy }

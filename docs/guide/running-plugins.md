@@ -70,7 +70,8 @@ runs a plugin you did not choose here.
 
 When you tick a plugin that takes input, its fields appear under it in the Run plugins panel —
 text, number, switch, dropdown, or a file drop zone. Required fields are marked * and **Run** stays
-disabled until they are filled. The nodes a plugin runs on come from the panel's scope, not from
+disabled until they are filled. **Esc** in a dropdown's open list closes only the list, so the plugins
+you ticked and what you filled in stay; the next Esc closes the panel. The nodes a plugin runs on come from the panel's scope, not from
 these fields. File inputs accept at most 25 MB per file, 50 files and 250 MB per run.
 
 Plugins that need stored settings (for example an API key or gateway URL) show a collapsible
@@ -143,10 +144,14 @@ changes came from one of its conversations.
 Closing the dialog with the X or **Esc** keeps the run waiting for review, and keeps your choices
 with it: what you unticked or ticked back on, and what you typed in **Why reject?**, are still there
 when you reopen the review, even after opening another project and coming back. **Esc** closes the
-dialog from anywhere in it, and also while nothing has focus, as right after **Apply**. In the
-**Filter by keyword** field while it holds text, it clears the filter first, as the field's **×**
-does. An Esc right after a click in another panel, such as the AI agent's, is that panel's; Run
-plugins does not close on Esc while a review is open.
+dialog from anywhere in it, and also while nothing has focus, as right after **Apply**. That holds
+after an **Apply** from the keyboard too (**Tab** to **Apply** and **Enter**, or **⌘Enter** /
+**Ctrl+Enter** in **Why reject?**), whatever you clicked last: the AI agent, Run plugins or Skill pack
+panel behind the review stays open. In the **Filter by keyword** field while it holds text, it clears
+the filter first, as the field's **×** does. An Esc right after a click in another panel, such as the
+AI agent's, is that panel's. While a review is open, an Esc pressed in Run plugins or the Skill pack
+panel, or right after a click in it, closes that panel and leaves the review open; an Esc from
+anywhere else leaves them open.
 
 A run waiting for review is also kept on this device, under your account, so a reload, a restart, an
 app update or a crash does not lose it. The next time you open the project it is waiting for review
