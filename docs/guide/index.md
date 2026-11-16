@@ -91,6 +91,12 @@ Track in-progress runs, cancel them, and review what they staged before it is ap
 Select, widen by a hop, run plugins and review without leaving the keyboard, and how the keys behave while you type Korean.
 → [Keyboard shortcuts](shortcuts.md)
 </div>
+
+<div class="vy-card" markdown>
+### :material-routes: Investigation recipes
+Follow one investigation from start to finish: a phishing domain, an account or handle, a crypto address, and reading the review and its evidence grades.
+→ [Investigation recipes](recipes/index.md)
+</div>
 </div>
 
 ## Next / See also

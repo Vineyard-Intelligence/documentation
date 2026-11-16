@@ -134,6 +134,11 @@ plugins:
             "The Properties panel": Properties 패널
             "Tasks & runs": 작업 및 실행
             "Keyboard shortcuts": 단축키
+            Recipes: 조사 레시피
+            "From a phishing domain to its infrastructure": 피싱 도메인에서 인프라까지
+            "Pivoting on an account or handle": 계정·핸들 피벗
+            "Tracing a crypto address": 암호화폐 주소 추적
+            "Reading the review and evidence grades": 리뷰와 증거 등급 읽기
             "Working with Skill Packs": Skill Pack 사용하기
             "Developer Guide": 개발자 가이드
             "Architecture & principles": 아키텍처 및 원칙
@@ -173,6 +178,12 @@ nav:
       - The Properties panel: guide/properties.md
       - Tasks & runs: guide/tasks.md
       - Keyboard shortcuts: guide/shortcuts.md
+      - Recipes:
+          - guide/recipes/index.md
+          - From a phishing domain to its infrastructure: guide/recipes/phishing-domain.md
+          - Pivoting on an account or handle: guide/recipes/account-pivot.md
+          - Tracing a crypto address: guide/recipes/crypto-trace.md
+          - Reading the review and evidence grades: guide/recipes/review-and-grades.md
   - Developer Guide:
       - develop/index.md
       - Architecture & principles: develop/architecture.md
