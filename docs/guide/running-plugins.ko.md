@@ -347,11 +347,21 @@ Blockchair API 키가 필요하며, 네 플러그인에 한 번만 입력합니�
 
 ## Blockscout PRO로 자금 추적하기 {#blockscout-pro}
 
-**Blockscout PRO** 플러그인 팩은 [dev.blockscout.com](https://dev.blockscout.com/)에서 받은 본인의
-무료 키로 EVM 체인을 읽습니다. Base, OP Mainnet, Ethereum, Arbitrum One, Polygon PoS, Ethereum
-Classic입니다. Etherscan 무료 키가 Base와 OP Mainnet을 다루지 않으므로, 이 두 체인이 이 팩을 쓰는
-이유입니다. 데스크탑 앱에서만 실행됩니다. 키는 플러그인 하나의 설정에 한 번만 붙여 넣으면 네
-플러그인이 함께 씁니다.
+**Blockscout PRO** 플러그인 팩은 본인의 Blockscout PRO API 키로 EVM 체인을 읽습니다. 키는
+[dev.blockscout.com](https://dev.blockscout.com/)에서 무료로 받습니다. Etherscan 무료 키가 OP
+Mainnet을 다루지 않으므로, OP Mainnet이 이 팩을 쓰는 이유입니다. 데스크탑 앱에서만 실행됩니다. 키는
+플러그인 하나의 설정에 한 번만 붙여 넣으면 네 플러그인이 함께 씁니다.
+
+키로 읽을 수 있는 체인은 키의 Blockscout 플랜이 정합니다. 무료 플랜은 Ethereum, OP Mainnet,
+Ethereum Classic, Arbitrum One을 초당 요청 5건, 하루 100,000크레딧까지 읽습니다. Polygon PoS와
+Base는 유료 플랜(Builder 이상)이 필요합니다. Blockscout는 2026-10-01부터 두 체인을 무료 플랜에서
+뺀다고 발표했고, 2026-11-16에 측정했을 때 무료 플랜 키는 두 체인 모두 거부되었습니다. 플랜은
+바뀌므로 팩은 체인 목록을 따로 두지 않고 Blockscout의 응답을 따릅니다.
+
+- 키의 플랜에 들어 있지 않은 체인이 있으면, 실행은 그 체인의 주소와 거래를 건너뛰고 나머지를
+  계속 진행합니다. 요약에는 그 체인, 그 체인이 들어 있는 플랜, 건너뛴 수가 나옵니다.
+- 키가 없거나 Blockscout가 받아 주지 않는 키이면 실행이 멈춥니다. 그날의 크레딧을 다 써도
+  멈춥니다.
 
 | 플러그인 | 실행 대상 | 쓰는 것 |
 |---|---|---|
@@ -385,8 +395,8 @@ Classic입니다. Etherscan 무료 키가 Base와 OP Mainnet을 다루지 않으
 - EIP-7702로 코드에 위임한 지갑은 `eoa`로 쓰고, 위임 대상은 `eip7702_delegate`에 적습니다.
 - Blockscout Transaction은 실패한 거래에 `revert_reason`을 씁니다. 예:
   `execution reverted: V3TooLittleReceived()`.
-- 무료 플랜은 하루 100,000크레딧이고, 조회 한 번에 20–40크레딧이 듭니다. 실행 요약에 쓴 크레딧이
-  나옵니다. 조회한 모든 주소와 거래는 Blockscout가 봅니다.
+- 조회 한 번에 20–40크레딧이 들고, 실행 요약에 쓴 크레딧이 나옵니다. 조회한 모든 주소와 거래는
+  Blockscout가 봅니다.
 
 ## Chaos 레퍼런스 팩
 

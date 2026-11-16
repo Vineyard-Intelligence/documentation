@@ -293,8 +293,8 @@ XRP Ledger, TON입니다. Polygon, Arbitrum, Base의 이력은 키가 필요한 
 그와 같은 구조의 체인 여섯 개에서 씁니다. [Blockchair로 코인 따라가기](running-plugins.md#blockchair)를
 보세요.
 
-**Blockscout PRO** 플러그인 팩은 본인의 무료 키로 Base, OP Mainnet, Ethereum, Arbitrum One,
-Polygon PoS, Ethereum Classic에서 이 유형과 링크를 채웁니다.
+**Blockscout PRO** 플러그인 팩은 본인의 무료 키로 Ethereum, OP Mainnet, Ethereum Classic,
+Arbitrum One에서, 유료 Blockscout 플랜으로는 Polygon PoS와 Base에서도 이 유형과 링크를 채웁니다.
 [Blockscout PRO로 자금 추적하기](running-plugins.md#blockscout-pro)를 보세요.
 
 **Helius로 보는 Solana.** **Helius** 플러그인팩에는 Helius API 키가 필요하고, 무료 플랜으로 이력과 첫

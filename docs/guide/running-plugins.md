@@ -359,11 +359,22 @@ receives every address and transaction looked up, with your key.
 
 ## Following funds with Blockscout PRO {#blockscout-pro}
 
-The **Blockscout PRO** plugin pack reads EVM chains with your own free key from
-[dev.blockscout.com](https://dev.blockscout.com/): Base, OP Mainnet, Ethereum, Arbitrum One, Polygon
-PoS and Ethereum Classic. Base and OP Mainnet are why you would reach for it, since Etherscan's free
-key does not serve them. It runs in the desktop app only. Paste the key into one of its plugins'
-settings once; all four share it.
+The **Blockscout PRO** plugin pack reads EVM chains with your own Blockscout PRO API key, which
+[dev.blockscout.com](https://dev.blockscout.com/) issues free. OP Mainnet is why you would reach for
+it, since Etherscan's free key does not serve it. It runs in the desktop app only. Paste the key
+into one of its plugins' settings once; all four share it.
+
+Which chains the key reads depends on its Blockscout plan. The free plan reads Ethereum, OP Mainnet,
+Ethereum Classic and Arbitrum One, at 5 requests a second and 100,000 credits a day. Polygon PoS and
+Base need a paid plan (Builder or higher): Blockscout announced that they leave the free plan from
+2026-10-01, and a free-plan key was refused both when this was measured on 2026-11-16. Plans
+change, so the pack keeps no list of its own and goes by Blockscout's answer:
+
+- When the key's plan does not include a chain, the run skips that chain's addresses and
+  transactions and goes on with the rest. The summary names the chain, the plans that include it
+  and how many it skipped.
+- A missing key, or one Blockscout does not accept, stops the run, and so does running out of the
+  day's credits.
 
 | Plugin | Run it on | What it writes |
 |---|---|---|
@@ -400,8 +411,8 @@ Reading what it wrote:
   `eip7702_delegate`.
 - Blockscout Transaction writes `revert_reason` for a failed transaction, such as
   `execution reverted: V3TooLittleReceived()`.
-- The free plan allows 100,000 credits a day, and a lookup costs 20 to 40. Each run's summary gives
-  the credits it used. Blockscout sees every address and transaction you look up.
+- A lookup costs 20 to 40 credits, and each run's summary gives the credits it used. Blockscout
+  sees every address and transaction you look up.
 
 ## The Chaos reference pack
 

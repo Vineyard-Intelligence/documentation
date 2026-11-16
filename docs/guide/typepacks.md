@@ -304,8 +304,9 @@ The **Blockchair** plugin pack writes the transaction rows of the table above, `
 `output to`, and `same address on`, for Bitcoin and six chains built like it; see
 [Following coins with Blockchair](running-plugins.md#blockchair).
 
-The **Blockscout PRO** plugin pack fills these types and links on Base, OP Mainnet, Ethereum,
-Arbitrum One, Polygon PoS and Ethereum Classic with your own free key; see
+The **Blockscout PRO** plugin pack fills these types and links on Ethereum, OP Mainnet, Ethereum
+Classic and Arbitrum One with your own free key, and on Polygon PoS and Base with a paid Blockscout
+plan; see
 [Following funds with Blockscout PRO](running-plugins.md#blockscout-pro).
 
 **Solana through Helius.** The **Helius** plugin pack needs a Helius API key, and its free plan
