@@ -115,7 +115,7 @@
 - **Settings**나 Review 대화상자 같은 대화상자가 열려 있으면 ⌘C는 그 뒤의 노드를 복사하지 않습니다.
 - 노드의 라벨만 복사하므로, 링크만 선택되어 있으면 ⌘C는 아무것도 복사하지 않습니다.
 
-**디팡.** **Copy labels, defanged**는 라벨 속 주소, 도메인, URL, 이메일을 살아 있는 링크가 아니게 바꿔 적습니다. `hxxps://evil[.]example/a`, `evil[.]example`, `admin[@]evil[.]example`, `203[.]0[.]113[.]7`처럼 적고, IPv6 주소의 콜론은 `[:]`로 적습니다. 리디렉트 대상처럼 URL 안에 든 것도 `hxxps://evil[.]example/r?u=hxxps://next[.]example/x`처럼 같은 방식으로 적습니다. `invoice.zip`이나 `setup.py`처럼 확장자가 최상위 도메인이기도 한 파일 이름은 도메인으로 읽히므로 도메인처럼 디팡됩니다(`invoice[.]zip`). 이름, 해시, 그 밖의 파일 이름처럼 나머지는 그대로 복사되고, 이미 디팡해서 적은 라벨은 바뀌지 않습니다. AI 에이전트의 지표 추출은 이렇게 적은 것을 원래대로 읽습니다. ⌘C가 늘 디팡해서 복사하게 하려면 **Settings ▸ Graph ▸ Defang when copying**을 켭니다. 다른 도구나 차단 목록에 붙여 넣을 목록에는 값이 그대로 있어야 하므로 기본값은 꺼짐입니다.
+**디팡.** **Copy labels, defanged**는 라벨 속 주소, 도메인, URL, 이메일을 살아 있는 링크가 아니게 바꿔 적습니다. `hxxps://evil[.]example/a`, `evil[.]example`, `admin[@]evil[.]example`, `203[.]0[.]113[.]7`처럼 적고, IPv6 주소의 콜론은 `[:]`로 적습니다. 리디렉트 대상처럼 URL 안에 든 것도 `hxxps://evil[.]example/r?u=hxxps://next[.]example/x`처럼 같은 방식으로 적습니다. 점으로 이어진 이름 하나로 된 라벨은 마지막 부분이 무엇이든 호스트 이름처럼 괄호로 적습니다. `dc01.corp`나 `nas.lan` 같은 내부 이름(`dc01[.]corp`)도, `invoice.zip`이나 `evil.exe` 같은 파일 이름(`evil[.]exe`)도 그렇습니다. 사람 이름이나 해시처럼 나머지는 그대로 복사되고, 이미 디팡해서 적은 라벨은 바뀌지 않습니다. AI 에이전트의 지표 추출은 이렇게 적은 것을 원래대로 읽습니다. ⌘C가 늘 디팡해서 복사하게 하려면 **Settings ▸ Graph ▸ Defang when copying**을 켭니다. 다른 도구나 차단 목록에 붙여 넣을 목록에는 값이 그대로 있어야 하므로 기본값은 꺼짐입니다.
 
 ## 레이아웃
 
