@@ -301,8 +301,8 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
 | Mac | Windows, Linux | 하는 일 |
 | --- | --- | --- |
 | ⌥⌘, | | Desktop Settings를 엽니다(Mac만. Windows와 Linux에서는 **File → Desktop Settings…**). |
-| ⌘Z, ⇧⌘Z | Ctrl+Z, Ctrl+Y(Windows), Ctrl+Shift+Z(Linux) | 입력란에서 실행 취소, 다시 실행. |
-| ⌘X, ⌘C, ⌘V, ⌘A | Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A | 입력란에서 잘라내기, 복사, 붙여넣기, 모두 선택. |
+| ⌘Z, ⇧⌘Z | Ctrl+Z, Ctrl+Y(Windows), Ctrl+Shift+Z(Linux) | 입력칸에서 실행 취소, 다시 실행. |
+| ⌘X, ⌘C, ⌘V, ⌘A | Ctrl+X, Ctrl+C, Ctrl+V, Ctrl+A | 입력칸에서 잘라내기, 복사, 붙여넣기, 모두 선택. |
 | ⌘0, ⌘+, ⌘- | Ctrl+0, Ctrl++, Ctrl+- | 창 확대·축소: 실제 크기, 확대, 축소. |
 | ⌃⌘F | F11 | 전체 화면. |
 | ⌘M | Ctrl+M | 최소화. |
