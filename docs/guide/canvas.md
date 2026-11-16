@@ -148,10 +148,6 @@ Applying a layout re-computes node positions and then fits the view.
   <figcaption>The legend (bottom-left) lists the types in the graph with counts and the evidence grades; the minimap (bottom-right) marks the current view.</figcaption>
 </figure>
 
-### Search
-
-The **Search entities…** field at the top-right of the canvas finds nodes by type or by any of their property values; typing an AS number such as `AS64496` also finds nodes whose ASN is 64496. **⌘F** (Mac) or **Ctrl+F**, or **/**, jumps to the field; **↑**/**↓** and **Enter** pick a result, and **Esc** closes the list. **⌘G** / **⇧⌘G** (Ctrl+G / Ctrl+Shift+G) jump to the next and previous result without opening the list. Picking a result selects that node and centers it; a node the canvas [hides](#hiding) is shown first. While the project is still loading, an empty result means the node has not arrived yet, not that it doesn't exist.
-
 ### Grid
 
 A subtle background grid that follows the canvas as you pan and zoom, giving you a visual reference for aligning nodes.
@@ -184,7 +180,7 @@ individually clickable.
 
 On a large graph, much of what is drawn has nothing to do with the question you are working on. **Filter** on the toolbar takes it off the canvas without changing the project:
 
-- **Label contains…** hides the nodes whose label contains the text, matched as [Search](#search) matches: case is ignored, and `AS64496` also matches a label that is exactly 64496. With **Show only matches**, every node whose label does not match is hidden instead. The canvas follows the text when you pause typing or press Enter, not at every keystroke, and **×** clears it at once. Korean is followed once the syllable being typed has its vowel, and text typed with another input method once you confirm it.
+- **Label contains…** hides the nodes whose label contains the text, matched as the [graph search](#search) matches: case is ignored, and `AS64496` also matches a label that is exactly 64496. With **Show only matches**, every node whose label does not match is hidden instead. The canvas follows the text when you pause typing or press Enter, not at every keystroke, and **×** clears it at once. Korean is followed once the syllable being typed has its vowel, and text typed with another input method once you confirm it.
 - **Hide nodes with no visible links** hides every node that no shown edge touches, once the other rules have run, so a node linked only by edges of a hidden grade is hidden too. An edge from a node to itself counts as a link.
 - **Types**: untick a type to hide its nodes. Nodes stored under another name for the same type, such as its name without the category, are hidden with it. Each type shows how many nodes of it the project has, shown or hidden. A hidden type with no node in the project, such as one hidden from the Types panel or one whose last node was deleted, stays listed with a count of 0.
 - **Evidence**: untick a grade to hide the edges with that grade.
@@ -199,9 +195,9 @@ The footer under the canvas counts what is hidden beside the project's totals, f
 
 Hiding changes only what the canvas draws:
 
-- Hidden nodes stay in the project. Plugins, the AI agent, [Search](#search), the [node table](#node-table) and **Export graph** still see every node.
+- Hidden nodes stay in the project. Plugins, the AI agent, the [node table](#node-table) and its [search](#search), and **Export graph** still see every node.
 - A hidden node or edge cannot be selected, so **Run plugins**, **Delete (N)**, **Connect to…** and the AI agent never act on something the canvas does not show. Select all, Invert, a legend row and the node table's boxes leave hidden nodes out, and a selected node or edge that becomes hidden leaves the selection. **Disconnect all** leaves a node's hidden edges alone. Deleting a node is the exception: its hidden edges go with it, and the question counts them as hidden on the canvas (see [Right-click menus](#right-click-menus)).
-- Going to one node shows it on its own if it is hidden: picking a search result, clicking a node table row, **Show on the canvas** in the activity log, the AI agent's `select_node`, and following what a collaborator has selected. The node is selected and centered once it is drawn, unless you select something else before then. The panel counts these as *N shown on request*, and **Hide again** puts them back under the rules. Clearing the last rule forgets them too, so a rule you set later hides them like any other node.
+- Going to one node shows it on its own if it is hidden: opening a node table row (a click, **Enter** or **⌘G**), **Show on the canvas** in the activity log, the AI agent's `select_node`, and following what a collaborator has selected. The node is selected and centered once it is drawn, unless you select something else before then. The panel counts these as *N shown on request*, and **Hide again** puts them back under the rules. Clearing the last rule forgets them too, so a rule you set later hides them like any other node.
 - While a plugin run's changes are under review, the nodes and edges it would change or delete, and the nodes its new edges would connect, are drawn whatever the rules say.
 - A hidden node keeps its place on the canvas and comes back to it when shown again. A layout applied while nodes are hidden arranges only the nodes shown; the hidden ones are placed like newly added nodes when they come back, and showing many of them at once lays out the whole graph again.
 - The rules belong to the open project and last until you leave it or reload the page, unless you keep them in a [saved view](#saved-views).
@@ -237,7 +233,7 @@ Node positions, the zoom, the hiding rules and the panel layout all start over w
 
 ## Node table {#node-table}
 
-`View ▸ Node table` opens a table of the project's nodes in a pane below the canvas, to sort, filter and pick nodes in bulk. Choose the menu item again, or press **×** in the pane's title bar, to close it. With several nodes selected, **Show in node table** opens it on those nodes: the button under *N nodes selected* in the Properties panel, or the item in the canvas's right-click menu for a selection. The pane can be dragged elsewhere like any other; **Reset panel layout** closes it.
+`View ▸ Node table` opens a table of the project's nodes in a pane below the canvas, to sort, filter, search and pick nodes in bulk. **⌘F** (Mac) or **Ctrl+F** opens it too, to [search](#search). Choose the menu item again, or press **×** in the pane's title bar, to close it. With several nodes selected, **Show in node table** opens it on those nodes: the button under *N nodes selected* in the Properties panel, or the item in the canvas's right-click menu for a selection. The pane can be dragged elsewhere like any other; **Reset panel layout** closes it.
 
 ### Columns
 
@@ -253,10 +249,18 @@ Click a column header to sort by it, click again to reverse, and a third time to
 
 - **All nodes** / **From selection** — *From selection* lists the nodes that were selected when the table was opened on them. It does not follow the canvas: clicking through the rows changes the selection but not which rows are listed. When the canvas selection is something else, a refresh button beside it takes the current selection instead.
 - **All types** — one type only, with the number of nodes of each.
-- **Filter by keyword** — matches what [Search](#search) matches (the type or any property value, never a field name, and `AS64496` for an ASN of 64496, also inside a list of ASNs), and the label and type name as the table shows them. **Esc** or **×** empties the field.
+- **Filter by keyword** — the graph search ([Finding a node](#search)): the type or any property value, case ignored, never a field name; `AS64496` for an ASN of 64496, also inside a list of ASNs; and the label and type name as the table shows them. **Esc** or **×** empties the field.
 - **Shown and hidden** / **Shown on the canvas** / **Hidden on the canvas** — appears while the canvas [hides](#hiding) nodes, to list only the nodes it draws or only the ones it hides.
 
 The line above the table counts the rows shown and the nodes selected on the canvas, and how many of the rows the canvas hides. 100 rows are shown per page. While the project is still loading, rows appear as nodes arrive.
+
+### Finding a node {#search}
+
+The graph search is the keyword filter. **⌘F** (Mac) or **Ctrl+F**, or **/**, puts the cursor in **Filter by keyword** with its text selected, from anywhere outside a text field. If the table is closed it opens first, on every node; an open table keeps its filters. In a text field, ⌘F is the browser's own find. **Search the graph** in a property value's menu opens the table on every node with that value in the field ([Properties](properties.md)).
+
+- **↓** / **↑** in the field move through the rows the filters leave, and **Enter** opens the row you are on, while you keep typing in the field. Opening a row selects only that node and centers it on the canvas; a node the canvas [hides](#hiding) is shown first.
+- **⌘G** / **⇧⌘G** (Ctrl+G / Ctrl+Shift+G) open the next and the previous row, from the field or from the canvas. The first press, before you have moved to a row or after the filters change, opens the first (or last) row, and they go round at the ends, as a browser's find does. In any other text field they are the browser's.
+- While the project is still loading, a filter that leaves no row means the node has not arrived yet, not that it doesn't exist; the table says so.
 
 ### Selecting from the table
 
@@ -264,7 +268,7 @@ The checkboxes are the canvas selection: a box is ticked exactly when its node i
 
 - Tick a box to add its node to the selection; untick it to take the node out. Other selected nodes and edges stay selected. **Shift**-click a box to do the same to every row from the last one you clicked.
 - The header box adds every row shown, on every page, to the selection, or takes them all out when they are all selected.
-- Click a row to select only that node and center it on the canvas, as picking a search result does. **⌘-click** (Mac) or **Ctrl-click** adds or removes the row, and **Shift-click** adds the rows from the last one clicked.
+- Click a row to select only that node and center it on the canvas, as **Enter** does on it. **⌘-click** (Mac) or **Ctrl-click** adds or removes the row, and **Shift-click** adds the rows from the last one clicked.
 - To copy a value without changing the selection, drag across its text: a click that ends with text selected leaves the selection as it is. A double-click selects the row with its first click, as a plain click does.
 - **Select N on canvas** makes exactly the rows shown, on every page, the selection. **Run plugins**, **Delete (N)**, **Connect to…** and the AI agent then act on them.
 - A node the canvas [hides](#hiding) has a crossed-out eye instead of a box, since a hidden node cannot be selected. The header box, Shift ranges and **Select N on canvas** leave it out. Click its row to show it on the canvas and select it.
@@ -279,7 +283,7 @@ The table takes the keys the [Review dialog](running-plugins.md#reviewing-a-runs
 - **→** / **←** turn to the next or previous page, onto its first row.
 - **Space** ticks or unticks the row's box, as a click on the box does. A row the canvas hides has no box, and Space leaves it.
 - **Enter** does what a click on the row does: it selects only that node and centers it on the canvas, showing it first if the canvas hides it.
-- **/** puts the cursor in **Filter by keyword**, with its text selected.
+- **/** puts the cursor in **Filter by keyword**, with its text selected, as **⌘F** does.
 
 These keys act on the table only, never on the canvas beside it. A new filter, a sort or another selection taken starts again from the first row.
 

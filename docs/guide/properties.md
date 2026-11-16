@@ -333,8 +333,8 @@ It opens a menu for that value:
   host name or an e-mail address is defanged whatever its top-level domain, `dc01.corp` and
   `user@evil.zz` included. **Copy refanged** appears when the value was stored defanged.
   Refanging a defanged copy gives back the value exactly.
-- **Search the graph** puts the value, refanged, in the canvas's search box and shows the results,
-  so `evil[.]example` finds `evil.example`. It is offered for a value on one line of up to 256
+- **Search the graph** opens the [node table](canvas.md#search) on every node with the value,
+  refanged, in its keyword filter, so `evil[.]example` finds `evil.example`. It is offered for a value on one line of up to 256
   characters, and for a number.
 - When the whole value is one indicator (an IP address or block, a domain, a URL with its scheme,
   an e-mail address, a phone number, a hash, a CVE id, a Bitcoin, TRON or EVM address), the menu

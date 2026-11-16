@@ -311,8 +311,8 @@ Vineyard에 탐색기가 없는 네트워크(Ethereum Classic, Bitcoin Gold, Das
   대상)도 디팡됩니다. 호스트 이름과 이메일 주소는 최상위 도메인과 상관없이 디팡되므로 `dc01.corp`나
   `user@evil.zz`도 디팡됩니다. **Copy refanged**는 값이 디팡된 채 저장되어 있을 때 나옵니다. 디팡한
   복사본을 리팡하면 원래 값이 그대로 돌아옵니다.
-- **Search the graph**는 값을 리팡해 캔버스의 검색 입력란에 넣고 결과를 보여 줍니다. 그래서
-  `evil[.]example`로 `evil.example`을 찾습니다. 256자 이하의 한 줄 값과 숫자에 나옵니다.
+- **Search the graph**는 [노드 표](canvas.md#검색)를 모든 노드에 대해 열고 값을 리팡해 키워드 필터에
+  넣습니다. 그래서 `evil[.]example`로 `evil.example`을 찾습니다. 256자 이하의 한 줄 값과 숫자에 나옵니다.
 - 값 전체가 지표 하나(IP 주소나 블록, 도메인, scheme이 있는 URL, 이메일 주소, 전화번호, 해시, CVE id,
   Bitcoin·TRON·EVM 주소)이면, 메뉴가 그 값이 가리키는 노드를 제안합니다.
     - 같은 식별자의 노드가 이미 그래프에 있으면 **Go to …**가, 설치된 플러그인 가운데 그 유형을 받는

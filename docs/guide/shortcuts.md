@@ -121,10 +121,10 @@ layout again is what the key does.
 
 ## What the default keys do
 
-- **Searching.** **⌘F** (**Ctrl+F**) or **/** goes to **Search entities…**. **⌘G** / **⇧⌘G**
-  (**Ctrl+G** / **Ctrl+Shift+G**) jump to the next / previous search result, selected and centred.
-  They work while something is typed in the search field: in the field itself, and anywhere outside
-  another text field.
+- **Searching.** **⌘F** (**Ctrl+F**) or **/** goes to the node table's **Filter by keyword**,
+  opening the table if it is closed ([Finding a node](canvas.md#search)). **⌘G** / **⇧⌘G**
+  (**Ctrl+G** / **Ctrl+Shift+G**) open the next / previous row of the table, selected and centred.
+  They work while the table is open: in its filter, and anywhere outside another text field.
 - **Going places.** Press **G**, then the second key within a second. **G** then **A** goes to the AI
   agent's message box, and opens a new conversation if the panel is closed. **G** then **P** goes to
   the first field of the Properties panel, switching it to **Table** from **Document** or **JSON**;
@@ -180,9 +180,9 @@ does.
 | --- | --- | --- |
 | Close what is in front<br><small>One thing per press: a menu, a waiting Connect to…, the panel in front, and last the selection.</small> | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
 | Open settings<br><small>A Mac browser may keep this key for its own settings; Settings is also in the sidebar.</small> | <kbd>⌘</kbd><kbd>,</kbd> | <kbd>Ctrl</kbd>+<kbd>,</kbd> |
-| Search the graph<br><small>In a text field the key is the browser’s own find.</small> | <kbd>⌘</kbd><kbd>F</kbd> / <kbd>/</kbd> | <kbd>Ctrl</kbd>+<kbd>F</kbd> / <kbd>/</kbd> |
-| Next search result | <kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>G</kbd> |
-| Previous search result | <kbd>⇧</kbd><kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd> |
+| Search the graph<br><small>Into the node table’s keyword filter, opening the table if it is closed. In a text field the key is the browser’s own find.</small> | <kbd>⌘</kbd><kbd>F</kbd> / <kbd>/</kbd> | <kbd>Ctrl</kbd>+<kbd>F</kbd> / <kbd>/</kbd> |
+| Next search result<br><small>The next row of the node table, selected and centered on the canvas.</small> | <kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>G</kbd> |
+| Previous search result<br><small>The previous row of the node table, selected and centered on the canvas.</small> | <kbd>⇧</kbd><kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd> |
 | Show keyboard shortcuts<br><small>Not while you are typing in a field.</small> | <kbd>?</kbd> / <kbd>⌘</kbd><kbd>/</kbd> | <kbd>?</kbd> / <kbd>Ctrl</kbd>+<kbd>/</kbd> |
 | Open the command palette<br><small>A menu, toolbar or right-click command, a setting, a plugin or a node, by name.</small> | <kbd>⌘</kbd><kbd>K</kbd> | <kbd>Ctrl</kbd>+<kbd>K</kbd> |
 | Go to the AI agent | <kbd>G</kbd> then <kbd>A</kbd> | <kbd>G</kbd> then <kbd>A</kbd> |
@@ -240,14 +240,6 @@ does.
 | Create the links, named as you typed | <kbd>↵</kbd> | <kbd>Enter</kbd> |
 | Stop connecting<br><small>While Connect to… waits for its target, or in the box that names the link.</small> | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
 
-### Graph search
-
-| Action | Mac | Windows and Linux |
-| --- | --- | --- |
-| Move through the results | <kbd>↓</kbd> / <kbd>↑</kbd> | <kbd>↓</kbd> / <kbd>↑</kbd> |
-| Select the highlighted node and center it | <kbd>↵</kbd> | <kbd>Enter</kbd> |
-| Close the results | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
-
 ### Review
 
 | Action | Mac | Windows and Linux |
@@ -292,10 +284,10 @@ does.
 | Action | Mac | Windows and Linux |
 | --- | --- | --- |
 | Filter the node table by keyword | <kbd>/</kbd> | <kbd>/</kbd> |
-| Move to the next or previous row<br><small>In the list of rows, across pages.</small> | <kbd>↓</kbd> / <kbd>↑</kbd> | <kbd>↓</kbd> / <kbd>↑</kbd> |
+| Move to the next or previous row<br><small>In the list of rows, across pages, and in the keyword filter.</small> | <kbd>↓</kbd> / <kbd>↑</kbd> | <kbd>↓</kbd> / <kbd>↑</kbd> |
 | Turn to the next or previous page of rows | <kbd>→</kbd> / <kbd>←</kbd> | <kbd>→</kbd> / <kbd>←</kbd> |
 | Tick or untick the row you are on | <kbd>Space</kbd> | <kbd>Space</kbd> |
-| Select only the row’s node and center it<br><small>As a click on the row does; a node the canvas hides is shown.</small> | <kbd>↵</kbd> | <kbd>Enter</kbd> |
+| Select only the row’s node and center it<br><small>In the list or the keyword filter, as a click on the row does; a node the canvas hides is shown.</small> | <kbd>↵</kbd> | <kbd>Enter</kbd> |
 | Add a row to the selection, or take it out | <kbd>⌘</kbd>-click | <kbd>Ctrl</kbd>-click |
 | Add the rows from the last one you clicked | <kbd>⇧</kbd>-click | <kbd>Shift</kbd>-click |
 | Sort by another column as well<br><small>On a column header, after the first column.</small> | <kbd>⇧</kbd>-click | <kbd>Shift</kbd>-click |
