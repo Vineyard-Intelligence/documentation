@@ -8,6 +8,14 @@ copyright: Copyright &copy; VINEYARD
 
 # Fully static output. `mkdocs build` produces ./site_html with no server requirement.
 docs_dir: docs
+
+# Hidden while the crypto-tracing Skill Pack is withdrawn: the recipe tells the analyst to run a
+# pack that is no longer installable. Both language editions are named because the i18n plugin maps
+# .ko.md. `draft_docs` keeps them previewable with `mkdocs serve` but out of `mkdocs build` and
+# `mkdocs gh-deploy`, so the page, its search entry and its URL are gone from the published site.
+draft_docs: |
+  guide/recipes/crypto-trace.md
+  guide/recipes/crypto-trace.ko.md
 site_dir: site_html
 use_directory_urls: true
 
@@ -137,7 +145,6 @@ plugins:
             Recipes: 조사 레시피
             "From a phishing domain to its infrastructure": 피싱 도메인에서 인프라까지
             "Pivoting on an account or handle": 계정·핸들 피벗
-            "Tracing a crypto address": 암호화폐 주소 추적
             "Reading the review and evidence grades": 리뷰와 증거 등급 읽기
             "Working with Skill Packs": Skill Pack 사용하기
             "Developer Guide": 개발자 가이드
@@ -182,7 +189,6 @@ nav:
           - guide/recipes/index.md
           - From a phishing domain to its infrastructure: guide/recipes/phishing-domain.md
           - Pivoting on an account or handle: guide/recipes/account-pivot.md
-          - Tracing a crypto address: guide/recipes/crypto-trace.md
           - Reading the review and evidence grades: guide/recipes/review-and-grades.md
   - Developer Guide:
       - develop/index.md

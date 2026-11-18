@@ -27,13 +27,12 @@ Skill Pack은 플러그인과 정확히 같은 방식으로 [마켓플레이스]
 !!! note "가용성은 의존성에 따라 결정됩니다"
     Skill Pack은 `requires`의 모든 플러그인 팩이 해당 프로젝트에 설치되어 있고 **이 플랫폼에서 실행될 수 있는** 경우에만 **사용 가능**합니다. 나중에 하나를 제거하거나, 필요한 팩이 데스크탑 전용인데 브라우저에서 프로젝트를 열면, 스킬은 조용히 에이전트에게 제공되지 않고 **Run ▸ Skill packs** 목록에서도 빠집니다. 예를 들어 Account & identity pivoting은 데스크탑 앱에서만 실행되는 WhatsMyName 팩이 필요하므로, 이 스킬은 데스크탑 앱에서만 사용할 수 있고 브라우저에서는 메뉴에 나타나지 않습니다.
 
-현재 카탈로그에는 세 개의 Skill Pack이 있습니다:
+현재 카탈로그에는 두 개의 Skill Pack이 있습니다:
 
 | Skill Pack | `applies_to` | 요구 사항 | 하는 일 |
 | --- | --- | --- | --- |
 | **Account & identity pivoting** (`run.vineyard.skillpacks.account_identity_pivot`) | `identity.handle`, `identity.account`, `identity.email_address`, `identity.person` | `run.vineyard.pluginpacks.whatsmyname` (데스크탑 앱 전용) | 하나의 계정이나 핸들을 그 사람의 다른 계정들로 확장 — 그리고 공유된 사용자명이 **같은 사람이 아닌** 경우를 구분합니다. |
 | **Infrastructure pivoting** (`run.vineyard.skillpacks.infra_pivot`) | `infrastructure.ip_address`, `infrastructure.domain`, `infrastructure.certificate`, `infrastructure.autonomous_system` | — (필수 없음; 그래프 툴과 프로젝트에 있는 DNS/RDAP/인증서/ASN 수집 플러그인을 사용하며, 그것 없이 갈 수 없는 홉은 밝힘) | 하나의 지표(IP/도메인/인증서)를 연결된 발자국으로, 검증 가능한 홉씩 확장합니다. |
-| **Crypto fund-flow tracing** (`run.vineyard.skillpacks.crypto_flow_tracing`) | `cryptocurrency.crypto_address`, `cryptocurrency.crypto_transaction`, `financial.crypto_address` | `run.vineyard.pluginpacks.chain_explorer` (웹 앱과 데스크탑 앱; 설치되어 있으면 Blockscout PRO, Helius, Blockchair, Sanctions 팩을 쓰며, 그것 없이 닿을 수 없는 네트워크와 확인은 밝힘) | 주소나 거래 하나에서 그 주소가 실제로 있는 네트워크 위로 한 홉씩 자금을 따라가, 자금을 동결하거나 계정 주인을 알려 줄 수 있는 거래소와 스테이블코인 발행사까지 추적하고, 그들에게 보낼 요청을 정리합니다. |
 
 ## Skill Pack 사용
 

@@ -20,12 +20,6 @@ One handle and an e-mail address: the accounts that carry the name, and the evid
 </div>
 
 <div class="vy-card" markdown>
-### :material-bitcoin: Tracing a crypto address
-One payment address: the network it is really on, where the funds went hop by hop, and the exchange or issuer a request goes to.
-→ [Crypto address](crypto-trace.md)
-</div>
-
-<div class="vy-card" markdown>
 ### :material-scale-balance: Reading the review and evidence grades
 What a review shows before anything is applied, what a link's grade and its corroboration say afterwards, and how to ask again.
 → [Review and evidence grades](review-and-grades.md)
@@ -43,8 +37,6 @@ Every name, address and result on these pages is made up for them:
   addresses contain characters their network does not allow, so they belong to nobody.
 
 None of them resolves, so a plugin run on them finds nothing: follow the steps on your own case.
-The one real value is a public token contract, which the crypto recipe offers for a practice
-lookup.
 
 ## Before any recipe {#before-any-recipe}
 

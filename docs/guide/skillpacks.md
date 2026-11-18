@@ -35,13 +35,12 @@ Skill Packs install from the [Marketplace](../marketplace.md) exactly like plugi
     requires the WhatsMyName pack, which runs only in the desktop app, so this skill is available
     only there; in the browser it is missing from the menu.
 
-The current catalog ships three Skill Packs:
+The current catalog ships two Skill Packs:
 
 | Skill Pack | `applies_to` | Requires | What it does |
 | --- | --- | --- | --- |
 | **Account & identity pivoting** (`run.vineyard.skillpacks.account_identity_pivot`) | `identity.handle`, `identity.account`, `identity.email_address`, `identity.person` | `run.vineyard.pluginpacks.whatsmyname` (desktop app only) | Turn one account or handle into the person's other accounts — and know when a shared username is **not** the same person. |
 | **Infrastructure pivoting** (`run.vineyard.skillpacks.infra_pivot`) | `infrastructure.ip_address`, `infrastructure.domain`, `infrastructure.certificate`, `infrastructure.autonomous_system` | — (none required; uses the graph tools plus whatever DNS/RDAP/certificate/ASN collection plugins the project has, and says which hops it cannot take without them) | Expand one indicator (IP/domain/cert) into its connected footprint, one verifiable hop at a time. |
-| **Crypto fund-flow tracing** (`run.vineyard.skillpacks.crypto_flow_tracing`) | `cryptocurrency.crypto_address`, `cryptocurrency.crypto_transaction`, `financial.crypto_address` | `run.vineyard.pluginpacks.chain_explorer` (web and desktop app; uses Blockscout PRO, Helius, Blockchair and the Sanctions pack where installed, and says which networks and checks it cannot reach without them) | Follow funds from one address or transaction, hop by hop on the network it is really on, to the exchanges and stablecoin issuers that can freeze them or name the account holder — and draft the requests to them. |
 
 ## Using a Skill Pack
 

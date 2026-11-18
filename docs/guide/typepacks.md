@@ -331,13 +331,6 @@ rather than a transfer gets no funder. Helius's identity labels (`public_label`,
 and `attributed to` an exchange, service or firm) need a paid plan too. Token transfers before
 December 2022 are not found through token accounts.
 
-To follow funds across several hops, the **Crypto fund-flow tracing** [Skill Pack](skillpacks.md)
-tells the agent how to use these plugins: settle each address's network before any hop, follow
-transfers by asset, time and amount, stop at exchanges and services, and draft the freeze and records
-requests for the exchanges and stablecoin issuers the funds reached. Transfers stay the plugins'
-links; an owner the agent infers from a label or a deposit pattern goes in its report as a candidate,
-not on the graph.
-
 !!! tip "Mixing Type Packs"
     Install as many Type Packs as you need — they share one qualified-type namespace and
     interlink by design. You might link a `threat.malware` to the `infrastructure.ip_address`
