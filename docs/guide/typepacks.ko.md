@@ -142,7 +142,7 @@ ONYPHE·VirusTotal은 `md5`, Censys·Netlas·urlscan.io는 `sha256`으로 찾고
 
 `infrastructure.certificate`는 SHA-256으로 식별합니다. 출처가 SHA-1도 알려 주면(Shodan, Censys,
 VirusTotal) `fingerprint_sha1`에 함께 담습니다. abuse.ch SSLBL 같은 차단 목록은 인증서를 SHA-1로만
-적고, SHA-1은 SHA-256에서 계산할 수 없기 때문입니다. **abuse.ch** 팩의 SSLBL Certificate Check가 이 값을 읽습니다([abuse.ch로 악성코드 조회하기](running-plugins.md#abusech) 참조).
+적고, SHA-1은 SHA-256에서 계산할 수 없기 때문입니다. **abuse.ch** 팩의 SSLBL Certificate Check가 이 값을 읽습니다.
 
 `infrastructure.domain`은 Infrastructure 4.3.0부터 `.한국`(`xn--3e0b707e`)이나 `.рф`(`xn--p1ai`)
 같은 국제화 최상위 도메인 아래의 이름도 받습니다. 유니코드(`사이트.한국`)로 적어도, 퓨니코드
@@ -280,7 +280,7 @@ Domain type does not accept (Infrastructure 4.3 or later takes internationalised
 결과입니다. `false`는 그 목록에 없다는 뜻이지, 문제가 없다는 뜻이 아닙니다. **Sanctions Screening**
 플러그인 팩이 OFAC SDN 목록으로 이 값을 쓰고, 어느 목록인지 `sanctions_list`에 적고,
 `listed address` 링크를 그립니다. 다른 목록이나 분석가가 이미 `sanctioned`로 표시한 주소는 건드리지
-않습니다. [제재 목록 스크리닝](running-plugins.md#sanctions)을 참조하세요.
+않습니다.
 
 **Chain Explorer** 플러그인팩은 계정이나 키 없이 이 유형들을 채웁니다. 주소의 거래 이력과
 상대 주소, 거래의 입력과 출력, TRON과 XRP Ledger의 첫 자금 공급자, 계약 배포자와 토큰, 탐색기
@@ -294,12 +294,10 @@ BNB Smart Chain(최근 30일), OP Mainnet, Avalanche C-Chain, Ethereum Classic, 
 XRP Ledger, TON입니다. Polygon, Arbitrum, Base의 이력은 키가 필요한 팩이 다룹니다.
 
 **Blockchair** 플러그인 팩이 위 표의 거래 행(`input to`, `output to`)과 `same address on`을 Bitcoin과
-그와 같은 구조의 체인 여섯 개에서 씁니다. [Blockchair로 코인 따라가기](running-plugins.md#blockchair)를
-보세요.
+그와 같은 구조의 체인 여섯 개에서 씁니다.
 
 **Blockscout PRO** 플러그인 팩은 본인의 무료 키로 Ethereum, OP Mainnet, Ethereum Classic,
 Arbitrum One에서, 유료 Blockscout 플랜으로는 Polygon PoS와 Base에서도 이 유형과 링크를 채웁니다.
-[Blockscout PRO로 자금 추적하기](running-plugins.md#blockscout-pro)를 보세요.
 
 **Helius로 보는 Solana.** **Helius** 플러그인팩에는 Helius API 키가 필요하고, 무료 플랜으로 이력과 첫
 자금 공급자를 볼 수 있습니다. Solana 지갑은 SPL 토큰을 자기가 소유한 토큰 계정에 두므로, 일반 Solana

@@ -150,7 +150,7 @@ near it; the favicon's other hash is still compared.
 
 `infrastructure.certificate` is identified by its SHA-256. When the source reports the SHA-1 too
 (Shodan, Censys and VirusTotal do), it goes in `fingerprint_sha1`: blocklists such as abuse.ch SSLBL
-list certificates by SHA-1 alone, and a SHA-1 cannot be computed from the SHA-256. The **abuse.ch** pack's SSLBL Certificate Check reads it (see [Looking up malware with abuse.ch](running-plugins.md#abusech)).
+list certificates by SHA-1 alone, and a SHA-1 cannot be computed from the SHA-256. The **abuse.ch** pack's SSLBL Certificate Check reads it.
 
 `infrastructure.domain` takes a name under an internationalised top-level domain, such as
 `.한국` (`xn--3e0b707e`) or `.рф` (`xn--p1ai`), from Infrastructure 4.3.0. Write it in Unicode
@@ -291,7 +291,7 @@ than relabelling it, and figures from different sources go under keys of their o
 `sanctions_as_of`: `false` means not on that list, not cleared. The **Sanctions Screening** plugin
 pack writes them from OFAC's SDN list, with `sanctions_list` naming the list, and draws the
 `listed address` links. It leaves an address alone that is already marked `sanctioned` from another
-list or by hand; see [Screening against sanctions lists](running-plugins.md#sanctions).
+list or by hand.
 
 The **Chain Explorer** plugin pack fills these types without an account or a key. It reads an
 address's history and counterparties, a transaction's inputs and outputs, TRON and XRP Ledger first
@@ -306,13 +306,11 @@ Smart Chain (the last 30 days), OP Mainnet, Avalanche C-Chain, Ethereum Classic,
 XRP Ledger and TON. History on Polygon, Arbitrum and Base needs a keyed pack.
 
 The **Blockchair** plugin pack writes the transaction rows of the table above, `input to` and
-`output to`, and `same address on`, for Bitcoin and six chains built like it; see
-[Following coins with Blockchair](running-plugins.md#blockchair).
+`output to`, and `same address on`, for Bitcoin and six chains built like it.
 
 The **Blockscout PRO** plugin pack fills these types and links on Ethereum, OP Mainnet, Ethereum
 Classic and Arbitrum One with your own free key, and on Polygon PoS and Base with a paid Blockscout
-plan; see
-[Following funds with Blockscout PRO](running-plugins.md#blockscout-pro).
+plan.
 
 **Solana through Helius.** The **Helius** plugin pack needs a Helius API key, and its free plan
 covers history and first funder. A Solana wallet holds SPL tokens in token accounts it owns, so a
