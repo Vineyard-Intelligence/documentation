@@ -256,10 +256,10 @@ The line above the table counts the rows shown and the nodes selected on the can
 
 ### Finding a node {#search}
 
-The graph search is the keyword filter. **⌘F** (Mac) or **Ctrl+F**, or **/**, puts the cursor in **Filter by keyword** with its text selected, from anywhere outside a text field. If the table is closed it opens first, on every node; an open table keeps its filters. In a text field, ⌘F is the browser's own find. **Search the graph** in a property value's menu opens the table on every node with that value in the field ([Properties](properties.md)).
+The graph search is the keyword filter, over every node. **⌘F** (Mac) or **Ctrl+F**, or **/**, puts the cursor in **Filter by keyword** with its text selected, from anywhere outside a text field. If the table is closed it opens first. If it is open, it goes back to every node: *From selection*, the type and the *On the canvas* filters are dropped, and what you typed stays, so a node outside the rows you were looking at is never reported missing. **/** pressed inside the table is the table's own: it goes to the field and leaves the filters as they are. In a text field, ⌘F is the browser's own find. **Search the graph** in a property value's menu opens the table on every node with that value in the field ([Properties](properties.md)).
 
-- **↓** / **↑** in the field move through the rows the filters leave, and **Enter** opens the row you are on, while you keep typing in the field. Opening a row selects only that node and centers it on the canvas; a node the canvas [hides](#hiding) is shown first.
-- **⌘G** / **⇧⌘G** (Ctrl+G / Ctrl+Shift+G) open the next and the previous row, from the field or from the canvas. The first press, before you have moved to a row or after the filters change, opens the first (or last) row, and they go round at the ends, as a browser's find does. In any other text field they are the browser's.
+- With something typed in the field, **↓** / **↑** move through the rows the filters leave, and **Enter** opens the row you are on, while you keep typing. Opening a row selects only that node and centers it on the canvas; a node the canvas [hides](#hiding) is shown first. In an empty field these keys are the field's, and Enter opens nothing.
+- **⌘G** / **⇧⌘G** (Ctrl+G / Ctrl+Shift+G) open the next and the previous row, from the field or from the canvas, while something is typed. If you have moved to a row (with **↓**, **↑**, a page turn or a click with ⌘) and not opened it, the first press opens it. Otherwise ⌘G opens the row after the one last opened and ⇧⌘G the one before; with none opened since the filter changed, the first row and the last. They go round at the ends, as a browser's find does. In any other text field they are the browser's.
 - While the project is still loading, a filter that leaves no row means the node has not arrived yet, not that it doesn't exist; the table says so.
 
 ### Selecting from the table
@@ -277,15 +277,15 @@ The table only changes the selection, so a participant who can only view the pro
 
 ### Keyboard {#node-table-keyboard}
 
-The table takes the keys the [Review dialog](running-plugins.md#reviewing-a-runs-changes) takes. Its list of rows has the focus when the table opens, and after a click on a row; **Tab** reaches it from the filters. While the focus is anywhere in the table, a bar down the left edge of a row marks the one the keys act on: the first row of the page until you move.
+The table takes the keys the [Review dialog](running-plugins.md#reviewing-a-runs-changes) takes, from wherever the focus is in it: its list of rows, which has the focus when the table opens and after a click on a row or its box, and the pager and the buttons above the rows too. **Tab** reaches the list from the filters. In a text field and on **All nodes** / **From selection** the keys are that control's, and **Space** or **Enter** on a box or a button presses it. While the focus is in the table, a bar down the left edge of a row marks the one the keys act on: the first row of the page until you move.
 
 - **↓** / **↑** move to the next or previous row. They go on across pages: after a page's last row the next page opens on its first.
 - **→** / **←** turn to the next or previous page, onto its first row.
 - **Space** ticks or unticks the row's box, as a click on the box does. A row the canvas hides has no box, and Space leaves it.
 - **Enter** does what a click on the row does: it selects only that node and centers it on the canvas, showing it first if the canvas hides it.
-- **/** puts the cursor in **Filter by keyword**, with its text selected, as **⌘F** does.
+- **/** puts the cursor in **Filter by keyword**, with its text selected, and leaves the table's filters as they are; **⌘F** searches every node.
 
-These keys act on the table only, never on the canvas beside it. A new filter, a sort or another selection taken starts again from the first row.
+These keys act on the table only, never on the canvas beside it. A new filter or another selection taken starts again from the first row. A sort keeps the row you are on and turns to the page the sort moved it to; with no row chosen, it shows the top of the new order.
 
 ## Drawing edges
 

@@ -84,8 +84,8 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
   단축키는 그대로 동작합니다.
 - 에이전트가 끝나면 커서가 메시지 입력칸으로 돌아갑니다. 그사이에 다른 곳을 클릭했다면 돌아가지
   않습니다.
-- 입력칸에서는 입력칸 자신의 키 말고는 **Esc**, **⌘K**(**Ctrl+K**), 검색칸의 **⌘G**(**Ctrl+G**), AI 에이전트 입력칸의
-  **↑**, 리뷰 대화상자의 **⌘↵**(**Ctrl+Enter**)만 동작합니다.
+- 입력칸에서는 입력칸 자신의 키 말고는 **Esc**, **⌘K**(**Ctrl+K**), 노드 표 키워드 필터의 **⌘G**(**Ctrl+G**),
+  AI 에이전트 입력칸의 **↑**, 리뷰 대화상자의 **⌘↵**(**Ctrl+Enter**)만 동작합니다.
 - 캔버스 키는 캔버스에서 동작합니다. 캔버스를 클릭하거나 **G** 다음 **C**를 누르면 캔버스 키가
   캔버스에 동작합니다. 캔버스에 키보드 포커스가 있으면 얇은 파란 테두리가 보입니다. 아직 아무 곳도
   클릭하지 않았을 때도 동작합니다. Properties 패널, 메뉴 바, 떠 있는 패널, 대화상자에서 누른 키나,
@@ -118,10 +118,10 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
 
 ## 기본 키가 하는 일
 
-- **검색.** **⌘F**(**Ctrl+F**)나 **/**는 노드 표의 **Filter by keyword**로 이동하며, 표가 닫혀 있으면
-  엽니다([노드 찾기](canvas.md#검색)). **⌘G** / **⇧⌘G**(**Ctrl+G** / **Ctrl+Shift+G**)는 표의 다음 / 이전
-  행을 열어 선택하고 가운데에 놓습니다. 표가 열려 있을 때 동작하며, 표의 필터 안에서도, 다른 입력칸
-  밖이면 어디서나 됩니다.
+- **검색.** **⌘F**(**Ctrl+F**)나 **/**는 노드 표의 **Filter by keyword**로 이동해 모든 노드를 검색합니다.
+  표가 닫혀 있으면 열고, 열려 있으면 모든 노드로 돌아갑니다([노드 찾기](canvas.md#검색)). **⌘G** /
+  **⇧⌘G**(**Ctrl+G** / **Ctrl+Shift+G**)는 필터가 찾은 다음 / 이전 행을 열어 선택하고 가운데에 놓습니다.
+  필터에 무언가 입력되어 있을 때 동작하며, 필터 안에서도, 다른 입력칸 밖이면 어디서나 됩니다.
 - **이동.** **G**를 누르고 1초 안에 두 번째 키를 누릅니다. **G** 다음 **A**는 AI 에이전트의 입력칸으로
   가고, 패널이 닫혀 있으면 새 대화를 엽니다. **G** 다음 **P**는 Properties 패널의 첫 칸으로 가며,
   패널이 **Document**나 **JSON** 보기면 **Table**로 바꿉니다. **G** 다음 **T**는 Types 패널의
@@ -173,9 +173,9 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
 | --- | --- | --- |
 | Close what is in front<br><small>One thing per press: a menu, a waiting Connect to…, the panel in front, and last the selection.</small> | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
 | Open settings<br><small>A Mac browser may keep this key for its own settings; Settings is also in the sidebar.</small> | <kbd>⌘</kbd><kbd>,</kbd> | <kbd>Ctrl</kbd>+<kbd>,</kbd> |
-| Search the graph<br><small>Into the node table’s keyword filter, opening the table if it is closed. In a text field the key is the browser’s own find.</small> | <kbd>⌘</kbd><kbd>F</kbd> / <kbd>/</kbd> | <kbd>Ctrl</kbd>+<kbd>F</kbd> / <kbd>/</kbd> |
-| Next search result<br><small>The next row of the node table, selected and centered on the canvas.</small> | <kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>G</kbd> |
-| Previous search result<br><small>The previous row of the node table, selected and centered on the canvas.</small> | <kbd>⇧</kbd><kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd> |
+| Search the graph<br><small>Into the node table’s keyword filter, over every node: the table opens if it is closed, or drops its other filters, keeping what is typed. In a text field the key is the browser’s own find.</small> | <kbd>⌘</kbd><kbd>F</kbd> / <kbd>/</kbd> | <kbd>Ctrl</kbd>+<kbd>F</kbd> / <kbd>/</kbd> |
+| Next search result<br><small>The next row the node table’s keyword filter finds, selected and centered on the canvas.</small> | <kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>G</kbd> |
+| Previous search result<br><small>The previous row the node table’s keyword filter finds, selected and centered on the canvas.</small> | <kbd>⇧</kbd><kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd> |
 | Show keyboard shortcuts<br><small>Not while you are typing in a field.</small> | <kbd>?</kbd> / <kbd>⌘</kbd><kbd>/</kbd> | <kbd>?</kbd> / <kbd>Ctrl</kbd>+<kbd>/</kbd> |
 | Open the command palette<br><small>A menu, toolbar or right-click command, a setting, a plugin or a node, by name.</small> | <kbd>⌘</kbd><kbd>K</kbd> | <kbd>Ctrl</kbd>+<kbd>K</kbd> |
 | Go to the AI agent | <kbd>G</kbd> 다음 <kbd>A</kbd> | <kbd>G</kbd> 다음 <kbd>A</kbd> |
@@ -276,11 +276,11 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
 
 | 동작 | Mac | Windows·Linux |
 | --- | --- | --- |
-| Filter the node table by keyword | <kbd>/</kbd> | <kbd>/</kbd> |
-| Move to the next or previous row<br><small>In the list of rows, across pages, and in the keyword filter.</small> | <kbd>↓</kbd> / <kbd>↑</kbd> | <kbd>↓</kbd> / <kbd>↑</kbd> |
+| Filter the node table by keyword<br><small>Pressed in the table: its scope and other filters stay as they are.</small> | <kbd>/</kbd> | <kbd>/</kbd> |
+| Move to the next or previous row<br><small>From anywhere in the table but a field or a choice, across pages; in the keyword filter too, with something typed.</small> | <kbd>↓</kbd> / <kbd>↑</kbd> | <kbd>↓</kbd> / <kbd>↑</kbd> |
 | Turn to the next or previous page of rows | <kbd>→</kbd> / <kbd>←</kbd> | <kbd>→</kbd> / <kbd>←</kbd> |
 | Tick or untick the row you are on | <kbd>Space</kbd> | <kbd>Space</kbd> |
-| Select only the row’s node and center it<br><small>In the list or the keyword filter, as a click on the row does; a node the canvas hides is shown.</small> | <kbd>↵</kbd> | <kbd>Enter</kbd> |
+| Select only the row’s node and center it<br><small>As a click on the row does, from anywhere in the table but a field or a choice, or from the keyword filter with something typed; a node the canvas hides is shown.</small> | <kbd>↵</kbd> | <kbd>Enter</kbd> |
 | Add a row to the selection, or take it out | <kbd>⌘</kbd>-클릭 | <kbd>Ctrl</kbd>-클릭 |
 | Add the rows from the last one you clicked | <kbd>⇧</kbd>-클릭 | <kbd>Shift</kbd>-클릭 |
 | Sort by another column as well<br><small>On a column header, after the first column.</small> | <kbd>⇧</kbd>-클릭 | <kbd>Shift</kbd>-클릭 |

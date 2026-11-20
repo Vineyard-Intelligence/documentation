@@ -86,8 +86,8 @@ layout again is what the key does.
 - When the agent is done, the caret goes back into its message box, unless you have clicked
   somewhere else in the meantime.
 - In a field, besides the field's own keys, only **Esc**, **⌘K** (**Ctrl+K**), **⌘G** (**Ctrl+G**)
-  in the search field, **↑** in the AI agent's message box and **⌘↵** (**Ctrl+Enter**) in the Review
-  dialog work.
+  in the node table's keyword filter, **↑** in the AI agent's message box and **⌘↵** (**Ctrl+Enter**)
+  in the Review dialog work.
 - The canvas keys need the canvas. Click the canvas, or press **G** then **C**, and the canvas keys
   act on it; a thin blue outline shows when the canvas has keyboard focus. They also work before you
   have clicked anywhere. A key pressed in the Properties panel, the menu bar, a floating panel or a
@@ -121,10 +121,11 @@ layout again is what the key does.
 
 ## What the default keys do
 
-- **Searching.** **⌘F** (**Ctrl+F**) or **/** goes to the node table's **Filter by keyword**,
-  opening the table if it is closed ([Finding a node](canvas.md#search)). **⌘G** / **⇧⌘G**
-  (**Ctrl+G** / **Ctrl+Shift+G**) open the next / previous row of the table, selected and centred.
-  They work while the table is open: in its filter, and anywhere outside another text field.
+- **Searching.** **⌘F** (**Ctrl+F**) or **/** goes to the node table's **Filter by keyword** and
+  searches every node: the table opens if it is closed, or goes back to every node if it is open
+  ([Finding a node](canvas.md#search)). **⌘G** / **⇧⌘G** (**Ctrl+G** / **Ctrl+Shift+G**) open the
+  next / previous row the filter finds, selected and centred. They work while something is typed in
+  the filter: in the filter itself, and anywhere outside another text field.
 - **Going places.** Press **G**, then the second key within a second. **G** then **A** goes to the AI
   agent's message box, and opens a new conversation if the panel is closed. **G** then **P** goes to
   the first field of the Properties panel, switching it to **Table** from **Document** or **JSON**;
@@ -180,9 +181,9 @@ does.
 | --- | --- | --- |
 | Close what is in front<br><small>One thing per press: a menu, a waiting Connect to…, the panel in front, and last the selection.</small> | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
 | Open settings<br><small>A Mac browser may keep this key for its own settings; Settings is also in the sidebar.</small> | <kbd>⌘</kbd><kbd>,</kbd> | <kbd>Ctrl</kbd>+<kbd>,</kbd> |
-| Search the graph<br><small>Into the node table’s keyword filter, opening the table if it is closed. In a text field the key is the browser’s own find.</small> | <kbd>⌘</kbd><kbd>F</kbd> / <kbd>/</kbd> | <kbd>Ctrl</kbd>+<kbd>F</kbd> / <kbd>/</kbd> |
-| Next search result<br><small>The next row of the node table, selected and centered on the canvas.</small> | <kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>G</kbd> |
-| Previous search result<br><small>The previous row of the node table, selected and centered on the canvas.</small> | <kbd>⇧</kbd><kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd> |
+| Search the graph<br><small>Into the node table’s keyword filter, over every node: the table opens if it is closed, or drops its other filters, keeping what is typed. In a text field the key is the browser’s own find.</small> | <kbd>⌘</kbd><kbd>F</kbd> / <kbd>/</kbd> | <kbd>Ctrl</kbd>+<kbd>F</kbd> / <kbd>/</kbd> |
+| Next search result<br><small>The next row the node table’s keyword filter finds, selected and centered on the canvas.</small> | <kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>G</kbd> |
+| Previous search result<br><small>The previous row the node table’s keyword filter finds, selected and centered on the canvas.</small> | <kbd>⇧</kbd><kbd>⌘</kbd><kbd>G</kbd> | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd> |
 | Show keyboard shortcuts<br><small>Not while you are typing in a field.</small> | <kbd>?</kbd> / <kbd>⌘</kbd><kbd>/</kbd> | <kbd>?</kbd> / <kbd>Ctrl</kbd>+<kbd>/</kbd> |
 | Open the command palette<br><small>A menu, toolbar or right-click command, a setting, a plugin or a node, by name.</small> | <kbd>⌘</kbd><kbd>K</kbd> | <kbd>Ctrl</kbd>+<kbd>K</kbd> |
 | Go to the AI agent | <kbd>G</kbd> then <kbd>A</kbd> | <kbd>G</kbd> then <kbd>A</kbd> |
@@ -283,11 +284,11 @@ does.
 
 | Action | Mac | Windows and Linux |
 | --- | --- | --- |
-| Filter the node table by keyword | <kbd>/</kbd> | <kbd>/</kbd> |
-| Move to the next or previous row<br><small>In the list of rows, across pages, and in the keyword filter.</small> | <kbd>↓</kbd> / <kbd>↑</kbd> | <kbd>↓</kbd> / <kbd>↑</kbd> |
+| Filter the node table by keyword<br><small>Pressed in the table: its scope and other filters stay as they are.</small> | <kbd>/</kbd> | <kbd>/</kbd> |
+| Move to the next or previous row<br><small>From anywhere in the table but a field or a choice, across pages; in the keyword filter too, with something typed.</small> | <kbd>↓</kbd> / <kbd>↑</kbd> | <kbd>↓</kbd> / <kbd>↑</kbd> |
 | Turn to the next or previous page of rows | <kbd>→</kbd> / <kbd>←</kbd> | <kbd>→</kbd> / <kbd>←</kbd> |
 | Tick or untick the row you are on | <kbd>Space</kbd> | <kbd>Space</kbd> |
-| Select only the row’s node and center it<br><small>In the list or the keyword filter, as a click on the row does; a node the canvas hides is shown.</small> | <kbd>↵</kbd> | <kbd>Enter</kbd> |
+| Select only the row’s node and center it<br><small>As a click on the row does, from anywhere in the table but a field or a choice, or from the keyword filter with something typed; a node the canvas hides is shown.</small> | <kbd>↵</kbd> | <kbd>Enter</kbd> |
 | Add a row to the selection, or take it out | <kbd>⌘</kbd>-click | <kbd>Ctrl</kbd>-click |
 | Add the rows from the last one you clicked | <kbd>⇧</kbd>-click | <kbd>Shift</kbd>-click |
 | Sort by another column as well<br><small>On a column header, after the first column.</small> | <kbd>⇧</kbd>-click | <kbd>Shift</kbd>-click |
