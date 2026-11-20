@@ -129,6 +129,12 @@ A chevron (**›**) at the end of a value opens a view of the whole value under 
 | Cryptocurrency address | The chain its format belongs to, and whether its checksum holds (EIP-55, Base58Check, Bech32 and Bech32m). Solana addresses and all-lowercase EVM addresses carry no checksum, and Monero's is not checked. A Base58Check address whose version byte names no chain Vineyard knows (Bitcoin Gold, Dash) shows `checksum ok` without a chain. | The format, the chain, what the node's own currency or network field says, and a link to a block explorer: the one for the network the node names, or for the format's own chain when it names none. The link asks before it opens, because the explorer sees your IP address, the time and the address you looked up. |
 | JSON | One line of JSON, with **{ }** to edit it ([JSON values](#json-values)). | A tree: fold and unfold, click a key to copy its path (`rdap.events[0].action`), **Find**, and **Raw** for the indented JSON. |
 
+Data is kept within 200 levels of nesting ([JSON values](#json-values)), but a node can hold a value
+written deeper before that limit. A value too deep to write out as text shows as *(nested too deep
+to show)* in the grid and in the tree's **Raw**, and its JSON editor opens empty. **Find** in a tree
+looks 200 levels deep at most; past that its count ends in `+` (`3+ found`), since there may be more
+matches below.
+
 A legacy Bitcoin address is the same string on Bitcoin Cash and Bitcoin SV, and an EVM address the
 same string on every EVM chain, each a different account. So no explorer link is offered when the
 node names a network of another format, a network Vineyard has no explorer for (Ethereum Classic,
@@ -239,6 +245,16 @@ the line opens it in a JSON editor, on the value as it is stored when you open i
 - A whole number larger than 9,007,199,254,740,991, or one too large to be a number at all (`1e400`),
   is refused. JavaScript would already have rounded it, so `18446744073709551616` would be saved as
   `18446744073709552000`. Put it in quotes, `"18446744073709551616"`, to keep every digit.
+- A key named `__proto__`, `constructor` or `prototype` is refused anywhere in the JSON, however
+  deep. These names are parts of JavaScript's own objects, and code that copies a value key by key
+  can turn such a key into a change to the app itself instead of a field. The message names the key
+  and where it is, such as *The key "constructor" in rdap.entities[0] is refused.*, and suggests a
+  new name: rename it, for example to `constructor_`.
+- JSON that nests more than 200 levels of objects and lists is refused, counting the node's data as
+  one level, so a field's value can nest 199. The message says where. Real records nest a handful
+  of levels; data much deeper breaks the views of every analyst who opens the node. Flatten the
+  inner levels, or keep them as one text value.
+- More than 1 MB of text is refused before it is read. A node's data holds at most 256 KB.
 - **Cancel**, **Esc** or a click outside closes the editor without saving.
 - The editor highlights the JSON when it is up to 8,000 characters as it opens, and is plain
   otherwise. JSON that grows past 8,000 characters while you edit loses its colours but stays in the
@@ -246,7 +262,8 @@ the line opens it in a JSON editor, on the value as it is stored when you open i
 - What you save is then checked against the type like any other value
   ([Saving and checks](#saving-and-checks)).
 
-The [JSON view](#document-and-json-views) edits the node's whole data under the same two rules.
+The [JSON view](#document-and-json-views) edits the node's whole data under the same rules, and
+**+ Field**'s **Object** follows them too.
 
 ## Saving and checks {#saving-and-checks}
 
@@ -269,6 +286,17 @@ The [JSON view](#document-and-json-views) edits the node's whole data under the 
   have write access to this project.*, and the field goes back to what is stored. Any other refusal
   says *Could not save this property.* When the server cannot be reached, *Unable to reach the
   server.* In both, what you typed stays.
+- Node and link data is kept within 200 levels of nesting whoever writes it: you, a plugin, the AI
+  agent or an import. A write whose data nests deeper is not sent. Where the app shows the reason,
+  it reads *… nests more than 200 levels deep, so it was not sent.*; the grid says *Could not save
+  this property.* This happens when the node already holds a field written that
+  deep before the limit, because a save sends the node's whole data: remove or flatten that field
+  in the [JSON view](#document-and-json-views) first.
+- The server holds every writer to the same rules. It refuses data nested more than 200 levels,
+  data that is not one object of fields, and a whole number outside the 64-bit range (from
+  −9,223,372,036,854,775,808 to 18,446,744,073,709,551,615), naming the field each time. The JSON
+  view shows its reason after *Not saved:*. Put big numbers such as ids in quotes, so they are
+  stored as text.
 
 The checks are listed in full under
 [What the app checks on node data](../develop/typepacks.md#what-the-app-checks-on-node-data).
@@ -289,6 +317,8 @@ The checks are listed in full under
   someone else saves in the moment between your save being sent and the server applying it can be
   lost, even when it was to another field. Adding or removing a field, and saving from the JSON
   view, write the whole data the same way.
+- A field named `__proto__`, which a plugin can store, is a field like any other: it stays in the
+  grid when the node changes elsewhere, and an edit to it is saved.
 
 ## The value menu {#the-value-menu}
 
@@ -371,7 +401,9 @@ as notes or tags, without waiting for a new version of the Type Pack. The grid l
   the rule a Type Pack's own field names follow, so a later version of the pack can declare the
   field under the name you gave it. A name such as `First Seen` is refused with **Use `first_seen`**
   beside it. A field the type declares is filled in its own row, and a field the node already has is
-  changed in its row, so neither name is accepted here.
+  changed in its row, so neither name is accepted here. Nor are `constructor` and `prototype`, which
+  name parts of JavaScript's own objects: *prototype names a part of JavaScript's own objects.
+  Choose another.*
 - Under the name, **Suggested** offers `notes` (Text) and `tags` (Array), then the fields that other
   nodes of the same type carry and their type does not declare, most common first, so one field
   keeps one name across the graph. Clicking a name fills it in, with the kind the other nodes hold
@@ -383,6 +415,8 @@ as notes or tags, without waiting for a new version of the Type Pack. The grid l
   [JSON view](#document-and-json-views). A field is added with its value: an empty text, an array
   with no entries, and `{}` are refused, since a field with nothing in it reads as one the node does
   not have. A number too large to store exactly is refused; choose **Text** to keep every digit.
+  **Object** is read as any JSON you type is: a `__proto__`, `constructor` or `prototype` key in
+  it, nesting past 200 levels and more than 1 MB of text are refused ([JSON values](#json-values)).
 - **Enter** in the name or in a number adds the field, and **⌘Enter** (Mac) or **Ctrl+Enter** adds it
   from anywhere in the form, the JSON editor included (without adding a line break to the JSON),
   with a list entry you are still typing.
@@ -449,6 +483,10 @@ characters: the editor is highlighted or plain from its size when it opens, as f
 - A field the type marks required (`*`) cannot be removed; give it another value instead. Changed
   values are checked against the type as in the table, and a number too large to store exactly has
   to be written in quotes.
+- The rules of [JSON values](#json-values) hold here. The whole data may nest at most 200 levels
+  and be at most 1 MB of text. A key named `__proto__`, `constructor` or `prototype` is refused only
+  in the fields a save changes or adds, as a field's own name or inside its value, so a node a
+  plugin wrote with a `constructor` field can still have its other fields edited here.
 - **Esc** and a click outside close the editor only while you have typed nothing. **Cancel**
   discards your edit. Nothing closes the editor while a save is on its way. A save that is
   refused (you have no write access) or fails leaves the editor open with the reason, so your edit

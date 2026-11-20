@@ -46,7 +46,7 @@ Below the view controls, the toolbar repeats the **Edit** menu's selection actio
 | --- | --- |
 | **Project settings…** | Opens the project settings dialog. **General** holds the project's name, **Leave** (collaborators only) and deleting the project (owner only). **Access** holds the project link, the organization the project belongs to, and who can view it, see it in their project lists and edit it; only the project owner or an owner/admin of its organization can change these, and others see them read-only. **People** lists the owner and the collaborators; the project owner or an organization owner/admin can invite collaborators by username (View only / Can edit), change their permission and remove them. An invitee gets access only after accepting the invitation, which appears on their dashboard and Projects page; until then they show as "Invitation pending" and the invite can be cancelled. In local mode the dialog has **General** only. |
 | **Export graph (JSON)** | Downloads the current graph as a JSON file (see [Export graph](#export-graph-json)). |
-| **Import graph (JSON)…** | Opens a dialog to load an exported JSON file into the project. Every node is created fresh, so importing the same file twice adds every node again. It reads only Vineyard's own export; STIX 2.1 bundles and MISP events come in through a plugin pack, with a review. |
+| **Import graph (JSON)…** | Opens a dialog to load an exported JSON file into the project. Every node is created fresh, so importing the same file twice adds every node again. It reads only Vineyard's own export; STIX 2.1 bundles and MISP events come in through a plugin pack, with a review. Rows the project cannot take are left out, with the reason (see [Import graph](#import-graph-json)). |
 | **Activity log…** | Opens the project's activity log, which you can filter and export (see [Activity log](#activity-log)). |
 | **Add from Marketplace…** | Opens the [Marketplace](../marketplace.md) scoped to this project so you can add plugins, Type Packs and Skill Packs. |
 
@@ -272,7 +272,7 @@ When one entity is in the project as two or more nodes, such as `Example.com.` a
 The merge view shows what the merge would do before anything changes:
 
 - **Keep** lists the selected nodes with their type and number of links. The node with the most links is picked to start with, because then the fewest links move; pick another to keep that one instead. The node kept stays with every value it has, except a TLP label that another of the nodes marks more strictly: it takes the stricter label. When the selected nodes are of different types, none is picked, and you pick the one of the newer type. Each of the others says how the type packs relate it to the node kept: *same identity* (its identifying fields are the same value once the type pack folds the spelling), *same e164* (or another field the pack marks as the canonical form), *same entity via …* (through another of the selected nodes), or *not identified as the same*. For a node the type packs do not identify as the same, a warning says so: merge only nodes you know are one entity, because the merge deletes them.
-- **Fields** lists each field the kept node has no value for, filled from the first other node that has one, and each conflict: a field the kept node already has where another node has a different value. The value shown is the one the kept node ends with, and the others are not written. To keep the other value, keep that node instead, or change the field after the merge. There are two exceptions, each listed apart:
+- **Fields** lists each field the kept node has no value for, filled from the first other node that has one, and each conflict: a field the kept node already has where another node has a different value. The value shown is the one the kept node ends with, and the others are not written. To keep the other value, keep that node instead, or change the field after the merge. A field named `constructor`, `toString`, `valueOf` or `__proto__` is filled and merged like any other field. There are two exceptions, each listed apart:
     - The source fields `source_report`, `created_by`, `tags`, `markings` and `references` are combined, as an import combines them: the kept node's values stay and the other nodes' parts are added, so two reports about one domain both stay. **Fields** lists them under *Combined on* the kept node, with what each other node adds and what the kept node had. A node whose parts the kept node already holds is no conflict; a value that is not a list, such as an object, still is.
     - `tlp`: the kept node takes the strictest TLP label among the nodes, as an import keeps the stricter label, and **Fields** lists that with the label it replaces. A label is never lowered. This holds whichever node is kept, so keeping the node with a laxer label does not keep that label. Another node's laxer label is not written, and **Fields** lists it apart from the conflicts, under *Laxer labels, not written*. One label spelled two ways, such as `TLP:AMBER` and `amber`, or `TLP:WHITE` and `TLP:CLEAR`, is one value and no conflict, but a label with a note beside it, such as `TLP:RED (Case 7 only)` against `TLP:RED`, still differs.
 
@@ -306,6 +306,19 @@ change, and what its writer recorded with it. See [A link](properties.md#a-link)
 ```
 
 While the project is still loading (for example while it re-syncs after a reconnect), export is refused with *The project is still loading — export again once it has finished.* When the export succeeds, a toast reports how many nodes and edges were written.
+
+## Import graph (JSON) {#import-graph-json}
+
+`Project ▸ Import graph (JSON)…` reads a file that **Export graph (JSON)** wrote and adds its nodes and edges to the project, each created fresh. The file is checked before anything is sent. The dialog asks *Add N node(s) and N edge(s) to this project?* and, when some rows cannot be imported, says only how many will be left out. When the import ends, its summary names the reasons, the three most common first, each with how many rows it covers.
+
+A row is left out when:
+
+- a node has no id or type, or its data is not an object of fields;
+- its data holds a key named `__proto__`, `constructor` or `prototype`, however deep. These names are parts of JavaScript's own objects, and code that copies keys one by one can turn such a key into a change to the app itself. The reason names the key and where it is, and says to rename the key in the file, for example to `constructor_`, to import that row;
+- its data nests more than 200 levels of objects and lists, the data object counting as one;
+- its data holds a number too large to store exactly: a whole number past 9,007,199,254,740,991, or one beyond any number such as `1e400`. By the time the file is read, such a number has already lost digits. Put big numbers such as ids in quotes in the file;
+- a row is larger than one request to the server may be;
+- an edge has no label, an end that is not among the imported nodes (a node left out takes its edges with it), or links the same two nodes in the same direction as an earlier edge in the file.
 
 ## Activity log {#activity-log}
 
