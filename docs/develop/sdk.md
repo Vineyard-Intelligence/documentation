@@ -142,6 +142,14 @@ fields are merged in, and that node is returned. It throws if `type` is not defi
 installed [Type Pack](typepacks.md). Both `createNode` and `updateNode` throw when the data fails
 the type's property checks; see
 [What the app checks on node data](typepacks.md#what-the-app-checks-on-node-data).
+`createNode`, `updateNode`, `createEdge` and `updateEdge` also throw when `data` nests more than 200
+levels of objects and lists, the data object counting as one (`createNode: data nests more than 200
+levels deep. …`): flatten the inner levels, or store them as one text value. When the analyst
+applies the review, the server holds every row to the same rules: node data is one object of
+fields, nests at most 200 levels, and keeps whole numbers within the 64-bit range,
+[-2^63, 2^64-1]. A row outside them is reported as not applied, with a reason naming the field, and
+the other rows still apply. Store large ids and serial numbers as text; past 2^53 a JavaScript
+number has already lost digits anyway.
 `EdgeDraft.from`/`to` are node ids — live ids or the ids `createNode` returned. `label` is free
 text describing the relationship; edges have no type.
 
