@@ -117,13 +117,17 @@ selected**; one dialog shows everything that will be added. Installs are pinned 
 installed. When the catalog has a newer one, the card shows **Update** and the detail drawer
 **Update available**. Either opens the same approval dialog as an install: permissions the new
 version adds are marked **New**, and packs it now needs are listed under **Also installs**. A Type
-Pack update that removes types lists them, with how many of the project's nodes use each; the update
-does not convert those nodes, so they stay with a type no installed pack defines, and the button
-reads **Update anyway**. Nothing changes until you confirm. To uninstall, open the pack and click **Installed — click to remove**;
-if nodes in the project still use a Type Pack's types, you are shown how many first and can
-**Remove anyway**. A pack the registry has retired is badged **Deprecated** (still installable;
-hover the badge for the reason) or **Withdrawn** (cannot be installed, and listed only in a project
-that has it, so you can remove it).
+Pack update that removes types lists them, with how many of the project's nodes use each, and the
+installed plugin packs that still take or make them, with the version to update each to. The update
+does not convert those nodes, so they stay with a type no installed pack defines. While any node may
+use the removed types, or an installed plugin still makes one, the button reads **Update anyway**.
+A plugin pack update whose plugins stop taking a node type says how many of the project's nodes are
+of it, because the run panel then no longer offers those plugins on them. Nothing changes until you
+confirm. To uninstall, open the pack and click **Installed — click to remove**; if nodes in the
+project still use a Type Pack's types, you are shown how many first and can **Remove anyway**. A
+pack the registry has retired is badged **Deprecated** (still installable; hover the badge for the
+reason) or **Withdrawn** (cannot be installed, and listed only in a project that has it, so you can
+remove it).
 
 ## Next / See also
 

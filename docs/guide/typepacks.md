@@ -236,10 +236,13 @@ Ethereum and on BSC — so `network` is part of the identity, and two such nodes
   a transaction by its string alone, were removed in Financial 3.0.0. A project on Financial 2.0.0
   or older still has them, shown as "(legacy)", and with both packs installed the short name
   `crypto_address` means the Cryptocurrency pack's type. Updating to 3.0.0 does not convert their
-  nodes: they stay, with a type no installed pack defines, so the run panel offers no plugin that
-  takes an address or a transaction on them, and they never merge with the new types. The update
-  dialog says how many there are first. Identify Crypto Network links each legacy address to a Cryptocurrency pack address; nothing
-  converts a legacy transaction, so write its `cryptocurrency.crypto_transaction` from the record.
+  nodes: they stay, with a type no installed pack defines. The run panel then offers on them only
+  plugins that take no node type, and those of an older installed plugin pack that still takes the
+  legacy type; they are never found as duplicates of the new types. The update dialog first says
+  how many there are, and which installed plugin packs still take or make the types, with the
+  version to update each to. Identify Crypto Network links each legacy address to a Cryptocurrency
+  pack address; nothing converts a legacy transaction, so write its
+  `cryptocurrency.crypto_transaction` from the record.
 
 Most `network` values have a CAIP-2 chain id, the form other tools exchange: some only as a draft
 or a proposal, and a few have none registered. The ids are not part of the identity, so a

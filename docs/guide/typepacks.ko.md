@@ -224,10 +224,12 @@ Domain type does not accept (Infrastructure 4.3 or later takes internationalised
 - 주소나 거래를 문자열만으로 식별하던 **Financial 팩의** `crypto_address`와 `crypto_transaction`은
   Financial 3.0.0에서 없어졌습니다. Financial 2.0.0 이하인 프로젝트에는 여전히 있고 "(legacy)"로
   표시되며, 두 팩을 함께 설치하면 짧은 이름 `crypto_address`는 Cryptocurrency 팩의 유형을
-  가리킵니다. 3.0.0으로 업데이트해도 그 노드는 변환되지 않습니다. 설치된 어떤 팩도 정의하지 않는
-  유형으로 남으므로 플러그인 실행 패널은 그 노드에 주소나 거래를 받는 플러그인을 제시하지 않고,
-  새 유형과 병합되지도 않습니다. 업데이트 대화상자가 그 개수를 먼저 보여 줍니다. Identify Crypto Network는
-  옛 주소마다 Cryptocurrency 팩 주소를 연결합니다. 옛 거래를 변환하는 것은 없으므로 기록을 보고
+  가리킵니다. 3.0.0으로 업데이트해도 그 노드는 변환되지 않고, 설치된 어떤 팩도 정의하지 않는
+  유형으로 남습니다. 그러면 플러그인 실행 패널은 그 노드에 노드 유형을 받지 않는 플러그인과, 옛
+  유형을 아직 받는 예전 버전의 설치된 플러그인 팩의 플러그인만 제시합니다. 새 유형의 노드와 중복으로
+  찾아지지도 않습니다. 업데이트 대화상자는 그 노드 수와, 그 유형을 아직 받거나 만드는 설치된
+  플러그인 팩, 각각 업데이트할 버전을 먼저 보여 줍니다. Identify Crypto Network는 옛 주소마다
+  Cryptocurrency 팩 주소를 연결합니다. 옛 거래를 변환하는 것은 없으므로 기록을 보고
   `cryptocurrency.crypto_transaction`을 직접 쓰세요.
 
 `network` 값 대부분에는 다른 도구와 주고받는 CAIP-2 체인 ID가 있습니다. 초안이나 제안 단계인 것도
