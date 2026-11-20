@@ -148,11 +148,11 @@ layout again is what the key does.
   instead and fills in the question only if the box is empty, so a question you have started stays
   as it is. **C** is **Connect to…**: click the node to connect the selection to. **Enter** or **F2**
   edits the selected node's value in the Properties panel, in the field its label shows; for an edge,
-  its relation. The panel opens first if you closed it. From the panel's **Document** or **JSON** view the panel switches to **Table** for
-  it, and the field opens even when the panel's finder or **Hide empty** leaves it out. **⌫** or
-  **⌦** (**Delete** or **Backspace** on Windows and Linux) deletes the selection: the same
-  confirmation as **Delete (N)** opens, with **Cancel** focused. **Duplicate** and stopping an agent
-  turn have no key, so neither can happen by a stray keystroke.
+  its relation. The panel opens first if you closed it. From the panel's **Document** or **JSON**
+  view the panel switches to **Table** for it, and the field opens even when the panel's finder or
+  **Hide empty** leaves it out. **⌫** or **⌦** (**Delete** or **Backspace** on Windows and Linux)
+  deletes the selection: the same confirmation as **Delete (N)** opens, with **Cancel** focused.
+  **Duplicate** and stopping an agent turn have no key, so neither can happen by a stray keystroke.
 - **The AI agent panel.** **↑** in an empty message box brings back your last question to edit and
   send again. **Esc** closes the Setup drawer, then the panel; a running turn keeps going (see
   [Tasks & runs](tasks.md#closing-and-deleting-a-conversation)).
