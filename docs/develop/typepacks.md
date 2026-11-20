@@ -109,7 +109,7 @@ A Type Pack's property declarations are checked when a plugin or the AI agent ca
 
 - **`type`**: a `string`, `text`, `hash`, `url`, `email`, `ip`, `date` or `datetime` value must be a string; `integer` a whole number; `number` a finite number; `boolean` a boolean; `array` an array; `object` an object that is not an array. A `reference` value is not checked.
 - **`enum`**: the value must be one of the listed values.
-- **`validator.regex`**: applied to string values as written (see above). It is skipped for values longer than 4,096 characters, for a pattern that does not compile, and for a pattern with a backtracking-prone shape such as `(a+)+`. A refused value's message quotes the property's `description` (up to 280 characters), because the message never shows the pattern and the agent sees field names only. Write that description as what to enter, for example "Account number without spaces or hyphens".
+- **`validator.regex`**: applied to string values as written (see above). The app runs the pattern itself, in time linear in the value's length whatever the pattern's shape, so a pattern such as `(a+)+` is checked like any other and cannot stall the tab. The value is left unchecked, and written as it is, when it is longer than 4,096 characters, and when the pattern does not compile, uses syntax the app does not run (lookahead or lookbehind, backreferences such as `\1` or `\k<name>`, inline modifiers such as `(?i:…)`, legacy octal escapes such as `\01`), is longer than 2,000 characters, nests more than 32 groups, expands past 2,000 states once its counted repeats are unrolled (`a{0,100000}`), or repeats empty groups inside repeats (`(?:(?:){1000}){1000}`). Avoid those features: a pattern the app does not run refuses nothing. A refused value's message quotes the property's `description` (up to 280 characters), because the message never shows the pattern and the agent sees field names only. Write that description as what to enter, for example "Account number without spaces or hyphens".
 - **`validator.min` / `validator.max`**: applied to number values.
 - **`"optional": false`**: on create only, the key must be present and not blank.
 
@@ -187,6 +187,7 @@ Nothing validates a Type Pack against this checklist at install time: the app lo
 - [ ] `label_property` exists in `properties` and is non-optional.
 - [ ] Every property writes `optional` explicitly; each required one says `"optional": false`.
 - [ ] Every `validator.regex` that must match the whole value is anchored with `^…$`.
+- [ ] No `validator.regex` uses lookahead, lookbehind, backreferences, inline modifiers or legacy octal escapes, or is longer than 2,000 characters; the app leaves values unchecked against such a pattern.
 - [ ] `enum` properties supply `enum`; `reference` properties supply `reference.target`; any `default` matches `type`.
 - [ ] A property that sets `normalize` to `crypto_address`, `hex` or `url` does not also set `"case_insensitive": true`; one that sets `hostname`, `ip` or `cidr` does.
 - [ ] A `duplicate_key` property is not one of the identity fields.

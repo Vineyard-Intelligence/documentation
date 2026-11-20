@@ -117,7 +117,7 @@ The schema for each value in a `properties` map (`#/$defs/property`, `additional
 
 | Field | Type | Constraints | Meaning |
 |-------|------|-------------|---------|
-| `regex` | string | — | ECMAScript regex tested against a string value as written, with no implicit anchoring: write `^…$` to require a full match. Skipped for values over 4,096 characters, for a pattern that does not compile, and for a pattern with a backtracking-prone shape. |
+| `regex` | string | — | ECMAScript regex tested against a string value as written, with no implicit anchoring: write `^…$` to require a full match. The app runs it in time linear in the value, whatever its shape. Skipped, leaving the value unchecked, for values over 4,096 characters and for a pattern that does not compile, uses lookahead, lookbehind, backreferences, inline modifiers or legacy octal escapes, is over 2,000 characters, nests more than 32 groups, expands past 2,000 states, or repeats empty groups inside repeats. See [What the app checks on node data](../develop/typepacks.md#what-the-app-checks-on-node-data). |
 | `min` | number | — | Minimum numeric value. |
 | `max` | number | — | Maximum numeric value. |
 | `min_length` | integer | `minimum: 0` | Minimum string length. A hint; the app does not check it. |
