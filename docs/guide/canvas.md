@@ -354,7 +354,7 @@ Each row carries the account's name (`actor_name`) and its id (`actor_id` in the
 - The `session` column names the app session the write came from, as the app stated it. The server checks only that it was an open session of the same account.
 - Rows about invitations not yet accepted are included only for the project owner and organization managers.
 
-Times are written in UTC. In the CSV file the top lines begin with `#`, and a cell that would begin with `=`, `+`, `-` or `@` begins with `'` so that a spreadsheet does not run it as a formula. The JSON file keeps those values unchanged.
+Times are written in UTC. In the CSV file the top lines begin with `#`, and a cell that would begin with `=`, `+`, `-`, `@` or a tab begins with `'` so that a spreadsheet does not run it as a formula. An `=`, `+`, `-` or `@` that follows a `;`, `|`, tab or line break inside a cell or a top line gets a `'` before it too, with spaces allowed between them: a spreadsheet that splits a CSV file on `;`, as Excel does in many European locales, would otherwise run that part of the cell as a formula. The top of the file says so. The JSON file keeps those values unchanged.
 
 ## Add from Marketplace
 
