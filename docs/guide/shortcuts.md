@@ -238,8 +238,8 @@ does.
 | Connect the selected nodes to the node you click | <kbd>⌘</kbd>-click | <kbd>Ctrl</kbd>-click |
 | Connect the other way, from the node you click to the selection | <kbd>⇧</kbd><kbd>⌘</kbd>-click | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>-click |
 | After Connect to…, connect the other way | <kbd>⇧</kbd>-click | <kbd>Shift</kbd>-click |
-| Create the links, named as you typed | <kbd>↵</kbd> | <kbd>Enter</kbd> |
-| Stop connecting<br><small>While Connect to… waits for its target, or in the box that names the link.</small> | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
+| Create the edges, named as you typed | <kbd>↵</kbd> | <kbd>Enter</kbd> |
+| Stop connecting<br><small>While Connect to… waits for its target, or in the box that names the edge.</small> | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
 
 ### Review
 

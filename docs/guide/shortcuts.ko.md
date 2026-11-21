@@ -230,8 +230,8 @@ Ctrl로 적습니다. 검색칸에 입력하면 목록이 좁혀집니다. 하�
 | Connect the selected nodes to the node you click | <kbd>⌘</kbd>-클릭 | <kbd>Ctrl</kbd>-클릭 |
 | Connect the other way, from the node you click to the selection | <kbd>⇧</kbd><kbd>⌘</kbd>-클릭 | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>-클릭 |
 | After Connect to…, connect the other way | <kbd>⇧</kbd>-클릭 | <kbd>Shift</kbd>-클릭 |
-| Create the links, named as you typed | <kbd>↵</kbd> | <kbd>Enter</kbd> |
-| Stop connecting<br><small>While Connect to… waits for its target, or in the box that names the link.</small> | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
+| Create the edges, named as you typed | <kbd>↵</kbd> | <kbd>Enter</kbd> |
+| Stop connecting<br><small>While Connect to… waits for its target, or in the box that names the edge.</small> | <kbd>Esc</kbd> | <kbd>Esc</kbd> |
 
 ### Review
 
